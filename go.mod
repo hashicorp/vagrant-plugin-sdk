@@ -1,6 +1,6 @@
 module github.com/hashicorp/vagrant-plugin-sdk
 
-go 1.14
+go 1.13
 
 require (
 	github.com/bgentry/speakeasy v0.1.0
@@ -30,5 +30,6 @@ require (
 	golang.org/x/sys v0.0.0-20200916030750-2334cc1a136f
 	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
 	google.golang.org/grpc v1.32.0
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1 // indirect
 	google.golang.org/protobuf v1.25.0
 )

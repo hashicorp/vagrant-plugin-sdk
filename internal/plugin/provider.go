@@ -20,17 +20,17 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
-// BuilderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
-// the Builder component type.
-type BuilderPlugin struct {
+// ProviderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
+// the Provider component type.
+type ProviderPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Builder // Impl is the concrete implementation
+	Impl    component.Provider // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 }
 
-func (p *BuilderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	base := &base{
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
