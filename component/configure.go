@@ -1,7 +1,8 @@
 package component
 
 import (
-	"context"
+	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 )
 
@@ -38,8 +39,53 @@ type ConfigurableNotify interface {
 //
 // If c does not implement Configurable AND body is non-empty, then it is
 // an error. If body is empty in that case, it is not an error.
-func Configure(c interface{}, body string, ctx context.Context) error {
-	return nil
+func Configure(c interface{}, body hcl.Body, ctx *hcl.EvalContext) hcl.Diagnostics {
+	if c, ok := c.(Configurable); ok {
+		// Get the configuration value
+		v, err := c.Config()
+		if err != nil {
+			return hcl.Diagnostics{
+				&hcl.Diagnostic{
+					Severity: hcl.DiagError,
+					Summary:  err.Error(),
+					Detail:   "",
+				},
+			}
+		}
+
+		// If the configuration structure is nil then we behave as if the
+		// component is not configurable.
+		if v == nil {
+			return nil
+		}
+
+		// Decode
+		if diag := gohcl.DecodeBody(body, ctx, v); len(diag) > 0 {
+			return diag
+		}
+
+		// If decoding worked and we have a notification implementation, then
+		// notify with the value.
+		if cn, ok := c.(ConfigurableNotify); ok {
+			if err := cn.ConfigSet(v); err != nil {
+				return hcl.Diagnostics{
+					&hcl.Diagnostic{
+						Severity: hcl.DiagError,
+						Summary:  err.Error(),
+						Detail:   "",
+					},
+				}
+			}
+		}
+
+		return nil
+	}
+
+	// If c doesn't implement Configurable, then we parse the content with
+	// an empty schema which will error if there are any fields since its
+	// non-conformant to the schema.
+	_, diag := body.Content(&hcl.BodySchema{})
+	return diag
 }
 
 // Documentation returns the documentation for the given component.
