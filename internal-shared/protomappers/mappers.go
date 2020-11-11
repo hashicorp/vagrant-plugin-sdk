@@ -9,7 +9,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/waypoint-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -23,8 +23,6 @@ var All = []interface{}{
 	SourceProto,
 	JobInfo,
 	JobInfoProto,
-	DeploymentConfig,
-	DeploymentConfigProto,
 	DatadirProject,
 	DatadirApp,
 	DatadirComponent,
@@ -60,17 +58,6 @@ func JobInfo(input *pb.Args_JobInfo) (*component.JobInfo, error) {
 // JobInfoProto
 func JobInfoProto(input *component.JobInfo) (*pb.Args_JobInfo, error) {
 	var result pb.Args_JobInfo
-	return &result, mapstructure.Decode(input, &result)
-}
-
-// DeploymentConfig
-func DeploymentConfig(input *pb.Args_DeploymentConfig) (*component.DeploymentConfig, error) {
-	var result component.DeploymentConfig
-	return &result, mapstructure.Decode(input, &result)
-}
-
-func DeploymentConfigProto(input *component.DeploymentConfig) (*pb.Args_DeploymentConfig, error) {
-	var result pb.Args_DeploymentConfig
 	return &result, mapstructure.Decode(input, &result)
 }
 

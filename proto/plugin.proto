@@ -6,7 +6,7 @@ option go_package = ".;proto";
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
-import "google/rpc/status.proto";
+import "status.proto";
 import "protostructure.proto";
 
 /********************************************************************
@@ -346,164 +346,24 @@ message Map {
 }
 
 /********************************************************************
-* Builder Plugin Service
+* Provider Plugin Service
 ********************************************************************/
 
-// Builder service is a builder that takes some set of arguments and produces
-// an artifact.
-service Builder {
-  rpc IsAuthenticator(google.protobuf.Empty) returns (ImplementsResp);
-  rpc Auth(FuncSpec.Args) returns (Auth.AuthResponse);
-  rpc AuthSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ValidateAuth(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc ValidateAuthSpec(google.protobuf.Empty) returns (FuncSpec);
-
+// Provider service is a provider that takes some set of arguments changes
+// the state of a machine
+service Provider {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
-  rpc BuildSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Build(FuncSpec.Args) returns (Build.Resp);
-}
-
-message Build {
-  message Resp {
-    google.protobuf.Any result = 1;
-    map<string, string> labels = 2;
-    bytes template_data = 3;
-  }
 }
 
 /********************************************************************
-* Platform Plugin Service
+* Provisioner Plugin Service
 ********************************************************************/
 
-// Platform is responsible for deploying an artifact that is in a registry.
-service Platform {
-  rpc IsAuthenticator(google.protobuf.Empty) returns (ImplementsResp);
-  rpc Auth(FuncSpec.Args) returns (Auth.AuthResponse);
-  rpc AuthSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ValidateAuth(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc ValidateAuthSpec(google.protobuf.Empty) returns (FuncSpec);
-
+// A Provisioner runs actions against a VM
+service Provisioner {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
-  rpc DeploySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Deploy(FuncSpec.Args) returns (Deploy.Resp);
-
-  // component.PlatformReleaser optional implementation.
-  rpc DefaultReleaserSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc DefaultReleaser(FuncSpec.Args) returns (DefaultReleaser.Resp);
-
-  // component.Destroyer optional implementation
-  rpc IsDestroyer(google.protobuf.Empty) returns (ImplementsResp);
-  rpc DestroySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Destroy(FuncSpec.Args) returns (google.protobuf.Empty);
-
-  // component.WorkspaceDestroyer optional implementation
-  rpc IsWorkspaceDestroyer(google.protobuf.Empty) returns (ImplementsResp);
-  rpc DestroyWorkspaceSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc DestroyWorkspace(FuncSpec.Args) returns (google.protobuf.Empty);
-
-  // IsLogPlatform returns true if this platform also implements LogPlatform.
-  rpc IsLogPlatform(google.protobuf.Empty) returns (ImplementsResp);
-}
-
-message DefaultReleaser {
-  message Resp {
-    // stream_id is the stream ID to connect to to get access to the
-    // ReleaseManager implementation.
-    uint32 stream_id = 1;
-  }
-}
-
-message Deploy {
-  message Resp {
-    // result is the resulting opaque data type
-    google.protobuf.Any result = 1;
-
-    // template data for the deployment
-    bytes template_data = 2;
-  }
-}
-
-/********************************************************************
-* Registry Plugin Service
-********************************************************************/
-
-// Registry is responsible for pushing a built artifact to some registry.
-// The difference between a registry and a builder is that while a builder
-// produces an artifact from source, a registry provides operations to work
-// with artifacts such as listing previous, deleting, etc.
-service Registry {
-  rpc IsAuthenticator(google.protobuf.Empty) returns (ImplementsResp);
-  rpc Auth(FuncSpec.Args) returns (Auth.AuthResponse);
-  rpc AuthSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ValidateAuth(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc ValidateAuthSpec(google.protobuf.Empty) returns (FuncSpec);
-
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
-  rpc PushSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Push(FuncSpec.Args) returns (Push.Resp);
-}
-
-message Push {
-  message Resp {
-    // result is the resulting opaque data type
-    google.protobuf.Any result = 1;
-
-    // template data for the artifact
-    bytes template_data = 2;
-  }
-}
-
-/********************************************************************
-* Release Plugin Service
-********************************************************************/
-
-// ReleaseManager is a serivce that handles the process of exposing
-// a deployment to traffic.
-service ReleaseManager {
-  rpc IsAuthenticator(google.protobuf.Empty) returns (ImplementsResp);
-  rpc Auth(FuncSpec.Args) returns (Auth.AuthResponse);
-  rpc AuthSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ValidateAuth(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc ValidateAuthSpec(google.protobuf.Empty) returns (FuncSpec);
-
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
-  // component.Destroyer optional implementation
-  rpc IsDestroyer(google.protobuf.Empty) returns (ImplementsResp);
-  rpc DestroySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Destroy(FuncSpec.Args) returns (google.protobuf.Empty);
-
-  // component.WorkspaceDestroyer optional implementation
-  rpc IsWorkspaceDestroyer(google.protobuf.Empty) returns (ImplementsResp);
-  rpc DestroyWorkspaceSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc DestroyWorkspace(FuncSpec.Args) returns (google.protobuf.Empty);
-
-  rpc ReleaseSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Release(FuncSpec.Args) returns (Release.Resp);
-}
-
-message Release {
-  string url = 1;
-
-  message Resp {
-    // result is the resulting data type for building.
-    google.protobuf.Any result = 1;
-
-    // release structure
-    Release release = 2;
-
-    // template data for the release
-    bytes template_data = 3;
-  }
 }

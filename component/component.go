@@ -1,6 +1,6 @@
 // Package component has the interfaces for all the components that
 // can be implemented. A component is the broad term used to describe
-// all builders, platforms, registries, etc.
+// all providers, provisioners, etc.
 //
 // Many component interfaces have functions named `XFunc` where "X" is some
 // operation and the return value is "interface{}". These functions should return
@@ -19,119 +19,29 @@ package component
 type Type uint
 
 const (
-	InvalidType        Type = iota // Invalid
-	BuilderType                    // Builder
-	RegistryType                   // Registry
-	PlatformType                   // Platform
-	ReleaseManagerType             // ReleaseManager
-	LogPlatformType                // LogPlatform
-	LogViewerType                  // LogViewer
-	AuthenticatorType              // Authenticator
-	MapperType                     // Mapper
+	InvalidType     Type = iota // Invalid
+	ProviderType                // Provider
+	ProvisionerType             // Provisioner
 	maxType
 )
 
 // TypeMap is a mapping of Type to the nil pointer to the interface of that
 // type. This can be used with libraries such as mapper.
 var TypeMap = map[Type]interface{}{
-	BuilderType:        (*Builder)(nil),
-	RegistryType:       (*Registry)(nil),
-	PlatformType:       (*Platform)(nil),
-	ReleaseManagerType: (*ReleaseManager)(nil),
-	LogPlatformType:    (*LogPlatform)(nil),
-	LogViewerType:      (*LogViewer)(nil),
-	AuthenticatorType:  (*Authenticator)(nil),
+	ProviderType:    (*Provider)(nil),
+	ProvisionerType: (*Provisioner)(nil),
 }
 
-// Builder is responsible for building an artifact from source.
-type Builder interface {
-	// BuildFunc should return the method handle for the "build" operation.
-	// The build function has access to a *Source and should return an Artifact.
-	BuildFunc() interface{}
+// Providers are the backend that VMs are launched on
+type Provider interface {
+	// Handles operations involving interfacing with a provider
+	ProviderFunc() interface{}
 }
 
-// Registry is responsible for managing artifacts.
-type Registry interface {
-	// PushFunc should return the method handle to the function for the "push"
-	// operation. The push function should take an artifact type and push it
-	// to the registry.
-	PushFunc() interface{}
-}
-
-// Platform is responsible for deploying artifacts.
-type Platform interface {
-	// DeployFunc should return the method handle for the "deploy" operation.
-	// The deploy function has access to the following and should use this
-	// as necessary to perform a deploy.
-	//
-	//   artifact, artifact registry
-	//
-	DeployFunc() interface{}
-}
-
-// PlatformReleaser is an optional interface that a Platform can implement
-// to provide default Release functionality. This only takes effect if
-// no release is configured.
-type PlatformReleaser interface {
-	// DefaultReleaserFunc() should return a function that returns
-	// a ReleaseManger implementation. This ReleaseManager will NOT have
-	// any config so it must work by default.
-	DefaultReleaserFunc() interface{}
-}
-
-// ReleaseManager is responsible for taking a deployment and making it
-// "released" which means that traffic can now route to it.
-type ReleaseManager interface {
-	// ReleaseFunc should return the method handle for the "release" operation.
-	ReleaseFunc() interface{}
-}
-
-// Destroyer is responsible for destroying resources associated with this
-// implementation. This can be implemented by all of the component types
-// and will be called to perform cleanup on any created resources.
-type Destroyer interface {
-	// DestroyFunc should return the method handle for the destroy operation.
-	DestroyFunc() interface{}
-}
-
-// WorkspaceDestroyer is called when a workspace destroy operation is
-// performed (typically via the "vagrant destroy" CLI). This can be implemented
-// by any plugin.
-type WorkspaceDestroyer interface {
-	// DestroyWorkspaceFunc is called when a workspace destroy operation is performed.
-	//
-	// This will only be called if that plugin had performed some operation
-	// previously on the workspace. This may be called multiple times so it should
-	// be idempotent. This will be called after all individual DestroyFuncs are
-	// complete.
-	DestroyWorkspaceFunc() interface{}
-}
-
-// Authenticator is responsible for authenticating different types of plugins.
-type Authenticator interface {
-	// AuthFunc should return the method for getting credentials for a
-	// plugin. This should return AuthResult.
-	AuthFunc() interface{}
-
-	// ValidateAuthFunc should return the method for validating authentication
-	// credentials for the plugin
-	ValidateAuthFunc() interface{}
-}
-
-// See Args.Source in the protobuf protocol.
-type Source struct {
-	App  string
-	Path string
-}
-
-// AuthResult is the return value expected from Authenticator.AuthFunc.
-type AuthResult struct {
-	// Authenticated when true means that the plugin should now be authenticated
-	// (given the other fields in this struct). If ValidateAuth is called,
-	// it should succeed. If this is false, the auth method may have printed
-	// help text or some other information, but it didn't authenticate. However,
-	// this is not an error.
-	Authenticated bool
+// Provisioner is responsible for provisioning a VM
+type Provisioner interface {
+	// Handles operations involving provisioining the guest machine
+	ProvisionerFunc() interface{}
 }
 
 type LabelSet struct {
@@ -156,29 +66,9 @@ type JobInfo struct {
 	Workspace string
 }
 
-type Artifact interface {
-	// Labels are the labels to set. These will overwrite any conflicting
-	// labels on the value. Please namespace the labels you set. The recommended
-	// namespacing is using a URL structure, followed by a slash, and a key.
-	// For example: "plugin.example.com/key" as the key. The value can be
-	// any string.
-	Labels() map[string]string
+// See Args.Source in the protobuf protocol.
+type Source struct {
+	App  string
+	Path string
 }
 
-type Deployment interface{}
-
-type Release interface {
-	// URL is the URL to access this release.
-	URL() string
-}
-
-// Template can be implemented by Artifact, Deployment, and Release. This
-// will expose this information as available variables in the HCL configuration
-// as well as functions in the `template`-prefixed family, such as `templatefile`.
-//
-// If Template is NOT implemented, we will automatically infer template data
-// based on exported variables of the result value. This may not be desirable
-// in which case you should implement Template and return nil.
-type Template interface {
-	TemplateData() map[string]interface{}
-}
