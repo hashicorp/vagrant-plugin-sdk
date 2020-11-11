@@ -2,19 +2,16 @@ package plugin
 
 import (
 	"context"
-	"reflect"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
-	"github.com/hashicorp/waypoint-plugin-sdk/component"
-	"github.com/hashicorp/waypoint-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/waypoint-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
+  "github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
 // ProviderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -51,9 +48,10 @@ func (p *ProviderPlugin) GRPCClient(
 
 // providerClient is an implementation of component.Provider over gRPC.
 type providerClient struct {
-	client proto.providerClient
+	client proto.ProviderClient
 	logger hclog.Logger
 	broker *plugin.GRPCBroker
+	mappers []*argmapper.Func
 }
 
 func (c *providerClient) Config() (interface{}, error) {
@@ -64,87 +62,49 @@ func (c *providerClient) ConfigSet(v interface{}) error {
 	return configureCall(context.Background(), c.client, v)
 }
 
+func (c *providerClient) Documentation() (*docs.Documentation, error) {
+	return documentationCall(context.Background(), c.client)
+}
+
 func (c *providerClient) ProviderFunc() interface{} {
-	spec, err := c.client.ProviderClient(context.Background(), &empty.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-
-	// We don't want to be a mapper
-	spec.Result = nil
-
-	return funcspec.Func(spec, c.build,
-		argmapper.Logger(c.logger),
-		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.broker,
-			Mappers: c.mappers,
-			Cleanup: &pluginargs.Cleanup{},
-		}),
-	)
+	//TODO
+	return nil
 }
 
 
 // logPlatformServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
-type logPlatformServer struct {
-	Impl    component.LogPlatform
+type providerServer struct {
+	Impl    component.Provider
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
 	Broker  *plugin.GRPCBroker
 }
 
-func (s *logPlatformServer) LogsSpec(
+func (s *providerServer) ConfigStruct(
 	ctx context.Context,
-	args *empty.Empty,
-) (*proto.FuncSpec, error) {
-	return funcspec.Spec(s.Impl.LogsFunc(),
-		argmapper.ConverterFunc(s.Mappers...),
-		argmapper.Logger(s.Logger),
-
-		// We expect a component.LogViewer output type and not a proto.Message
-		argmapper.FilterOutput(argmapper.FilterType(
-			reflect.TypeOf((*component.LogViewer)(nil)).Elem()),
-		),
-	)
+	empty *empty.Empty,
+) (*proto.Config_StructResp, error) {
+	return configStruct(s.Impl)
 }
 
-func (s *logPlatformServer) Logs(
+func (s *providerServer) Configure(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Logs_Resp, error) {
-	result, err := callDynamicFunc2(s.Impl.LogsFunc(), args.Args,
-		argmapper.Typed(ctx),
-		argmapper.ConverterFunc(s.Mappers...))
-	if err != nil {
-		return nil, err
-	}
+	req *proto.Config_ConfigureRequest,
+) (*empty.Empty, error) {
+	return configure(s.Impl, req)
+}
 
-	lv, ok := result.(component.LogViewer)
-	if !ok {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"plugin Logs function should've returned a component.LogViewer, got %T",
-			result)
-	}
-
-	// Get the ID for the server we're going to start to run our viewer
-	id := s.Broker.NextId()
-
-	// Start our server
-	go s.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-		server := plugin.DefaultGRPCServer(opts)
-		proto.RegisterLogViewerServer(server, &logViewerServer{
-			Impl:   lv,
-			Logger: s.Logger.Named("logviewer"),
-		})
-		return server
-	})
-
-	return &proto.Logs_Resp{StreamId: id}, nil
+func (s *providerServer) Documentation(
+	ctx context.Context,
+	empty *empty.Empty,
+) (*proto.Config_Documentation, error) {
+	return documentation(s.Impl)
 }
 
 var (
-	_ plugin.Plugin           = (*LogPlatformPlugin)(nil)
-	_ plugin.GRPCPlugin       = (*LogPlatformPlugin)(nil)
-	_ proto.LogPlatformServer = (*logPlatformServer)(nil)
-	_ component.LogPlatform   = (*logPlatformClient)(nil)
+	_ plugin.Plugin           = (*ProviderPlugin)(nil)
+	_ plugin.GRPCPlugin       = (*ProviderPlugin)(nil)
+	_ proto.ProviderServer = (*providerServer)(nil)
+	_ component.Provider   = (*providerClient)(nil)
 )

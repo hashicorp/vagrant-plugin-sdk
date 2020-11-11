@@ -352,11 +352,9 @@ message Map {
 // Provider service is a provider that takes some set of arguments changes
 // the state of a machine
 service Provider {
-  rpc Boot(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc Provision(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc Reload(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc Ssh(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
 
 /********************************************************************
@@ -365,9 +363,7 @@ service Provider {
 
 // A Provisioner runs actions against a VM
 service Provisioner {
-  rpc Provision(ProvisionerConfig) returns (google.protobuf.Empty);
-}
-
-message ProvisionerConfig {
-  map<string, string> config = 1;
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }

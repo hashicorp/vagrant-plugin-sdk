@@ -360,53 +360,6 @@ func (*Map) Descriptor() ([]byte, []int) {
 	return file_plugin_proto_rawDescGZIP(), []int{6}
 }
 
-type ProvisionerConfig struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Config map[string]string `protobuf:"bytes,1,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-}
-
-func (x *ProvisionerConfig) Reset() {
-	*x = ProvisionerConfig{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ProvisionerConfig) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProvisionerConfig) ProtoMessage() {}
-
-func (x *ProvisionerConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProvisionerConfig.ProtoReflect.Descriptor instead.
-func (*ProvisionerConfig) Descriptor() ([]byte, []int) {
-	return file_plugin_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *ProvisionerConfig) GetConfig() map[string]string {
-	if x != nil {
-		return x.Config
-	}
-	return nil
-}
-
 // See component.Source
 type Args_Source struct {
 	state         protoimpl.MessageState
@@ -422,7 +375,7 @@ type Args_Source struct {
 func (x *Args_Source) Reset() {
 	*x = Args_Source{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[8]
+		mi := &file_plugin_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -435,7 +388,7 @@ func (x *Args_Source) String() string {
 func (*Args_Source) ProtoMessage() {}
 
 func (x *Args_Source) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[8]
+	mi := &file_plugin_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -479,7 +432,7 @@ type Args_JobInfo struct {
 func (x *Args_JobInfo) Reset() {
 	*x = Args_JobInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[9]
+		mi := &file_plugin_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -492,7 +445,7 @@ func (x *Args_JobInfo) String() string {
 func (*Args_JobInfo) ProtoMessage() {}
 
 func (x *Args_JobInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[9]
+	mi := &file_plugin_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -545,7 +498,7 @@ type Args_DeploymentConfig struct {
 func (x *Args_DeploymentConfig) Reset() {
 	*x = Args_DeploymentConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[10]
+		mi := &file_plugin_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -558,7 +511,7 @@ func (x *Args_DeploymentConfig) String() string {
 func (*Args_DeploymentConfig) ProtoMessage() {}
 
 func (x *Args_DeploymentConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[10]
+	mi := &file_plugin_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,7 +574,7 @@ type Args_DataDir struct {
 func (x *Args_DataDir) Reset() {
 	*x = Args_DataDir{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[11]
+		mi := &file_plugin_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -634,7 +587,7 @@ func (x *Args_DataDir) String() string {
 func (*Args_DataDir) ProtoMessage() {}
 
 func (x *Args_DataDir) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[11]
+	mi := &file_plugin_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -663,7 +616,7 @@ type Args_Logger struct {
 func (x *Args_Logger) Reset() {
 	*x = Args_Logger{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[12]
+		mi := &file_plugin_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -676,7 +629,7 @@ func (x *Args_Logger) String() string {
 func (*Args_Logger) ProtoMessage() {}
 
 func (x *Args_Logger) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[12]
+	mi := &file_plugin_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -711,7 +664,7 @@ type Args_TerminalUI struct {
 func (x *Args_TerminalUI) Reset() {
 	*x = Args_TerminalUI{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[13]
+		mi := &file_plugin_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -724,7 +677,7 @@ func (x *Args_TerminalUI) String() string {
 func (*Args_TerminalUI) ProtoMessage() {}
 
 func (x *Args_TerminalUI) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[13]
+	mi := &file_plugin_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -762,7 +715,7 @@ type Args_ReleaseTargets struct {
 func (x *Args_ReleaseTargets) Reset() {
 	*x = Args_ReleaseTargets{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[14]
+		mi := &file_plugin_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -775,7 +728,7 @@ func (x *Args_ReleaseTargets) String() string {
 func (*Args_ReleaseTargets) ProtoMessage() {}
 
 func (x *Args_ReleaseTargets) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[14]
+	mi := &file_plugin_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,7 +764,7 @@ type Args_LabelSet struct {
 func (x *Args_LabelSet) Reset() {
 	*x = Args_LabelSet{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[15]
+		mi := &file_plugin_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -824,7 +777,7 @@ func (x *Args_LabelSet) String() string {
 func (*Args_LabelSet) ProtoMessage() {}
 
 func (x *Args_LabelSet) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[15]
+	mi := &file_plugin_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -859,7 +812,7 @@ type Args_DataDir_Project struct {
 func (x *Args_DataDir_Project) Reset() {
 	*x = Args_DataDir_Project{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[16]
+		mi := &file_plugin_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -872,7 +825,7 @@ func (x *Args_DataDir_Project) String() string {
 func (*Args_DataDir_Project) ProtoMessage() {}
 
 func (x *Args_DataDir_Project) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[16]
+	mi := &file_plugin_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -914,7 +867,7 @@ type Args_DataDir_App struct {
 func (x *Args_DataDir_App) Reset() {
 	*x = Args_DataDir_App{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[17]
+		mi := &file_plugin_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -927,7 +880,7 @@ func (x *Args_DataDir_App) String() string {
 func (*Args_DataDir_App) ProtoMessage() {}
 
 func (x *Args_DataDir_App) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[17]
+	mi := &file_plugin_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -969,7 +922,7 @@ type Args_DataDir_Component struct {
 func (x *Args_DataDir_Component) Reset() {
 	*x = Args_DataDir_Component{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[18]
+		mi := &file_plugin_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -982,7 +935,7 @@ func (x *Args_DataDir_Component) String() string {
 func (*Args_DataDir_Component) ProtoMessage() {}
 
 func (x *Args_DataDir_Component) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[18]
+	mi := &file_plugin_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1025,7 +978,7 @@ type Args_ReleaseTargets_Target struct {
 func (x *Args_ReleaseTargets_Target) Reset() {
 	*x = Args_ReleaseTargets_Target{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[19]
+		mi := &file_plugin_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1038,7 +991,7 @@ func (x *Args_ReleaseTargets_Target) String() string {
 func (*Args_ReleaseTargets_Target) ProtoMessage() {}
 
 func (x *Args_ReleaseTargets_Target) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[19]
+	mi := &file_plugin_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1087,7 +1040,7 @@ type FuncSpec_Value struct {
 func (x *FuncSpec_Value) Reset() {
 	*x = FuncSpec_Value{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[21]
+		mi := &file_plugin_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1100,7 +1053,7 @@ func (x *FuncSpec_Value) String() string {
 func (*FuncSpec_Value) ProtoMessage() {}
 
 func (x *FuncSpec_Value) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[21]
+	mi := &file_plugin_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1106,7 @@ type FuncSpec_Args struct {
 func (x *FuncSpec_Args) Reset() {
 	*x = FuncSpec_Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[22]
+		mi := &file_plugin_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1166,7 +1119,7 @@ func (x *FuncSpec_Args) String() string {
 func (*FuncSpec_Args) ProtoMessage() {}
 
 func (x *FuncSpec_Args) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[22]
+	mi := &file_plugin_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1204,7 +1157,7 @@ type Config_ConfigureRequest struct {
 func (x *Config_ConfigureRequest) Reset() {
 	*x = Config_ConfigureRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[23]
+		mi := &file_plugin_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1217,7 +1170,7 @@ func (x *Config_ConfigureRequest) String() string {
 func (*Config_ConfigureRequest) ProtoMessage() {}
 
 func (x *Config_ConfigureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[23]
+	mi := &file_plugin_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1255,7 +1208,7 @@ type Config_StructResp struct {
 func (x *Config_StructResp) Reset() {
 	*x = Config_StructResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[24]
+		mi := &file_plugin_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1268,7 +1221,7 @@ func (x *Config_StructResp) String() string {
 func (*Config_StructResp) ProtoMessage() {}
 
 func (x *Config_StructResp) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[24]
+	mi := &file_plugin_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1308,7 +1261,7 @@ type Config_FieldDocumentation struct {
 func (x *Config_FieldDocumentation) Reset() {
 	*x = Config_FieldDocumentation{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[25]
+		mi := &file_plugin_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1321,7 +1274,7 @@ func (x *Config_FieldDocumentation) String() string {
 func (*Config_FieldDocumentation) ProtoMessage() {}
 
 func (x *Config_FieldDocumentation) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[25]
+	mi := &file_plugin_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1399,7 +1352,7 @@ type Config_MapperDocumentation struct {
 func (x *Config_MapperDocumentation) Reset() {
 	*x = Config_MapperDocumentation{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[26]
+		mi := &file_plugin_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1412,7 +1365,7 @@ func (x *Config_MapperDocumentation) String() string {
 func (*Config_MapperDocumentation) ProtoMessage() {}
 
 func (x *Config_MapperDocumentation) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[26]
+	mi := &file_plugin_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1465,7 +1418,7 @@ type Config_Documentation struct {
 func (x *Config_Documentation) Reset() {
 	*x = Config_Documentation{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[27]
+		mi := &file_plugin_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1478,7 +1431,7 @@ func (x *Config_Documentation) String() string {
 func (*Config_Documentation) ProtoMessage() {}
 
 func (x *Config_Documentation) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[27]
+	mi := &file_plugin_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1548,7 +1501,7 @@ type Auth_AuthResponse struct {
 func (x *Auth_AuthResponse) Reset() {
 	*x = Auth_AuthResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[29]
+		mi := &file_plugin_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1561,7 +1514,7 @@ func (x *Auth_AuthResponse) String() string {
 func (*Auth_AuthResponse) ProtoMessage() {}
 
 func (x *Auth_AuthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[29]
+	mi := &file_plugin_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1595,7 +1548,7 @@ type TerminalUI_IsInteractiveResponse struct {
 func (x *TerminalUI_IsInteractiveResponse) Reset() {
 	*x = TerminalUI_IsInteractiveResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[30]
+		mi := &file_plugin_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1608,7 +1561,7 @@ func (x *TerminalUI_IsInteractiveResponse) String() string {
 func (*TerminalUI_IsInteractiveResponse) ProtoMessage() {}
 
 func (x *TerminalUI_IsInteractiveResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[30]
+	mi := &file_plugin_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1642,7 +1595,7 @@ type TerminalUI_OutputRequest struct {
 func (x *TerminalUI_OutputRequest) Reset() {
 	*x = TerminalUI_OutputRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[31]
+		mi := &file_plugin_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1655,7 +1608,7 @@ func (x *TerminalUI_OutputRequest) String() string {
 func (*TerminalUI_OutputRequest) ProtoMessage() {}
 
 func (x *TerminalUI_OutputRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[31]
+	mi := &file_plugin_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1691,7 +1644,7 @@ type TerminalUI_Response struct {
 func (x *TerminalUI_Response) Reset() {
 	*x = TerminalUI_Response{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[32]
+		mi := &file_plugin_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1704,7 +1657,7 @@ func (x *TerminalUI_Response) String() string {
 func (*TerminalUI_Response) ProtoMessage() {}
 
 func (x *TerminalUI_Response) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[32]
+	mi := &file_plugin_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1764,7 +1717,7 @@ type TerminalUI_Event struct {
 func (x *TerminalUI_Event) Reset() {
 	*x = TerminalUI_Event{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[33]
+		mi := &file_plugin_proto_msgTypes[32]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1777,7 +1730,7 @@ func (x *TerminalUI_Event) String() string {
 func (*TerminalUI_Event) ProtoMessage() {}
 
 func (x *TerminalUI_Event) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[33]
+	mi := &file_plugin_proto_msgTypes[32]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1921,7 +1874,7 @@ type TerminalUI_Event_Input struct {
 func (x *TerminalUI_Event_Input) Reset() {
 	*x = TerminalUI_Event_Input{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[34]
+		mi := &file_plugin_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1934,7 +1887,7 @@ func (x *TerminalUI_Event_Input) String() string {
 func (*TerminalUI_Event_Input) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Input) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[34]
+	mi := &file_plugin_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1983,7 +1936,7 @@ type TerminalUI_Event_InputResp struct {
 func (x *TerminalUI_Event_InputResp) Reset() {
 	*x = TerminalUI_Event_InputResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[35]
+		mi := &file_plugin_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1996,7 +1949,7 @@ func (x *TerminalUI_Event_InputResp) String() string {
 func (*TerminalUI_Event_InputResp) ProtoMessage() {}
 
 func (x *TerminalUI_Event_InputResp) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[35]
+	mi := &file_plugin_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2039,7 +1992,7 @@ type TerminalUI_Event_Status struct {
 func (x *TerminalUI_Event_Status) Reset() {
 	*x = TerminalUI_Event_Status{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[36]
+		mi := &file_plugin_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2052,7 +2005,7 @@ func (x *TerminalUI_Event_Status) String() string {
 func (*TerminalUI_Event_Status) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Status) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[36]
+	mi := &file_plugin_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2101,7 +2054,7 @@ type TerminalUI_Event_Line struct {
 func (x *TerminalUI_Event_Line) Reset() {
 	*x = TerminalUI_Event_Line{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[37]
+		mi := &file_plugin_proto_msgTypes[36]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2114,7 +2067,7 @@ func (x *TerminalUI_Event_Line) String() string {
 func (*TerminalUI_Event_Line) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Line) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[37]
+	mi := &file_plugin_proto_msgTypes[36]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2156,7 +2109,7 @@ type TerminalUI_Event_Raw struct {
 func (x *TerminalUI_Event_Raw) Reset() {
 	*x = TerminalUI_Event_Raw{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[38]
+		mi := &file_plugin_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2169,7 +2122,7 @@ func (x *TerminalUI_Event_Raw) String() string {
 func (*TerminalUI_Event_Raw) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Raw) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[38]
+	mi := &file_plugin_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2211,7 +2164,7 @@ type TerminalUI_Event_NamedValue struct {
 func (x *TerminalUI_Event_NamedValue) Reset() {
 	*x = TerminalUI_Event_NamedValue{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[39]
+		mi := &file_plugin_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2224,7 +2177,7 @@ func (x *TerminalUI_Event_NamedValue) String() string {
 func (*TerminalUI_Event_NamedValue) ProtoMessage() {}
 
 func (x *TerminalUI_Event_NamedValue) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[39]
+	mi := &file_plugin_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2265,7 +2218,7 @@ type TerminalUI_Event_NamedValues struct {
 func (x *TerminalUI_Event_NamedValues) Reset() {
 	*x = TerminalUI_Event_NamedValues{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[40]
+		mi := &file_plugin_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2278,7 +2231,7 @@ func (x *TerminalUI_Event_NamedValues) String() string {
 func (*TerminalUI_Event_NamedValues) ProtoMessage() {}
 
 func (x *TerminalUI_Event_NamedValues) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[40]
+	mi := &file_plugin_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2313,7 +2266,7 @@ type TerminalUI_Event_TableEntry struct {
 func (x *TerminalUI_Event_TableEntry) Reset() {
 	*x = TerminalUI_Event_TableEntry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[41]
+		mi := &file_plugin_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2326,7 +2279,7 @@ func (x *TerminalUI_Event_TableEntry) String() string {
 func (*TerminalUI_Event_TableEntry) ProtoMessage() {}
 
 func (x *TerminalUI_Event_TableEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[41]
+	mi := &file_plugin_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2367,7 +2320,7 @@ type TerminalUI_Event_TableRow struct {
 func (x *TerminalUI_Event_TableRow) Reset() {
 	*x = TerminalUI_Event_TableRow{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[42]
+		mi := &file_plugin_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2380,7 +2333,7 @@ func (x *TerminalUI_Event_TableRow) String() string {
 func (*TerminalUI_Event_TableRow) ProtoMessage() {}
 
 func (x *TerminalUI_Event_TableRow) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[42]
+	mi := &file_plugin_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2415,7 +2368,7 @@ type TerminalUI_Event_Table struct {
 func (x *TerminalUI_Event_Table) Reset() {
 	*x = TerminalUI_Event_Table{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[43]
+		mi := &file_plugin_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2428,7 +2381,7 @@ func (x *TerminalUI_Event_Table) String() string {
 func (*TerminalUI_Event_Table) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Table) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[43]
+	mi := &file_plugin_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2469,7 +2422,7 @@ type TerminalUI_Event_StepGroup struct {
 func (x *TerminalUI_Event_StepGroup) Reset() {
 	*x = TerminalUI_Event_StepGroup{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[44]
+		mi := &file_plugin_proto_msgTypes[43]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2482,7 +2435,7 @@ func (x *TerminalUI_Event_StepGroup) String() string {
 func (*TerminalUI_Event_StepGroup) ProtoMessage() {}
 
 func (x *TerminalUI_Event_StepGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[44]
+	mi := &file_plugin_proto_msgTypes[43]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2520,7 +2473,7 @@ type TerminalUI_Event_Step struct {
 func (x *TerminalUI_Event_Step) Reset() {
 	*x = TerminalUI_Event_Step{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[45]
+		mi := &file_plugin_proto_msgTypes[44]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2533,7 +2486,7 @@ func (x *TerminalUI_Event_Step) String() string {
 func (*TerminalUI_Event_Step) ProtoMessage() {}
 
 func (x *TerminalUI_Event_Step) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[45]
+	mi := &file_plugin_proto_msgTypes[44]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2598,7 +2551,7 @@ type Map_Request struct {
 func (x *Map_Request) Reset() {
 	*x = Map_Request{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[46]
+		mi := &file_plugin_proto_msgTypes[45]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2611,7 +2564,7 @@ func (x *Map_Request) String() string {
 func (*Map_Request) ProtoMessage() {}
 
 func (x *Map_Request) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[46]
+	mi := &file_plugin_proto_msgTypes[45]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2654,7 +2607,7 @@ type Map_Response struct {
 func (x *Map_Response) Reset() {
 	*x = Map_Response{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[47]
+		mi := &file_plugin_proto_msgTypes[46]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2667,7 +2620,7 @@ func (x *Map_Response) String() string {
 func (*Map_Response) ProtoMessage() {}
 
 func (x *Map_Response) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[47]
+	mi := &file_plugin_proto_msgTypes[46]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2702,7 +2655,7 @@ type Map_ListResponse struct {
 func (x *Map_ListResponse) Reset() {
 	*x = Map_ListResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_plugin_proto_msgTypes[48]
+		mi := &file_plugin_proto_msgTypes[47]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2715,7 +2668,7 @@ func (x *Map_ListResponse) String() string {
 func (*Map_ListResponse) ProtoMessage() {}
 
 func (x *Map_ListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_plugin_proto_msgTypes[48]
+	mi := &file_plugin_proto_msgTypes[47]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3006,72 +2959,71 @@ var file_plugin_proto_rawDesc = []byte{
 	0x05, 0x66, 0x75, 0x6e, 0x63, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x68,
 	0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74,
 	0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x46, 0x75, 0x6e, 0x63, 0x53, 0x70, 0x65, 0x63, 0x52, 0x05, 0x66,
-	0x75, 0x6e, 0x63, 0x73, 0x22, 0x9c, 0x01, 0x0a, 0x11, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x73, 0x69,
-	0x6f, 0x6e, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x4c, 0x0a, 0x06, 0x63, 0x6f,
-	0x6e, 0x66, 0x69, 0x67, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x34, 0x2e, 0x68, 0x61, 0x73,
-	0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73,
-	0x64, 0x6b, 0x2e, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x65, 0x72, 0x43, 0x6f,
-	0x6e, 0x66, 0x69, 0x67, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x45, 0x6e, 0x74, 0x72, 0x79,
-	0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x1a, 0x39, 0x0a, 0x0b, 0x43, 0x6f, 0x6e, 0x66,
-	0x69, 0x67, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a,
-	0x02, 0x38, 0x01, 0x32, 0xab, 0x02, 0x0a, 0x11, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c,
-	0x55, 0x49, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x51, 0x0a, 0x06, 0x4f, 0x75, 0x74,
-	0x70, 0x75, 0x74, 0x12, 0x2f, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e,
-	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x54, 0x65, 0x72, 0x6d,
-	0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x61, 0x0a, 0x06,
-	0x45, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x27, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
-	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x54,
-	0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x1a,
-	0x2a, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72,
-	0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c,
-	0x55, 0x49, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x30, 0x01, 0x12,
-	0x60, 0x0a, 0x0d, 0x49, 0x73, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65,
-	0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x37, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69,
-	0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b,
-	0x2e, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x49, 0x73, 0x49, 0x6e,
-	0x74, 0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x32, 0xa8, 0x01, 0x0a, 0x06, 0x4d, 0x61, 0x70, 0x70, 0x65, 0x72, 0x12, 0x4e, 0x0a, 0x0b,
-	0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x70, 0x70, 0x65, 0x72, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
-	0x70, 0x74, 0x79, 0x1a, 0x27, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e,
-	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x70, 0x2e,
-	0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4e, 0x0a, 0x03,
-	0x4d, 0x61, 0x70, 0x12, 0x22, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e,
-	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x70, 0x2e,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x23, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63,
+	0x75, 0x6e, 0x63, 0x73, 0x32, 0xab, 0x02, 0x0a, 0x11, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61,
+	0x6c, 0x55, 0x49, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x51, 0x0a, 0x06, 0x4f, 0x75,
+	0x74, 0x70, 0x75, 0x74, 0x12, 0x2f, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x54, 0x65, 0x72,
+	0x6d, 0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x61, 0x0a,
+	0x06, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x27, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63,
 	0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e,
-	0x4d, 0x61, 0x70, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xab, 0x02, 0x0a,
-	0x08, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x12, 0x36, 0x0a, 0x04, 0x42, 0x6f, 0x6f,
-	0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
-	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x12, 0x39, 0x0a, 0x07, 0x44, 0x65, 0x73, 0x74, 0x72, 0x6f, 0x79, 0x12, 0x16, 0x2e, 0x67,
+	0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x1a, 0x2a, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67,
+	0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61,
+	0x6c, 0x55, 0x49, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x30, 0x01,
+	0x12, 0x60, 0x0a, 0x0d, 0x49, 0x73, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76,
+	0x65, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x37, 0x2e, 0x68, 0x61, 0x73, 0x68,
+	0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64,
+	0x6b, 0x2e, 0x54, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6c, 0x55, 0x49, 0x2e, 0x49, 0x73, 0x49,
+	0x6e, 0x74, 0x65, 0x72, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x32, 0xa8, 0x01, 0x0a, 0x06, 0x4d, 0x61, 0x70, 0x70, 0x65, 0x72, 0x12, 0x4e, 0x0a,
+	0x0b, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x70, 0x70, 0x65, 0x72, 0x73, 0x12, 0x16, 0x2e, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45,
-	0x6d, 0x70, 0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x3b, 0x0a, 0x09,
-	0x50, 0x72, 0x6f, 0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
-	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x38, 0x0a, 0x06, 0x52, 0x65, 0x6c,
-	0x6f, 0x61, 0x64, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d,
-	0x70, 0x74, 0x79, 0x12, 0x35, 0x0a, 0x03, 0x53, 0x73, 0x68, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
+	0x6d, 0x70, 0x74, 0x79, 0x1a, 0x27, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x70,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4e, 0x0a,
+	0x03, 0x4d, 0x61, 0x70, 0x12, 0x22, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x70,
+	0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x23, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69,
+	0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b,
+	0x2e, 0x4d, 0x61, 0x70, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x87, 0x02,
+	0x0a, 0x08, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x12, 0x50, 0x0a, 0x0c, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x67, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f,
 	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70,
-	0x74, 0x79, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x32, 0x5c, 0x0a, 0x0b, 0x50, 0x72,
-	0x6f, 0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x65, 0x72, 0x12, 0x4d, 0x0a, 0x09, 0x50, 0x72, 0x6f,
-	0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x28, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
-	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x50,
-	0x72, 0x6f, 0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x79, 0x1a, 0x28, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76,
+	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69,
+	0x67, 0x2e, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x53, 0x0a, 0x09,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75, 0x72, 0x65, 0x12, 0x2e, 0x2e, 0x68, 0x61, 0x73, 0x68,
+	0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64,
+	0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75,
+	0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
+	0x79, 0x12, 0x54, 0x0a, 0x0d, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x2b, 0x2e, 0x68, 0x61, 0x73,
+	0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73,
+	0x64, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
+	0x6e, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x8a, 0x02, 0x0a, 0x0b, 0x50, 0x72, 0x6f, 0x76,
+	0x69, 0x73, 0x69, 0x6f, 0x6e, 0x65, 0x72, 0x12, 0x50, 0x0a, 0x0c, 0x43, 0x6f, 0x6e, 0x66, 0x69,
+	0x67, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a,
+	0x28, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72,
+	0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x53,
+	0x74, 0x72, 0x75, 0x63, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x53, 0x0a, 0x09, 0x43, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x75, 0x72, 0x65, 0x12, 0x2e, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
+	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x43,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x75, 0x72, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x54,
+	0x0a, 0x0d, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
+	0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x2b, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63,
+	0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3086,7 +3038,7 @@ func file_plugin_proto_rawDescGZIP() []byte {
 	return file_plugin_proto_rawDescData
 }
 
-var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
+var file_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_plugin_proto_goTypes = []interface{}{
 	(*Args)(nil),                             // 0: hashicorp.vagrant.sdk.Args
 	(*FuncSpec)(nil),                         // 1: hashicorp.vagrant.sdk.FuncSpec
@@ -3095,110 +3047,107 @@ var file_plugin_proto_goTypes = []interface{}{
 	(*ImplementsResp)(nil),                   // 4: hashicorp.vagrant.sdk.ImplementsResp
 	(*TerminalUI)(nil),                       // 5: hashicorp.vagrant.sdk.TerminalUI
 	(*Map)(nil),                              // 6: hashicorp.vagrant.sdk.Map
-	(*ProvisionerConfig)(nil),                // 7: hashicorp.vagrant.sdk.ProvisionerConfig
-	(*Args_Source)(nil),                      // 8: hashicorp.vagrant.sdk.Args.Source
-	(*Args_JobInfo)(nil),                     // 9: hashicorp.vagrant.sdk.Args.JobInfo
-	(*Args_DeploymentConfig)(nil),            // 10: hashicorp.vagrant.sdk.Args.DeploymentConfig
-	(*Args_DataDir)(nil),                     // 11: hashicorp.vagrant.sdk.Args.DataDir
-	(*Args_Logger)(nil),                      // 12: hashicorp.vagrant.sdk.Args.Logger
-	(*Args_TerminalUI)(nil),                  // 13: hashicorp.vagrant.sdk.Args.TerminalUI
-	(*Args_ReleaseTargets)(nil),              // 14: hashicorp.vagrant.sdk.Args.ReleaseTargets
-	(*Args_LabelSet)(nil),                    // 15: hashicorp.vagrant.sdk.Args.LabelSet
-	(*Args_DataDir_Project)(nil),             // 16: hashicorp.vagrant.sdk.Args.DataDir.Project
-	(*Args_DataDir_App)(nil),                 // 17: hashicorp.vagrant.sdk.Args.DataDir.App
-	(*Args_DataDir_Component)(nil),           // 18: hashicorp.vagrant.sdk.Args.DataDir.Component
-	(*Args_ReleaseTargets_Target)(nil),       // 19: hashicorp.vagrant.sdk.Args.ReleaseTargets.Target
-	nil,                                      // 20: hashicorp.vagrant.sdk.Args.LabelSet.LabelsEntry
-	(*FuncSpec_Value)(nil),                   // 21: hashicorp.vagrant.sdk.FuncSpec.Value
-	(*FuncSpec_Args)(nil),                    // 22: hashicorp.vagrant.sdk.FuncSpec.Args
-	(*Config_ConfigureRequest)(nil),          // 23: hashicorp.vagrant.sdk.Config.ConfigureRequest
-	(*Config_StructResp)(nil),                // 24: hashicorp.vagrant.sdk.Config.StructResp
-	(*Config_FieldDocumentation)(nil),        // 25: hashicorp.vagrant.sdk.Config.FieldDocumentation
-	(*Config_MapperDocumentation)(nil),       // 26: hashicorp.vagrant.sdk.Config.MapperDocumentation
-	(*Config_Documentation)(nil),             // 27: hashicorp.vagrant.sdk.Config.Documentation
-	nil,                                      // 28: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
-	(*Auth_AuthResponse)(nil),                // 29: hashicorp.vagrant.sdk.Auth.AuthResponse
-	(*TerminalUI_IsInteractiveResponse)(nil), // 30: hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
-	(*TerminalUI_OutputRequest)(nil),         // 31: hashicorp.vagrant.sdk.TerminalUI.OutputRequest
-	(*TerminalUI_Response)(nil),              // 32: hashicorp.vagrant.sdk.TerminalUI.Response
-	(*TerminalUI_Event)(nil),                 // 33: hashicorp.vagrant.sdk.TerminalUI.Event
-	(*TerminalUI_Event_Input)(nil),           // 34: hashicorp.vagrant.sdk.TerminalUI.Event.Input
-	(*TerminalUI_Event_InputResp)(nil),       // 35: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
-	(*TerminalUI_Event_Status)(nil),          // 36: hashicorp.vagrant.sdk.TerminalUI.Event.Status
-	(*TerminalUI_Event_Line)(nil),            // 37: hashicorp.vagrant.sdk.TerminalUI.Event.Line
-	(*TerminalUI_Event_Raw)(nil),             // 38: hashicorp.vagrant.sdk.TerminalUI.Event.Raw
-	(*TerminalUI_Event_NamedValue)(nil),      // 39: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
-	(*TerminalUI_Event_NamedValues)(nil),     // 40: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
-	(*TerminalUI_Event_TableEntry)(nil),      // 41: hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
-	(*TerminalUI_Event_TableRow)(nil),        // 42: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
-	(*TerminalUI_Event_Table)(nil),           // 43: hashicorp.vagrant.sdk.TerminalUI.Event.Table
-	(*TerminalUI_Event_StepGroup)(nil),       // 44: hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
-	(*TerminalUI_Event_Step)(nil),            // 45: hashicorp.vagrant.sdk.TerminalUI.Event.Step
-	(*Map_Request)(nil),                      // 46: hashicorp.vagrant.sdk.Map.Request
-	(*Map_Response)(nil),                     // 47: hashicorp.vagrant.sdk.Map.Response
-	(*Map_ListResponse)(nil),                 // 48: hashicorp.vagrant.sdk.Map.ListResponse
-	nil,                                      // 49: hashicorp.vagrant.sdk.ProvisionerConfig.ConfigEntry
-	(*any.Any)(nil),                          // 50: google.protobuf.Any
-	(*protostructure.Struct)(nil),            // 51: protostructure.Struct
-	(*status.Status)(nil),                    // 52: google.rpc.Status
-	(*empty.Empty)(nil),                      // 53: google.protobuf.Empty
+	(*Args_Source)(nil),                      // 7: hashicorp.vagrant.sdk.Args.Source
+	(*Args_JobInfo)(nil),                     // 8: hashicorp.vagrant.sdk.Args.JobInfo
+	(*Args_DeploymentConfig)(nil),            // 9: hashicorp.vagrant.sdk.Args.DeploymentConfig
+	(*Args_DataDir)(nil),                     // 10: hashicorp.vagrant.sdk.Args.DataDir
+	(*Args_Logger)(nil),                      // 11: hashicorp.vagrant.sdk.Args.Logger
+	(*Args_TerminalUI)(nil),                  // 12: hashicorp.vagrant.sdk.Args.TerminalUI
+	(*Args_ReleaseTargets)(nil),              // 13: hashicorp.vagrant.sdk.Args.ReleaseTargets
+	(*Args_LabelSet)(nil),                    // 14: hashicorp.vagrant.sdk.Args.LabelSet
+	(*Args_DataDir_Project)(nil),             // 15: hashicorp.vagrant.sdk.Args.DataDir.Project
+	(*Args_DataDir_App)(nil),                 // 16: hashicorp.vagrant.sdk.Args.DataDir.App
+	(*Args_DataDir_Component)(nil),           // 17: hashicorp.vagrant.sdk.Args.DataDir.Component
+	(*Args_ReleaseTargets_Target)(nil),       // 18: hashicorp.vagrant.sdk.Args.ReleaseTargets.Target
+	nil,                                      // 19: hashicorp.vagrant.sdk.Args.LabelSet.LabelsEntry
+	(*FuncSpec_Value)(nil),                   // 20: hashicorp.vagrant.sdk.FuncSpec.Value
+	(*FuncSpec_Args)(nil),                    // 21: hashicorp.vagrant.sdk.FuncSpec.Args
+	(*Config_ConfigureRequest)(nil),          // 22: hashicorp.vagrant.sdk.Config.ConfigureRequest
+	(*Config_StructResp)(nil),                // 23: hashicorp.vagrant.sdk.Config.StructResp
+	(*Config_FieldDocumentation)(nil),        // 24: hashicorp.vagrant.sdk.Config.FieldDocumentation
+	(*Config_MapperDocumentation)(nil),       // 25: hashicorp.vagrant.sdk.Config.MapperDocumentation
+	(*Config_Documentation)(nil),             // 26: hashicorp.vagrant.sdk.Config.Documentation
+	nil,                                      // 27: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
+	(*Auth_AuthResponse)(nil),                // 28: hashicorp.vagrant.sdk.Auth.AuthResponse
+	(*TerminalUI_IsInteractiveResponse)(nil), // 29: hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
+	(*TerminalUI_OutputRequest)(nil),         // 30: hashicorp.vagrant.sdk.TerminalUI.OutputRequest
+	(*TerminalUI_Response)(nil),              // 31: hashicorp.vagrant.sdk.TerminalUI.Response
+	(*TerminalUI_Event)(nil),                 // 32: hashicorp.vagrant.sdk.TerminalUI.Event
+	(*TerminalUI_Event_Input)(nil),           // 33: hashicorp.vagrant.sdk.TerminalUI.Event.Input
+	(*TerminalUI_Event_InputResp)(nil),       // 34: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
+	(*TerminalUI_Event_Status)(nil),          // 35: hashicorp.vagrant.sdk.TerminalUI.Event.Status
+	(*TerminalUI_Event_Line)(nil),            // 36: hashicorp.vagrant.sdk.TerminalUI.Event.Line
+	(*TerminalUI_Event_Raw)(nil),             // 37: hashicorp.vagrant.sdk.TerminalUI.Event.Raw
+	(*TerminalUI_Event_NamedValue)(nil),      // 38: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
+	(*TerminalUI_Event_NamedValues)(nil),     // 39: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
+	(*TerminalUI_Event_TableEntry)(nil),      // 40: hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
+	(*TerminalUI_Event_TableRow)(nil),        // 41: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
+	(*TerminalUI_Event_Table)(nil),           // 42: hashicorp.vagrant.sdk.TerminalUI.Event.Table
+	(*TerminalUI_Event_StepGroup)(nil),       // 43: hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
+	(*TerminalUI_Event_Step)(nil),            // 44: hashicorp.vagrant.sdk.TerminalUI.Event.Step
+	(*Map_Request)(nil),                      // 45: hashicorp.vagrant.sdk.Map.Request
+	(*Map_Response)(nil),                     // 46: hashicorp.vagrant.sdk.Map.Response
+	(*Map_ListResponse)(nil),                 // 47: hashicorp.vagrant.sdk.Map.ListResponse
+	(*any.Any)(nil),                          // 48: google.protobuf.Any
+	(*protostructure.Struct)(nil),            // 49: protostructure.Struct
+	(*status.Status)(nil),                    // 50: google.rpc.Status
+	(*empty.Empty)(nil),                      // 51: google.protobuf.Empty
 }
 var file_plugin_proto_depIdxs = []int32{
-	21, // 0: hashicorp.vagrant.sdk.FuncSpec.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
-	21, // 1: hashicorp.vagrant.sdk.FuncSpec.result:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
-	49, // 2: hashicorp.vagrant.sdk.ProvisionerConfig.config:type_name -> hashicorp.vagrant.sdk.ProvisionerConfig.ConfigEntry
-	19, // 3: hashicorp.vagrant.sdk.Args.ReleaseTargets.targets:type_name -> hashicorp.vagrant.sdk.Args.ReleaseTargets.Target
-	20, // 4: hashicorp.vagrant.sdk.Args.LabelSet.labels:type_name -> hashicorp.vagrant.sdk.Args.LabelSet.LabelsEntry
-	50, // 5: hashicorp.vagrant.sdk.Args.ReleaseTargets.Target.deployment:type_name -> google.protobuf.Any
-	50, // 6: hashicorp.vagrant.sdk.FuncSpec.Value.value:type_name -> google.protobuf.Any
-	21, // 7: hashicorp.vagrant.sdk.FuncSpec.Args.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
-	51, // 8: hashicorp.vagrant.sdk.Config.StructResp.struct:type_name -> protostructure.Struct
-	28, // 9: hashicorp.vagrant.sdk.Config.Documentation.fields:type_name -> hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
-	26, // 10: hashicorp.vagrant.sdk.Config.Documentation.mappers:type_name -> hashicorp.vagrant.sdk.Config.MapperDocumentation
-	25, // 11: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry.value:type_name -> hashicorp.vagrant.sdk.Config.FieldDocumentation
-	35, // 12: hashicorp.vagrant.sdk.TerminalUI.Response.input:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
-	37, // 13: hashicorp.vagrant.sdk.TerminalUI.Event.line:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Line
-	36, // 14: hashicorp.vagrant.sdk.TerminalUI.Event.status:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Status
-	40, // 15: hashicorp.vagrant.sdk.TerminalUI.Event.named_values:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
-	38, // 16: hashicorp.vagrant.sdk.TerminalUI.Event.raw:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Raw
-	43, // 17: hashicorp.vagrant.sdk.TerminalUI.Event.table:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Table
-	44, // 18: hashicorp.vagrant.sdk.TerminalUI.Event.step_group:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
-	45, // 19: hashicorp.vagrant.sdk.TerminalUI.Event.step:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Step
-	34, // 20: hashicorp.vagrant.sdk.TerminalUI.Event.input:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Input
-	52, // 21: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp.error:type_name -> google.rpc.Status
-	39, // 22: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues.values:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
-	41, // 23: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow.entries:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
-	42, // 24: hashicorp.vagrant.sdk.TerminalUI.Event.Table.rows:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
-	22, // 25: hashicorp.vagrant.sdk.Map.Request.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Args
-	50, // 26: hashicorp.vagrant.sdk.Map.Response.result:type_name -> google.protobuf.Any
-	1,  // 27: hashicorp.vagrant.sdk.Map.ListResponse.funcs:type_name -> hashicorp.vagrant.sdk.FuncSpec
-	31, // 28: hashicorp.vagrant.sdk.TerminalUIService.Output:input_type -> hashicorp.vagrant.sdk.TerminalUI.OutputRequest
-	33, // 29: hashicorp.vagrant.sdk.TerminalUIService.Events:input_type -> hashicorp.vagrant.sdk.TerminalUI.Event
-	53, // 30: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:input_type -> google.protobuf.Empty
-	53, // 31: hashicorp.vagrant.sdk.Mapper.ListMappers:input_type -> google.protobuf.Empty
-	46, // 32: hashicorp.vagrant.sdk.Mapper.Map:input_type -> hashicorp.vagrant.sdk.Map.Request
-	53, // 33: hashicorp.vagrant.sdk.Provider.Boot:input_type -> google.protobuf.Empty
-	53, // 34: hashicorp.vagrant.sdk.Provider.Destroy:input_type -> google.protobuf.Empty
-	53, // 35: hashicorp.vagrant.sdk.Provider.Provision:input_type -> google.protobuf.Empty
-	53, // 36: hashicorp.vagrant.sdk.Provider.Reload:input_type -> google.protobuf.Empty
-	53, // 37: hashicorp.vagrant.sdk.Provider.Ssh:input_type -> google.protobuf.Empty
-	7,  // 38: hashicorp.vagrant.sdk.Provisioner.Provision:input_type -> hashicorp.vagrant.sdk.ProvisionerConfig
-	53, // 39: hashicorp.vagrant.sdk.TerminalUIService.Output:output_type -> google.protobuf.Empty
-	32, // 40: hashicorp.vagrant.sdk.TerminalUIService.Events:output_type -> hashicorp.vagrant.sdk.TerminalUI.Response
-	30, // 41: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:output_type -> hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
-	48, // 42: hashicorp.vagrant.sdk.Mapper.ListMappers:output_type -> hashicorp.vagrant.sdk.Map.ListResponse
-	47, // 43: hashicorp.vagrant.sdk.Mapper.Map:output_type -> hashicorp.vagrant.sdk.Map.Response
-	53, // 44: hashicorp.vagrant.sdk.Provider.Boot:output_type -> google.protobuf.Empty
-	53, // 45: hashicorp.vagrant.sdk.Provider.Destroy:output_type -> google.protobuf.Empty
-	53, // 46: hashicorp.vagrant.sdk.Provider.Provision:output_type -> google.protobuf.Empty
-	53, // 47: hashicorp.vagrant.sdk.Provider.Reload:output_type -> google.protobuf.Empty
-	53, // 48: hashicorp.vagrant.sdk.Provider.Ssh:output_type -> google.protobuf.Empty
-	53, // 49: hashicorp.vagrant.sdk.Provisioner.Provision:output_type -> google.protobuf.Empty
-	39, // [39:50] is the sub-list for method output_type
-	28, // [28:39] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	20, // 0: hashicorp.vagrant.sdk.FuncSpec.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
+	20, // 1: hashicorp.vagrant.sdk.FuncSpec.result:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
+	18, // 2: hashicorp.vagrant.sdk.Args.ReleaseTargets.targets:type_name -> hashicorp.vagrant.sdk.Args.ReleaseTargets.Target
+	19, // 3: hashicorp.vagrant.sdk.Args.LabelSet.labels:type_name -> hashicorp.vagrant.sdk.Args.LabelSet.LabelsEntry
+	48, // 4: hashicorp.vagrant.sdk.Args.ReleaseTargets.Target.deployment:type_name -> google.protobuf.Any
+	48, // 5: hashicorp.vagrant.sdk.FuncSpec.Value.value:type_name -> google.protobuf.Any
+	20, // 6: hashicorp.vagrant.sdk.FuncSpec.Args.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
+	49, // 7: hashicorp.vagrant.sdk.Config.StructResp.struct:type_name -> protostructure.Struct
+	27, // 8: hashicorp.vagrant.sdk.Config.Documentation.fields:type_name -> hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
+	25, // 9: hashicorp.vagrant.sdk.Config.Documentation.mappers:type_name -> hashicorp.vagrant.sdk.Config.MapperDocumentation
+	24, // 10: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry.value:type_name -> hashicorp.vagrant.sdk.Config.FieldDocumentation
+	34, // 11: hashicorp.vagrant.sdk.TerminalUI.Response.input:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
+	36, // 12: hashicorp.vagrant.sdk.TerminalUI.Event.line:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Line
+	35, // 13: hashicorp.vagrant.sdk.TerminalUI.Event.status:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Status
+	39, // 14: hashicorp.vagrant.sdk.TerminalUI.Event.named_values:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
+	37, // 15: hashicorp.vagrant.sdk.TerminalUI.Event.raw:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Raw
+	42, // 16: hashicorp.vagrant.sdk.TerminalUI.Event.table:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Table
+	43, // 17: hashicorp.vagrant.sdk.TerminalUI.Event.step_group:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
+	44, // 18: hashicorp.vagrant.sdk.TerminalUI.Event.step:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Step
+	33, // 19: hashicorp.vagrant.sdk.TerminalUI.Event.input:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Input
+	50, // 20: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp.error:type_name -> google.rpc.Status
+	38, // 21: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues.values:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
+	40, // 22: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow.entries:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
+	41, // 23: hashicorp.vagrant.sdk.TerminalUI.Event.Table.rows:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
+	21, // 24: hashicorp.vagrant.sdk.Map.Request.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Args
+	48, // 25: hashicorp.vagrant.sdk.Map.Response.result:type_name -> google.protobuf.Any
+	1,  // 26: hashicorp.vagrant.sdk.Map.ListResponse.funcs:type_name -> hashicorp.vagrant.sdk.FuncSpec
+	30, // 27: hashicorp.vagrant.sdk.TerminalUIService.Output:input_type -> hashicorp.vagrant.sdk.TerminalUI.OutputRequest
+	32, // 28: hashicorp.vagrant.sdk.TerminalUIService.Events:input_type -> hashicorp.vagrant.sdk.TerminalUI.Event
+	51, // 29: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:input_type -> google.protobuf.Empty
+	51, // 30: hashicorp.vagrant.sdk.Mapper.ListMappers:input_type -> google.protobuf.Empty
+	45, // 31: hashicorp.vagrant.sdk.Mapper.Map:input_type -> hashicorp.vagrant.sdk.Map.Request
+	51, // 32: hashicorp.vagrant.sdk.Provider.ConfigStruct:input_type -> google.protobuf.Empty
+	22, // 33: hashicorp.vagrant.sdk.Provider.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	51, // 34: hashicorp.vagrant.sdk.Provider.Documentation:input_type -> google.protobuf.Empty
+	51, // 35: hashicorp.vagrant.sdk.Provisioner.ConfigStruct:input_type -> google.protobuf.Empty
+	22, // 36: hashicorp.vagrant.sdk.Provisioner.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	51, // 37: hashicorp.vagrant.sdk.Provisioner.Documentation:input_type -> google.protobuf.Empty
+	51, // 38: hashicorp.vagrant.sdk.TerminalUIService.Output:output_type -> google.protobuf.Empty
+	31, // 39: hashicorp.vagrant.sdk.TerminalUIService.Events:output_type -> hashicorp.vagrant.sdk.TerminalUI.Response
+	29, // 40: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:output_type -> hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
+	47, // 41: hashicorp.vagrant.sdk.Mapper.ListMappers:output_type -> hashicorp.vagrant.sdk.Map.ListResponse
+	46, // 42: hashicorp.vagrant.sdk.Mapper.Map:output_type -> hashicorp.vagrant.sdk.Map.Response
+	23, // 43: hashicorp.vagrant.sdk.Provider.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	51, // 44: hashicorp.vagrant.sdk.Provider.Configure:output_type -> google.protobuf.Empty
+	26, // 45: hashicorp.vagrant.sdk.Provider.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	23, // 46: hashicorp.vagrant.sdk.Provisioner.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	51, // 47: hashicorp.vagrant.sdk.Provisioner.Configure:output_type -> google.protobuf.Empty
+	26, // 48: hashicorp.vagrant.sdk.Provisioner.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	38, // [38:49] is the sub-list for method output_type
+	27, // [27:38] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_plugin_proto_init() }
@@ -3292,18 +3241,6 @@ func file_plugin_proto_init() {
 			}
 		}
 		file_plugin_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ProvisionerConfig); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_plugin_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_Source); i {
 			case 0:
 				return &v.state
@@ -3315,7 +3252,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_JobInfo); i {
 			case 0:
 				return &v.state
@@ -3327,7 +3264,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_DeploymentConfig); i {
 			case 0:
 				return &v.state
@@ -3339,7 +3276,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_DataDir); i {
 			case 0:
 				return &v.state
@@ -3351,7 +3288,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_Logger); i {
 			case 0:
 				return &v.state
@@ -3363,7 +3300,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_TerminalUI); i {
 			case 0:
 				return &v.state
@@ -3375,7 +3312,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_ReleaseTargets); i {
 			case 0:
 				return &v.state
@@ -3387,7 +3324,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_LabelSet); i {
 			case 0:
 				return &v.state
@@ -3399,7 +3336,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_DataDir_Project); i {
 			case 0:
 				return &v.state
@@ -3411,7 +3348,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_DataDir_App); i {
 			case 0:
 				return &v.state
@@ -3423,7 +3360,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_DataDir_Component); i {
 			case 0:
 				return &v.state
@@ -3435,7 +3372,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args_ReleaseTargets_Target); i {
 			case 0:
 				return &v.state
@@ -3447,7 +3384,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FuncSpec_Value); i {
 			case 0:
 				return &v.state
@@ -3459,7 +3396,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FuncSpec_Args); i {
 			case 0:
 				return &v.state
@@ -3471,7 +3408,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Config_ConfigureRequest); i {
 			case 0:
 				return &v.state
@@ -3483,7 +3420,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Config_StructResp); i {
 			case 0:
 				return &v.state
@@ -3495,7 +3432,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Config_FieldDocumentation); i {
 			case 0:
 				return &v.state
@@ -3507,7 +3444,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Config_MapperDocumentation); i {
 			case 0:
 				return &v.state
@@ -3519,7 +3456,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Config_Documentation); i {
 			case 0:
 				return &v.state
@@ -3531,7 +3468,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Auth_AuthResponse); i {
 			case 0:
 				return &v.state
@@ -3543,7 +3480,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_IsInteractiveResponse); i {
 			case 0:
 				return &v.state
@@ -3555,7 +3492,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_OutputRequest); i {
 			case 0:
 				return &v.state
@@ -3567,7 +3504,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Response); i {
 			case 0:
 				return &v.state
@@ -3579,7 +3516,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event); i {
 			case 0:
 				return &v.state
@@ -3591,7 +3528,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Input); i {
 			case 0:
 				return &v.state
@@ -3603,7 +3540,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_InputResp); i {
 			case 0:
 				return &v.state
@@ -3615,7 +3552,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Status); i {
 			case 0:
 				return &v.state
@@ -3627,7 +3564,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Line); i {
 			case 0:
 				return &v.state
@@ -3639,7 +3576,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Raw); i {
 			case 0:
 				return &v.state
@@ -3651,7 +3588,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_NamedValue); i {
 			case 0:
 				return &v.state
@@ -3663,7 +3600,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_NamedValues); i {
 			case 0:
 				return &v.state
@@ -3675,7 +3612,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_TableEntry); i {
 			case 0:
 				return &v.state
@@ -3687,7 +3624,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_TableRow); i {
 			case 0:
 				return &v.state
@@ -3699,7 +3636,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Table); i {
 			case 0:
 				return &v.state
@@ -3711,7 +3648,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_StepGroup); i {
 			case 0:
 				return &v.state
@@ -3723,7 +3660,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TerminalUI_Event_Step); i {
 			case 0:
 				return &v.state
@@ -3735,7 +3672,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Map_Request); i {
 			case 0:
 				return &v.state
@@ -3747,7 +3684,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Map_Response); i {
 			case 0:
 				return &v.state
@@ -3759,7 +3696,7 @@ func file_plugin_proto_init() {
 				return nil
 			}
 		}
-		file_plugin_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+		file_plugin_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Map_ListResponse); i {
 			case 0:
 				return &v.state
@@ -3772,10 +3709,10 @@ func file_plugin_proto_init() {
 			}
 		}
 	}
-	file_plugin_proto_msgTypes[32].OneofWrappers = []interface{}{
+	file_plugin_proto_msgTypes[31].OneofWrappers = []interface{}{
 		(*TerminalUI_Response_Input)(nil),
 	}
-	file_plugin_proto_msgTypes[33].OneofWrappers = []interface{}{
+	file_plugin_proto_msgTypes[32].OneofWrappers = []interface{}{
 		(*TerminalUI_Event_Line_)(nil),
 		(*TerminalUI_Event_Status_)(nil),
 		(*TerminalUI_Event_NamedValues_)(nil),
@@ -3791,7 +3728,7 @@ func file_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   50,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   4,
 		},
@@ -4106,11 +4043,9 @@ var _Mapper_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ProviderClient interface {
-	Boot(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
-	Destroy(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
-	Provision(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
-	Reload(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
-	Ssh(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type providerClient struct {
@@ -4121,45 +4056,27 @@ func NewProviderClient(cc grpc.ClientConnInterface) ProviderClient {
 	return &providerClient{cc}
 }
 
-func (c *providerClient) Boot(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Boot", in, out, opts...)
+func (c *providerClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/ConfigStruct", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *providerClient) Destroy(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *providerClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Destroy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *providerClient) Provision(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Provision", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *providerClient) Reload(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Reload", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *providerClient) Ssh(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Ssh", in, out, opts...)
+func (c *providerClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Documentation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4168,123 +4085,79 @@ func (c *providerClient) Ssh(ctx context.Context, in *empty.Empty, opts ...grpc.
 
 // ProviderServer is the server API for Provider service.
 type ProviderServer interface {
-	Boot(context.Context, *empty.Empty) (*empty.Empty, error)
-	Destroy(context.Context, *empty.Empty) (*empty.Empty, error)
-	Provision(context.Context, *empty.Empty) (*empty.Empty, error)
-	Reload(context.Context, *empty.Empty) (*empty.Empty, error)
-	Ssh(context.Context, *empty.Empty) (*empty.Empty, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 }
 
 // UnimplementedProviderServer can be embedded to have forward compatible implementations.
 type UnimplementedProviderServer struct {
 }
 
-func (*UnimplementedProviderServer) Boot(context.Context, *empty.Empty) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Boot not implemented")
+func (*UnimplementedProviderServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (*UnimplementedProviderServer) Destroy(context.Context, *empty.Empty) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Destroy not implemented")
+func (*UnimplementedProviderServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (*UnimplementedProviderServer) Provision(context.Context, *empty.Empty) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Provision not implemented")
-}
-func (*UnimplementedProviderServer) Reload(context.Context, *empty.Empty) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Reload not implemented")
-}
-func (*UnimplementedProviderServer) Ssh(context.Context, *empty.Empty) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Ssh not implemented")
+func (*UnimplementedProviderServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 
 func RegisterProviderServer(s *grpc.Server, srv ProviderServer) {
 	s.RegisterService(&_Provider_serviceDesc, srv)
 }
 
-func _Provider_Boot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Provider_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).Boot(ctx, in)
+		return srv.(ProviderServer).ConfigStruct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Boot",
+		FullMethod: "/hashicorp.vagrant.sdk.Provider/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Boot(ctx, req.(*empty.Empty))
+		return srv.(ProviderServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provider_Destroy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+func _Provider_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).Destroy(ctx, in)
+		return srv.(ProviderServer).Configure(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Destroy",
+		FullMethod: "/hashicorp.vagrant.sdk.Provider/Configure",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Destroy(ctx, req.(*empty.Empty))
+		return srv.(ProviderServer).Configure(ctx, req.(*Config_ConfigureRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provider_Provision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Provider_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).Provision(ctx, in)
+		return srv.(ProviderServer).Documentation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Provision",
+		FullMethod: "/hashicorp.vagrant.sdk.Provider/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Provision(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Provider_Reload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProviderServer).Reload(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Reload",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Reload(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Provider_Ssh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProviderServer).Ssh(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Ssh",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Ssh(ctx, req.(*empty.Empty))
+		return srv.(ProviderServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4294,24 +4167,16 @@ var _Provider_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProviderServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Boot",
-			Handler:    _Provider_Boot_Handler,
+			MethodName: "ConfigStruct",
+			Handler:    _Provider_ConfigStruct_Handler,
 		},
 		{
-			MethodName: "Destroy",
-			Handler:    _Provider_Destroy_Handler,
+			MethodName: "Configure",
+			Handler:    _Provider_Configure_Handler,
 		},
 		{
-			MethodName: "Provision",
-			Handler:    _Provider_Provision_Handler,
-		},
-		{
-			MethodName: "Reload",
-			Handler:    _Provider_Reload_Handler,
-		},
-		{
-			MethodName: "Ssh",
-			Handler:    _Provider_Ssh_Handler,
+			MethodName: "Documentation",
+			Handler:    _Provider_Documentation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -4322,7 +4187,9 @@ var _Provider_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ProvisionerClient interface {
-	Provision(ctx context.Context, in *ProvisionerConfig, opts ...grpc.CallOption) (*empty.Empty, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type provisionerClient struct {
@@ -4333,9 +4200,27 @@ func NewProvisionerClient(cc grpc.ClientConnInterface) ProvisionerClient {
 	return &provisionerClient{cc}
 }
 
-func (c *provisionerClient) Provision(ctx context.Context, in *ProvisionerConfig, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *provisionerClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/Provision", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/Documentation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4344,35 +4229,79 @@ func (c *provisionerClient) Provision(ctx context.Context, in *ProvisionerConfig
 
 // ProvisionerServer is the server API for Provisioner service.
 type ProvisionerServer interface {
-	Provision(context.Context, *ProvisionerConfig) (*empty.Empty, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 }
 
 // UnimplementedProvisionerServer can be embedded to have forward compatible implementations.
 type UnimplementedProvisionerServer struct {
 }
 
-func (*UnimplementedProvisionerServer) Provision(context.Context, *ProvisionerConfig) (*empty.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method Provision not implemented")
+func (*UnimplementedProvisionerServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
+}
+func (*UnimplementedProvisionerServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method Configure not implemented")
+}
+func (*UnimplementedProvisionerServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 
 func RegisterProvisionerServer(s *grpc.Server, srv ProvisionerServer) {
 	s.RegisterService(&_Provisioner_serviceDesc, srv)
 }
 
-func _Provisioner_Provision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProvisionerConfig)
+func _Provisioner_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServer).Provision(ctx, in)
+		return srv.(ProvisionerServer).ConfigStruct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/Provision",
+		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServer).Provision(ctx, req.(*ProvisionerConfig))
+		return srv.(ProvisionerServer).ConfigStruct(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Provisioner_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Provisioner_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4382,8 +4311,16 @@ var _Provisioner_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProvisionerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Provision",
-			Handler:    _Provisioner_Provision_Handler,
+			MethodName: "ConfigStruct",
+			Handler:    _Provisioner_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _Provisioner_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _Provisioner_Documentation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
