@@ -6,8 +6,10 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
+	"github.com/hashicorp/waypoint-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -17,6 +19,10 @@ import (
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
+	Source,
+	SourceProto,
+	JobInfo,
+	JobInfoProto,
 	DatadirProject,
 	DatadirApp,
 	DatadirComponent,
@@ -27,6 +33,32 @@ var All = []interface{}{
 	LoggerProto,
 	TerminalUI,
 	TerminalUIProto,
+	LabelSet,
+	LabelSetProto,
+}
+
+// Source maps Args.Source to component.Source.
+func Source(input *pb.Args_Source) (*component.Source, error) {
+	var result component.Source
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// SourceProto
+func SourceProto(input *component.Source) (*pb.Args_Source, error) {
+	var result pb.Args_Source
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// JobInfo maps Args.JobInfo to component.JobInfo.
+func JobInfo(input *pb.Args_JobInfo) (*component.JobInfo, error) {
+	var result component.JobInfo
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// JobInfoProto
+func JobInfoProto(input *component.JobInfo) (*pb.Args_JobInfo, error) {
+	var result pb.Args_JobInfo
+	return &result, mapstructure.Decode(input, &result)
 }
 
 // DatadirProject maps *pb.Args_DataDir_Project to *datadir.Project
@@ -139,4 +171,14 @@ func TerminalUIProto(
 	})
 
 	return &pb.Args_TerminalUI{StreamId: id}
+}
+
+func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
+	return &component.LabelSet{
+		Labels: input.Labels,
+	}
+}
+
+func LabelSetProto(labels *component.LabelSet) *pb.Args_LabelSet {
+	return &pb.Args_LabelSet{Labels: labels.Labels}
 }

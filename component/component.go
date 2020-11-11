@@ -43,3 +43,32 @@ type Provisioner interface {
 	// Handles operations involving provisioining the guest machine
 	ProvisionerFunc() interface{}
 }
+
+type LabelSet struct {
+	Labels map[string]string
+}
+
+// JobInfo is available to plugins to get information about the context
+// in which a job is executing.
+type JobInfo struct {
+	// Id is the ID of the job that is executing this plugin operation.
+	// If this is empty then it means that the execution is happening
+	// outside of a job.
+	Id string
+
+	// Local is true if the operation is running locally on a machine
+	// alongside the invocation. This can be used to determine if you can
+	// do things such as open browser windows, read user files, etc.
+	Local bool
+
+	// Workspace is the workspace that this job is executing in. This should
+	// be used by plugins to properly isolate resources from each other.
+	Workspace string
+}
+
+// See Args.Source in the protobuf protocol.
+type Source struct {
+	App  string
+	Path string
+}
+
