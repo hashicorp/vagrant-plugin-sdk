@@ -34,7 +34,6 @@ type ConfigurableNotify interface {
 	ConfigSet(interface{}) error
 }
 
-
 // Configure configures c with the provided configuration.
 //
 // If c does not implement Configurable AND body is non-empty, then it is

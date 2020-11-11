@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-  "github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
@@ -20,8 +20,8 @@ type ProviderPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
 	Impl    component.Provider // Impl is the concrete implementation
-	Mappers []*argmapper.Func     // Mappers
-	Logger  hclog.Logger          // Logger
+	Mappers []*argmapper.Func  // Mappers
+	Logger  hclog.Logger       // Logger
 }
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -48,9 +48,9 @@ func (p *ProviderPlugin) GRPCClient(
 
 // providerClient is an implementation of component.Provider over gRPC.
 type providerClient struct {
-	client proto.ProviderClient
-	logger hclog.Logger
-	broker *plugin.GRPCBroker
+	client  proto.ProviderClient
+	logger  hclog.Logger
+	broker  *plugin.GRPCBroker
 	mappers []*argmapper.Func
 }
 
@@ -70,7 +70,6 @@ func (c *providerClient) ProviderFunc() interface{} {
 	//TODO
 	return nil
 }
-
 
 // logPlatformServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
@@ -103,8 +102,8 @@ func (s *providerServer) Documentation(
 }
 
 var (
-	_ plugin.Plugin           = (*ProviderPlugin)(nil)
-	_ plugin.GRPCPlugin       = (*ProviderPlugin)(nil)
+	_ plugin.Plugin        = (*ProviderPlugin)(nil)
+	_ plugin.GRPCPlugin    = (*ProviderPlugin)(nil)
 	_ proto.ProviderServer = (*providerServer)(nil)
 	_ component.Provider   = (*providerClient)(nil)
 )

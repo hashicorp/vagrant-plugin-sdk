@@ -1,9 +1,9 @@
 package plugin
 
 import (
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/go-argmapper"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 )
