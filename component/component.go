@@ -1,6 +1,6 @@
 // Package component has the interfaces for all the components that
 // can be implemented. A component is the broad term used to describe
-// all builders, platforms, registries, etc.
+// all providers, provisioners, etc.
 //
 // Many component interfaces have functions named `XFunc` where "X" is some
 // operation and the return value is "interface{}". These functions should return
@@ -40,7 +40,7 @@ type Provider interface {
 
 // Provisioner is responsible for provisioning a VM
 type Provisioner interface {
-	// Handles operations involving runing commands
-	RunFunc() interface{}
+	// Handles operations involving provisioining the guest machine
+	ProvisionerFunc() interface{}
 }
 
