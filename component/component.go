@@ -44,6 +44,12 @@ type Provisioner interface {
 	ProvisionerFunc() interface{}
 }
 
+// VagrantConfig is responsible for providing configuration for Vagrant
+type VagrantConfig interface {
+	// Handles operations involving getting config Vagrant operating environment
+	ConfigFunc() interface{}
+}
+
 type LabelSet struct {
 	Labels map[string]string
 }
@@ -71,4 +77,3 @@ type Source struct {
 	App  string
 	Path string
 }
-

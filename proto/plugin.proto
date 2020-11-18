@@ -358,6 +358,17 @@ service Provider {
 }
 
 /********************************************************************
+* Config Plugin Service
+********************************************************************/
+
+// Config service reads config for a Vagrant envrionment
+service VagrantConfig {
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+}
+
+/********************************************************************
 * Provisioner Plugin Service
 ********************************************************************/
 
