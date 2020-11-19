@@ -11,7 +11,6 @@
 package component
 
 //go:generate stringer -type=Type -linecomment
-//go:generate mockery -all -case underscore
 
 // Type is an enum of all the types of components supported.
 // This isn't used directly in this package but is used by other packages
