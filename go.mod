@@ -27,6 +27,7 @@ require (
 	github.com/oklog/ulid v1.3.1
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/stretchr/testify v1.6.1
+	github.com/vektra/mockery/v2 v2.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/sys v0.0.0-20200916030750-2334cc1a136f
 	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
