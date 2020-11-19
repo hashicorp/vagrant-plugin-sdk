@@ -66,6 +66,16 @@ type Authenticator interface {
 	ValidateAuthFunc() interface{}
 }
 
+// AuthResult is the return value expected from Authenticator.AuthFunc.
+type AuthResult struct {
+	// Authenticated when true means that the plugin should now be authenticated
+	// (given the other fields in this struct). If ValidateAuth is called,
+	// it should succeed. If this is false, the auth method may have printed
+	// help text or some other information, but it didn't authenticate. However,
+	// this is not an error.
+	Authenticated bool
+}
+
 type LabelSet struct {
 	Labels map[string]string
 }
