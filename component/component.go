@@ -19,17 +19,19 @@ package component
 type Type uint
 
 const (
-	InvalidType     Type = iota // Invalid
-	ProviderType                // Provider
-	ProvisionerType             // Provisioner
+	InvalidType       Type = iota // Invalid
+	ProviderType                  // Provider
+	ProvisionerType               // Provisioner
+	VagrantConfigType             // VagrantConfig
 	maxType
 )
 
 // TypeMap is a mapping of Type to the nil pointer to the interface of that
 // type. This can be used with libraries such as mapper.
 var TypeMap = map[Type]interface{}{
-	ProviderType:    (*Provider)(nil),
-	ProvisionerType: (*Provisioner)(nil),
+	ProviderType:      (*Provider)(nil),
+	ProvisionerType:   (*Provisioner)(nil),
+	VagrantConfigType: (*VagrantConfig)(nil),
 }
 
 // Providers are the backend that VMs are launched on
