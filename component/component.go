@@ -22,6 +22,8 @@ const (
 	ProviderType                  // Provider
 	ProvisionerType               // Provisioner
 	VagrantConfigType             // VagrantConfig
+	AuthenticatorType             // Authenticator
+	MapperType                    // Mapper
 	maxType
 )
 
@@ -31,6 +33,7 @@ var TypeMap = map[Type]interface{}{
 	ProviderType:      (*Provider)(nil),
 	ProvisionerType:   (*Provisioner)(nil),
 	VagrantConfigType: (*VagrantConfig)(nil),
+	AuthenticatorType: (*Authenticator)(nil),
 }
 
 // Providers are the backend that VMs are launched on
@@ -49,6 +52,17 @@ type Provisioner interface {
 type VagrantConfig interface {
 	// Handles operations involving getting config Vagrant operating environment
 	ConfigFunc() interface{}
+}
+
+// Authenticator is responsible for authenticating different types of plugins.
+type Authenticator interface {
+	// AuthFunc should return the method for getting credentials for a
+	// plugin. This should return AuthResult.
+	AuthFunc() interface{}
+
+	// ValidateAuthFunc should return the method for validating authentication
+	// credentials for the plugin
+	ValidateAuthFunc() interface{}
 }
 
 type LabelSet struct {
