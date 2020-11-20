@@ -10,6 +10,11 @@
 // framework (see internal/mapper) to call these functions.
 package component
 
+import (
+	"context"
+	"time"
+)
+
 //go:generate stringer -type=Type -linecomment
 //go:generate mockery --all
 
@@ -23,6 +28,7 @@ const (
 	ProviderType                // Provider
 	ProvisionerType             // Provisioner
 	MapperType                  // Mapper
+	LogViewerType               // LogViewer
 	maxType
 )
 
@@ -31,6 +37,7 @@ const (
 var TypeMap = map[Type]interface{}{
 	ProviderType:    (*Provider)(nil),
 	ProvisionerType: (*Provisioner)(nil),
+	LogViewerType:   (*LogViewer)(nil),
 }
 
 // Providers are the backend that VMs are launched on
@@ -47,6 +54,22 @@ type Provisioner interface {
 
 type LabelSet struct {
 	Labels map[string]string
+}
+
+// LogViewer returns batches of log lines. This is expected to be returned
+// by a LogPlatform implementation.
+type LogViewer interface {
+	// NextBatch is called to return the next batch of logs. This is expected
+	// to block if there are no logs available. The context passed in will be
+	// cancelled if the logs viewer is interrupted.
+	NextLogBatch(ctx context.Context) ([]LogEvent, error)
+}
+
+// LogEvent represents a single log entry.
+type LogEvent struct {
+	Partition string
+	Timestamp time.Time
+	Message   string
 }
 
 // JobInfo is available to plugins to get information about the context
