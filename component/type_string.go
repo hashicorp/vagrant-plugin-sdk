@@ -12,12 +12,13 @@ func _() {
 	_ = x[ProviderType-1]
 	_ = x[ProvisionerType-2]
 	_ = x[MapperType-3]
-	_ = x[maxType-4]
+	_ = x[LogViewerType-4]
+	_ = x[maxType-5]
 }
 
-const _Type_name = "InvalidProviderProvisionerMappermaxType"
+const _Type_name = "InvalidProviderProvisionerMapperLogViewermaxType"
 
-var _Type_index = [...]uint8{0, 7, 15, 26, 32, 39}
+var _Type_index = [...]uint8{0, 7, 15, 26, 32, 41, 48}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {
