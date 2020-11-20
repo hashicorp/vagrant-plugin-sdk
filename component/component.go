@@ -24,20 +24,22 @@ import (
 type Type uint
 
 const (
-	InvalidType     Type = iota // Invalid
-	ProviderType                // Provider
-	ProvisionerType             // Provisioner
-	MapperType                  // Mapper
-	LogViewerType               // LogViewer
+	InvalidType       Type = iota // Invalid
+	ProviderType                  // Provider
+	ProvisionerType               // Provisioner
+	MapperType                    // Mapper
+	LogViewerType                 // LogViewer
+	AuthenticatorType             // Authenticator
 	maxType
 )
 
 // TypeMap is a mapping of Type to the nil pointer to the interface of that
 // type. This can be used with libraries such as mapper.
 var TypeMap = map[Type]interface{}{
-	ProviderType:    (*Provider)(nil),
-	ProvisionerType: (*Provisioner)(nil),
-	LogViewerType:   (*LogViewer)(nil),
+	ProviderType:      (*Provider)(nil),
+	ProvisionerType:   (*Provisioner)(nil),
+	LogViewerType:     (*LogViewer)(nil),
+	AuthenticatorType: (*Authenticator)(nil),
 }
 
 // Providers are the backend that VMs are launched on
@@ -72,6 +74,17 @@ type LogEvent struct {
 	Message   string
 }
 
+// Authenticator is responsible for authenticating different types of plugins.
+type Authenticator interface {
+	// AuthFunc should return the method for getting credentials for a
+	// plugin. This should return AuthResult.
+	AuthFunc() interface{}
+
+	// ValidateAuthFunc should return the method for validating authentication
+	// credentials for the plugin
+	ValidateAuthFunc() interface{}
+}
+
 // JobInfo is available to plugins to get information about the context
 // in which a job is executing.
 type JobInfo struct {
@@ -94,4 +107,14 @@ type JobInfo struct {
 type Source struct {
 	App  string
 	Path string
+}
+
+// AuthResult is the return value expected from Authenticator.AuthFunc.
+type AuthResult struct {
+	// Authenticated when true means that the plugin should now be authenticated
+	// (given the other fields in this struct). If ValidateAuth is called,
+	// it should succeed. If this is false, the auth method may have printed
+	// help text or some other information, but it didn't authenticate. However,
+	// this is not an error.
+	Authenticated bool
 }
