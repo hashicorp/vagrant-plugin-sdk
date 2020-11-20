@@ -11,7 +11,7 @@
 package component
 
 //go:generate stringer -type=Type -linecomment
-//go:generate mockery -all -case underscore
+//go:generate mockery --all
 
 // Type is an enum of all the types of components supported.
 // This isn't used directly in this package but is used by other packages
@@ -22,6 +22,7 @@ const (
 	InvalidType     Type = iota // Invalid
 	ProviderType                // Provider
 	ProvisionerType             // Provisioner
+	MapperType                  // Mapper
 	maxType
 )
 
@@ -71,4 +72,3 @@ type Source struct {
 	App  string
 	Path string
 }
-
