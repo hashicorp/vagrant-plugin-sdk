@@ -9,17 +9,24 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[InvalidType-0]
-	_ = x[ProviderType-1]
-	_ = x[ProvisionerType-2]
-	_ = x[MapperType-3]
-	_ = x[LogViewerType-4]
-	_ = x[AuthenticatorType-5]
-	_ = x[maxType-6]
+	_ = x[AuthenticatorType-1]
+	_ = x[CommandType-2]
+	_ = x[CommunicatorType-3]
+	_ = x[ConfigType-4]
+	_ = x[GuestType-5]
+	_ = x[HostType-6]
+	_ = x[LogPlatformType-7]
+	_ = x[LogViewerType-8]
+	_ = x[ProviderType-9]
+	_ = x[ProvisionerType-10]
+	_ = x[SyncedFolderType-11]
+	_ = x[MapperType-12]
+	_ = x[maxType-13]
 }
 
-const _Type_name = "InvalidProviderProvisionerMapperLogViewerAuthenticatormaxType"
+const _Type_name = "InvalidAuthenticatorCommandCommunicatorConfigGuestHostLogPlatformLogViewerProviderProvisionerSynced FolderMappermaxType"
 
-var _Type_index = [...]uint8{0, 7, 15, 26, 32, 41, 54, 61}
+var _Type_index = [...]uint8{0, 7, 20, 27, 39, 45, 50, 54, 65, 74, 82, 93, 106, 112, 119}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {

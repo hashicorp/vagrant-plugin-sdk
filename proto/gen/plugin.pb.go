@@ -60,6 +60,726 @@ func (m *Args) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Args proto.InternalMessageInfo
 
+type Args_MachineIndex struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_MachineIndex) Reset()         { *m = Args_MachineIndex{} }
+func (m *Args_MachineIndex) String() string { return proto.CompactTextString(m) }
+func (*Args_MachineIndex) ProtoMessage()    {}
+func (*Args_MachineIndex) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 0}
+}
+func (m *Args_MachineIndex) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_MachineIndex.Unmarshal(m, b)
+}
+func (m *Args_MachineIndex) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_MachineIndex.Marshal(b, m, deterministic)
+}
+func (m *Args_MachineIndex) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_MachineIndex.Merge(m, src)
+}
+func (m *Args_MachineIndex) XXX_Size() int {
+	return xxx_messageInfo_Args_MachineIndex.Size(m)
+}
+func (m *Args_MachineIndex) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_MachineIndex.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_MachineIndex proto.InternalMessageInfo
+
+type Args_MachineIndex_Entry struct {
+	Id                   string        `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	LocalDataPath        string        `protobuf:"bytes,2,opt,name=local_data_path,json=localDataPath,proto3" json:"local_data_path,omitempty"`
+	Name                 string        `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Provider             string        `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
+	State                string        `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	VagrantfileName      string        `protobuf:"bytes,6,opt,name=vagrantfile_name,json=vagrantfileName,proto3" json:"vagrantfile_name,omitempty"`
+	VagrantfilePath      string        `protobuf:"bytes,7,opt,name=vagrantfile_path,json=vagrantfilePath,proto3" json:"vagrantfile_path,omitempty"`
+	UpdatedAt            string        `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ExtraData            *Args_Options `protobuf:"bytes,9,opt,name=extra_data,json=extraData,proto3" json:"extra_data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Args_MachineIndex_Entry) Reset()         { *m = Args_MachineIndex_Entry{} }
+func (m *Args_MachineIndex_Entry) String() string { return proto.CompactTextString(m) }
+func (*Args_MachineIndex_Entry) ProtoMessage()    {}
+func (*Args_MachineIndex_Entry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 0, 0}
+}
+func (m *Args_MachineIndex_Entry) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_MachineIndex_Entry.Unmarshal(m, b)
+}
+func (m *Args_MachineIndex_Entry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_MachineIndex_Entry.Marshal(b, m, deterministic)
+}
+func (m *Args_MachineIndex_Entry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_MachineIndex_Entry.Merge(m, src)
+}
+func (m *Args_MachineIndex_Entry) XXX_Size() int {
+	return xxx_messageInfo_Args_MachineIndex_Entry.Size(m)
+}
+func (m *Args_MachineIndex_Entry) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_MachineIndex_Entry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_MachineIndex_Entry proto.InternalMessageInfo
+
+func (m *Args_MachineIndex_Entry) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetLocalDataPath() string {
+	if m != nil {
+		return m.LocalDataPath
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetProvider() string {
+	if m != nil {
+		return m.Provider
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetState() string {
+	if m != nil {
+		return m.State
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetVagrantfileName() string {
+	if m != nil {
+		return m.VagrantfileName
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetVagrantfilePath() string {
+	if m != nil {
+		return m.VagrantfilePath
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetUpdatedAt() string {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return ""
+}
+
+func (m *Args_MachineIndex_Entry) GetExtraData() *Args_Options {
+	if m != nil {
+		return m.ExtraData
+	}
+	return nil
+}
+
+type Args_BoxCollection struct {
+	Directory            string   `protobuf:"bytes,1,opt,name=directory,proto3" json:"directory,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_BoxCollection) Reset()         { *m = Args_BoxCollection{} }
+func (m *Args_BoxCollection) String() string { return proto.CompactTextString(m) }
+func (*Args_BoxCollection) ProtoMessage()    {}
+func (*Args_BoxCollection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 1}
+}
+func (m *Args_BoxCollection) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_BoxCollection.Unmarshal(m, b)
+}
+func (m *Args_BoxCollection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_BoxCollection.Marshal(b, m, deterministic)
+}
+func (m *Args_BoxCollection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_BoxCollection.Merge(m, src)
+}
+func (m *Args_BoxCollection) XXX_Size() int {
+	return xxx_messageInfo_Args_BoxCollection.Size(m)
+}
+func (m *Args_BoxCollection) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_BoxCollection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_BoxCollection proto.InternalMessageInfo
+
+func (m *Args_BoxCollection) GetDirectory() string {
+	if m != nil {
+		return m.Directory
+	}
+	return ""
+}
+
+type Args_Box struct {
+	Name                 string        `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Provider             string        `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	Version              string        `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Directory            string        `protobuf:"bytes,4,opt,name=directory,proto3" json:"directory,omitempty"`
+	Metadata             *Args_Options `protobuf:"bytes,5,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	MetadataUrl          string        `protobuf:"bytes,6,opt,name=metadata_url,json=metadataUrl,proto3" json:"metadata_url,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Args_Box) Reset()         { *m = Args_Box{} }
+func (m *Args_Box) String() string { return proto.CompactTextString(m) }
+func (*Args_Box) ProtoMessage()    {}
+func (*Args_Box) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 2}
+}
+func (m *Args_Box) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Box.Unmarshal(m, b)
+}
+func (m *Args_Box) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Box.Marshal(b, m, deterministic)
+}
+func (m *Args_Box) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Box.Merge(m, src)
+}
+func (m *Args_Box) XXX_Size() int {
+	return xxx_messageInfo_Args_Box.Size(m)
+}
+func (m *Args_Box) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Box.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Box proto.InternalMessageInfo
+
+func (m *Args_Box) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Args_Box) GetProvider() string {
+	if m != nil {
+		return m.Provider
+	}
+	return ""
+}
+
+func (m *Args_Box) GetVersion() string {
+	if m != nil {
+		return m.Version
+	}
+	return ""
+}
+
+func (m *Args_Box) GetDirectory() string {
+	if m != nil {
+		return m.Directory
+	}
+	return ""
+}
+
+func (m *Args_Box) GetMetadata() *Args_Options {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *Args_Box) GetMetadataUrl() string {
+	if m != nil {
+		return m.MetadataUrl
+	}
+	return ""
+}
+
+type Args_Environment struct {
+	Cwd                   string           `protobuf:"bytes,1,opt,name=cwd,proto3" json:"cwd,omitempty"`
+	DataDir               string           `protobuf:"bytes,2,opt,name=data_dir,json=dataDir,proto3" json:"data_dir,omitempty"`
+	VagrantfileName       string           `protobuf:"bytes,3,opt,name=vagrantfile_name,json=vagrantfileName,proto3" json:"vagrantfile_name,omitempty"`
+	Ui                    *Args_TerminalUI `protobuf:"bytes,4,opt,name=ui,proto3" json:"ui,omitempty"`
+	HomePath              string           `protobuf:"bytes,5,opt,name=home_path,json=homePath,proto3" json:"home_path,omitempty"`
+	LocalDataPath         string           `protobuf:"bytes,6,opt,name=local_data_path,json=localDataPath,proto3" json:"local_data_path,omitempty"`
+	TmpPath               string           `protobuf:"bytes,7,opt,name=tmp_path,json=tmpPath,proto3" json:"tmp_path,omitempty"`
+	AliasesPath           string           `protobuf:"bytes,8,opt,name=aliases_path,json=aliasesPath,proto3" json:"aliases_path,omitempty"`
+	BoxesPath             string           `protobuf:"bytes,9,opt,name=boxes_path,json=boxesPath,proto3" json:"boxes_path,omitempty"`
+	GemsPath              string           `protobuf:"bytes,10,opt,name=gems_path,json=gemsPath,proto3" json:"gems_path,omitempty"`
+	DefaultPrivateKeyPath string           `protobuf:"bytes,11,opt,name=default_private_key_path,json=defaultPrivateKeyPath,proto3" json:"default_private_key_path,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}         `json:"-"`
+	XXX_unrecognized      []byte           `json:"-"`
+	XXX_sizecache         int32            `json:"-"`
+}
+
+func (m *Args_Environment) Reset()         { *m = Args_Environment{} }
+func (m *Args_Environment) String() string { return proto.CompactTextString(m) }
+func (*Args_Environment) ProtoMessage()    {}
+func (*Args_Environment) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 3}
+}
+func (m *Args_Environment) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Environment.Unmarshal(m, b)
+}
+func (m *Args_Environment) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Environment.Marshal(b, m, deterministic)
+}
+func (m *Args_Environment) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Environment.Merge(m, src)
+}
+func (m *Args_Environment) XXX_Size() int {
+	return xxx_messageInfo_Args_Environment.Size(m)
+}
+func (m *Args_Environment) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Environment.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Environment proto.InternalMessageInfo
+
+func (m *Args_Environment) GetCwd() string {
+	if m != nil {
+		return m.Cwd
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetDataDir() string {
+	if m != nil {
+		return m.DataDir
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetVagrantfileName() string {
+	if m != nil {
+		return m.VagrantfileName
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetUi() *Args_TerminalUI {
+	if m != nil {
+		return m.Ui
+	}
+	return nil
+}
+
+func (m *Args_Environment) GetHomePath() string {
+	if m != nil {
+		return m.HomePath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetLocalDataPath() string {
+	if m != nil {
+		return m.LocalDataPath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetTmpPath() string {
+	if m != nil {
+		return m.TmpPath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetAliasesPath() string {
+	if m != nil {
+		return m.AliasesPath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetBoxesPath() string {
+	if m != nil {
+		return m.BoxesPath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetGemsPath() string {
+	if m != nil {
+		return m.GemsPath
+	}
+	return ""
+}
+
+func (m *Args_Environment) GetDefaultPrivateKeyPath() string {
+	if m != nil {
+		return m.DefaultPrivateKeyPath
+	}
+	return ""
+}
+
+type Args_Machine struct {
+	Box                  *Args_Box           `protobuf:"bytes,1,opt,name=box,proto3" json:"box,omitempty"`
+	Config               *Args_Configuration `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
+	DataDir              string              `protobuf:"bytes,3,opt,name=data_dir,json=dataDir,proto3" json:"data_dir,omitempty"`
+	Env                  *Args_Environment   `protobuf:"bytes,4,opt,name=env,proto3" json:"env,omitempty"`
+	Id                   string              `protobuf:"bytes,5,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string              `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Provider             *Provider           `protobuf:"bytes,7,opt,name=provider,proto3" json:"provider,omitempty"`
+	ProviderConfig       *Args_Configuration `protobuf:"bytes,8,opt,name=provider_config,json=providerConfig,proto3" json:"provider_config,omitempty"`
+	ProviderName         string              `protobuf:"bytes,9,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	ProviderOptions      *Args_Options       `protobuf:"bytes,10,opt,name=provider_options,json=providerOptions,proto3" json:"provider_options,omitempty"`
+	Ui                   *Args_TerminalUI    `protobuf:"bytes,11,opt,name=ui,proto3" json:"ui,omitempty"`
+	Vagrantfile          *Args_Vagrantfile   `protobuf:"bytes,12,opt,name=vagrantfile,proto3" json:"vagrantfile,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
+}
+
+func (m *Args_Machine) Reset()         { *m = Args_Machine{} }
+func (m *Args_Machine) String() string { return proto.CompactTextString(m) }
+func (*Args_Machine) ProtoMessage()    {}
+func (*Args_Machine) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 4}
+}
+func (m *Args_Machine) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Machine.Unmarshal(m, b)
+}
+func (m *Args_Machine) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Machine.Marshal(b, m, deterministic)
+}
+func (m *Args_Machine) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Machine.Merge(m, src)
+}
+func (m *Args_Machine) XXX_Size() int {
+	return xxx_messageInfo_Args_Machine.Size(m)
+}
+func (m *Args_Machine) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Machine.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Machine proto.InternalMessageInfo
+
+func (m *Args_Machine) GetBox() *Args_Box {
+	if m != nil {
+		return m.Box
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetConfig() *Args_Configuration {
+	if m != nil {
+		return m.Config
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetDataDir() string {
+	if m != nil {
+		return m.DataDir
+	}
+	return ""
+}
+
+func (m *Args_Machine) GetEnv() *Args_Environment {
+	if m != nil {
+		return m.Env
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Args_Machine) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Args_Machine) GetProvider() *Provider {
+	if m != nil {
+		return m.Provider
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetProviderConfig() *Args_Configuration {
+	if m != nil {
+		return m.ProviderConfig
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetProviderName() string {
+	if m != nil {
+		return m.ProviderName
+	}
+	return ""
+}
+
+func (m *Args_Machine) GetProviderOptions() *Args_Options {
+	if m != nil {
+		return m.ProviderOptions
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetUi() *Args_TerminalUI {
+	if m != nil {
+		return m.Ui
+	}
+	return nil
+}
+
+func (m *Args_Machine) GetVagrantfile() *Args_Vagrantfile {
+	if m != nil {
+		return m.Vagrantfile
+	}
+	return nil
+}
+
+type Args_Configuration struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_Configuration) Reset()         { *m = Args_Configuration{} }
+func (m *Args_Configuration) String() string { return proto.CompactTextString(m) }
+func (*Args_Configuration) ProtoMessage()    {}
+func (*Args_Configuration) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 5}
+}
+func (m *Args_Configuration) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Configuration.Unmarshal(m, b)
+}
+func (m *Args_Configuration) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Configuration.Marshal(b, m, deterministic)
+}
+func (m *Args_Configuration) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Configuration.Merge(m, src)
+}
+func (m *Args_Configuration) XXX_Size() int {
+	return xxx_messageInfo_Args_Configuration.Size(m)
+}
+func (m *Args_Configuration) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Configuration.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Configuration proto.InternalMessageInfo
+
+type Args_Configuration_Vagrant struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_Configuration_Vagrant) Reset()         { *m = Args_Configuration_Vagrant{} }
+func (m *Args_Configuration_Vagrant) String() string { return proto.CompactTextString(m) }
+func (*Args_Configuration_Vagrant) ProtoMessage()    {}
+func (*Args_Configuration_Vagrant) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 5, 0}
+}
+func (m *Args_Configuration_Vagrant) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Configuration_Vagrant.Unmarshal(m, b)
+}
+func (m *Args_Configuration_Vagrant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Configuration_Vagrant.Marshal(b, m, deterministic)
+}
+func (m *Args_Configuration_Vagrant) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Configuration_Vagrant.Merge(m, src)
+}
+func (m *Args_Configuration_Vagrant) XXX_Size() int {
+	return xxx_messageInfo_Args_Configuration_Vagrant.Size(m)
+}
+func (m *Args_Configuration_Vagrant) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Configuration_Vagrant.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Configuration_Vagrant proto.InternalMessageInfo
+
+type Args_Configuration_VM struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_Configuration_VM) Reset()         { *m = Args_Configuration_VM{} }
+func (m *Args_Configuration_VM) String() string { return proto.CompactTextString(m) }
+func (*Args_Configuration_VM) ProtoMessage()    {}
+func (*Args_Configuration_VM) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 5, 1}
+}
+func (m *Args_Configuration_VM) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Configuration_VM.Unmarshal(m, b)
+}
+func (m *Args_Configuration_VM) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Configuration_VM.Marshal(b, m, deterministic)
+}
+func (m *Args_Configuration_VM) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Configuration_VM.Merge(m, src)
+}
+func (m *Args_Configuration_VM) XXX_Size() int {
+	return xxx_messageInfo_Args_Configuration_VM.Size(m)
+}
+func (m *Args_Configuration_VM) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Configuration_VM.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Configuration_VM proto.InternalMessageInfo
+
+type Args_Configuration_Provider struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_Configuration_Provider) Reset()         { *m = Args_Configuration_Provider{} }
+func (m *Args_Configuration_Provider) String() string { return proto.CompactTextString(m) }
+func (*Args_Configuration_Provider) ProtoMessage()    {}
+func (*Args_Configuration_Provider) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 5, 2}
+}
+func (m *Args_Configuration_Provider) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Configuration_Provider.Unmarshal(m, b)
+}
+func (m *Args_Configuration_Provider) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Configuration_Provider.Marshal(b, m, deterministic)
+}
+func (m *Args_Configuration_Provider) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Configuration_Provider.Merge(m, src)
+}
+func (m *Args_Configuration_Provider) XXX_Size() int {
+	return xxx_messageInfo_Args_Configuration_Provider.Size(m)
+}
+func (m *Args_Configuration_Provider) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Configuration_Provider.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Configuration_Provider proto.InternalMessageInfo
+
+// LabelSet is a set of labels for anything that can be labelled, such
+// as a deployment, build, etc.
+type Args_LabelSet struct {
+	Labels               map[string]string `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *Args_LabelSet) Reset()         { *m = Args_LabelSet{} }
+func (m *Args_LabelSet) String() string { return proto.CompactTextString(m) }
+func (*Args_LabelSet) ProtoMessage()    {}
+func (*Args_LabelSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 6}
+}
+func (m *Args_LabelSet) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_LabelSet.Unmarshal(m, b)
+}
+func (m *Args_LabelSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_LabelSet.Marshal(b, m, deterministic)
+}
+func (m *Args_LabelSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_LabelSet.Merge(m, src)
+}
+func (m *Args_LabelSet) XXX_Size() int {
+	return xxx_messageInfo_Args_LabelSet.Size(m)
+}
+func (m *Args_LabelSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_LabelSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_LabelSet proto.InternalMessageInfo
+
+func (m *Args_LabelSet) GetLabels() map[string]string {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+type Args_Options struct {
+	Opt                  *Args_LabelSet `protobuf:"bytes,1,opt,name=opt,proto3" json:"opt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *Args_Options) Reset()         { *m = Args_Options{} }
+func (m *Args_Options) String() string { return proto.CompactTextString(m) }
+func (*Args_Options) ProtoMessage()    {}
+func (*Args_Options) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 7}
+}
+func (m *Args_Options) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Options.Unmarshal(m, b)
+}
+func (m *Args_Options) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Options.Marshal(b, m, deterministic)
+}
+func (m *Args_Options) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Options.Merge(m, src)
+}
+func (m *Args_Options) XXX_Size() int {
+	return xxx_messageInfo_Args_Options.Size(m)
+}
+func (m *Args_Options) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Options.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Options proto.InternalMessageInfo
+
+func (m *Args_Options) GetOpt() *Args_LabelSet {
+	if m != nil {
+		return m.Opt
+	}
+	return nil
+}
+
+type Args_Vagrantfile struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Args_Vagrantfile) Reset()         { *m = Args_Vagrantfile{} }
+func (m *Args_Vagrantfile) String() string { return proto.CompactTextString(m) }
+func (*Args_Vagrantfile) ProtoMessage()    {}
+func (*Args_Vagrantfile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 8}
+}
+func (m *Args_Vagrantfile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Args_Vagrantfile.Unmarshal(m, b)
+}
+func (m *Args_Vagrantfile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Args_Vagrantfile.Marshal(b, m, deterministic)
+}
+func (m *Args_Vagrantfile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Args_Vagrantfile.Merge(m, src)
+}
+func (m *Args_Vagrantfile) XXX_Size() int {
+	return xxx_messageInfo_Args_Vagrantfile.Size(m)
+}
+func (m *Args_Vagrantfile) XXX_DiscardUnknown() {
+	xxx_messageInfo_Args_Vagrantfile.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Args_Vagrantfile proto.InternalMessageInfo
+
 // See component.Source
 type Args_Source struct {
 	// app is the name of the application being deployed.
@@ -75,7 +795,7 @@ func (m *Args_Source) Reset()         { *m = Args_Source{} }
 func (m *Args_Source) String() string { return proto.CompactTextString(m) }
 func (*Args_Source) ProtoMessage()    {}
 func (*Args_Source) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 0}
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 9}
 }
 func (m *Args_Source) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Args_Source.Unmarshal(m, b)
@@ -123,7 +843,7 @@ func (m *Args_JobInfo) Reset()         { *m = Args_JobInfo{} }
 func (m *Args_JobInfo) String() string { return proto.CompactTextString(m) }
 func (*Args_JobInfo) ProtoMessage()    {}
 func (*Args_JobInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 1}
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 10}
 }
 func (m *Args_JobInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Args_JobInfo.Unmarshal(m, b)
@@ -164,248 +884,6 @@ func (m *Args_JobInfo) GetId() string {
 	return ""
 }
 
-// See component.DeploymentConfig
-type Args_DeploymentConfig struct {
-	Id                    string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ServerAddr            string   `protobuf:"bytes,2,opt,name=server_addr,json=serverAddr,proto3" json:"server_addr,omitempty"`
-	ServerTls             bool     `protobuf:"varint,3,opt,name=server_tls,json=serverTls,proto3" json:"server_tls,omitempty"`
-	ServerTlsSkipVerify   bool     `protobuf:"varint,4,opt,name=server_tls_skip_verify,json=serverTlsSkipVerify,proto3" json:"server_tls_skip_verify,omitempty"`
-	EntrypointInviteToken string   `protobuf:"bytes,5,opt,name=entrypoint_invite_token,json=entrypointInviteToken,proto3" json:"entrypoint_invite_token,omitempty"`
-	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
-	XXX_unrecognized      []byte   `json:"-"`
-	XXX_sizecache         int32    `json:"-"`
-}
-
-func (m *Args_DeploymentConfig) Reset()         { *m = Args_DeploymentConfig{} }
-func (m *Args_DeploymentConfig) String() string { return proto.CompactTextString(m) }
-func (*Args_DeploymentConfig) ProtoMessage()    {}
-func (*Args_DeploymentConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 2}
-}
-func (m *Args_DeploymentConfig) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_DeploymentConfig.Unmarshal(m, b)
-}
-func (m *Args_DeploymentConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_DeploymentConfig.Marshal(b, m, deterministic)
-}
-func (m *Args_DeploymentConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_DeploymentConfig.Merge(m, src)
-}
-func (m *Args_DeploymentConfig) XXX_Size() int {
-	return xxx_messageInfo_Args_DeploymentConfig.Size(m)
-}
-func (m *Args_DeploymentConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_DeploymentConfig.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_DeploymentConfig proto.InternalMessageInfo
-
-func (m *Args_DeploymentConfig) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Args_DeploymentConfig) GetServerAddr() string {
-	if m != nil {
-		return m.ServerAddr
-	}
-	return ""
-}
-
-func (m *Args_DeploymentConfig) GetServerTls() bool {
-	if m != nil {
-		return m.ServerTls
-	}
-	return false
-}
-
-func (m *Args_DeploymentConfig) GetServerTlsSkipVerify() bool {
-	if m != nil {
-		return m.ServerTlsSkipVerify
-	}
-	return false
-}
-
-func (m *Args_DeploymentConfig) GetEntrypointInviteToken() string {
-	if m != nil {
-		return m.EntrypointInviteToken
-	}
-	return ""
-}
-
-// DataDir represents the directory where data can be stored. This is an internal
-// struct and shouldn't be used directly. Use the relevant *datadir implementation
-// instead.
-type Args_DataDir struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Args_DataDir) Reset()         { *m = Args_DataDir{} }
-func (m *Args_DataDir) String() string { return proto.CompactTextString(m) }
-func (*Args_DataDir) ProtoMessage()    {}
-func (*Args_DataDir) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 3}
-}
-func (m *Args_DataDir) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_DataDir.Unmarshal(m, b)
-}
-func (m *Args_DataDir) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_DataDir.Marshal(b, m, deterministic)
-}
-func (m *Args_DataDir) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_DataDir.Merge(m, src)
-}
-func (m *Args_DataDir) XXX_Size() int {
-	return xxx_messageInfo_Args_DataDir.Size(m)
-}
-func (m *Args_DataDir) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_DataDir.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_DataDir proto.InternalMessageInfo
-
-type Args_DataDir_Project struct {
-	CacheDir             string   `protobuf:"bytes,2,opt,name=cache_dir,json=cacheDir,proto3" json:"cache_dir,omitempty"`
-	DataDir              string   `protobuf:"bytes,3,opt,name=data_dir,json=dataDir,proto3" json:"data_dir,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Args_DataDir_Project) Reset()         { *m = Args_DataDir_Project{} }
-func (m *Args_DataDir_Project) String() string { return proto.CompactTextString(m) }
-func (*Args_DataDir_Project) ProtoMessage()    {}
-func (*Args_DataDir_Project) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 3, 0}
-}
-func (m *Args_DataDir_Project) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_DataDir_Project.Unmarshal(m, b)
-}
-func (m *Args_DataDir_Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_DataDir_Project.Marshal(b, m, deterministic)
-}
-func (m *Args_DataDir_Project) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_DataDir_Project.Merge(m, src)
-}
-func (m *Args_DataDir_Project) XXX_Size() int {
-	return xxx_messageInfo_Args_DataDir_Project.Size(m)
-}
-func (m *Args_DataDir_Project) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_DataDir_Project.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_DataDir_Project proto.InternalMessageInfo
-
-func (m *Args_DataDir_Project) GetCacheDir() string {
-	if m != nil {
-		return m.CacheDir
-	}
-	return ""
-}
-
-func (m *Args_DataDir_Project) GetDataDir() string {
-	if m != nil {
-		return m.DataDir
-	}
-	return ""
-}
-
-type Args_DataDir_App struct {
-	CacheDir             string   `protobuf:"bytes,2,opt,name=cache_dir,json=cacheDir,proto3" json:"cache_dir,omitempty"`
-	DataDir              string   `protobuf:"bytes,3,opt,name=data_dir,json=dataDir,proto3" json:"data_dir,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Args_DataDir_App) Reset()         { *m = Args_DataDir_App{} }
-func (m *Args_DataDir_App) String() string { return proto.CompactTextString(m) }
-func (*Args_DataDir_App) ProtoMessage()    {}
-func (*Args_DataDir_App) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 3, 1}
-}
-func (m *Args_DataDir_App) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_DataDir_App.Unmarshal(m, b)
-}
-func (m *Args_DataDir_App) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_DataDir_App.Marshal(b, m, deterministic)
-}
-func (m *Args_DataDir_App) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_DataDir_App.Merge(m, src)
-}
-func (m *Args_DataDir_App) XXX_Size() int {
-	return xxx_messageInfo_Args_DataDir_App.Size(m)
-}
-func (m *Args_DataDir_App) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_DataDir_App.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_DataDir_App proto.InternalMessageInfo
-
-func (m *Args_DataDir_App) GetCacheDir() string {
-	if m != nil {
-		return m.CacheDir
-	}
-	return ""
-}
-
-func (m *Args_DataDir_App) GetDataDir() string {
-	if m != nil {
-		return m.DataDir
-	}
-	return ""
-}
-
-type Args_DataDir_Component struct {
-	CacheDir             string   `protobuf:"bytes,2,opt,name=cache_dir,json=cacheDir,proto3" json:"cache_dir,omitempty"`
-	DataDir              string   `protobuf:"bytes,3,opt,name=data_dir,json=dataDir,proto3" json:"data_dir,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Args_DataDir_Component) Reset()         { *m = Args_DataDir_Component{} }
-func (m *Args_DataDir_Component) String() string { return proto.CompactTextString(m) }
-func (*Args_DataDir_Component) ProtoMessage()    {}
-func (*Args_DataDir_Component) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 3, 2}
-}
-func (m *Args_DataDir_Component) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_DataDir_Component.Unmarshal(m, b)
-}
-func (m *Args_DataDir_Component) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_DataDir_Component.Marshal(b, m, deterministic)
-}
-func (m *Args_DataDir_Component) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_DataDir_Component.Merge(m, src)
-}
-func (m *Args_DataDir_Component) XXX_Size() int {
-	return xxx_messageInfo_Args_DataDir_Component.Size(m)
-}
-func (m *Args_DataDir_Component) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_DataDir_Component.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_DataDir_Component proto.InternalMessageInfo
-
-func (m *Args_DataDir_Component) GetCacheDir() string {
-	if m != nil {
-		return m.CacheDir
-	}
-	return ""
-}
-
-func (m *Args_DataDir_Component) GetDataDir() string {
-	if m != nil {
-		return m.DataDir
-	}
-	return ""
-}
-
 // Logger is used to construct an logger for the plugin.
 type Args_Logger struct {
 	// name is the name of the logger
@@ -419,7 +897,7 @@ func (m *Args_Logger) Reset()         { *m = Args_Logger{} }
 func (m *Args_Logger) String() string { return proto.CompactTextString(m) }
 func (*Args_Logger) ProtoMessage()    {}
 func (*Args_Logger) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 4}
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 11}
 }
 func (m *Args_Logger) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Args_Logger.Unmarshal(m, b)
@@ -458,7 +936,7 @@ func (m *Args_TerminalUI) Reset()         { *m = Args_TerminalUI{} }
 func (m *Args_TerminalUI) String() string { return proto.CompactTextString(m) }
 func (*Args_TerminalUI) ProtoMessage()    {}
 func (*Args_TerminalUI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 5}
+	return fileDescriptor_22a625af4bc1cc87, []int{0, 12}
 }
 func (m *Args_TerminalUI) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Args_TerminalUI.Unmarshal(m, b)
@@ -483,135 +961,6 @@ func (m *Args_TerminalUI) GetStreamId() uint32 {
 		return m.StreamId
 	}
 	return 0
-}
-
-// ReleaseTargets is the set of targets for a release operation.
-type Args_ReleaseTargets struct {
-	// The set of targets for a release. This is always guaranteed by
-	// the caller to sum to 100%. If the release component doesn't support
-	// traffic splitting, this is guaranteed to always be length 1.
-	Targets              []*Args_ReleaseTargets_Target `protobuf:"bytes,1,rep,name=targets,proto3" json:"targets,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                      `json:"-"`
-	XXX_unrecognized     []byte                        `json:"-"`
-	XXX_sizecache        int32                         `json:"-"`
-}
-
-func (m *Args_ReleaseTargets) Reset()         { *m = Args_ReleaseTargets{} }
-func (m *Args_ReleaseTargets) String() string { return proto.CompactTextString(m) }
-func (*Args_ReleaseTargets) ProtoMessage()    {}
-func (*Args_ReleaseTargets) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 6}
-}
-func (m *Args_ReleaseTargets) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_ReleaseTargets.Unmarshal(m, b)
-}
-func (m *Args_ReleaseTargets) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_ReleaseTargets.Marshal(b, m, deterministic)
-}
-func (m *Args_ReleaseTargets) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_ReleaseTargets.Merge(m, src)
-}
-func (m *Args_ReleaseTargets) XXX_Size() int {
-	return xxx_messageInfo_Args_ReleaseTargets.Size(m)
-}
-func (m *Args_ReleaseTargets) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_ReleaseTargets.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_ReleaseTargets proto.InternalMessageInfo
-
-func (m *Args_ReleaseTargets) GetTargets() []*Args_ReleaseTargets_Target {
-	if m != nil {
-		return m.Targets
-	}
-	return nil
-}
-
-// Target is a single target for releasing.
-type Args_ReleaseTargets_Target struct {
-	Deployment           *anypb.Any `protobuf:"bytes,1,opt,name=deployment,proto3" json:"deployment,omitempty"`
-	Percent              uint32     `protobuf:"varint,2,opt,name=percent,proto3" json:"percent,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *Args_ReleaseTargets_Target) Reset()         { *m = Args_ReleaseTargets_Target{} }
-func (m *Args_ReleaseTargets_Target) String() string { return proto.CompactTextString(m) }
-func (*Args_ReleaseTargets_Target) ProtoMessage()    {}
-func (*Args_ReleaseTargets_Target) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 6, 0}
-}
-func (m *Args_ReleaseTargets_Target) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_ReleaseTargets_Target.Unmarshal(m, b)
-}
-func (m *Args_ReleaseTargets_Target) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_ReleaseTargets_Target.Marshal(b, m, deterministic)
-}
-func (m *Args_ReleaseTargets_Target) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_ReleaseTargets_Target.Merge(m, src)
-}
-func (m *Args_ReleaseTargets_Target) XXX_Size() int {
-	return xxx_messageInfo_Args_ReleaseTargets_Target.Size(m)
-}
-func (m *Args_ReleaseTargets_Target) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_ReleaseTargets_Target.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_ReleaseTargets_Target proto.InternalMessageInfo
-
-func (m *Args_ReleaseTargets_Target) GetDeployment() *anypb.Any {
-	if m != nil {
-		return m.Deployment
-	}
-	return nil
-}
-
-func (m *Args_ReleaseTargets_Target) GetPercent() uint32 {
-	if m != nil {
-		return m.Percent
-	}
-	return 0
-}
-
-// LabelSet is a set of labels for anything that can be labelled, such
-// as a deployment, build, etc.
-type Args_LabelSet struct {
-	Labels               map[string]string `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
-}
-
-func (m *Args_LabelSet) Reset()         { *m = Args_LabelSet{} }
-func (m *Args_LabelSet) String() string { return proto.CompactTextString(m) }
-func (*Args_LabelSet) ProtoMessage()    {}
-func (*Args_LabelSet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22a625af4bc1cc87, []int{0, 7}
-}
-func (m *Args_LabelSet) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Args_LabelSet.Unmarshal(m, b)
-}
-func (m *Args_LabelSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Args_LabelSet.Marshal(b, m, deterministic)
-}
-func (m *Args_LabelSet) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Args_LabelSet.Merge(m, src)
-}
-func (m *Args_LabelSet) XXX_Size() int {
-	return xxx_messageInfo_Args_LabelSet.Size(m)
-}
-func (m *Args_LabelSet) XXX_DiscardUnknown() {
-	xxx_messageInfo_Args_LabelSet.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Args_LabelSet proto.InternalMessageInfo
-
-func (m *Args_LabelSet) GetLabels() map[string]string {
-	if m != nil {
-		return m.Labels
-	}
-	return nil
 }
 
 // FuncSpec describes a function and is used by the dependency-injection
@@ -2520,21 +2869,746 @@ func (m *Map_ListResponse) GetFuncs() []*FuncSpec {
 	return nil
 }
 
+type Provider struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Provider) Reset()         { *m = Provider{} }
+func (m *Provider) String() string { return proto.CompactTextString(m) }
+func (*Provider) ProtoMessage()    {}
+func (*Provider) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{7}
+}
+func (m *Provider) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Provider.Unmarshal(m, b)
+}
+func (m *Provider) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Provider.Marshal(b, m, deterministic)
+}
+func (m *Provider) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Provider.Merge(m, src)
+}
+func (m *Provider) XXX_Size() int {
+	return xxx_messageInfo_Provider.Size(m)
+}
+func (m *Provider) XXX_DiscardUnknown() {
+	xxx_messageInfo_Provider.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Provider proto.InternalMessageInfo
+
+type Provider_UsableResp struct {
+	IsUsable             bool     `protobuf:"varint,1,opt,name=is_usable,json=isUsable,proto3" json:"is_usable,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Provider_UsableResp) Reset()         { *m = Provider_UsableResp{} }
+func (m *Provider_UsableResp) String() string { return proto.CompactTextString(m) }
+func (*Provider_UsableResp) ProtoMessage()    {}
+func (*Provider_UsableResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{7, 0}
+}
+func (m *Provider_UsableResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Provider_UsableResp.Unmarshal(m, b)
+}
+func (m *Provider_UsableResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Provider_UsableResp.Marshal(b, m, deterministic)
+}
+func (m *Provider_UsableResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Provider_UsableResp.Merge(m, src)
+}
+func (m *Provider_UsableResp) XXX_Size() int {
+	return xxx_messageInfo_Provider_UsableResp.Size(m)
+}
+func (m *Provider_UsableResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Provider_UsableResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Provider_UsableResp proto.InternalMessageInfo
+
+func (m *Provider_UsableResp) GetIsUsable() bool {
+	if m != nil {
+		return m.IsUsable
+	}
+	return false
+}
+
+type Provider_InstalledResp struct {
+	IsInstalled          bool     `protobuf:"varint,1,opt,name=is_installed,json=isInstalled,proto3" json:"is_installed,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Provider_InstalledResp) Reset()         { *m = Provider_InstalledResp{} }
+func (m *Provider_InstalledResp) String() string { return proto.CompactTextString(m) }
+func (*Provider_InstalledResp) ProtoMessage()    {}
+func (*Provider_InstalledResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{7, 1}
+}
+func (m *Provider_InstalledResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Provider_InstalledResp.Unmarshal(m, b)
+}
+func (m *Provider_InstalledResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Provider_InstalledResp.Marshal(b, m, deterministic)
+}
+func (m *Provider_InstalledResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Provider_InstalledResp.Merge(m, src)
+}
+func (m *Provider_InstalledResp) XXX_Size() int {
+	return xxx_messageInfo_Provider_InstalledResp.Size(m)
+}
+func (m *Provider_InstalledResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Provider_InstalledResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Provider_InstalledResp proto.InternalMessageInfo
+
+func (m *Provider_InstalledResp) GetIsInstalled() bool {
+	if m != nil {
+		return m.IsInstalled
+	}
+	return false
+}
+
+type Provider_Action struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Provider_Action) Reset()         { *m = Provider_Action{} }
+func (m *Provider_Action) String() string { return proto.CompactTextString(m) }
+func (*Provider_Action) ProtoMessage()    {}
+func (*Provider_Action) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{7, 2}
+}
+func (m *Provider_Action) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Provider_Action.Unmarshal(m, b)
+}
+func (m *Provider_Action) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Provider_Action.Marshal(b, m, deterministic)
+}
+func (m *Provider_Action) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Provider_Action.Merge(m, src)
+}
+func (m *Provider_Action) XXX_Size() int {
+	return xxx_messageInfo_Provider_Action.Size(m)
+}
+func (m *Provider_Action) XXX_DiscardUnknown() {
+	xxx_messageInfo_Provider_Action.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Provider_Action proto.InternalMessageInfo
+
+type Provider_Action_Resp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Provider_Action_Resp) Reset()         { *m = Provider_Action_Resp{} }
+func (m *Provider_Action_Resp) String() string { return proto.CompactTextString(m) }
+func (*Provider_Action_Resp) ProtoMessage()    {}
+func (*Provider_Action_Resp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{7, 2, 0}
+}
+func (m *Provider_Action_Resp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Provider_Action_Resp.Unmarshal(m, b)
+}
+func (m *Provider_Action_Resp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Provider_Action_Resp.Marshal(b, m, deterministic)
+}
+func (m *Provider_Action_Resp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Provider_Action_Resp.Merge(m, src)
+}
+func (m *Provider_Action_Resp) XXX_Size() int {
+	return xxx_messageInfo_Provider_Action_Resp.Size(m)
+}
+func (m *Provider_Action_Resp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Provider_Action_Resp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Provider_Action_Resp proto.InternalMessageInfo
+
+type Communicator struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator) Reset()         { *m = Communicator{} }
+func (m *Communicator) String() string { return proto.CompactTextString(m) }
+func (*Communicator) ProtoMessage()    {}
+func (*Communicator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8}
+}
+func (m *Communicator) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator.Unmarshal(m, b)
+}
+func (m *Communicator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator.Marshal(b, m, deterministic)
+}
+func (m *Communicator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator.Merge(m, src)
+}
+func (m *Communicator) XXX_Size() int {
+	return xxx_messageInfo_Communicator.Size(m)
+}
+func (m *Communicator) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator proto.InternalMessageInfo
+
+type Communicator_MatchResp struct {
+	Match                bool     `protobuf:"varint,1,opt,name=match,proto3" json:"match,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_MatchResp) Reset()         { *m = Communicator_MatchResp{} }
+func (m *Communicator_MatchResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_MatchResp) ProtoMessage()    {}
+func (*Communicator_MatchResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 0}
+}
+func (m *Communicator_MatchResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_MatchResp.Unmarshal(m, b)
+}
+func (m *Communicator_MatchResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_MatchResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_MatchResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_MatchResp.Merge(m, src)
+}
+func (m *Communicator_MatchResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_MatchResp.Size(m)
+}
+func (m *Communicator_MatchResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_MatchResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_MatchResp proto.InternalMessageInfo
+
+func (m *Communicator_MatchResp) GetMatch() bool {
+	if m != nil {
+		return m.Match
+	}
+	return false
+}
+
+type Communicator_InitResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_InitResp) Reset()         { *m = Communicator_InitResp{} }
+func (m *Communicator_InitResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_InitResp) ProtoMessage()    {}
+func (*Communicator_InitResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 1}
+}
+func (m *Communicator_InitResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_InitResp.Unmarshal(m, b)
+}
+func (m *Communicator_InitResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_InitResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_InitResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_InitResp.Merge(m, src)
+}
+func (m *Communicator_InitResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_InitResp.Size(m)
+}
+func (m *Communicator_InitResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_InitResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_InitResp proto.InternalMessageInfo
+
+type Communicator_ReadyResp struct {
+	Ready                bool     `protobuf:"varint,1,opt,name=ready,proto3" json:"ready,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_ReadyResp) Reset()         { *m = Communicator_ReadyResp{} }
+func (m *Communicator_ReadyResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_ReadyResp) ProtoMessage()    {}
+func (*Communicator_ReadyResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 2}
+}
+func (m *Communicator_ReadyResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_ReadyResp.Unmarshal(m, b)
+}
+func (m *Communicator_ReadyResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_ReadyResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_ReadyResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_ReadyResp.Merge(m, src)
+}
+func (m *Communicator_ReadyResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_ReadyResp.Size(m)
+}
+func (m *Communicator_ReadyResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_ReadyResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_ReadyResp proto.InternalMessageInfo
+
+func (m *Communicator_ReadyResp) GetReady() bool {
+	if m != nil {
+		return m.Ready
+	}
+	return false
+}
+
+type Communicator_ReadyWaitRequest struct {
+	Machine              *Args_Machine `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+	Wait                 int64         `protobuf:"varint,2,opt,name=wait,proto3" json:"wait,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Communicator_ReadyWaitRequest) Reset()         { *m = Communicator_ReadyWaitRequest{} }
+func (m *Communicator_ReadyWaitRequest) String() string { return proto.CompactTextString(m) }
+func (*Communicator_ReadyWaitRequest) ProtoMessage()    {}
+func (*Communicator_ReadyWaitRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 3}
+}
+func (m *Communicator_ReadyWaitRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_ReadyWaitRequest.Unmarshal(m, b)
+}
+func (m *Communicator_ReadyWaitRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_ReadyWaitRequest.Marshal(b, m, deterministic)
+}
+func (m *Communicator_ReadyWaitRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_ReadyWaitRequest.Merge(m, src)
+}
+func (m *Communicator_ReadyWaitRequest) XXX_Size() int {
+	return xxx_messageInfo_Communicator_ReadyWaitRequest.Size(m)
+}
+func (m *Communicator_ReadyWaitRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_ReadyWaitRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_ReadyWaitRequest proto.InternalMessageInfo
+
+func (m *Communicator_ReadyWaitRequest) GetMachine() *Args_Machine {
+	if m != nil {
+		return m.Machine
+	}
+	return nil
+}
+
+func (m *Communicator_ReadyWaitRequest) GetWait() int64 {
+	if m != nil {
+		return m.Wait
+	}
+	return 0
+}
+
+type Communicator_FileTransferRequest struct {
+	Machine              *Args_Machine `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+	Source               string        `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
+	Destination          string        `protobuf:"bytes,3,opt,name=destination,proto3" json:"destination,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Communicator_FileTransferRequest) Reset()         { *m = Communicator_FileTransferRequest{} }
+func (m *Communicator_FileTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*Communicator_FileTransferRequest) ProtoMessage()    {}
+func (*Communicator_FileTransferRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 4}
+}
+func (m *Communicator_FileTransferRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_FileTransferRequest.Unmarshal(m, b)
+}
+func (m *Communicator_FileTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_FileTransferRequest.Marshal(b, m, deterministic)
+}
+func (m *Communicator_FileTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_FileTransferRequest.Merge(m, src)
+}
+func (m *Communicator_FileTransferRequest) XXX_Size() int {
+	return xxx_messageInfo_Communicator_FileTransferRequest.Size(m)
+}
+func (m *Communicator_FileTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_FileTransferRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_FileTransferRequest proto.InternalMessageInfo
+
+func (m *Communicator_FileTransferRequest) GetMachine() *Args_Machine {
+	if m != nil {
+		return m.Machine
+	}
+	return nil
+}
+
+func (m *Communicator_FileTransferRequest) GetSource() string {
+	if m != nil {
+		return m.Source
+	}
+	return ""
+}
+
+func (m *Communicator_FileTransferRequest) GetDestination() string {
+	if m != nil {
+		return m.Destination
+	}
+	return ""
+}
+
+type Communicator_FileTransferResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_FileTransferResp) Reset()         { *m = Communicator_FileTransferResp{} }
+func (m *Communicator_FileTransferResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_FileTransferResp) ProtoMessage()    {}
+func (*Communicator_FileTransferResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 5}
+}
+func (m *Communicator_FileTransferResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_FileTransferResp.Unmarshal(m, b)
+}
+func (m *Communicator_FileTransferResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_FileTransferResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_FileTransferResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_FileTransferResp.Merge(m, src)
+}
+func (m *Communicator_FileTransferResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_FileTransferResp.Size(m)
+}
+func (m *Communicator_FileTransferResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_FileTransferResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_FileTransferResp proto.InternalMessageInfo
+
+type Communicator_ExecutionRequest struct {
+	Machine              *Args_Machine  `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+	Command              string         `protobuf:"bytes,2,opt,name=command,proto3" json:"command,omitempty"`
+	Options              *Args_LabelSet `protobuf:"bytes,3,opt,name=options,proto3" json:"options,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *Communicator_ExecutionRequest) Reset()         { *m = Communicator_ExecutionRequest{} }
+func (m *Communicator_ExecutionRequest) String() string { return proto.CompactTextString(m) }
+func (*Communicator_ExecutionRequest) ProtoMessage()    {}
+func (*Communicator_ExecutionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 6}
+}
+func (m *Communicator_ExecutionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_ExecutionRequest.Unmarshal(m, b)
+}
+func (m *Communicator_ExecutionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_ExecutionRequest.Marshal(b, m, deterministic)
+}
+func (m *Communicator_ExecutionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_ExecutionRequest.Merge(m, src)
+}
+func (m *Communicator_ExecutionRequest) XXX_Size() int {
+	return xxx_messageInfo_Communicator_ExecutionRequest.Size(m)
+}
+func (m *Communicator_ExecutionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_ExecutionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_ExecutionRequest proto.InternalMessageInfo
+
+func (m *Communicator_ExecutionRequest) GetMachine() *Args_Machine {
+	if m != nil {
+		return m.Machine
+	}
+	return nil
+}
+
+func (m *Communicator_ExecutionRequest) GetCommand() string {
+	if m != nil {
+		return m.Command
+	}
+	return ""
+}
+
+func (m *Communicator_ExecutionRequest) GetOptions() *Args_LabelSet {
+	if m != nil {
+		return m.Options
+	}
+	return nil
+}
+
+type Communicator_ExecuteResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_ExecuteResp) Reset()         { *m = Communicator_ExecuteResp{} }
+func (m *Communicator_ExecuteResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_ExecuteResp) ProtoMessage()    {}
+func (*Communicator_ExecuteResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 7}
+}
+func (m *Communicator_ExecuteResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_ExecuteResp.Unmarshal(m, b)
+}
+func (m *Communicator_ExecuteResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_ExecuteResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_ExecuteResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_ExecuteResp.Merge(m, src)
+}
+func (m *Communicator_ExecuteResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_ExecuteResp.Size(m)
+}
+func (m *Communicator_ExecuteResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_ExecuteResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_ExecuteResp proto.InternalMessageInfo
+
+type Communicator_TestResp struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Communicator_TestResp) Reset()         { *m = Communicator_TestResp{} }
+func (m *Communicator_TestResp) String() string { return proto.CompactTextString(m) }
+func (*Communicator_TestResp) ProtoMessage()    {}
+func (*Communicator_TestResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{8, 8}
+}
+func (m *Communicator_TestResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Communicator_TestResp.Unmarshal(m, b)
+}
+func (m *Communicator_TestResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Communicator_TestResp.Marshal(b, m, deterministic)
+}
+func (m *Communicator_TestResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Communicator_TestResp.Merge(m, src)
+}
+func (m *Communicator_TestResp) XXX_Size() int {
+	return xxx_messageInfo_Communicator_TestResp.Size(m)
+}
+func (m *Communicator_TestResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Communicator_TestResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Communicator_TestResp proto.InternalMessageInfo
+
+type Guest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Guest) Reset()         { *m = Guest{} }
+func (m *Guest) String() string { return proto.CompactTextString(m) }
+func (*Guest) ProtoMessage()    {}
+func (*Guest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{9}
+}
+func (m *Guest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Guest.Unmarshal(m, b)
+}
+func (m *Guest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Guest.Marshal(b, m, deterministic)
+}
+func (m *Guest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Guest.Merge(m, src)
+}
+func (m *Guest) XXX_Size() int {
+	return xxx_messageInfo_Guest.Size(m)
+}
+func (m *Guest) XXX_DiscardUnknown() {
+	xxx_messageInfo_Guest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Guest proto.InternalMessageInfo
+
+type Guest_DetectResp struct {
+	Detected             bool     `protobuf:"varint,1,opt,name=detected,proto3" json:"detected,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Guest_DetectResp) Reset()         { *m = Guest_DetectResp{} }
+func (m *Guest_DetectResp) String() string { return proto.CompactTextString(m) }
+func (*Guest_DetectResp) ProtoMessage()    {}
+func (*Guest_DetectResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{9, 0}
+}
+func (m *Guest_DetectResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Guest_DetectResp.Unmarshal(m, b)
+}
+func (m *Guest_DetectResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Guest_DetectResp.Marshal(b, m, deterministic)
+}
+func (m *Guest_DetectResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Guest_DetectResp.Merge(m, src)
+}
+func (m *Guest_DetectResp) XXX_Size() int {
+	return xxx_messageInfo_Guest_DetectResp.Size(m)
+}
+func (m *Guest_DetectResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Guest_DetectResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Guest_DetectResp proto.InternalMessageInfo
+
+func (m *Guest_DetectResp) GetDetected() bool {
+	if m != nil {
+		return m.Detected
+	}
+	return false
+}
+
+type Guest_Capability struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Guest_Capability) Reset()         { *m = Guest_Capability{} }
+func (m *Guest_Capability) String() string { return proto.CompactTextString(m) }
+func (*Guest_Capability) ProtoMessage()    {}
+func (*Guest_Capability) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{9, 1}
+}
+func (m *Guest_Capability) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Guest_Capability.Unmarshal(m, b)
+}
+func (m *Guest_Capability) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Guest_Capability.Marshal(b, m, deterministic)
+}
+func (m *Guest_Capability) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Guest_Capability.Merge(m, src)
+}
+func (m *Guest_Capability) XXX_Size() int {
+	return xxx_messageInfo_Guest_Capability.Size(m)
+}
+func (m *Guest_Capability) XXX_DiscardUnknown() {
+	xxx_messageInfo_Guest_Capability.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Guest_Capability proto.InternalMessageInfo
+
+type Guest_Capability_CheckResp struct {
+	HasCapability        bool     `protobuf:"varint,1,opt,name=has_capability,json=hasCapability,proto3" json:"has_capability,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Guest_Capability_CheckResp) Reset()         { *m = Guest_Capability_CheckResp{} }
+func (m *Guest_Capability_CheckResp) String() string { return proto.CompactTextString(m) }
+func (*Guest_Capability_CheckResp) ProtoMessage()    {}
+func (*Guest_Capability_CheckResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{9, 1, 0}
+}
+func (m *Guest_Capability_CheckResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Guest_Capability_CheckResp.Unmarshal(m, b)
+}
+func (m *Guest_Capability_CheckResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Guest_Capability_CheckResp.Marshal(b, m, deterministic)
+}
+func (m *Guest_Capability_CheckResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Guest_Capability_CheckResp.Merge(m, src)
+}
+func (m *Guest_Capability_CheckResp) XXX_Size() int {
+	return xxx_messageInfo_Guest_Capability_CheckResp.Size(m)
+}
+func (m *Guest_Capability_CheckResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Guest_Capability_CheckResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Guest_Capability_CheckResp proto.InternalMessageInfo
+
+func (m *Guest_Capability_CheckResp) GetHasCapability() bool {
+	if m != nil {
+		return m.HasCapability
+	}
+	return false
+}
+
+type Guest_Capability_Resp struct {
+	Result               *anypb.Any `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *Guest_Capability_Resp) Reset()         { *m = Guest_Capability_Resp{} }
+func (m *Guest_Capability_Resp) String() string { return proto.CompactTextString(m) }
+func (*Guest_Capability_Resp) ProtoMessage()    {}
+func (*Guest_Capability_Resp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_22a625af4bc1cc87, []int{9, 1, 1}
+}
+func (m *Guest_Capability_Resp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Guest_Capability_Resp.Unmarshal(m, b)
+}
+func (m *Guest_Capability_Resp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Guest_Capability_Resp.Marshal(b, m, deterministic)
+}
+func (m *Guest_Capability_Resp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Guest_Capability_Resp.Merge(m, src)
+}
+func (m *Guest_Capability_Resp) XXX_Size() int {
+	return xxx_messageInfo_Guest_Capability_Resp.Size(m)
+}
+func (m *Guest_Capability_Resp) XXX_DiscardUnknown() {
+	xxx_messageInfo_Guest_Capability_Resp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Guest_Capability_Resp proto.InternalMessageInfo
+
+func (m *Guest_Capability_Resp) GetResult() *anypb.Any {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Args)(nil), "hashicorp.vagrant.sdk.Args")
-	proto.RegisterType((*Args_Source)(nil), "hashicorp.vagrant.sdk.Args.Source")
-	proto.RegisterType((*Args_JobInfo)(nil), "hashicorp.vagrant.sdk.Args.JobInfo")
-	proto.RegisterType((*Args_DeploymentConfig)(nil), "hashicorp.vagrant.sdk.Args.DeploymentConfig")
-	proto.RegisterType((*Args_DataDir)(nil), "hashicorp.vagrant.sdk.Args.DataDir")
-	proto.RegisterType((*Args_DataDir_Project)(nil), "hashicorp.vagrant.sdk.Args.DataDir.Project")
-	proto.RegisterType((*Args_DataDir_App)(nil), "hashicorp.vagrant.sdk.Args.DataDir.App")
-	proto.RegisterType((*Args_DataDir_Component)(nil), "hashicorp.vagrant.sdk.Args.DataDir.Component")
-	proto.RegisterType((*Args_Logger)(nil), "hashicorp.vagrant.sdk.Args.Logger")
-	proto.RegisterType((*Args_TerminalUI)(nil), "hashicorp.vagrant.sdk.Args.TerminalUI")
-	proto.RegisterType((*Args_ReleaseTargets)(nil), "hashicorp.vagrant.sdk.Args.ReleaseTargets")
-	proto.RegisterType((*Args_ReleaseTargets_Target)(nil), "hashicorp.vagrant.sdk.Args.ReleaseTargets.Target")
+	proto.RegisterType((*Args_MachineIndex)(nil), "hashicorp.vagrant.sdk.Args.MachineIndex")
+	proto.RegisterType((*Args_MachineIndex_Entry)(nil), "hashicorp.vagrant.sdk.Args.MachineIndex.Entry")
+	proto.RegisterType((*Args_BoxCollection)(nil), "hashicorp.vagrant.sdk.Args.BoxCollection")
+	proto.RegisterType((*Args_Box)(nil), "hashicorp.vagrant.sdk.Args.Box")
+	proto.RegisterType((*Args_Environment)(nil), "hashicorp.vagrant.sdk.Args.Environment")
+	proto.RegisterType((*Args_Machine)(nil), "hashicorp.vagrant.sdk.Args.Machine")
+	proto.RegisterType((*Args_Configuration)(nil), "hashicorp.vagrant.sdk.Args.Configuration")
+	proto.RegisterType((*Args_Configuration_Vagrant)(nil), "hashicorp.vagrant.sdk.Args.Configuration.Vagrant")
+	proto.RegisterType((*Args_Configuration_VM)(nil), "hashicorp.vagrant.sdk.Args.Configuration.VM")
+	proto.RegisterType((*Args_Configuration_Provider)(nil), "hashicorp.vagrant.sdk.Args.Configuration.Provider")
 	proto.RegisterType((*Args_LabelSet)(nil), "hashicorp.vagrant.sdk.Args.LabelSet")
 	proto.RegisterMapType((map[string]string)(nil), "hashicorp.vagrant.sdk.Args.LabelSet.LabelsEntry")
+	proto.RegisterType((*Args_Options)(nil), "hashicorp.vagrant.sdk.Args.Options")
+	proto.RegisterType((*Args_Vagrantfile)(nil), "hashicorp.vagrant.sdk.Args.Vagrantfile")
+	proto.RegisterType((*Args_Source)(nil), "hashicorp.vagrant.sdk.Args.Source")
+	proto.RegisterType((*Args_JobInfo)(nil), "hashicorp.vagrant.sdk.Args.JobInfo")
+	proto.RegisterType((*Args_Logger)(nil), "hashicorp.vagrant.sdk.Args.Logger")
+	proto.RegisterType((*Args_TerminalUI)(nil), "hashicorp.vagrant.sdk.Args.TerminalUI")
 	proto.RegisterType((*FuncSpec)(nil), "hashicorp.vagrant.sdk.FuncSpec")
 	proto.RegisterType((*FuncSpec_Value)(nil), "hashicorp.vagrant.sdk.FuncSpec.Value")
 	proto.RegisterType((*FuncSpec_Args)(nil), "hashicorp.vagrant.sdk.FuncSpec.Args")
@@ -2569,6 +3643,26 @@ func init() {
 	proto.RegisterType((*Map_Request)(nil), "hashicorp.vagrant.sdk.Map.Request")
 	proto.RegisterType((*Map_Response)(nil), "hashicorp.vagrant.sdk.Map.Response")
 	proto.RegisterType((*Map_ListResponse)(nil), "hashicorp.vagrant.sdk.Map.ListResponse")
+	proto.RegisterType((*Provider)(nil), "hashicorp.vagrant.sdk.Provider")
+	proto.RegisterType((*Provider_UsableResp)(nil), "hashicorp.vagrant.sdk.Provider.UsableResp")
+	proto.RegisterType((*Provider_InstalledResp)(nil), "hashicorp.vagrant.sdk.Provider.InstalledResp")
+	proto.RegisterType((*Provider_Action)(nil), "hashicorp.vagrant.sdk.Provider.Action")
+	proto.RegisterType((*Provider_Action_Resp)(nil), "hashicorp.vagrant.sdk.Provider.Action.Resp")
+	proto.RegisterType((*Communicator)(nil), "hashicorp.vagrant.sdk.Communicator")
+	proto.RegisterType((*Communicator_MatchResp)(nil), "hashicorp.vagrant.sdk.Communicator.MatchResp")
+	proto.RegisterType((*Communicator_InitResp)(nil), "hashicorp.vagrant.sdk.Communicator.InitResp")
+	proto.RegisterType((*Communicator_ReadyResp)(nil), "hashicorp.vagrant.sdk.Communicator.ReadyResp")
+	proto.RegisterType((*Communicator_ReadyWaitRequest)(nil), "hashicorp.vagrant.sdk.Communicator.ReadyWaitRequest")
+	proto.RegisterType((*Communicator_FileTransferRequest)(nil), "hashicorp.vagrant.sdk.Communicator.FileTransferRequest")
+	proto.RegisterType((*Communicator_FileTransferResp)(nil), "hashicorp.vagrant.sdk.Communicator.FileTransferResp")
+	proto.RegisterType((*Communicator_ExecutionRequest)(nil), "hashicorp.vagrant.sdk.Communicator.ExecutionRequest")
+	proto.RegisterType((*Communicator_ExecuteResp)(nil), "hashicorp.vagrant.sdk.Communicator.ExecuteResp")
+	proto.RegisterType((*Communicator_TestResp)(nil), "hashicorp.vagrant.sdk.Communicator.TestResp")
+	proto.RegisterType((*Guest)(nil), "hashicorp.vagrant.sdk.Guest")
+	proto.RegisterType((*Guest_DetectResp)(nil), "hashicorp.vagrant.sdk.Guest.DetectResp")
+	proto.RegisterType((*Guest_Capability)(nil), "hashicorp.vagrant.sdk.Guest.Capability")
+	proto.RegisterType((*Guest_Capability_CheckResp)(nil), "hashicorp.vagrant.sdk.Guest.Capability.CheckResp")
+	proto.RegisterType((*Guest_Capability_Resp)(nil), "hashicorp.vagrant.sdk.Guest.Capability.Resp")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2843,260 +3937,1502 @@ var _Mapper_serviceDesc = grpc.ServiceDesc{
 	Metadata: "plugin.proto",
 }
 
-// ProviderClient is the client API for Provider service.
+// ProviderServiceClient is the client API for ProviderService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ProviderClient interface {
+type ProviderServiceClient interface {
 	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
 	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
-type providerClient struct {
+type providerServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewProviderClient(cc *grpc.ClientConn) ProviderClient {
-	return &providerClient{cc}
+func NewProviderServiceClient(cc *grpc.ClientConn) ProviderServiceClient {
+	return &providerServiceClient{cc}
 }
 
-func (c *providerClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *providerServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/ConfigStruct", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/ConfigStruct", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *providerClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *providerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Configure", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *providerClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *providerServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provider/Documentation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Documentation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ProviderServer is the server API for Provider service.
-type ProviderServer interface {
+// ProviderServiceServer is the server API for ProviderService service.
+type ProviderServiceServer interface {
 	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
 	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
 	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
 }
 
-func RegisterProviderServer(s *grpc.Server, srv ProviderServer) {
-	s.RegisterService(&_Provider_serviceDesc, srv)
+func RegisterProviderServiceServer(s *grpc.Server, srv ProviderServiceServer) {
+	s.RegisterService(&_ProviderService_serviceDesc, srv)
 }
 
-func _Provider_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProviderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).ConfigStruct(ctx, in)
+		return srv.(ProviderServiceServer).ConfigStruct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/ConfigStruct",
+		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provider_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProviderService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Config_ConfigureRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).Configure(ctx, in)
+		return srv.(ProviderServiceServer).Configure(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Configure",
+		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/Configure",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Configure(ctx, req.(*Config_ConfigureRequest))
+		return srv.(ProviderServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provider_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProviderService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProviderServer).Documentation(ctx, in)
+		return srv.(ProviderServiceServer).Documentation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provider/Documentation",
+		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).Documentation(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Provider_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "hashicorp.vagrant.sdk.Provider",
-	HandlerType: (*ProviderServer)(nil),
+var _ProviderService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.ProviderService",
+	HandlerType: (*ProviderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ConfigStruct",
-			Handler:    _Provider_ConfigStruct_Handler,
+			Handler:    _ProviderService_ConfigStruct_Handler,
 		},
 		{
 			MethodName: "Configure",
-			Handler:    _Provider_Configure_Handler,
+			Handler:    _ProviderService_Configure_Handler,
 		},
 		{
 			MethodName: "Documentation",
-			Handler:    _Provider_Documentation_Handler,
+			Handler:    _ProviderService_Documentation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "plugin.proto",
 }
 
-// ProvisionerClient is the client API for Provisioner service.
+// ProvisionerServiceClient is the client API for ProvisionerService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ProvisionerClient interface {
+type ProvisionerServiceClient interface {
 	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
 	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
-type provisionerClient struct {
+type provisionerServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewProvisionerClient(cc *grpc.ClientConn) ProvisionerClient {
-	return &provisionerClient{cc}
+func NewProvisionerServiceClient(cc *grpc.ClientConn) ProvisionerServiceClient {
+	return &provisionerServiceClient{cc}
 }
 
-func (c *provisionerClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *provisionerServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/ConfigStruct", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *provisionerClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/Configure", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *provisionerClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *provisionerServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Provisioner/Documentation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Documentation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ProvisionerServer is the server API for Provisioner service.
-type ProvisionerServer interface {
+// ProvisionerServiceServer is the server API for ProvisionerService service.
+type ProvisionerServiceServer interface {
 	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
 	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
 	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
 }
 
-func RegisterProvisionerServer(s *grpc.Server, srv ProvisionerServer) {
-	s.RegisterService(&_Provisioner_serviceDesc, srv)
+func RegisterProvisionerServiceServer(s *grpc.Server, srv ProvisionerServiceServer) {
+	s.RegisterService(&_ProvisionerService_serviceDesc, srv)
 }
 
-func _Provisioner_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServer).ConfigStruct(ctx, in)
+		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/ConfigStruct",
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provisioner_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Config_ConfigureRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServer).Configure(ctx, in)
+		return srv.(ProvisionerServiceServer).Configure(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/Configure",
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Configure",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServer).Configure(ctx, req.(*Config_ConfigureRequest))
+		return srv.(ProvisionerServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Provisioner_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServer).Documentation(ctx, in)
+		return srv.(ProvisionerServiceServer).Documentation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.Provisioner/Documentation",
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(ProvisionerServiceServer).Documentation(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Provisioner_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "hashicorp.vagrant.sdk.Provisioner",
-	HandlerType: (*ProvisionerServer)(nil),
+var _ProvisionerService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.ProvisionerService",
+	HandlerType: (*ProvisionerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ConfigStruct",
-			Handler:    _Provisioner_ConfigStruct_Handler,
+			Handler:    _ProvisionerService_ConfigStruct_Handler,
 		},
 		{
 			MethodName: "Configure",
-			Handler:    _Provisioner_Configure_Handler,
+			Handler:    _ProvisionerService_Configure_Handler,
 		},
 		{
 			MethodName: "Documentation",
-			Handler:    _Provisioner_Documentation_Handler,
+			Handler:    _ProvisionerService_Documentation_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// CommandServiceClient is the client API for CommandService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type CommandServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+}
+
+type commandServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewCommandServiceClient(cc *grpc.ClientConn) CommandServiceClient {
+	return &commandServiceClient{cc}
+}
+
+func (c *commandServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CommandServiceServer is the server API for CommandService service.
+type CommandServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+}
+
+func RegisterCommandServiceServer(s *grpc.Server, srv CommandServiceServer) {
+	s.RegisterService(&_CommandService_serviceDesc, srv)
+}
+
+func _CommandService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommandService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommandService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _CommandService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.CommandService",
+	HandlerType: (*CommandServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _CommandService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _CommandService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _CommandService_Documentation_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// CommunicatorServiceClient is the client API for CommunicatorService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type CommunicatorServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	MatchSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Match(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_MatchResp, error)
+	InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_InitResp, error)
+	ReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Ready(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error)
+	WaitForReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	WaitForReady(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error)
+	DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Download(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error)
+	UploadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Upload(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error)
+}
+
+type communicatorServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewCommunicatorServiceClient(cc *grpc.ClientConn) CommunicatorServiceClient {
+	return &communicatorServiceClient{cc}
+}
+
+func (c *communicatorServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) MatchSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/MatchSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Match(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_MatchResp, error) {
+	out := new(Communicator_MatchResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Match", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/InitSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_InitResp, error) {
+	out := new(Communicator_InitResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Init", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) ReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ReadySpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Ready(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error) {
+	out := new(Communicator_ReadyResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Ready", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) WaitForReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReadySpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) WaitForReady(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error) {
+	out := new(Communicator_ReadyResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReady", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/DownloadSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Download(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error) {
+	out := new(Communicator_FileTransferResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Download", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) UploadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/UploadSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) Upload(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error) {
+	out := new(Communicator_FileTransferResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Upload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CommunicatorServiceServer is the server API for CommunicatorService service.
+type CommunicatorServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	MatchSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Match(context.Context, *FuncSpec_Args) (*Communicator_MatchResp, error)
+	InitSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Init(context.Context, *FuncSpec_Args) (*Communicator_InitResp, error)
+	ReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Ready(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error)
+	WaitForReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	WaitForReady(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error)
+	DownloadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Download(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error)
+	UploadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Upload(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error)
+}
+
+func RegisterCommunicatorServiceServer(s *grpc.Server, srv CommunicatorServiceServer) {
+	s.RegisterService(&_CommunicatorService_serviceDesc, srv)
+}
+
+func _CommunicatorService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_MatchSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).MatchSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/MatchSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).MatchSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Match_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Match(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Match",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Match(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_InitSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).InitSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/InitSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).InitSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Init(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Init",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Init(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_ReadySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).ReadySpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ReadySpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).ReadySpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Ready_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Ready(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Ready",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Ready(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_WaitForReadySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).WaitForReadySpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReadySpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).WaitForReadySpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_WaitForReady_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).WaitForReady(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReady",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).WaitForReady(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_DownloadSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).DownloadSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/DownloadSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).DownloadSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Download(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Download",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Download(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_UploadSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).UploadSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/UploadSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).UploadSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).Upload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Upload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).Upload(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _CommunicatorService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.CommunicatorService",
+	HandlerType: (*CommunicatorServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _CommunicatorService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _CommunicatorService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _CommunicatorService_Documentation_Handler,
+		},
+		{
+			MethodName: "MatchSpec",
+			Handler:    _CommunicatorService_MatchSpec_Handler,
+		},
+		{
+			MethodName: "Match",
+			Handler:    _CommunicatorService_Match_Handler,
+		},
+		{
+			MethodName: "InitSpec",
+			Handler:    _CommunicatorService_InitSpec_Handler,
+		},
+		{
+			MethodName: "Init",
+			Handler:    _CommunicatorService_Init_Handler,
+		},
+		{
+			MethodName: "ReadySpec",
+			Handler:    _CommunicatorService_ReadySpec_Handler,
+		},
+		{
+			MethodName: "Ready",
+			Handler:    _CommunicatorService_Ready_Handler,
+		},
+		{
+			MethodName: "WaitForReadySpec",
+			Handler:    _CommunicatorService_WaitForReadySpec_Handler,
+		},
+		{
+			MethodName: "WaitForReady",
+			Handler:    _CommunicatorService_WaitForReady_Handler,
+		},
+		{
+			MethodName: "DownloadSpec",
+			Handler:    _CommunicatorService_DownloadSpec_Handler,
+		},
+		{
+			MethodName: "Download",
+			Handler:    _CommunicatorService_Download_Handler,
+		},
+		{
+			MethodName: "UploadSpec",
+			Handler:    _CommunicatorService_UploadSpec_Handler,
+		},
+		{
+			MethodName: "Upload",
+			Handler:    _CommunicatorService_Upload_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// ConfigServiceClient is the client API for ConfigService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type ConfigServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+}
+
+type configServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewConfigServiceClient(cc *grpc.ClientConn) ConfigServiceClient {
+	return &configServiceClient{cc}
+}
+
+func (c *configServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ConfigServiceServer is the server API for ConfigService service.
+type ConfigServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+}
+
+func RegisterConfigServiceServer(s *grpc.Server, srv ConfigServiceServer) {
+	s.RegisterService(&_ConfigService_serviceDesc, srv)
+}
+
+func _ConfigService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ConfigService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConfigService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ConfigService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConfigService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ConfigService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _ConfigService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.ConfigService",
+	HandlerType: (*ConfigServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _ConfigService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _ConfigService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _ConfigService_Documentation_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// GuestServiceClient is the client API for GuestService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type GuestServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Guest_DetectResp, error)
+	DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+}
+
+type guestServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewGuestServiceClient(cc *grpc.ClientConn) GuestServiceClient {
+	return &guestServiceClient{cc}
+}
+
+func (c *guestServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Guest_DetectResp, error) {
+	out := new(Guest_DetectResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Detect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/DetectSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GuestServiceServer is the server API for GuestService service.
+type GuestServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	Detect(context.Context, *FuncSpec_Args) (*Guest_DetectResp, error)
+	DetectSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+}
+
+func RegisterGuestServiceServer(s *grpc.Server, srv GuestServiceServer) {
+	s.RegisterService(&_GuestService_serviceDesc, srv)
+}
+
+func _GuestService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_Detect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Detect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Detect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Detect(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).DetectSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/DetectSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).DetectSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _GuestService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.GuestService",
+	HandlerType: (*GuestServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _GuestService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _GuestService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _GuestService_Documentation_Handler,
+		},
+		{
+			MethodName: "Detect",
+			Handler:    _GuestService_Detect_Handler,
+		},
+		{
+			MethodName: "DetectSpec",
+			Handler:    _GuestService_DetectSpec_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// HostServiceClient is the client API for HostService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type HostServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+}
+
+type hostServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewHostServiceClient(cc *grpc.ClientConn) HostServiceClient {
+	return &hostServiceClient{cc}
+}
+
+func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// HostServiceServer is the server API for HostService service.
+type HostServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+}
+
+func RegisterHostServiceServer(s *grpc.Server, srv HostServiceServer) {
+	s.RegisterService(&_HostService_serviceDesc, srv)
+}
+
+func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _HostService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.HostService",
+	HandlerType: (*HostServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _HostService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _HostService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _HostService_Documentation_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "plugin.proto",
+}
+
+// SyncedFolderServiceClient is the client API for SyncedFolderService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type SyncedFolderServiceClient interface {
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+}
+
+type syncedFolderServiceClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewSyncedFolderServiceClient(cc *grpc.ClientConn) SyncedFolderServiceClient {
+	return &syncedFolderServiceClient{cc}
+}
+
+func (c *syncedFolderServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncedFolderServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncedFolderServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SyncedFolderServiceServer is the server API for SyncedFolderService service.
+type SyncedFolderServiceServer interface {
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+}
+
+func RegisterSyncedFolderServiceServer(s *grpc.Server, srv SyncedFolderServiceServer) {
+	s.RegisterService(&_SyncedFolderService_serviceDesc, srv)
+}
+
+func _SyncedFolderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncedFolderService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncedFolderService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _SyncedFolderService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.SyncedFolderService",
+	HandlerType: (*SyncedFolderServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _SyncedFolderService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _SyncedFolderService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _SyncedFolderService_Documentation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3106,118 +5442,172 @@ var _Provisioner_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("plugin.proto", fileDescriptor_22a625af4bc1cc87) }
 
 var fileDescriptor_22a625af4bc1cc87 = []byte{
-	// 1797 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x57, 0x5f, 0x73, 0x1c, 0x47,
-	0x11, 0xf7, 0xde, 0x9f, 0xbd, 0xbb, 0x3e, 0xc9, 0x65, 0x26, 0xb6, 0x7c, 0x99, 0x04, 0x62, 0x44,
-	0x02, 0x22, 0x09, 0x6b, 0x47, 0x0e, 0x89, 0x0d, 0x49, 0x51, 0xb2, 0x25, 0xa3, 0x4b, 0x24, 0xc7,
-	0xac, 0x84, 0xcb, 0x90, 0x2a, 0x8e, 0xf1, 0xee, 0xe8, 0xb4, 0xd1, 0xde, 0xce, 0x30, 0x33, 0x7b,
-	0xe2, 0xde, 0xa9, 0xa2, 0x8a, 0x17, 0xde, 0x79, 0xe2, 0x91, 0x2a, 0x3e, 0x00, 0xbc, 0x51, 0x3c,
-	0xf2, 0x04, 0xdf, 0x81, 0x2f, 0x42, 0xcd, 0xbf, 0xbd, 0x3b, 0xf9, 0x4e, 0x7f, 0xf2, 0xca, 0xd3,
-	0x4e, 0xf7, 0x74, 0xf7, 0x74, 0x4f, 0xff, 0xba, 0xa7, 0x17, 0x56, 0x78, 0x5e, 0x0e, 0xb3, 0x22,
-	0xe2, 0x82, 0x29, 0x86, 0x6e, 0x1d, 0x13, 0x79, 0x9c, 0x25, 0x4c, 0xf0, 0x68, 0x4c, 0x86, 0x82,
-	0x14, 0x2a, 0x92, 0xe9, 0x09, 0x7e, 0x7d, 0xc8, 0xd8, 0x30, 0xa7, 0x77, 0x8d, 0xd0, 0xcb, 0xf2,
-	0xe8, 0x2e, 0x29, 0x26, 0x56, 0x03, 0xbf, 0x71, 0x76, 0x8b, 0x8e, 0xb8, 0xf2, 0x9b, 0xb7, 0xdd,
-	0xa6, 0xe0, 0xc9, 0x5d, 0xa9, 0x88, 0x2a, 0xa5, 0xdb, 0xb8, 0x69, 0x3e, 0x52, 0x89, 0x32, 0x51,
-	0xa5, 0xa0, 0x96, 0xbb, 0xfe, 0x8f, 0x16, 0x34, 0xb6, 0xc4, 0x50, 0xe2, 0x08, 0xc2, 0x03, 0x56,
-	0x8a, 0x84, 0xa2, 0x1b, 0x50, 0x27, 0x9c, 0xf7, 0x82, 0x3b, 0xc1, 0x46, 0x27, 0xd6, 0x4b, 0x84,
-	0xa0, 0xc1, 0x89, 0x3a, 0xee, 0xd5, 0x0c, 0xcb, 0xac, 0xf1, 0x3e, 0xb4, 0x3e, 0x63, 0x2f, 0xfb,
-	0xc5, 0x11, 0x43, 0x37, 0xa1, 0x99, 0xb3, 0x84, 0xe4, 0x46, 0xa5, 0x1d, 0x5b, 0x02, 0xbd, 0x09,
-	0x9d, 0x53, 0x26, 0x4e, 0x24, 0x27, 0x09, 0x75, 0x9a, 0x53, 0x06, 0xba, 0x0e, 0xb5, 0x2c, 0xed,
-	0xd5, 0x0d, 0xbb, 0x96, 0xa5, 0xf8, 0xdf, 0x01, 0xdc, 0xd8, 0xa6, 0x3c, 0x67, 0x93, 0x11, 0x2d,
-	0xd4, 0x63, 0x56, 0x1c, 0x65, 0x43, 0x27, 0x14, 0x78, 0x21, 0xf4, 0x16, 0x74, 0x25, 0x15, 0x63,
-	0x2a, 0x06, 0x24, 0x4d, 0x85, 0x33, 0x0a, 0x96, 0xb5, 0x95, 0xa6, 0x02, 0x7d, 0x13, 0x1c, 0x35,
-	0x50, 0xb9, 0x34, 0xd6, 0xdb, 0x71, 0xc7, 0x72, 0x0e, 0x73, 0x89, 0xee, 0xc3, 0xda, 0x74, 0x7b,
-	0x20, 0x4f, 0x32, 0x3e, 0x18, 0x53, 0x91, 0x1d, 0x4d, 0x7a, 0x0d, 0x23, 0xfa, 0x5a, 0x25, 0x7a,
-	0x70, 0x92, 0xf1, 0xe7, 0x66, 0x0b, 0x7d, 0x04, 0xb7, 0x69, 0xa1, 0xc4, 0x84, 0xb3, 0xac, 0x50,
-	0x83, 0xac, 0x18, 0x67, 0x8a, 0x0e, 0x14, 0x3b, 0xa1, 0x45, 0xaf, 0x69, 0x1c, 0xb8, 0x35, 0xdd,
-	0xee, 0x9b, 0xdd, 0x43, 0xbd, 0x89, 0xff, 0x13, 0x40, 0x6b, 0x9b, 0x28, 0xb2, 0x9d, 0x09, 0xbc,
-	0x05, 0xad, 0x67, 0x82, 0x7d, 0x45, 0x13, 0x85, 0xde, 0x80, 0x4e, 0x42, 0x92, 0x63, 0x3a, 0x48,
-	0x33, 0x1f, 0x41, 0xdb, 0x30, 0xb6, 0x33, 0x81, 0x5e, 0x87, 0x76, 0x4a, 0x14, 0x31, 0x7b, 0xf6,
-	0x6e, 0x5a, 0xa9, 0x33, 0xf1, 0x29, 0xd4, 0xb7, 0x38, 0xff, 0xda, 0xea, 0x8f, 0xa1, 0xf3, 0x98,
-	0x8d, 0x38, 0x2b, 0x68, 0xf1, 0xf5, 0x7d, 0x78, 0x13, 0xc2, 0x3d, 0x36, 0x1c, 0x52, 0xa1, 0x11,
-	0x51, 0x90, 0x11, 0x75, 0xb9, 0x31, 0x6b, 0xfc, 0x7d, 0x80, 0x43, 0x2a, 0x46, 0x59, 0x41, 0xf2,
-	0x9f, 0xf7, 0xf5, 0x19, 0x52, 0x09, 0x4a, 0x46, 0x03, 0x97, 0xc2, 0xd5, 0xb8, 0x6d, 0x19, 0xfd,
-	0x14, 0xff, 0x2d, 0x80, 0xeb, 0x31, 0xcd, 0x29, 0x91, 0xf4, 0x90, 0x88, 0x21, 0x55, 0x12, 0x7d,
-	0x0e, 0x2d, 0x65, 0x97, 0xbd, 0xe0, 0x4e, 0x7d, 0xa3, 0xbb, 0xf9, 0x41, 0xb4, 0xb0, 0x30, 0x22,
-	0x8d, 0xd6, 0x68, 0x5e, 0x39, 0xb2, 0xdf, 0xd8, 0x5b, 0xc0, 0x2f, 0x20, 0xb4, 0x2c, 0xf4, 0x21,
-	0x40, 0x5a, 0xc1, 0xca, 0xf8, 0xd1, 0xdd, 0xbc, 0x19, 0xd9, 0x1a, 0x89, 0x7c, 0x01, 0x45, 0x5b,
-	0xc5, 0x24, 0x9e, 0x91, 0x43, 0x3d, 0x68, 0x71, 0x2a, 0x12, 0xad, 0x52, 0x33, 0xae, 0x7b, 0x12,
-	0xff, 0x31, 0x80, 0xf6, 0x1e, 0x79, 0x49, 0xf3, 0x03, 0xaa, 0xd0, 0x2e, 0x84, 0xb9, 0x5e, 0x7b,
-	0x97, 0xef, 0x9d, 0xe7, 0xb2, 0xd7, 0xb2, 0x0b, 0xb9, 0xa3, 0x41, 0x13, 0x3b, 0x7d, 0xfc, 0x10,
-	0xba, 0x33, 0x6c, 0x5d, 0x82, 0x27, 0x74, 0xe2, 0x4b, 0xf0, 0x84, 0x4e, 0x74, 0x8d, 0x8d, 0x49,
-	0x5e, 0xfa, 0x4a, 0xb2, 0xc4, 0x8f, 0x6a, 0x0f, 0x82, 0xf5, 0xbf, 0xd7, 0xa0, 0xfd, 0xa4, 0x2c,
-	0x92, 0x03, 0x4e, 0x93, 0x45, 0x79, 0x41, 0x0f, 0xa1, 0x41, 0xc4, 0x50, 0xf6, 0x6a, 0xc6, 0xc7,
-	0x77, 0x96, 0xf8, 0xe8, 0x4d, 0x44, 0xcf, 0xb5, 0xe5, 0xd8, 0xa8, 0xa0, 0x4f, 0x21, 0x14, 0x54,
-	0x96, 0xb9, 0xea, 0xd5, 0xaf, 0xa2, 0xec, 0x94, 0xf0, 0x97, 0xd0, 0x34, 0x8c, 0x85, 0x6e, 0x21,
-	0x68, 0xa8, 0x09, 0xf7, 0x01, 0x99, 0x35, 0x7a, 0xd7, 0x47, 0x59, 0x3f, 0x27, 0x51, 0x56, 0x04,
-	0x6f, 0xd9, 0xc6, 0x55, 0x85, 0x17, 0x5c, 0x39, 0xbc, 0xf5, 0x3f, 0x87, 0x10, 0xda, 0x56, 0x83,
-	0xbf, 0x0b, 0x37, 0xec, 0xaa, 0x14, 0x34, 0xa6, 0xbf, 0x29, 0xa9, 0x54, 0xda, 0xc3, 0xaf, 0x24,
-	0x2b, 0x8c, 0xd7, 0x2b, 0xb1, 0x59, 0xe3, 0x4f, 0x00, 0x0e, 0x4c, 0x0b, 0x8d, 0xa9, 0xe4, 0x28,
-	0x82, 0xd0, 0x36, 0x54, 0x87, 0xac, 0xb5, 0xe8, 0x4c, 0x93, 0x75, 0xb2, 0x4e, 0x0a, 0xff, 0x33,
-	0x00, 0xf4, 0x24, 0xa3, 0x79, 0xba, 0xcd, 0x92, 0x52, 0x23, 0x8d, 0xa8, 0x8c, 0x15, 0x0b, 0xaf,
-	0x07, 0x43, 0x5b, 0x4e, 0x0a, 0xc6, 0x65, 0x26, 0x7d, 0x89, 0x7a, 0x5a, 0xc3, 0x53, 0x96, 0xa3,
-	0x11, 0x11, 0x13, 0x5f, 0xa1, 0x8e, 0xd4, 0x5a, 0x8c, 0x6b, 0x9b, 0x24, 0x77, 0x3d, 0xad, 0xa2,
-	0xd1, 0x6d, 0x68, 0xd1, 0x62, 0x3c, 0x18, 0x13, 0xe1, 0x1a, 0x57, 0x48, 0x8b, 0xf1, 0x73, 0x22,
-	0xaa, 0x4c, 0x84, 0x33, 0x99, 0xe8, 0x41, 0x2b, 0xa5, 0x47, 0x44, 0xa7, 0xbe, 0xe5, 0x9a, 0x80,
-	0x25, 0x31, 0x85, 0xd7, 0xf6, 0x09, 0xe7, 0x54, 0xcc, 0xc7, 0x70, 0x13, 0x9a, 0x59, 0xc1, 0x4b,
-	0xe5, 0x82, 0xb0, 0x04, 0x5a, 0x83, 0x90, 0x95, 0x4a, 0xb3, 0x6d, 0x0c, 0x8e, 0x42, 0x77, 0xa0,
-	0x9b, 0x52, 0x99, 0x88, 0xcc, 0x38, 0xe7, 0xa2, 0x98, 0x65, 0xe1, 0xdf, 0xd5, 0x61, 0x75, 0xfe,
-	0x84, 0x33, 0x3a, 0xc1, 0x2b, 0x3a, 0xda, 0x69, 0xfa, 0x5b, 0x32, 0xe2, 0xb9, 0x47, 0x95, 0x27,
-	0xa7, 0xde, 0xd5, 0x17, 0x7b, 0xd7, 0x98, 0xf3, 0xee, 0x0b, 0x08, 0x8f, 0x74, 0x96, 0x64, 0xaf,
-	0x69, 0x40, 0xf5, 0xf1, 0x12, 0x50, 0x59, 0xc4, 0x44, 0x73, 0x6e, 0x46, 0x26, 0xbf, 0xbe, 0xbc,
-	0xad, 0x19, 0xdd, 0xdc, 0x46, 0xe6, 0xce, 0x64, 0x2f, 0x3c, 0xb7, 0xb9, 0x39, 0x8b, 0x0b, 0x2e,
-	0x38, 0xf6, 0x16, 0xf0, 0x09, 0x74, 0x67, 0xce, 0x58, 0xd0, 0x2b, 0x9e, 0xcc, 0xf6, 0x8a, 0xe5,
-	0x5d, 0xc9, 0x9d, 0xf5, 0x2a, 0x1e, 0x67, 0xbb, 0xcb, 0x27, 0xd0, 0xd8, 0x2a, 0xd5, 0x31, 0xfe,
-	0x10, 0x56, 0xf4, 0x57, 0xa3, 0x9e, 0x15, 0x92, 0xa2, 0xb7, 0x61, 0x95, 0x94, 0xea, 0x98, 0x16,
-	0x2a, 0x4b, 0x88, 0xa2, 0xa9, 0x7b, 0xfb, 0xe7, 0x99, 0xeb, 0xf7, 0xe0, 0x7a, 0x5f, 0xdf, 0xbf,
-	0x36, 0x2d, 0x4d, 0xc5, 0x7c, 0x0b, 0x20, 0xab, 0x38, 0x4e, 0x69, 0x86, 0xb3, 0xfe, 0xa7, 0xd5,
-	0xd9, 0x57, 0x04, 0x3f, 0x84, 0x5b, 0x7d, 0xd9, 0x2f, 0x14, 0x15, 0x24, 0x51, 0xd9, 0x98, 0x56,
-	0xe7, 0xdf, 0x81, 0x6e, 0x36, 0x65, 0x3b, 0x43, 0xb3, 0x2c, 0xfc, 0x0e, 0xac, 0x7e, 0x61, 0xd2,
-	0xe9, 0xcb, 0x59, 0x8f, 0x29, 0x59, 0x41, 0x6d, 0xa7, 0xe8, 0xc4, 0x96, 0xc0, 0xbf, 0x82, 0x76,
-	0x65, 0xb4, 0x3f, 0x8b, 0xe1, 0xe5, 0x49, 0x9a, 0xfa, 0x17, 0xed, 0x8c, 0x69, 0xa1, 0xa2, 0x7e,
-	0x61, 0x8e, 0x91, 0x7c, 0xf7, 0x9a, 0x83, 0xd6, 0xa3, 0x16, 0x34, 0xa9, 0xde, 0xc3, 0xff, 0xea,
-	0x42, 0xd3, 0x48, 0xa1, 0x47, 0xd0, 0xd0, 0x47, 0x3a, 0xe3, 0xef, 0x5f, 0xd6, 0xf8, 0x5e, 0x56,
-	0xd0, 0xdd, 0x6b, 0xb1, 0xd1, 0xd5, 0x2f, 0x8e, 0x1d, 0xea, 0x5c, 0x6e, 0xa3, 0xcb, 0x5a, 0x39,
-	0x30, 0x5a, 0xbb, 0xd7, 0x62, 0xa7, 0x8f, 0x5e, 0xc0, 0x8a, 0xee, 0x33, 0xe9, 0xc0, 0xe4, 0x5a,
-	0xba, 0x8e, 0x7b, 0xff, 0xb2, 0xf6, 0x9e, 0x6a, 0x5d, 0xd3, 0x4b, 0xb5, 0xd1, 0x6e, 0x31, 0x25,
-	0xd1, 0x4f, 0xa0, 0x2e, 0xc8, 0xa9, 0x29, 0xa9, 0xee, 0xe6, 0x7b, 0x97, 0x35, 0x18, 0x93, 0xd3,
-	0xdd, 0x6b, 0xb1, 0xd6, 0x44, 0x3b, 0xd0, 0x54, 0xe4, 0x65, 0x4e, 0x4d, 0x9b, 0xea, 0x6e, 0xfe,
-	0xe0, 0xb2, 0x26, 0x0e, 0xb5, 0x92, 0x4e, 0x81, 0xd1, 0x46, 0x31, 0x80, 0x54, 0x94, 0x0f, 0x86,
-	0x82, 0x95, 0xdc, 0x34, 0xb7, 0x2b, 0xa4, 0xf4, 0x40, 0x51, 0xfe, 0x53, 0xad, 0xb8, 0x7b, 0x2d,
-	0xee, 0x48, 0x4f, 0xe8, 0x1c, 0x6a, 0xc2, 0xf4, 0xc4, 0x2b, 0xe4, 0x50, 0x5b, 0xd3, 0x39, 0xd4,
-	0xba, 0x3a, 0x3c, 0x8b, 0xb2, 0xf6, 0xd5, 0xc2, 0x33, 0x28, 0xab, 0x10, 0x86, 0xf7, 0xa1, 0xd9,
-	0xf7, 0x5d, 0x8c, 0x0b, 0x36, 0xe2, 0xbe, 0xf5, 0x3a, 0x4a, 0xe3, 0x5d, 0xaa, 0x49, 0xd5, 0x0b,
-	0x2d, 0xa1, 0xa5, 0x25, 0x4d, 0x04, 0x55, 0x6e, 0x3c, 0x76, 0x14, 0xfe, 0x1c, 0x3a, 0x15, 0x8c,
-	0x97, 0x34, 0xf3, 0x0d, 0x68, 0x52, 0x21, 0x98, 0x70, 0xd8, 0x43, 0xfe, 0x75, 0x16, 0x3c, 0x71,
-	0xf8, 0x8a, 0xad, 0x00, 0x7e, 0x02, 0xa1, 0x65, 0x98, 0xe3, 0x2c, 0x60, 0x9d, 0x73, 0x0e, 0x7e,
-	0x37, 0xa0, 0x3e, 0x92, 0x43, 0xe7, 0x9a, 0x5e, 0xea, 0x57, 0xc8, 0x5c, 0xad, 0x75, 0xcb, 0xac,
-	0x71, 0x04, 0x0d, 0x0d, 0x7f, 0x2f, 0x1d, 0x4c, 0xa5, 0x17, 0x06, 0x87, 0x3f, 0x80, 0x7a, 0x4c,
-	0x4e, 0xb5, 0x29, 0x3d, 0xb2, 0xfa, 0x87, 0x5b, 0xaf, 0xad, 0x23, 0x29, 0x15, 0xd6, 0x7b, 0x1d,
-	0xb7, 0xa1, 0xf0, 0x47, 0x00, 0x53, 0x2c, 0x2f, 0x7c, 0x89, 0x17, 0x8e, 0x5e, 0xf8, 0x17, 0xd0,
-	0x9d, 0xa9, 0x01, 0xf4, 0x19, 0x84, 0xae, 0x90, 0xec, 0x1c, 0xb2, 0x79, 0xf5, 0x42, 0x8a, 0x9d,
-	0x05, 0xfc, 0x00, 0xc0, 0x40, 0xd9, 0xf6, 0xf7, 0xea, 0xf8, 0x60, 0xe6, 0x78, 0xcd, 0x4d, 0x58,
-	0xce, 0xfc, 0xf8, 0x6e, 0x09, 0xfc, 0x02, 0xda, 0x46, 0x33, 0x66, 0xa7, 0x68, 0x4f, 0x3f, 0xf7,
-	0x4a, 0x64, 0x57, 0x77, 0x69, 0x7a, 0x78, 0xec, 0x4d, 0xe0, 0x21, 0x34, 0x0d, 0x5b, 0xbf, 0xb1,
-	0xc7, 0x94, 0xa4, 0xfa, 0x29, 0xb3, 0x7d, 0xd4, 0x93, 0x68, 0x1b, 0x1a, 0x82, 0x9d, 0xfa, 0x39,
-	0xf3, 0xde, 0x95, 0x4e, 0x8b, 0xd9, 0x69, 0x6c, 0xb4, 0xf1, 0xb7, 0xa1, 0x53, 0xd5, 0x9e, 0x89,
-	0x32, 0x67, 0xd2, 0xf7, 0x77, 0x4b, 0xe0, 0x02, 0x1a, 0x5a, 0x64, 0xe6, 0xf7, 0xb0, 0x69, 0x7e,
-	0x0f, 0x2b, 0xe9, 0xda, 0x8c, 0xb4, 0xc7, 0x4e, 0x7d, 0x8a, 0x9d, 0x29, 0x26, 0x1b, 0x73, 0x98,
-	0x9c, 0x8e, 0x03, 0x4d, 0x03, 0x1c, 0x47, 0x55, 0xbd, 0x7c, 0xfd, 0xbf, 0x01, 0xd4, 0xf7, 0x09,
-	0xc7, 0x5f, 0x42, 0xcb, 0x3f, 0x2a, 0x0f, 0xaa, 0xe9, 0x53, 0x97, 0xc4, 0xdb, 0x17, 0x4d, 0x9f,
-	0x7a, 0x62, 0x75, 0xb3, 0xf5, 0x5a, 0x35, 0x5b, 0xbb, 0xd1, 0xc8, 0x0d, 0xcd, 0x0f, 0x66, 0x1e,
-	0xa4, 0xf7, 0x2b, 0x99, 0xf3, 0xfe, 0x5c, 0xbc, 0xe6, 0x0e, 0xac, 0xec, 0x65, 0x52, 0x55, 0xda,
-	0x3f, 0x84, 0xe6, 0x51, 0x59, 0x24, 0x3e, 0xff, 0x6f, 0x5d, 0xe0, 0x5c, 0x6c, 0xa5, 0x37, 0xff,
-	0x5a, 0x83, 0x6f, 0x4c, 0xb3, 0x74, 0x40, 0xc5, 0x38, 0x4b, 0x28, 0xfa, 0x19, 0x84, 0xf6, 0x39,
-	0x45, 0x77, 0x2f, 0xce, 0xec, 0xdc, 0xc3, 0x8b, 0xd7, 0x5e, 0xf1, 0x7a, 0x67, 0xc4, 0xd5, 0x04,
-	0x11, 0x08, 0x0d, 0x04, 0x24, 0xfa, 0xde, 0x25, 0xc1, 0x82, 0xdf, 0xbd, 0x58, 0xd0, 0x87, 0xbf,
-	0x11, 0xdc, 0x0b, 0xd0, 0xaf, 0x61, 0x75, 0x6e, 0x7e, 0x40, 0x4b, 0x7c, 0xc1, 0x1f, 0x5f, 0x6c,
-	0x78, 0xe1, 0x20, 0xb2, 0xf9, 0x97, 0x00, 0x42, 0x3b, 0xae, 0xa1, 0xa7, 0xd0, 0xd5, 0xf7, 0x6f,
-	0x29, 0xb9, 0xf4, 0xa8, 0x65, 0xc1, 0xee, 0x13, 0x1e, 0xcd, 0xe5, 0xef, 0xa9, 0x41, 0x1b, 0x5a,
-	0x3f, 0x47, 0xde, 0x5f, 0xf1, 0x77, 0xce, 0x95, 0x71, 0xae, 0xfe, 0xbe, 0x06, 0xed, 0x67, 0x82,
-	0x8d, 0xb3, 0x94, 0x0a, 0xf4, 0x0c, 0x56, 0xec, 0x00, 0x68, 0x7f, 0x51, 0x96, 0x7a, 0xbb, 0x71,
-	0xfe, 0xf4, 0x38, 0xf3, 0x33, 0x74, 0x00, 0x9d, 0xea, 0x17, 0x0a, 0x45, 0xe7, 0xab, 0x9d, 0xfd,
-	0xd7, 0x5a, 0x8a, 0x91, 0xc3, 0xb3, 0x7f, 0x01, 0xcb, 0xfc, 0x7c, 0xef, 0x0a, 0x33, 0xfa, 0xe6,
-	0x1f, 0x6a, 0xd0, 0x35, 0x37, 0x21, 0x33, 0x56, 0xfc, 0x9f, 0x5f, 0xc6, 0xa3, 0xce, 0x2f, 0x5b,
-	0xd1, 0x8f, 0xad, 0x81, 0xd0, 0x7c, 0xee, 0xff, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x5c, 0x4e, 0xa9,
-	0x7f, 0xa2, 0x14, 0x00, 0x00,
+	// 2670 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0xcb, 0x93, 0x1b, 0xb7,
+	0xd1, 0x17, 0x5f, 0x43, 0xb2, 0xc9, 0x95, 0xf6, 0x83, 0x64, 0x99, 0x86, 0xfc, 0x7d, 0x96, 0xd6,
+	0xaf, 0x95, 0x2d, 0x53, 0x32, 0xed, 0xcf, 0x96, 0x62, 0x3b, 0xae, 0x7d, 0x7a, 0xd7, 0xd2, 0xca,
+	0xca, 0xac, 0x24, 0x3b, 0x76, 0x2a, 0x0c, 0x76, 0x88, 0x25, 0x27, 0x1a, 0x0e, 0x26, 0xf3, 0xe0,
+	0x2e, 0x2b, 0xb7, 0x54, 0x4e, 0x79, 0x38, 0x95, 0x54, 0xe5, 0x92, 0x53, 0x8e, 0x49, 0xf9, 0x9c,
+	0xaa, 0x9c, 0x52, 0x95, 0x63, 0x4e, 0xa9, 0xe4, 0x5f, 0xc8, 0x3f, 0x92, 0x42, 0x03, 0x18, 0x0e,
+	0x57, 0x24, 0x45, 0x96, 0xe4, 0xdb, 0x9e, 0x88, 0x6e, 0x74, 0x37, 0x1a, 0xdd, 0x3f, 0x34, 0x1a,
+	0x43, 0xa8, 0x07, 0x5e, 0xd2, 0x75, 0xfd, 0x66, 0x10, 0x8a, 0x58, 0x90, 0xe7, 0x7a, 0x2c, 0xea,
+	0xb9, 0x8e, 0x08, 0x83, 0xe6, 0x80, 0x75, 0x43, 0xe6, 0xc7, 0xcd, 0xa8, 0xf3, 0x88, 0xbe, 0xd0,
+	0x15, 0xa2, 0xeb, 0xf1, 0xeb, 0x28, 0x74, 0x90, 0x1c, 0x5e, 0x67, 0xfe, 0x50, 0x69, 0xd0, 0x4b,
+	0x27, 0xa7, 0x78, 0x3f, 0x88, 0xcd, 0xe4, 0xf3, 0x7a, 0x32, 0x0c, 0x9c, 0xeb, 0x51, 0xcc, 0xe2,
+	0x24, 0xd2, 0x13, 0x17, 0xf0, 0x27, 0x8a, 0xc3, 0xc4, 0x89, 0x93, 0x90, 0x2b, 0xee, 0xca, 0xbf,
+	0x97, 0xa1, 0xb8, 0x16, 0x76, 0x23, 0xfa, 0xcf, 0x3c, 0xd4, 0xf7, 0x98, 0xd3, 0x73, 0x7d, 0xbe,
+	0xeb, 0x77, 0xf8, 0x31, 0xfd, 0x5b, 0x1e, 0x4a, 0x5b, 0x7e, 0x1c, 0x0e, 0xc9, 0x59, 0xc8, 0xbb,
+	0x9d, 0x46, 0xee, 0x72, 0x6e, 0xb5, 0x6a, 0xe7, 0xdd, 0x0e, 0x79, 0x0d, 0xce, 0x79, 0xc2, 0x61,
+	0x5e, 0xbb, 0xc3, 0x62, 0xd6, 0x0e, 0x58, 0xdc, 0x6b, 0xe4, 0x71, 0x72, 0x09, 0xd9, 0x9b, 0x2c,
+	0x66, 0xf7, 0x58, 0xdc, 0x23, 0x04, 0x8a, 0x3e, 0xeb, 0xf3, 0x46, 0x01, 0x27, 0x71, 0x4c, 0x28,
+	0x54, 0x82, 0x50, 0x0c, 0xdc, 0x0e, 0x0f, 0x1b, 0x45, 0xe4, 0xa7, 0x34, 0xb9, 0x00, 0x25, 0xe9,
+	0x31, 0x6f, 0x94, 0x70, 0x42, 0x11, 0xe4, 0x2a, 0x2c, 0xeb, 0xb8, 0x1c, 0xba, 0x1e, 0x6f, 0xa3,
+	0x45, 0x0b, 0x05, 0xce, 0x65, 0xf8, 0x77, 0xa5, 0xf1, 0x13, 0xa2, 0xe8, 0x59, 0xf9, 0x31, 0x51,
+	0xf4, 0xed, 0x7f, 0x01, 0x92, 0xa0, 0xc3, 0x62, 0xde, 0x69, 0xb3, 0xb8, 0x51, 0x41, 0xa1, 0xaa,
+	0xe6, 0xac, 0xc5, 0x64, 0x1d, 0x80, 0x1f, 0xc7, 0x21, 0xc3, 0x2d, 0x36, 0xaa, 0x97, 0x73, 0xab,
+	0xb5, 0xd6, 0xcb, 0xcd, 0x89, 0x99, 0x6a, 0xca, 0xf0, 0x35, 0x3f, 0x0b, 0x62, 0x57, 0xf8, 0x91,
+	0x5d, 0x45, 0x35, 0x19, 0x02, 0xfa, 0x16, 0x2c, 0xad, 0x8b, 0xe3, 0x0d, 0xe1, 0x79, 0xdc, 0x91,
+	0x93, 0xe4, 0x45, 0xa8, 0x76, 0xdc, 0x90, 0x3b, 0xb1, 0x08, 0x87, 0x3a, 0x9c, 0x23, 0x06, 0xfd,
+	0x57, 0x0e, 0x0a, 0xeb, 0xe2, 0x38, 0x8d, 0x5a, 0x6e, 0x4a, 0xd4, 0xf2, 0x27, 0xa2, 0xd6, 0x80,
+	0xf2, 0x80, 0x87, 0x91, 0x2b, 0x7c, 0x1d, 0x68, 0x43, 0x8e, 0xaf, 0x57, 0x3c, 0xb1, 0x1e, 0xf9,
+	0x18, 0x2a, 0x7d, 0x1e, 0x33, 0xdc, 0x60, 0x69, 0xfe, 0x0d, 0xa6, 0x4a, 0xe4, 0x0a, 0xd4, 0xcd,
+	0xb8, 0x9d, 0x84, 0x9e, 0x4e, 0x4a, 0xcd, 0xf0, 0x1e, 0x84, 0x1e, 0xfd, 0x7d, 0x01, 0x6a, 0x5b,
+	0xfe, 0xc0, 0x0d, 0x85, 0xdf, 0xe7, 0x7e, 0x4c, 0x96, 0xa1, 0xe0, 0x1c, 0x19, 0x28, 0xc9, 0x21,
+	0x79, 0x01, 0x2a, 0x68, 0xa0, 0xe3, 0x9a, 0x9d, 0x95, 0x25, 0xbd, 0xe9, 0x86, 0x13, 0x13, 0x5f,
+	0x98, 0x9c, 0xf8, 0xf7, 0x20, 0x9f, 0xb8, 0xb8, 0xc5, 0x5a, 0xeb, 0xb5, 0x59, 0xbb, 0xb8, 0xcf,
+	0xc3, 0xbe, 0xeb, 0x33, 0xef, 0xc1, 0xae, 0x9d, 0x4f, 0x5c, 0x72, 0x09, 0xaa, 0x3d, 0xd1, 0xd7,
+	0x48, 0x51, 0xa8, 0xab, 0x48, 0x06, 0x42, 0x64, 0x02, 0xcc, 0xad, 0x49, 0x30, 0x7f, 0x01, 0x2a,
+	0x71, 0x3f, 0xc8, 0xa2, 0xad, 0x1c, 0xf7, 0x03, 0x9c, 0xba, 0x02, 0x75, 0xe6, 0xb9, 0x2c, 0xe2,
+	0x91, 0x9a, 0x56, 0x38, 0xab, 0x69, 0x9e, 0x01, 0xe2, 0x81, 0x38, 0x36, 0x02, 0x55, 0x95, 0x25,
+	0xe4, 0xe0, 0xf4, 0x25, 0xa8, 0x76, 0x79, 0x5f, 0xcf, 0x82, 0xf2, 0x50, 0x32, 0x70, 0xf2, 0x7d,
+	0x68, 0x74, 0xf8, 0x21, 0x4b, 0xbc, 0xb8, 0x1d, 0x84, 0xee, 0x80, 0xc5, 0xbc, 0xfd, 0x88, 0x0f,
+	0x95, 0x6c, 0x0d, 0x65, 0x9f, 0xd3, 0xf3, 0xf7, 0xd4, 0xf4, 0x6d, 0x3e, 0x94, 0x8a, 0xf4, 0x67,
+	0x25, 0x28, 0xeb, 0xc3, 0x4e, 0xde, 0x86, 0xc2, 0x81, 0x38, 0xc6, 0x9c, 0xd4, 0x5a, 0x2f, 0xcd,
+	0x0a, 0xde, 0xba, 0x38, 0xb6, 0xa5, 0x2c, 0x59, 0x03, 0xcb, 0x11, 0xfe, 0xa1, 0xdb, 0xc5, 0x94,
+	0xd5, 0x5a, 0x57, 0x67, 0x69, 0x6d, 0xa0, 0x64, 0x12, 0x32, 0x89, 0x1f, 0x5b, 0x2b, 0x8e, 0xe5,
+	0xbd, 0x30, 0x9e, 0xf7, 0x5b, 0x50, 0xe0, 0xfe, 0x40, 0x67, 0xf3, 0xf5, 0x59, 0xa6, 0x33, 0xd0,
+	0xb2, 0xa5, 0x8e, 0xae, 0x54, 0xa5, 0xb4, 0x52, 0x99, 0xb3, 0x64, 0x65, 0xce, 0xd2, 0x07, 0x99,
+	0xb3, 0x54, 0x9e, 0xb9, 0xe9, 0x7b, 0x5a, 0x2c, 0x73, 0xd8, 0x6c, 0x38, 0x67, 0xc6, 0x6d, 0x1d,
+	0x82, 0xca, 0xa2, 0x21, 0x38, 0x6b, 0x2c, 0x28, 0x36, 0x79, 0x19, 0x96, 0x52, 0x9b, 0xe8, 0xad,
+	0x02, 0x41, 0xdd, 0x30, 0x11, 0xe1, 0x77, 0x61, 0x39, 0x15, 0x12, 0xea, 0x28, 0x22, 0x1c, 0xe6,
+	0x3c, 0xb5, 0xa9, 0xd7, 0x9a, 0xa1, 0x4f, 0x4c, 0x6d, 0xe1, 0x13, 0xb3, 0x0b, 0xb5, 0xcc, 0xe1,
+	0x6b, 0xd4, 0x9f, 0x9c, 0xa4, 0x87, 0x23, 0x71, 0x3b, 0xab, 0x4b, 0xaf, 0xc1, 0xd2, 0x58, 0x60,
+	0x68, 0x15, 0xca, 0x5a, 0x98, 0x16, 0x21, 0xff, 0x70, 0x8f, 0x02, 0x54, 0x4c, 0x0e, 0xe8, 0x6f,
+	0x72, 0x50, 0xb9, 0xc3, 0x0e, 0xb8, 0xb7, 0xcf, 0x63, 0xb2, 0x03, 0x96, 0x27, 0xc7, 0x51, 0x23,
+	0x77, 0xb9, 0xb0, 0x5a, 0x6b, 0xdd, 0x98, 0xe5, 0x80, 0xd1, 0x52, 0x83, 0x08, 0xef, 0x34, 0x5b,
+	0xeb, 0xd3, 0x5b, 0x50, 0xcb, 0xb0, 0x65, 0x81, 0x7a, 0xc4, 0x4d, 0x71, 0x96, 0x43, 0x79, 0x29,
+	0x0d, 0x98, 0x97, 0x70, 0x5d, 0x9d, 0x14, 0xf1, 0x9d, 0xfc, 0xcd, 0x1c, 0x5d, 0x83, 0xf2, 0x28,
+	0x9a, 0x05, 0x11, 0xc4, 0xfa, 0x0c, 0xbd, 0x32, 0x8f, 0x33, 0xb6, 0x54, 0xa0, 0x4b, 0x50, 0xcb,
+	0x84, 0x87, 0x36, 0xc1, 0xda, 0x17, 0x49, 0xe8, 0x70, 0xe9, 0x07, 0x0b, 0x02, 0xe3, 0x07, 0x0b,
+	0x02, 0x09, 0xe5, 0xcc, 0x4d, 0x8b, 0x63, 0xba, 0x07, 0xe5, 0x4f, 0xc5, 0xc1, 0xae, 0x7f, 0x28,
+	0xa4, 0x9b, 0x58, 0x95, 0x50, 0xa5, 0x62, 0x2b, 0x42, 0xde, 0x00, 0x47, 0x22, 0x7c, 0x14, 0x05,
+	0xcc, 0x31, 0x1b, 0x18, 0x31, 0xf4, 0x69, 0x29, 0x98, 0xd3, 0x42, 0x5f, 0x04, 0xeb, 0x8e, 0xe8,
+	0x76, 0x79, 0x38, 0xe9, 0x0e, 0xa2, 0x57, 0x01, 0x46, 0x58, 0x90, 0x75, 0x29, 0x8a, 0x43, 0xce,
+	0xfa, 0x6d, 0xdd, 0x1a, 0x2c, 0xd9, 0x15, 0xc5, 0xd8, 0xed, 0xac, 0xfc, 0x35, 0x0f, 0x95, 0xed,
+	0xc4, 0x77, 0xf6, 0x03, 0xee, 0x4c, 0xbc, 0xcf, 0x6e, 0x41, 0x91, 0x85, 0xdd, 0xa8, 0x91, 0xc7,
+	0xec, 0xbd, 0x3a, 0x25, 0x60, 0xc6, 0x44, 0xf3, 0xa1, 0x8c, 0xb9, 0x8d, 0x2a, 0xe4, 0x23, 0xb0,
+	0x42, 0x1e, 0x25, 0x5e, 0xdc, 0x28, 0x2c, 0xa2, 0xac, 0x95, 0xe8, 0x57, 0x50, 0x42, 0xc6, 0x44,
+	0xb7, 0x08, 0x14, 0xe3, 0x61, 0x60, 0x22, 0x85, 0x63, 0xf2, 0x86, 0xc9, 0x7f, 0x01, 0x93, 0x7b,
+	0xa1, 0xa9, 0xfa, 0xab, 0xa6, 0x69, 0xbe, 0x9a, 0x6b, 0xfe, 0x50, 0xa3, 0x82, 0xae, 0xa9, 0x5e,
+	0x2a, 0xdd, 0x5e, 0x6e, 0xe1, 0xed, 0xad, 0xfc, 0xd1, 0x02, 0x4b, 0x9d, 0x0a, 0xfa, 0x1a, 0x2c,
+	0x9b, 0xf3, 0xc1, 0x6d, 0xfe, 0x93, 0x84, 0x47, 0xb1, 0xf4, 0xf0, 0xc7, 0x91, 0xf0, 0xd1, 0xeb,
+	0xba, 0x8d, 0x63, 0xfa, 0x21, 0xc0, 0x3e, 0x76, 0x75, 0x36, 0x8f, 0x02, 0xd2, 0x04, 0x4b, 0xf5,
+	0x78, 0x1a, 0x8d, 0x17, 0x9b, 0x27, 0xfa, 0x3e, 0x2d, 0xab, 0xa5, 0xe8, 0xdf, 0x73, 0x40, 0xb6,
+	0x5d, 0xee, 0x75, 0x36, 0x85, 0x93, 0xc8, 0x4a, 0x8a, 0x67, 0x71, 0x5a, 0x17, 0x12, 0x0d, 0x7d,
+	0x11, 0x44, 0x6e, 0x64, 0xba, 0x10, 0x43, 0xcb, 0x2e, 0x24, 0x4a, 0xfa, 0x7d, 0x16, 0x0e, 0x4d,
+	0x39, 0xd7, 0xa4, 0xd4, 0x52, 0x05, 0x8b, 0x79, 0x58, 0xd3, 0x2b, 0x76, 0x4a, 0x93, 0xe7, 0xa1,
+	0xcc, 0xfd, 0x41, 0x7b, 0xc0, 0x42, 0x5d, 0xb4, 0x2d, 0xee, 0x0f, 0x1e, 0xb2, 0x30, 0xcd, 0x84,
+	0x95, 0xc9, 0x44, 0x03, 0xca, 0xfa, 0x36, 0x33, 0xd7, 0xac, 0x26, 0x29, 0x87, 0xf3, 0x7b, 0x2c,
+	0x08, 0x78, 0x38, 0xbe, 0x87, 0x0b, 0x50, 0x72, 0xfd, 0x20, 0x89, 0xf5, 0x26, 0x14, 0x41, 0x2e,
+	0x82, 0x25, 0x92, 0x58, 0xb2, 0xd5, 0x1e, 0x34, 0x45, 0x2e, 0x43, 0xad, 0xc3, 0x23, 0x27, 0x74,
+	0xd1, 0x39, 0xbd, 0x8b, 0x2c, 0x8b, 0xfe, 0xbc, 0x00, 0x4b, 0xe3, 0x2b, 0x9c, 0xd0, 0xc9, 0x3d,
+	0xa6, 0x23, 0x9d, 0xe6, 0xc7, 0xac, 0x1f, 0x78, 0x06, 0x55, 0x86, 0x1c, 0x79, 0x57, 0x98, 0xec,
+	0x5d, 0x71, 0xcc, 0xbb, 0xcf, 0xc0, 0x3a, 0x94, 0x59, 0x8a, 0x1a, 0x25, 0x04, 0xd5, 0xfb, 0x53,
+	0x40, 0xa5, 0x10, 0xd3, 0x1c, 0x73, 0xb3, 0x89, 0xf9, 0x35, 0x85, 0x4f, 0x99, 0x21, 0xb7, 0xa1,
+	0xdc, 0xc7, 0x98, 0x45, 0x0d, 0x0b, 0x2d, 0xbe, 0x3d, 0xdb, 0xe2, 0x84, 0x00, 0xdb, 0xc6, 0x02,
+	0x7d, 0x04, 0xb5, 0xcc, 0x1a, 0x13, 0xaa, 0xe8, 0x76, 0xb6, 0x8a, 0x4e, 0xaf, 0xd7, 0x7a, 0xad,
+	0xc7, 0xf1, 0x98, 0xa9, 0xbb, 0x2b, 0x1f, 0x42, 0x71, 0x2d, 0x89, 0x7b, 0xf4, 0x5d, 0xa8, 0xcb,
+	0x5f, 0x89, 0x7a, 0xe1, 0x47, 0x9c, 0xbc, 0x02, 0x4b, 0x2c, 0x89, 0x7b, 0xdc, 0x8f, 0x5d, 0x47,
+	0xb6, 0xf1, 0xba, 0x14, 0x8e, 0x33, 0x57, 0x6e, 0xc0, 0xd9, 0x5d, 0x19, 0x7f, 0x69, 0x3a, 0xc2,
+	0x13, 0xf3, 0x7f, 0x00, 0x6e, 0xca, 0xd1, 0x4a, 0x19, 0xce, 0xca, 0x1f, 0x96, 0xb2, 0x95, 0x8f,
+	0xde, 0x82, 0xe7, 0x76, 0xa3, 0x5d, 0x3f, 0xe6, 0x21, 0x73, 0x62, 0x77, 0xc0, 0xd3, 0xf5, 0x2f,
+	0x43, 0xcd, 0x1d, 0xb1, 0xb5, 0xa1, 0x2c, 0x8b, 0xbe, 0x0a, 0x4b, 0x9f, 0x61, 0x3a, 0xcd, 0x71,
+	0x96, 0x55, 0xdb, 0xf5, 0xb9, 0xaa, 0x14, 0x55, 0x5b, 0x11, 0xf4, 0x87, 0x50, 0x49, 0x8d, 0xee,
+	0x66, 0x31, 0x3c, 0x3d, 0x49, 0x23, 0xff, 0x9a, 0x5b, 0x03, 0xee, 0xc7, 0xcd, 0x5d, 0x1f, 0x97,
+	0x89, 0x82, 0x9d, 0x33, 0x1a, 0x5a, 0xeb, 0x65, 0x28, 0x71, 0x39, 0x47, 0xff, 0x51, 0x83, 0x12,
+	0x4a, 0x91, 0x75, 0x28, 0xca, 0x25, 0xb5, 0xf1, 0x6b, 0xf3, 0x1a, 0xbf, 0xe3, 0xfa, 0x7c, 0xe7,
+	0x8c, 0x8d, 0xba, 0xf2, 0x2e, 0x56, 0xef, 0x4c, 0x9d, 0xdb, 0xe6, 0xbc, 0x56, 0xf6, 0x51, 0x6b,
+	0xe7, 0x8c, 0xad, 0xf5, 0xc9, 0x17, 0x50, 0x97, 0x75, 0xa6, 0xd3, 0xc6, 0x5c, 0x47, 0xba, 0xe2,
+	0xbe, 0x33, 0xaf, 0x3d, 0xd9, 0x27, 0x75, 0xb0, 0x96, 0x4a, 0xa3, 0x35, 0x7f, 0x44, 0x92, 0x8f,
+	0xa1, 0x10, 0xb2, 0x23, 0xdd, 0x52, 0xbe, 0x39, 0xaf, 0x41, 0x9b, 0x1d, 0xed, 0x9c, 0xb1, 0xa5,
+	0x26, 0xd9, 0x82, 0x52, 0xcc, 0x0e, 0x3c, 0xae, 0x5f, 0x4a, 0x6f, 0xcd, 0x6b, 0xe2, 0xbe, 0x54,
+	0x92, 0x29, 0x40, 0x6d, 0x62, 0x03, 0x44, 0x31, 0x0f, 0xda, 0xdd, 0x50, 0x24, 0x01, 0x16, 0xb7,
+	0x05, 0x52, 0xba, 0x1f, 0xf3, 0xe0, 0x13, 0xa9, 0xb8, 0x73, 0xc6, 0xae, 0x46, 0x86, 0x90, 0x39,
+	0x94, 0x84, 0xee, 0x65, 0xaf, 0x2d, 0x62, 0x4d, 0xe6, 0x50, 0xea, 0xca, 0xed, 0x29, 0x94, 0x55,
+	0x16, 0xdb, 0x1e, 0xa2, 0x2c, 0x45, 0x18, 0xdd, 0x83, 0xd2, 0xae, 0xa9, 0x62, 0x41, 0x28, 0xfa,
+	0x81, 0x29, 0xbd, 0x9a, 0x52, 0x2f, 0xfc, 0x61, 0x5a, 0x0b, 0x15, 0x21, 0xa5, 0x23, 0xee, 0x84,
+	0x5c, 0x95, 0xc2, 0x8a, 0xad, 0x29, 0x7a, 0x1b, 0xaa, 0x29, 0x8c, 0xa7, 0x14, 0xf3, 0x55, 0x28,
+	0xf1, 0x30, 0x14, 0xa1, 0xc6, 0x1e, 0x31, 0xb7, 0x73, 0x18, 0x38, 0x1a, 0x5f, 0xb6, 0x12, 0xa0,
+	0xdb, 0x60, 0x29, 0x06, 0x2e, 0xa7, 0x00, 0xab, 0x9d, 0xd3, 0xf0, 0x5b, 0x86, 0x42, 0x3f, 0xea,
+	0x6a, 0xd7, 0xe4, 0x50, 0xde, 0x42, 0x18, 0x5a, 0xe5, 0x16, 0x8e, 0x69, 0x13, 0x8a, 0x12, 0xfe,
+	0x46, 0x3a, 0x37, 0x92, 0x9e, 0xb8, 0x39, 0xfa, 0x36, 0x14, 0x6c, 0x76, 0x24, 0x4d, 0xe1, 0x4b,
+	0x5b, 0x5f, 0xdc, 0xf8, 0x80, 0x46, 0x47, 0x3a, 0x3c, 0x54, 0xde, 0xcb, 0x7d, 0x23, 0x45, 0xdf,
+	0x03, 0x18, 0x61, 0x79, 0xe2, 0x4d, 0x3c, 0xb1, 0x29, 0xa5, 0xdf, 0x87, 0x5a, 0xe6, 0x0c, 0x90,
+	0x4f, 0xc1, 0xd2, 0x07, 0x49, 0xf5, 0x21, 0xad, 0xc5, 0x0f, 0x92, 0xad, 0x2d, 0xd0, 0x9b, 0x00,
+	0x08, 0x65, 0x55, 0xdf, 0xd3, 0xe5, 0x73, 0x99, 0xe5, 0x25, 0xd7, 0x11, 0x9e, 0x30, 0xef, 0x78,
+	0x45, 0xd0, 0x2f, 0xa0, 0x82, 0x9a, 0xb6, 0x38, 0x22, 0x77, 0xe4, 0x75, 0x1f, 0x87, 0xee, 0xe2,
+	0x2e, 0x8d, 0x16, 0xb7, 0x8d, 0x09, 0xda, 0x85, 0x12, 0xb2, 0xe5, 0x1d, 0xdb, 0xe3, 0xac, 0x23,
+	0xaf, 0x32, 0x55, 0x47, 0x0d, 0x49, 0x36, 0xa1, 0x18, 0x8a, 0x23, 0xd3, 0x67, 0xde, 0x58, 0x68,
+	0x35, 0x5b, 0x1c, 0xd9, 0xa8, 0x4d, 0xaf, 0x40, 0x35, 0x3d, 0x7b, 0xb8, 0x4b, 0x4f, 0x44, 0xa6,
+	0xbe, 0x2b, 0x82, 0xfa, 0x50, 0x94, 0x22, 0x99, 0x4f, 0x65, 0x25, 0x7c, 0x80, 0xa6, 0xd2, 0xf9,
+	0x8c, 0xb4, 0xc1, 0x4e, 0x61, 0x84, 0x9d, 0x11, 0x26, 0x8b, 0x63, 0x98, 0x1c, 0xb5, 0x03, 0x25,
+	0x04, 0x8e, 0xa6, 0xd2, 0x5a, 0xbe, 0xf2, 0x9f, 0x1c, 0x14, 0xf6, 0x58, 0x40, 0xbf, 0x82, 0xb2,
+	0xb9, 0x54, 0x6e, 0xa6, 0xdd, 0xe7, 0xac, 0xd7, 0x48, 0xda, 0x7d, 0xca, 0x8e, 0x55, 0xf7, 0xd6,
+	0x17, 0xd3, 0xde, 0x5a, 0xb7, 0x46, 0xba, 0x69, 0xbe, 0x99, 0xb9, 0x90, 0xae, 0xa5, 0x32, 0xb9,
+	0x19, 0x0d, 0xb1, 0xd1, 0xdc, 0x82, 0xfa, 0x1d, 0x37, 0x8a, 0x53, 0xed, 0xff, 0x87, 0xd2, 0x61,
+	0xe2, 0x3b, 0x26, 0xff, 0x2f, 0x3d, 0xc1, 0x39, 0x5b, 0x49, 0xaf, 0xfc, 0x34, 0xf3, 0x10, 0xbc,
+	0x0a, 0xf0, 0x20, 0xc2, 0x04, 0xc9, 0xb2, 0x70, 0x09, 0xaa, 0x6e, 0xd4, 0x4e, 0x90, 0xa1, 0x53,
+	0x52, 0x71, 0x23, 0x25, 0x40, 0x5b, 0xb0, 0xb4, 0xeb, 0x47, 0x31, 0xf3, 0x3c, 0xde, 0x41, 0xe9,
+	0x2b, 0x50, 0x77, 0xa3, 0xb6, 0x6b, 0x78, 0xe9, 0x1d, 0x1d, 0xa5, 0x62, 0x74, 0x19, 0xac, 0x35,
+	0xfc, 0x5c, 0x47, 0x2d, 0x28, 0x4a, 0xa5, 0x95, 0xbf, 0x14, 0xa1, 0xbe, 0x21, 0xfa, 0xfd, 0xc4,
+	0x97, 0x2d, 0x84, 0x08, 0x25, 0x1e, 0xf6, 0x58, 0xec, 0xf4, 0x4c, 0x5d, 0xea, 0x4b, 0xc2, 0xe0,
+	0x01, 0x09, 0xf9, 0x72, 0xdd, 0xf5, 0x5d, 0xdc, 0xb7, 0x14, 0xb7, 0x39, 0xeb, 0x0c, 0x8d, 0x78,
+	0x28, 0x09, 0x23, 0x8e, 0x04, 0xe5, 0xb0, 0x8c, 0x22, 0x9f, 0x33, 0x37, 0xed, 0x0d, 0x3e, 0x92,
+	0x0d, 0x1a, 0x7e, 0xa2, 0xd1, 0x91, 0x9e, 0xf9, 0xd0, 0xd7, 0x5f, 0x73, 0x6c, 0xa3, 0x23, 0xcb,
+	0xc6, 0x11, 0x73, 0x55, 0x26, 0x0b, 0x36, 0x8e, 0xe9, 0xd7, 0x39, 0x38, 0xbf, 0xed, 0x7a, 0xfc,
+	0x7e, 0xc8, 0xfc, 0xe8, 0x90, 0x87, 0xcf, 0x68, 0x29, 0x09, 0x5e, 0x7c, 0xb6, 0x1a, 0xd8, 0x28,
+	0x4a, 0x77, 0xc7, 0xb1, 0xeb, 0xb3, 0x13, 0x1d, 0xb5, 0x61, 0x51, 0x02, 0xcb, 0xe3, 0xfe, 0x44,
+	0x01, 0xfd, 0x26, 0x07, 0xcb, 0x5b, 0xc7, 0xdc, 0x49, 0xb0, 0xef, 0x7b, 0x36, 0x1e, 0x36, 0xa0,
+	0xec, 0x88, 0x7e, 0x9f, 0xf9, 0x1d, 0xd3, 0x85, 0x6b, 0x92, 0x7c, 0x17, 0xca, 0xe6, 0x73, 0x4a,
+	0x61, 0x81, 0xd7, 0xbb, 0x51, 0x92, 0x2f, 0x78, 0xe5, 0x2c, 0xc2, 0x51, 0xe6, 0xfd, 0x3e, 0x57,
+	0x78, 0x5f, 0xf9, 0x73, 0x0e, 0x4a, 0x9f, 0x48, 0xef, 0xe9, 0x2a, 0xc0, 0x26, 0x8f, 0xb9, 0x7e,
+	0xa1, 0x51, 0xa8, 0x74, 0x90, 0x4a, 0x01, 0x98, 0xd2, 0x74, 0x00, 0xb0, 0xc1, 0x02, 0x76, 0xe0,
+	0x7a, 0x6e, 0x3c, 0xa4, 0x2d, 0xa8, 0x6e, 0xf4, 0xb8, 0xf3, 0x08, 0xd5, 0x5e, 0x85, 0xb3, 0x3d,
+	0x16, 0xb5, 0x9d, 0x74, 0xda, 0xf4, 0xb7, 0x3d, 0x16, 0x65, 0x74, 0xde, 0x55, 0xa8, 0x5d, 0xec,
+	0x9c, 0xb6, 0xbe, 0xc9, 0xc3, 0xff, 0x8c, 0xca, 0xe0, 0x3e, 0x0f, 0x07, 0xae, 0xc3, 0xc9, 0xf7,
+	0xc0, 0x52, 0xfd, 0x2a, 0xb9, 0xfe, 0xe4, 0xd2, 0x39, 0xd6, 0xd9, 0xd2, 0x8b, 0x8f, 0x2d, 0xb7,
+	0xd5, 0x0f, 0xe2, 0x21, 0x61, 0x60, 0x61, 0x8d, 0x8d, 0xc8, 0xeb, 0x73, 0x56, 0x63, 0xfa, 0xc6,
+	0x93, 0x05, 0x4d, 0x7d, 0x59, 0xcd, 0xdd, 0xc8, 0x91, 0x1f, 0xc1, 0xd2, 0x58, 0x83, 0x4e, 0xa6,
+	0xf8, 0x42, 0xdf, 0x7f, 0xb2, 0xe1, 0x89, 0x9d, 0x7e, 0xeb, 0x4f, 0x39, 0xb0, 0xd4, 0x7b, 0x88,
+	0xdc, 0x85, 0x9a, 0x2c, 0x70, 0x8a, 0x8a, 0xa6, 0x2e, 0x35, 0x6d, 0xb3, 0x7b, 0x2c, 0x68, 0x8e,
+	0x15, 0xc8, 0xbb, 0x58, 0xce, 0xc9, 0xca, 0x0c, 0x79, 0x13, 0xe2, 0x97, 0x67, 0xca, 0x68, 0x57,
+	0xbf, 0xce, 0xc3, 0x39, 0x53, 0x3a, 0x4d, 0x5a, 0xef, 0xc9, 0x7a, 0x26, 0x1f, 0x5a, 0xea, 0x53,
+	0xc0, 0x54, 0xa7, 0x57, 0x67, 0xbf, 0xd2, 0x32, 0x1f, 0x1d, 0xf6, 0xa1, 0x9a, 0x7e, 0xaa, 0x20,
+	0xcd, 0xd9, 0x6a, 0x27, 0xbf, 0x69, 0x4c, 0x85, 0xca, 0xfd, 0x93, 0xaf, 0xed, 0x69, 0x7e, 0xbe,
+	0xb9, 0xc0, 0x5b, 0xb8, 0xf5, 0xdb, 0x3c, 0x10, 0x0c, 0x48, 0xe4, 0x0a, 0xff, 0x34, 0x26, 0x18,
+	0x93, 0x5f, 0xe7, 0xe1, 0xec, 0x86, 0x2a, 0x88, 0xa7, 0xf1, 0x10, 0x7e, 0xeb, 0x97, 0x00, 0xe7,
+	0xb3, 0x37, 0xfe, 0x69, 0x50, 0x84, 0x4f, 0x36, 0x75, 0xd7, 0x83, 0x1f, 0x75, 0xa7, 0x59, 0x7c,
+	0x52, 0x43, 0x47, 0x7e, 0x00, 0x25, 0xb4, 0x42, 0xe6, 0xea, 0x4b, 0xe9, 0x5b, 0x53, 0x3d, 0x1c,
+	0x65, 0xa7, 0x39, 0x6a, 0xc6, 0x36, 0x54, 0xdb, 0xf5, 0x74, 0x2e, 0x7e, 0x09, 0x45, 0x69, 0x64,
+	0x4e, 0x0f, 0xaf, 0xcd, 0xe3, 0xa1, 0xe9, 0x05, 0x65, 0x10, 0xb1, 0xd1, 0x7b, 0xea, 0x20, 0xa2,
+	0x95, 0x67, 0x19, 0xc4, 0x51, 0x8b, 0x7a, 0x1b, 0x96, 0x65, 0x1f, 0xba, 0x2d, 0xc2, 0x67, 0xe0,
+	0xaa, 0x03, 0xf5, 0xac, 0xb1, 0x6f, 0xc7, 0xe3, 0x4f, 0xa0, 0xbe, 0x29, 0x8e, 0x7c, 0x4f, 0xb0,
+	0xce, 0xd3, 0x79, 0x7b, 0x08, 0x15, 0x63, 0x68, 0x4e, 0x4f, 0xdf, 0x9d, 0xc7, 0xd3, 0x93, 0x3d,
+	0x2e, 0xd9, 0x02, 0x78, 0x10, 0x3c, 0xbd, 0xbb, 0x1d, 0xb0, 0x94, 0x99, 0x6f, 0xd3, 0xd9, 0xd6,
+	0xaf, 0xf2, 0xe6, 0x8f, 0xba, 0xd3, 0x3a, 0x28, 0xfc, 0xd6, 0x37, 0x05, 0xa8, 0x63, 0x5b, 0x7f,
+	0x1a, 0x0d, 0xe1, 0x93, 0xcf, 0xc1, 0x52, 0x4f, 0x9b, 0x39, 0x21, 0x38, 0xad, 0x11, 0xc6, 0x88,
+	0x36, 0x33, 0xaf, 0xa4, 0x2d, 0xf3, 0x66, 0x7a, 0xaa, 0x23, 0xd2, 0xfa, 0x45, 0x1e, 0x6a, 0x3b,
+	0xe2, 0x34, 0x59, 0x08, 0xdd, 0xdf, 0xe5, 0xe1, 0xfc, 0xfe, 0xd0, 0x77, 0x78, 0x67, 0x5b, 0x78,
+	0xa7, 0x0f, 0x02, 0x34, 0xb2, 0x5e, 0xfd, 0xb2, 0xdc, 0xfc, 0x40, 0x19, 0xb0, 0xf0, 0xe7, 0x9d,
+	0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0xcb, 0xe1, 0x8c, 0x68, 0xa1, 0x27, 0x00, 0x00,
 }
