@@ -28,6 +28,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
+	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 	golang.org/x/sys v0.0.0-20200916030750-2334cc1a136f
 	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
 	google.golang.org/grpc v1.32.0
