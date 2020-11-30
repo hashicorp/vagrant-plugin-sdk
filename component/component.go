@@ -30,6 +30,7 @@ const (
 	MapperType                    // Mapper
 	LogViewerType                 // LogViewer
 	AuthenticatorType             // Authenticator
+	RubyType                      // Ruby
 	maxType
 )
 
