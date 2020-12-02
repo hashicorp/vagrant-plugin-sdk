@@ -9,8 +9,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
-	"github.com/hashicorp/waypoint-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	//	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	//	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
@@ -23,12 +24,12 @@ var All = []interface{}{
 	SourceProto,
 	JobInfo,
 	JobInfoProto,
-	DatadirProject,
-	DatadirApp,
-	DatadirComponent,
-	DatadirProjectProto,
-	DatadirAppProto,
-	DatadirComponentProto,
+	// DatadirProject,
+	// DatadirApp,
+	// DatadirComponent,
+	// DatadirProjectProto,
+	// DatadirAppProto,
+	// DatadirComponentProto,
 	Logger,
 	LoggerProto,
 	TerminalUI,
@@ -36,6 +37,19 @@ var All = []interface{}{
 	LabelSet,
 	LabelSetProto,
 }
+
+// TODO(spox): make sure these new mappers actually work
+// func Machine(input *pb.Args_Machine) (*core.Machine, error) {
+// 	var result core.Machine
+// 	return &result, mapstructure.Decode(input, &result)
+// }
+
+// func MachineProto(input *core.Machine) (*pb.Args_Machine, error) {
+// 	var result pb.Args_Machine
+// 	return &result, mapstructure.Decode(intput, &result)
+// }
+
+// TODO(spox): end of mappers to validate
 
 // Source maps Args.Source to component.Source.
 func Source(input *pb.Args_Source) (*component.Source, error) {
@@ -61,44 +75,44 @@ func JobInfoProto(input *component.JobInfo) (*pb.Args_JobInfo, error) {
 	return &result, mapstructure.Decode(input, &result)
 }
 
-// DatadirProject maps *pb.Args_DataDir_Project to *datadir.Project
-func DatadirProject(input *pb.Args_DataDir_Project) *datadir.Project {
-	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
-	return &datadir.Project{Dir: dir}
-}
+// // DatadirProject maps *pb.Args_DataDir_Project to *datadir.Project
+// func DatadirProject(input *pb.Args_DataDir_Project) *datadir.Project {
+// 	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
+// 	return &datadir.Project{Dir: dir}
+// }
 
-func DatadirProjectProto(input *datadir.Project) *pb.Args_DataDir_Project {
-	return &pb.Args_DataDir_Project{
-		CacheDir: input.CacheDir(),
-		DataDir:  input.DataDir(),
-	}
-}
+// func DatadirProjectProto(input *datadir.Project) *pb.Args_DataDir_Project {
+// 	return &pb.Args_DataDir_Project{
+// 		CacheDir: input.CacheDir(),
+// 		DataDir:  input.DataDir(),
+// 	}
+// }
 
-// DatadirApp maps *pb.Args_DataDir_App to *datadir.App
-func DatadirApp(input *pb.Args_DataDir_App) *datadir.App {
-	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
-	return &datadir.App{Dir: dir}
-}
+// // DatadirApp maps *pb.Args_DataDir_App to *datadir.App
+// func DatadirApp(input *pb.Args_DataDir_App) *datadir.App {
+// 	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
+// 	return &datadir.App{Dir: dir}
+// }
 
-func DatadirAppProto(input *datadir.App) *pb.Args_DataDir_App {
-	return &pb.Args_DataDir_App{
-		CacheDir: input.CacheDir(),
-		DataDir:  input.DataDir(),
-	}
-}
+// func DatadirAppProto(input *datadir.App) *pb.Args_DataDir_App {
+// 	return &pb.Args_DataDir_App{
+// 		CacheDir: input.CacheDir(),
+// 		DataDir:  input.DataDir(),
+// 	}
+// }
 
-// DatadirComponent maps *pb.Args_DataDir_Component to *datadir.Component
-func DatadirComponent(input *pb.Args_DataDir_Component) *datadir.Component {
-	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
-	return &datadir.Component{Dir: dir}
-}
+// // DatadirComponent maps *pb.Args_DataDir_Component to *datadir.Component
+// func DatadirComponent(input *pb.Args_DataDir_Component) *datadir.Component {
+// 	dir := datadir.NewBasicDir(input.CacheDir, input.DataDir)
+// 	return &datadir.Component{Dir: dir}
+// }
 
-func DatadirComponentProto(input *datadir.Component) *pb.Args_DataDir_Component {
-	return &pb.Args_DataDir_Component{
-		CacheDir: input.CacheDir(),
-		DataDir:  input.DataDir(),
-	}
-}
+// func DatadirComponentProto(input *datadir.Component) *pb.Args_DataDir_Component {
+// 	return &pb.Args_DataDir_Component{
+// 		CacheDir: input.CacheDir(),
+// 		DataDir:  input.DataDir(),
+// 	}
+// }
 
 // Logger maps *pb.Args_Logger to an hclog.Logger
 func Logger(input *pb.Args_Logger) hclog.Logger {

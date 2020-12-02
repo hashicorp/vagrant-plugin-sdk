@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package hashicorp.vagrant.sdk;
+
+option go_package = ".;proto";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/rpc/status.proto";
+import "protostructure.proto";
+import "plugin.proto";
+
+message Machine {
+  message DataDirResp {
+    string path = 1;
+  }
+
+  message IDResp {
+    string ID = 1;
+  }
+}
+
+service MachineService {
+  rpc Box(google.protobuf.Empty) returns (Args.Box);
+  rpc DataDir(google.protobuf.Empty) returns (Machine.DataDirResp);
+  rpc Environment(google.protobuf.Empty) returns (Args.Environment);
+  rpc ID(google.protobuf.Empty) returns (Machine.IDResp);
+}

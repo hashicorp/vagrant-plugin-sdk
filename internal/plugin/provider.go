@@ -25,7 +25,7 @@ type ProviderPlugin struct {
 }
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterProviderServer(s, &providerServer{
+	proto.RegisterProviderServiceServer(s, &providerServer{
 		Impl:    p.Impl,
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
@@ -40,7 +40,7 @@ func (p *ProviderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &providerClient{
-		client: proto.NewProviderClient(c),
+		client: proto.NewProviderServiceClient(c),
 		logger: p.Logger,
 		broker: broker,
 	}, nil
@@ -48,7 +48,7 @@ func (p *ProviderPlugin) GRPCClient(
 
 // providerClient is an implementation of component.Provider over gRPC.
 type providerClient struct {
-	client  proto.ProviderClient
+	client  proto.ProviderServiceClient
 	logger  hclog.Logger
 	broker  *plugin.GRPCBroker
 	mappers []*argmapper.Func
@@ -66,12 +66,16 @@ func (c *providerClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(context.Background(), c.client)
 }
 
-func (c *providerClient) ProviderFunc() interface{} {
-	//TODO
-	return nil
-}
+// func (c *providerClient) Usable() bool {
+// 	resp, err := c.client.Usable(context.Background(), &empty.Empty{})
+// 	if err != nil {
+// 		return false
+// 	}
 
-// logPlatformServer is a gRPC server that the client talks to and calls a
+// 	return resp.IsUsable
+// }
+
+// providerServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type providerServer struct {
 	Impl    component.Provider
@@ -102,8 +106,8 @@ func (s *providerServer) Documentation(
 }
 
 var (
-	_ plugin.Plugin        = (*ProviderPlugin)(nil)
-	_ plugin.GRPCPlugin    = (*ProviderPlugin)(nil)
-	_ proto.ProviderServer = (*providerServer)(nil)
-	_ component.Provider   = (*providerClient)(nil)
+	_ plugin.Plugin               = (*ProviderPlugin)(nil)
+	_ plugin.GRPCPlugin           = (*ProviderPlugin)(nil)
+	_ proto.ProviderServiceServer = (*providerServer)(nil)
+	_ component.Provider          = (*providerClient)(nil)
 )

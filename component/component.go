@@ -10,11 +10,6 @@
 // framework (see internal/mapper) to call these functions.
 package component
 
-import (
-	"context"
-	"time"
-)
-
 //go:generate stringer -type=Type -linecomment
 //go:generate mockery --all
 
@@ -25,53 +20,100 @@ type Type uint
 
 const (
 	InvalidType       Type = iota // Invalid
+	AuthenticatorType             // Authenticator
+	CommandType                   // Command
+	CommunicatorType              // Communicator
+	ConfigType                    // Config
+	GuestType                     // Guest
+	HostType                      // Host
+	LogPlatformType               // LogPlatform
+	LogViewerType                 // LogViewer
 	ProviderType                  // Provider
 	ProvisionerType               // Provisioner
+	SyncedFolderType              // Synced Folder
 	MapperType                    // Mapper
-	LogViewerType                 // LogViewer
-	AuthenticatorType             // Authenticator
 	maxType
 )
 
 // TypeMap is a mapping of Type to the nil pointer to the interface of that
 // type. This can be used with libraries such as mapper.
 var TypeMap = map[Type]interface{}{
+	AuthenticatorType: (*Authenticator)(nil),
+	CommandType:       (*Command)(nil),
+	CommunicatorType:  (*Communicator)(nil),
+	ConfigType:        (*Config)(nil),
+	GuestType:         (*Guest)(nil),
+	HostType:          (*Host)(nil),
+	LogPlatformType:   (*LogPlatform)(nil),
+	LogViewerType:     (*LogViewer)(nil),
 	ProviderType:      (*Provider)(nil),
 	ProvisionerType:   (*Provisioner)(nil),
-	LogViewerType:     (*LogViewer)(nil),
-	AuthenticatorType: (*Authenticator)(nil),
+	SyncedFolderType:  (*SyncedFolder)(nil),
 }
 
-// Providers are the backend that VMs are launched on
+type Command interface {
+}
+
+type Config interface {
+}
+
+type Communicator interface {
+	// Checks if machine can be used with communicator
+	MatchFunc() interface{}
+	// Initialize communicator with machine
+	InitFunc() interface{}
+	// Check if communicator is ready
+	ReadyFunc() interface{}
+	// Wait for communicator to become ready for given seconds
+	WaitForReadyFunc() interface{}
+	// Download file from guest path to local path
+	DownloadFunc() interface{}
+	// Upload file from local path to guest path
+	UploadFunc() interface{}
+	// // Run command using escalated privileges
+	// EscalateFunc() interface{}
+	// // Run a test command on the guest
+	// TestFunc() interface{}
+	// // Reset the communicator. Close and re-establish connection where required.
+	// ResetFunc() interface{}
+}
+
+type Guest interface {
+	// Detect if machine is supported guest
+	DetectFunc() interface{}
+	// // Test if capability is available
+	// HasCapabilityFunc() interface{}
+	// // Run a capability
+	// CapabilityFunc() interface{}
+}
+
+type Host interface {
+}
+
 type Provider interface {
-	// Handles operations involving interfacing with a provider
-	ProviderFunc() interface{}
+	// Usable() bool
+	// Installed() bool
+	// InitFunc() interface{}
+	// ActionUpFunc() interface{}
+	// ActionHaltFunc() interface{}
+	// ActionSuspendFunc() interface{}
+	// ActionReloadFunc() interface{}
+	// ActionResumeFunc() interface{}
+	// ActionProvisionFunc() interface{}
+	// ActionSnapshotSaveFunc() interface{}
+	// ActionSnapshotRestoreFunc() interface{}
+	// ActionSnapshotDeleteFunc() interface{}
+	// ActionDestroyFunc() interface{}
 }
 
-// Provisioner is responsible for provisioning a VM
 type Provisioner interface {
-	// Handles operations involving provisioining the guest machine
-	ProvisionerFunc() interface{}
+}
+
+type SyncedFolder interface {
 }
 
 type LabelSet struct {
 	Labels map[string]string
-}
-
-// LogViewer returns batches of log lines. This is expected to be returned
-// by a LogPlatform implementation.
-type LogViewer interface {
-	// NextBatch is called to return the next batch of logs. This is expected
-	// to block if there are no logs available. The context passed in will be
-	// cancelled if the logs viewer is interrupted.
-	NextLogBatch(ctx context.Context) ([]LogEvent, error)
-}
-
-// LogEvent represents a single log entry.
-type LogEvent struct {
-	Partition string
-	Timestamp time.Time
-	Message   string
 }
 
 // Authenticator is responsible for authenticating different types of plugins.
