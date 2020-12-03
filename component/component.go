@@ -88,6 +88,8 @@ type Guest interface {
 }
 
 type Host interface {
+	// Detect if machine is supported host
+	DetectFunc() interface{}
 }
 
 type Provider interface {
