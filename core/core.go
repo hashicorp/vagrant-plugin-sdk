@@ -189,3 +189,4 @@ type Host interface{}
 type Guest interface{}
 type SyncedFolder interface{}
 type Communicator interface{}
+type CommunicatorOptions struct{}

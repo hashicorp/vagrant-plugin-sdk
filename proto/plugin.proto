@@ -473,9 +473,17 @@ service CommunicatorService {
   rpc UploadSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Upload(FuncSpec.Args) returns (Communicator.FileTransferResp);
 
-  // rpc Execute(Communicator.ExecutionRequest) returns (Communicator.ExecuteResp);
-  // rpc PrivilegedExecute(Communicator.ExecutionRequest) returns (Communicator.ExecuteResp);
-  // rpc Test(Communicator.ExecutionRequest) returns (Communicator.TestResp);
+  rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Execute(FuncSpec.Args) returns (Communicator.ExecuteResp);
+
+  rpc PrivilegedExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc PrivilegedExecute(FuncSpec.Args) returns (Communicator.ExecuteResp);
+
+  rpc TestSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Test(FuncSpec.Args) returns (Communicator.TestResp);
+
+  rpc ResetSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Reset(FuncSpec.Args) returns (Communicator.ResetResp);
 }
 
 message Communicator {
@@ -489,17 +497,6 @@ message Communicator {
     bool ready = 1;
   }
 
-  message ReadyWaitRequest {
-    Args.Machine machine = 1;
-    int64 wait = 2;
-  }
-
-  message FileTransferRequest {
-    Args.Machine machine = 1;
-    string source = 2;
-    string destination = 3;
-  }
-
   message FileTransferResp {
   }
 
@@ -510,10 +507,14 @@ message Communicator {
   }
 
   message ExecuteResp {
+    int32 exit_code = 1;
   }
 
   message TestResp {
+    bool valid = 1;
   }
+
+  message ResetResp {}
 }
 
 service ConfigService {

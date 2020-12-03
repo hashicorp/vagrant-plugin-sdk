@@ -2,15 +2,12 @@ package plugin
 
 import (
 	"context"
-	"errors"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -111,14 +108,8 @@ func (c *communicatorClient) Match(machine *core.Machine) (bool, error) {
 		return false, err
 	}
 
-	// Convert it into the expected type
-	result, ok := raw.(bool)
-	if !ok {
-		return false, errors.New("invalid response type")
-	}
-
 	// and fin
-	return result, nil
+	return raw.(bool), nil
 }
 
 func (c *communicatorClient) InitFunc() interface{} {
@@ -165,12 +156,7 @@ func (c *communicatorClient) Ready(machine *core.Machine) (bool, error) {
 		return false, err
 	}
 
-	result, ok := raw.(bool)
-	if !ok {
-		return false, errors.New("invalid type response")
-	}
-
-	return result, nil
+	return raw.(bool), nil
 }
 
 func (c *communicatorClient) WaitForReadyFunc() interface{} {
@@ -198,12 +184,8 @@ func (c *communicatorClient) WaitForReady(machine *core.Machine, wait int) (bool
 	if err != nil {
 		return false, err
 	}
-	result, ok := raw.(bool)
-	if !ok {
-		return false, errors.New("invalid type response")
-	}
 
-	return result, nil
+	return raw.(bool), nil
 }
 
 func (c *communicatorClient) DownloadFunc() interface{} {
@@ -252,6 +234,127 @@ func (c *communicatorClient) Upload(machine *core.Machine, source, destination s
 	return err
 }
 
+func (c *communicatorClient) ExecuteFunc() interface{} {
+	spec, err := c.client.ExecuteSpec(context.Background(), &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+		result, err := c.client.Execute(ctx, &proto.FuncSpec_Args{Args: args})
+		if err != nil {
+			return -1, err
+		}
+		return result.ExitCode, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *communicatorClient) Execute(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+	f := c.ExecuteFunc()
+	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
+		argmapper.Typed(machine),
+		argmapper.Typed(opts),
+		argmapper.Typed(cmd),
+		argmapper.Named("command", cmd),
+	)
+	if err != nil {
+		return -1, err
+	}
+
+	return raw.(int32), nil
+}
+
+func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
+	spec, err := c.client.PrivilegedExecuteSpec(context.Background(), &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+		result, err := c.client.PrivilegedExecute(ctx, &proto.FuncSpec_Args{Args: args})
+		if err != nil {
+			return -1, err
+		}
+		return result.ExitCode, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *communicatorClient) PrivilegedExecute(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+	f := c.PrivilegedExecuteFunc()
+	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
+		argmapper.Typed(machine),
+		argmapper.Typed(opts),
+		argmapper.Typed(cmd),
+		argmapper.Named("command", cmd),
+	)
+	if err != nil {
+		return -1, err
+	}
+
+	return raw.(int32), nil
+}
+
+func (c *communicatorClient) TestFunc() interface{} {
+	spec, err := c.client.TestSpec(context.Background(), &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		result, err := c.client.Test(ctx, &proto.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return result.Valid, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *communicatorClient) Test(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
+	f := c.TestFunc()
+	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
+		argmapper.Typed(machine),
+		argmapper.Typed(opts),
+		argmapper.Typed(cmd),
+		argmapper.Named("command", cmd),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
+}
+
+func (c *communicatorClient) ResetFunc() interface{} {
+	spec, err := c.client.ResetSpec(context.Background(), &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		_, err := c.client.Reset(ctx, &proto.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *communicatorClient) Reset(machine *core.Machine) (err error) {
+	f := c.ResetFunc()
+	_, err = c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
+		argmapper.Typed(machine),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // communicatorServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type communicatorServer struct {
@@ -296,21 +399,14 @@ func (s *communicatorServer) Match(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Communicator_MatchResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.MatchFunc(), args.Args,
+	raw, err := s.callLocalDynamicFunc(s.Impl.MatchFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	match, ok := raw.(bool)
-	if !ok {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"plugin Match function should have returned a bool, got %T",
-			raw)
-	}
-
-	return &proto.Communicator_MatchResp{Match: match}, nil
+	return &proto.Communicator_MatchResp{Match: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) InitSpec(
@@ -349,7 +445,7 @@ func (s *communicatorServer) Ready(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Communicator_ReadyResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.ReadyFunc(), args.Args,
+	raw, err := s.callLocalDynamicFunc(s.Impl.ReadyFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -357,14 +453,7 @@ func (s *communicatorServer) Ready(
 		return nil, err
 	}
 
-	result, ok := raw.(bool)
-	if !ok {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"plugin Ready function should have returned a bool, got %T",
-			raw)
-	}
-
-	return &proto.Communicator_ReadyResp{Ready: result}, nil
+	return &proto.Communicator_ReadyResp{Ready: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) WaitForReadySpec(
@@ -382,21 +471,14 @@ func (s *communicatorServer) WaitForReady(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Communicator_ReadyResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.WaitForReadyFunc(), args.Args,
+	raw, err := s.callLocalDynamicFunc(s.Impl.WaitForReadyFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
 
-	result, ok := raw.(bool)
-	if !ok {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"plugin Ready function should have returned a bool, got %T",
-			raw)
-	}
-
-	return &proto.Communicator_ReadyResp{Ready: result}, nil
+	return &proto.Communicator_ReadyResp{Ready: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) DownloadSpec(
@@ -414,7 +496,7 @@ func (s *communicatorServer) Download(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Communicator_FileTransferResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.DownloadFunc(), args.Args,
+	_, err := s.callLocalDynamicFunc(s.Impl.DownloadFunc(), args.Args, (interface{})(nil),
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -439,7 +521,7 @@ func (s *communicatorServer) Upload(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Communicator_FileTransferResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.UploadFunc(), args.Args,
+	_, err := s.callLocalDynamicFunc(s.Impl.UploadFunc(), args.Args, (interface{})(nil),
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -447,6 +529,106 @@ func (s *communicatorServer) Upload(
 	}
 
 	return &proto.Communicator_FileTransferResp{}, nil
+}
+
+func (s *communicatorServer) ExecuteSpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*proto.FuncSpec, error) {
+	if err := isImplemented(s, "communicator"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.ExecuteFunc())
+}
+
+func (s *communicatorServer) Execute(
+	ctx context.Context,
+	args *proto.FuncSpec_Args,
+) (*proto.Communicator_ExecuteResp, error) {
+	raw, err := s.callLocalDynamicFunc(s.Impl.ExecuteFunc(), args.Args, (*int32)(nil),
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+}
+
+func (s *communicatorServer) PrivilegedExecuteSpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*proto.FuncSpec, error) {
+	if err := isImplemented(s, "communicator"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.PrivilegedExecuteFunc())
+}
+
+func (s *communicatorServer) PrivilegedExecute(
+	ctx context.Context,
+	args *proto.FuncSpec_Args,
+) (*proto.Communicator_ExecuteResp, error) {
+	raw, err := s.callLocalDynamicFunc(s.Impl.PrivilegedExecuteFunc(), args.Args, (*int32)(nil),
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+}
+
+func (s *communicatorServer) TestSpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*proto.FuncSpec, error) {
+	if err := isImplemented(s, "communicator"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.TestFunc())
+}
+
+func (s *communicatorServer) Test(
+	ctx context.Context,
+	args *proto.FuncSpec_Args,
+) (*proto.Communicator_TestResp, error) {
+	raw, err := s.callLocalDynamicFunc(s.Impl.TestFunc(), args.Args, (*bool)(nil),
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Communicator_TestResp{Valid: raw.(bool)}, nil
+}
+
+func (s *communicatorServer) ResetSpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*proto.FuncSpec, error) {
+	if err := isImplemented(s, "communicator"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.ResetFunc())
+}
+
+func (s *communicatorServer) Reset(
+	ctx context.Context,
+	args *proto.FuncSpec_Args,
+) (*proto.Communicator_ResetResp, error) {
+	_, err := s.callLocalDynamicFunc(s.Impl.ResetFunc(), args.Args, (interface{})(nil),
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Communicator_ResetResp{}, nil
 }
 
 var (
