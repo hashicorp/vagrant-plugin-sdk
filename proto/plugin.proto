@@ -554,7 +554,25 @@ service HostService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+
+  rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
+  rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
 }
+
+message Host {
+  message DetectResp {
+    bool detected = 1;
+  }
+  message Capability {
+    message CheckResp {
+      bool has_capability = 1;
+    }
+    message Resp {
+      google.protobuf.Any result = 1;
+    }
+  }
+}
+
 
 service SyncedFolderService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);

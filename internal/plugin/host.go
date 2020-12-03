@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
@@ -26,10 +27,14 @@ type HostPlugin struct {
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	proto.RegisterHostServiceServer(s, &hostServer{
-		Impl:    p.Impl,
-		Mappers: p.Mappers,
-		Logger:  p.Logger,
-		Broker:  broker,
+		Impl: p.Impl,
+		baseServer: &baseServer{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	})
 	return nil
 }
@@ -41,17 +46,21 @@ func (p *HostPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &hostClient{
 		client: proto.NewHostServiceClient(c),
-		logger: p.Logger,
-		broker: broker,
+		baseClient: &baseClient{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	}, nil
 }
 
 // hostClient is an implementation of component.Host over gRPC.
 type hostClient struct {
-	client  proto.HostServiceClient
-	logger  hclog.Logger
-	broker  *plugin.GRPCBroker
-	mappers []*argmapper.Func
+	*baseClient
+
+	client proto.HostServiceClient
 }
 
 func (c *hostClient) Config() (interface{}, error) {
@@ -66,18 +75,38 @@ func (c *hostClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(context.Background(), c.client)
 }
 
-func (c *hostClient) HostFunc() interface{} {
-	//TODO
-	return nil
+func (c *hostClient) DetectFunc() interface{} {
+	spec, err := c.client.DetectSpec(context.Background(), &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		resp, err := c.client.Detect(ctx, &proto.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return resp.Detected, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *hostClient) Detect() (bool, error) {
+	f := c.DetectFunc()
+	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
 }
 
 // hostServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type hostServer struct {
-	Impl    component.Host
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Broker  *plugin.GRPCBroker
+	*baseServer
+
+	Impl component.Host
 }
 
 func (s *hostServer) ConfigStruct(
@@ -99,6 +128,32 @@ func (s *hostServer) Documentation(
 	empty *empty.Empty,
 ) (*proto.Config_Documentation, error) {
 	return documentation(s.Impl)
+}
+
+func (s *hostServer) DetectSpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*proto.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.DetectFunc())
+}
+
+func (s *hostServer) Detect(
+	ctx context.Context,
+	args *proto.FuncSpec_Args,
+) (*proto.Host_DetectResp, error) {
+	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args, (*bool)(nil),
+		argmapper.Typed(ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Host_DetectResp{Detected: raw.(bool)}, nil
 }
 
 var (
