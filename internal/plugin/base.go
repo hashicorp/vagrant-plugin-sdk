@@ -119,6 +119,7 @@ func (b *baseClient) generateFunc(spec *pb.FuncSpec, cbFn interface{}, args ...a
 func (b *baseServer) callLocalDynamicFunc(
 	f interface{},
 	args funcspec.Args,
+	result interface{}, // expected result type
 	callArgs ...argmapper.Arg,
 ) (interface{}, error) {
 	internal := b.internal()
@@ -167,12 +168,23 @@ func (b *baseServer) callLocalDynamicFunc(
 		return nil, err
 	}
 
-	result := mapF.Call(callArgs...)
-	if err := result.Err(); err != nil {
+	callResult := mapF.Call(callArgs...)
+	if err := callResult.Err(); err != nil {
 		return nil, err
 	}
 
-	return result.Out(0), nil
+	raw := callResult.Out(0)
+
+	// Verify
+	interfaceType := reflect.TypeOf(result).Elem()
+	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
+		return nil, status.Errorf(codes.FailedPrecondition,
+			"operation expected result type %s, got %s",
+			interfaceType.String(),
+			rawType.String())
+	}
+
+	return raw, nil
 }
 
 func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {

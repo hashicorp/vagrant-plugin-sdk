@@ -9,8 +9,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -156,7 +154,7 @@ func (s *guestServer) Detect(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Guest_DetectResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args,
+	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -164,14 +162,7 @@ func (s *guestServer) Detect(
 		return nil, err
 	}
 
-	result, ok := raw.(bool)
-	if !ok {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"plugin Ready function should have returned a bool, got %T",
-			raw)
-	}
-
-	return &proto.Guest_DetectResp{Detected: result}, nil
+	return &proto.Guest_DetectResp{Detected: raw.(bool)}, nil
 }
 
 var (

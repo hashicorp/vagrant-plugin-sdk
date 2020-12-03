@@ -70,12 +70,14 @@ type Communicator interface {
 	DownloadFunc() interface{}
 	// Upload file from local path to guest path
 	UploadFunc() interface{}
-	// // Run command using escalated privileges
-	// EscalateFunc() interface{}
-	// // Run a test command on the guest
-	// TestFunc() interface{}
-	// // Reset the communicator. Close and re-establish connection where required.
-	// ResetFunc() interface{}
+	// Run command
+	ExecuteFunc() interface{}
+	// Run privileged command
+	PrivilegedExecuteFunc() interface{}
+	// Run a test command on the guest
+	TestFunc() interface{}
+	// Reset the communicator. Close and re-establish connection where required.
+	ResetFunc() interface{}
 }
 
 type Guest interface {
