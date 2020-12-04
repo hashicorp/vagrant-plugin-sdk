@@ -94,7 +94,7 @@ func (c *guestClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *guestClient) Detect(machine *core.Machine) (bool, error) {
+func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 	f := c.DetectFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine))
