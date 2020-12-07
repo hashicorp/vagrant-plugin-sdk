@@ -95,10 +95,10 @@ type Host interface {
 }
 
 type Provider interface {
-	// Usable() bool
-	// Installed() bool
-	// InitFunc() interface{}
-	// ActionUpFunc() interface{}
+	UsableFunc() interface{}
+	InstalledFunc() interface{}
+	InitFunc() interface{}
+	ActionUpFunc() interface{}
 	// ActionHaltFunc() interface{}
 	// ActionSuspendFunc() interface{}
 	// ActionReloadFunc() interface{}
