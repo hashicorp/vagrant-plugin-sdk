@@ -83,10 +83,10 @@ type Communicator interface {
 type Guest interface {
 	// Detect if machine is supported guest
 	DetectFunc() interface{}
-	// // Test if capability is available
-	// HasCapabilityFunc() interface{}
-	// // Run a capability
-	// CapabilityFunc() interface{}
+	// Test if capability is available
+	HasCapabilityFunc(capName string) interface{}
+	// Run a capability
+	CapabilityFunc(capName string) interface{}
 }
 
 type Host interface {

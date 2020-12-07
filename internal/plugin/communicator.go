@@ -99,7 +99,7 @@ func (c *communicatorClient) MatchFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Match(machine *core.Machine) (bool, error) {
+func (c *communicatorClient) Match(machine core.Machine) (bool, error) {
 	f := c.MatchFunc()
 	// Call the function and include our local machine argument
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
@@ -125,7 +125,7 @@ func (c *communicatorClient) InitFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Init(machine *core.Machine) error {
+func (c *communicatorClient) Init(machine core.Machine) error {
 	f := c.InitFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine))
@@ -148,7 +148,7 @@ func (c *communicatorClient) ReadyFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Ready(machine *core.Machine) (bool, error) {
+func (c *communicatorClient) Ready(machine core.Machine) (bool, error) {
 	f := c.ReadyFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine))
@@ -175,7 +175,7 @@ func (c *communicatorClient) WaitForReadyFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) WaitForReady(machine *core.Machine, wait int) (bool, error) {
+func (c *communicatorClient) WaitForReady(machine core.Machine, wait int) (bool, error) {
 	f := c.WaitForReadyFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
@@ -201,7 +201,7 @@ func (c *communicatorClient) DownloadFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Download(machine *core.Machine, source, destination string) error {
+func (c *communicatorClient) Download(machine core.Machine, source, destination string) error {
 	f := c.DownloadFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
@@ -224,7 +224,7 @@ func (c *communicatorClient) UploadFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Upload(machine *core.Machine, source, destination string) error {
+func (c *communicatorClient) Upload(machine core.Machine, source, destination string) error {
 	f := c.DownloadFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
@@ -250,7 +250,7 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Execute(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
 	f := c.ExecuteFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
 		argmapper.Typed(machine),
@@ -281,7 +281,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) PrivilegedExecute(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
 	f := c.PrivilegedExecuteFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
 		argmapper.Typed(machine),
@@ -312,7 +312,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Test(machine *core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
+func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
 	f := c.TestFunc()
 	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*int32)(nil), f,
 		argmapper.Typed(machine),
@@ -343,7 +343,7 @@ func (c *communicatorClient) ResetFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Reset(machine *core.Machine) (err error) {
+func (c *communicatorClient) Reset(machine core.Machine) (err error) {
 	f := c.ResetFunc()
 	_, err = c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
