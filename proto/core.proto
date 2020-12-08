@@ -10,19 +10,134 @@ import "google/rpc/status.proto";
 import "protostructure.proto";
 import "plugin.proto";
 
+message SSHInfo {
+  string host = 1;
+  string port = 2;
+  string private_key_path = 3;
+  bool keys_only = 4;
+  bool verify_host_key = 5;
+  string username = 6;
+  string remote_user = 7;
+  bool compression = 8;
+  bool dsa_authentication = 9;
+  string config = 10;
+  repeated string extra_args = 11;
+  bool forward_agent = 12;
+  bool forward_x11 = 13;
+  repeated string forward_env = 14;
+  int64 connect_timeout = 15;
+  string ssh_command = 16;
+  string proxy_command = 17;
+}
+
+message WinrmInfo {
+  string username = 1;
+  string password = 2;
+  string host = 3;
+  int64 port = 4;  
+  int64 guest_port = 5;
+  int64 max_tries = 6;
+  int64 retry_delay = 7;
+  int64 timeout = 8;
+  enum Transport {
+    NEGOTIATE = 0;  // default
+    SSL = 1;
+    PLAINTEXT = 2;
+  }
+  Transport transport = 9;
+  bool ssl_peer_verification = 10;
+  string execution_time_limit = 11;
+  bool basic_auth_only = 12;
+  string codepage = 13;
+}
+
+message MachineState {
+  string id = 1;
+  string short_description = 2;
+  string long_description = 3;
+}
+
 message Machine {
-  message DataDirResp {
-    string path = 1;
+  message ActionResp {
+    bool success = 1;
+    string err = 2;
   }
 
-  message IDResp {
-    string ID = 1;
+  message CommunicateResp {
+    Communicator communicator = 3;
+  }
+
+  message GuestResp {
+    Guest guest = 4;
+  }
+
+  message SetIDResp {
+    bool success = 5;
+    string err = 6;
+  }
+
+  message IndexUUIDResp {
+    string uuid = 7;
+  }
+
+  message InspectResp {
+    string inspect = 8;
+  }
+
+  message ReloadResp {
+    string id = 9;
+  }
+
+  message ConnectionInfoResp {
+    oneof connection {
+      SSHInfo ssh = 4;
+      WinrmInfo winrm = 9;
+    }
+  }
+
+  message StateResp {
+    MachineState state = 14;
+  }
+
+  message UIDResp {
+    string uid = 15;
+  }
+  
+  message SyncedFoldersResp{
   }
 }
 
 service MachineService {
-  rpc Box(google.protobuf.Empty) returns (Args.Box);
-  rpc DataDir(google.protobuf.Empty) returns (Machine.DataDirResp);
-  rpc Environment(google.protobuf.Empty) returns (Args.Environment);
-  rpc ID(google.protobuf.Empty) returns (Machine.IDResp);
+  rpc ActionSpec(google.protobuf.Empty) returns (FuncSpec);
+	rpc Action(FuncSpec.Args) returns (Machine.ActionResp);
+
+  rpc CommunicateSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Communicate(FuncSpec.Args) returns (Machine.CommunicateResp);
+
+  rpc GuestSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Guest(FuncSpec.Args) returns (Machine.GuestResp);
+
+  rpc SetIDSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc SetID(FuncSpec.Args) returns (Machine.SetIDResp);
+
+  rpc IndexUUIDSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc IndexUUID(FuncSpec.Args) returns (Machine.IndexUUIDResp);
+
+  rpc InspectSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Inspect(FuncSpec.Args) returns (Machine.InspectResp);
+
+  rpc ReloadSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Reload(FuncSpec.Args) returns (Machine.ReloadResp);
+
+  rpc ConnectionInfoSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc ConnectionInfo(FuncSpec.Args) returns (Machine.ConnectionInfoResp);
+
+  rpc StateSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc State(FuncSpec.Args) returns (Machine.StateResp);
+
+  rpc UIDSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc UID(FuncSpec.Args) returns (Machine.UIDResp);
+
+  rpc SyncedFoldersSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc SyncedFolders(FuncSpec.Args) returns (Machine.SyncedFoldersResp);
 }
