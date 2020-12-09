@@ -9,5 +9,3 @@
 // making porting plugins less time consuming.
 
 package core
-
-type StateBag interface{} // TODO(spox): this needs to be a utility (might be in another PR already?)
