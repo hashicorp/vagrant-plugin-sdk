@@ -26,10 +26,14 @@ type CommandPlugin struct {
 
 func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	proto.RegisterCommandServiceServer(s, &commandServer{
-		Impl:    p.Impl,
-		Mappers: p.Mappers,
-		Logger:  p.Logger,
-		Broker:  broker,
+		Impl: p.Impl,
+		baseServer: &baseServer{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	})
 	return nil
 }
@@ -41,29 +45,34 @@ func (p *CommandPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &commandClient{
 		client: proto.NewCommandServiceClient(c),
-		logger: p.Logger,
-		broker: broker,
+		baseClient: &baseClient{
+			ctx: context.Background(),
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	}, nil
 }
 
 // commandClient is an implementation of component.Command over gRPC.
 type commandClient struct {
-	client  proto.CommandServiceClient
-	logger  hclog.Logger
-	broker  *plugin.GRPCBroker
-	mappers []*argmapper.Func
+	*baseClient
+
+	client proto.CommandServiceClient
 }
 
 func (c *commandClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *commandClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *commandClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *commandClient) CommandFunc() interface{} {
@@ -74,10 +83,9 @@ func (c *commandClient) CommandFunc() interface{} {
 // commandServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type commandServer struct {
-	Impl    component.Command
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Broker  *plugin.GRPCBroker
+	*baseServer
+
+	Impl component.Command
 }
 
 func (s *commandServer) ConfigStruct(

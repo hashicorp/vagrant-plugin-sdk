@@ -26,10 +26,14 @@ type SyncedFolderPlugin struct {
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	proto.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
-		Impl:    p.Impl,
-		Mappers: p.Mappers,
-		Logger:  p.Logger,
-		Broker:  broker,
+		Impl: p.Impl,
+		baseServer: &baseServer{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	})
 	return nil
 }
@@ -41,29 +45,34 @@ func (p *SyncedFolderPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &syncedFolderClient{
 		client: proto.NewSyncedFolderServiceClient(c),
-		logger: p.Logger,
-		broker: broker,
+		baseClient: &baseClient{
+			ctx: context.Background(),
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	}, nil
 }
 
 // syncedFolderClient is an implementation of component.SyncedFolder over gRPC.
 type syncedFolderClient struct {
-	client  proto.SyncedFolderServiceClient
-	logger  hclog.Logger
-	broker  *plugin.GRPCBroker
-	mappers []*argmapper.Func
+	*baseClient
+
+	client proto.SyncedFolderServiceClient
 }
 
 func (c *syncedFolderClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *syncedFolderClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *syncedFolderClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
@@ -74,10 +83,9 @@ func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
 // syncedFolderServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type syncedFolderServer struct {
-	Impl    component.SyncedFolder
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Broker  *plugin.GRPCBroker
+	*baseServer
+
+	Impl component.SyncedFolder
 }
 
 func (s *syncedFolderServer) ConfigStruct(

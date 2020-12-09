@@ -51,6 +51,7 @@ func (p *GuestPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &guestClient{
 		baseClient: &baseClient{
+			ctx: context.Background(),
 			base: &base{
 				Mappers: p.Mappers,
 				Logger:  p.Logger,
@@ -68,19 +69,19 @@ type guestClient struct {
 }
 
 func (c *guestClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *guestClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *guestClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *guestClient) DetectFunc() interface{} {
-	spec, err := c.client.DetectSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -97,7 +98,7 @@ func (c *guestClient) DetectFunc() interface{} {
 
 func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 	f := c.DetectFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
 		argmapper.Typed(machine))
 	if err != nil {
 		return false, err
@@ -107,7 +108,7 @@ func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 }
 
 func (c *guestClient) HasCapabilityFunc(capName string) interface{} {
-	spec, err := c.client.HasCapabilitySpec(context.Background(), &proto.Guest_Capability_NamedRequest{Name: capName})
+	spec, err := c.client.HasCapabilitySpec(c.ctx, &proto.Guest_Capability_NamedRequest{Name: capName})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -124,7 +125,7 @@ func (c *guestClient) HasCapabilityFunc(capName string) interface{} {
 
 func (c *guestClient) HasCapability(machine core.Machine, capName string) (bool, error) {
 	f := c.HasCapabilityFunc(capName)
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
 		argmapper.Typed(capName),
 		argmapper.Named("capabilityName", capName),
@@ -137,7 +138,7 @@ func (c *guestClient) HasCapability(machine core.Machine, capName string) (bool,
 }
 
 func (c *guestClient) CapabilityFunc(capName string) interface{} {
-	spec, err := c.client.CapabilitySpec(context.Background(), &proto.Guest_Capability_NamedRequest{Name: capName})
+	spec, err := c.client.CapabilitySpec(c.ctx, &proto.Guest_Capability_NamedRequest{Name: capName})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -161,7 +162,7 @@ func (c *guestClient) Capability(machine core.Machine, capName string, args ...i
 	for _, a := range args {
 		margs = append(margs, argmapper.Typed(a))
 	}
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f, margs...)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (interface{})(nil), f, margs...)
 	if err != nil {
 		return nil, err
 	}
