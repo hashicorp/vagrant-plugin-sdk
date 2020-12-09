@@ -200,7 +200,8 @@ func (b *baseServer) callLocalDynamicFunc(
 
 	// Verify
 	interfaceType := reflect.TypeOf(result).Elem()
-	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
+	rawType := reflect.TypeOf(raw)
+	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
 		return nil, status.Errorf(codes.FailedPrecondition,
 			"operation expected result type %s, got %s",
 			interfaceType.String(),
