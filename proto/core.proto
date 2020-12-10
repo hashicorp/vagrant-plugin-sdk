@@ -107,7 +107,7 @@ message Environment {
   string default_private_key_path = 11;
 }
 
-message Provider {}
+message MachineProvider {}
 
 message Configuration {}
 
@@ -118,7 +118,7 @@ message Machine {
   Environment env = 4;
   string id = 5;
   string name = 6;
-  Provider provider = 7;
+  MachineProvider provider = 7;
   Configuration provider_config = 8;
   string provider_name = 9;
   Options provider_options = 10;

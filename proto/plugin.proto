@@ -59,6 +59,11 @@ message Args {
     // name is the name of the logger
     string name = 1;
   }
+
+  // TerminalUI is used to construct the terminal.UI for the plugin.
+  message TerminalUI {
+    uint32 stream_id = 1;
+  }
 }
 
 // FuncSpec describes a function and is used by the dependency-injection
@@ -327,13 +332,13 @@ service ProviderService {
 
   // rpc Usable(google.protobuf.Empty) returns (Provider.UsableResp);
   // rpc Installed(google.protobuf.Empty) returns (Provider.InstalledResp);
-  rpc Usable(FuncSpec.Args) returns (ProviderResp.UsableResp);
+  rpc Usable(FuncSpec.Args) returns (Provider.UsableResp);
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Installed(FuncSpec.Args) returns (ProviderResp.InstalledResp);
+  rpc Installed(FuncSpec.Args) returns (Provider.InstalledResp);
   rpc InstalledSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Init(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ActionUp(FuncSpec.Args) returns (ProviderResp.ActionResp);
+  rpc ActionUp(FuncSpec.Args) returns (Provider.ActionResp);
   rpc ActionUpSpec(google.protobuf.Empty) returns (FuncSpec);
   // rpc ActionHalt(FuncSpec.Args) returns (Provider.Action.Resp);
   // rpc ActionHaltSpec(google.protobuf.Empty) returns (FuncSpec);
@@ -359,7 +364,7 @@ service ProviderService {
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
 
-message ProviderResp {
+message Provider {
   message UsableResp {
     bool is_usable = 1;
   }
