@@ -7,7 +7,11 @@
 package proto
 
 import (
+	context "context"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1147,6 +1151,337 @@ func (x *UI) GetStreamId() uint32 {
 	return 0
 }
 
+// Ref contains shared messages used for references to other resources.
+//
+// Refs should be used when the full type shouldn't be embedded in the message.
+type Ref struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Ref) Reset() {
+	*x = Ref{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Ref) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Ref) ProtoMessage() {}
+
+func (x *Ref) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Ref.ProtoReflect.Descriptor instead.
+func (*Ref) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{14}
+}
+
+//*******************************************************************
+// Machine
+//******************************************************************
+type UpsertMachineRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Machine to upsert
+	Machine *Machine `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+}
+
+func (x *UpsertMachineRequest) Reset() {
+	*x = UpsertMachineRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpsertMachineRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertMachineRequest) ProtoMessage() {}
+
+func (x *UpsertMachineRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertMachineRequest.ProtoReflect.Descriptor instead.
+func (*UpsertMachineRequest) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UpsertMachineRequest) GetMachine() *Machine {
+	if x != nil {
+		return x.Machine
+	}
+	return nil
+}
+
+type UpsertMachineResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// resulting pushed machine
+	Machine *Machine `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+}
+
+func (x *UpsertMachineResponse) Reset() {
+	*x = UpsertMachineResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpsertMachineResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertMachineResponse) ProtoMessage() {}
+
+func (x *UpsertMachineResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertMachineResponse.ProtoReflect.Descriptor instead.
+func (*UpsertMachineResponse) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *UpsertMachineResponse) GetMachine() *Machine {
+	if x != nil {
+		return x.Machine
+	}
+	return nil
+}
+
+type GetMachineRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ref *Ref_Machine `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+}
+
+func (x *GetMachineRequest) Reset() {
+	*x = GetMachineRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMachineRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMachineRequest) ProtoMessage() {}
+
+func (x *GetMachineRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMachineRequest.ProtoReflect.Descriptor instead.
+func (*GetMachineRequest) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetMachineRequest) GetRef() *Ref_Machine {
+	if x != nil {
+		return x.Ref
+	}
+	return nil
+}
+
+type GetMachineResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Machine *Machine `protobuf:"bytes,1,opt,name=machine,proto3" json:"machine,omitempty"`
+}
+
+func (x *GetMachineResponse) Reset() {
+	*x = GetMachineResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMachineResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMachineResponse) ProtoMessage() {}
+
+func (x *GetMachineResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMachineResponse.ProtoReflect.Descriptor instead.
+func (*GetMachineResponse) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetMachineResponse) GetMachine() *Machine {
+	if x != nil {
+		return x.Machine
+	}
+	return nil
+}
+
+type ListMachineRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// The workspace to list machines for. If this isn't set, then all builds
+	// for the other filters are listed.
+	Workspace *Ref_Workspace `protobuf:"bytes,2,opt,name=workspace,proto3" json:"workspace,omitempty"`
+}
+
+func (x *ListMachineRequest) Reset() {
+	*x = ListMachineRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListMachineRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMachineRequest) ProtoMessage() {}
+
+func (x *ListMachineRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMachineRequest.ProtoReflect.Descriptor instead.
+func (*ListMachineRequest) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ListMachineRequest) GetWorkspace() *Ref_Workspace {
+	if x != nil {
+		return x.Workspace
+	}
+	return nil
+}
+
+type ListMachineResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// machines is the list of Machine.
+	Machines []*Machine `protobuf:"bytes,1,rep,name=machines,proto3" json:"machines,omitempty"`
+}
+
+func (x *ListMachineResponse) Reset() {
+	*x = ListMachineResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListMachineResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMachineResponse) ProtoMessage() {}
+
+func (x *ListMachineResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMachineResponse.ProtoReflect.Descriptor instead.
+func (*ListMachineResponse) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ListMachineResponse) GetMachines() []*Machine {
+	if x != nil {
+		return x.Machines
+	}
+	return nil
+}
+
 type MachineIndex_Entry struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1166,7 +1501,7 @@ type MachineIndex_Entry struct {
 func (x *MachineIndex_Entry) Reset() {
 	*x = MachineIndex_Entry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_core_proto_msgTypes[15]
+		mi := &file_core_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1179,7 +1514,7 @@ func (x *MachineIndex_Entry) String() string {
 func (*MachineIndex_Entry) ProtoMessage() {}
 
 func (x *MachineIndex_Entry) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_msgTypes[15]
+	mi := &file_core_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1256,6 +1591,102 @@ func (x *MachineIndex_Entry) GetExtraData() *Options {
 		return x.ExtraData
 	}
 	return nil
+}
+
+// Machine references a machine.
+type Ref_Machine struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *Ref_Machine) Reset() {
+	*x = Ref_Machine{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[23]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Ref_Machine) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Ref_Machine) ProtoMessage() {}
+
+func (x *Ref_Machine) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[23]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Ref_Machine.ProtoReflect.Descriptor instead.
+func (*Ref_Machine) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{14, 0}
+}
+
+func (x *Ref_Machine) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+// Workspace references a workspace.
+type Ref_Workspace struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Workspace string `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
+}
+
+func (x *Ref_Workspace) Reset() {
+	*x = Ref_Workspace{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Ref_Workspace) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Ref_Workspace) ProtoMessage() {}
+
+func (x *Ref_Workspace) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Ref_Workspace.ProtoReflect.Descriptor instead.
+func (*Ref_Workspace) Descriptor() ([]byte, []int) {
+	return file_core_proto_rawDescGZIP(), []int{14, 1}
+}
+
+func (x *Ref_Workspace) GetWorkspace() string {
+	if x != nil {
+		return x.Workspace
+	}
+	return ""
 }
 
 var File_core_proto protoreflect.FileDescriptor
@@ -1456,9 +1887,65 @@ var file_core_proto_rawDesc = []byte{
 	0x0b, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x22, 0x0d, 0x0a, 0x0b,
 	0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x22, 0x21, 0x0a, 0x02, 0x55,
 	0x49, 0x12, 0x1b, 0x0a, 0x09, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0d, 0x52, 0x08, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x49, 0x64, 0x42, 0x09,
-	0x5a, 0x07, 0x2e, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x08, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x49, 0x64, 0x22, 0x4b,
+	0x0a, 0x03, 0x52, 0x65, 0x66, 0x1a, 0x19, 0x0a, 0x07, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65,
+	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
+	0x1a, 0x29, 0x0a, 0x09, 0x57, 0x6f, 0x72, 0x6b, 0x73, 0x70, 0x61, 0x63, 0x65, 0x12, 0x1c, 0x0a,
+	0x09, 0x77, 0x6f, 0x72, 0x6b, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x77, 0x6f, 0x72, 0x6b, 0x73, 0x70, 0x61, 0x63, 0x65, 0x22, 0x50, 0x0a, 0x14, 0x55,
+	0x70, 0x73, 0x65, 0x72, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x38, 0x0a, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x63,
+	0x68, 0x69, 0x6e, 0x65, 0x52, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x22, 0x51, 0x0a,
+	0x15, 0x55, 0x70, 0x73, 0x65, 0x72, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x38, 0x0a, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63,
+	0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e,
+	0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65,
+	0x22, 0x49, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x34, 0x0a, 0x03, 0x72, 0x65, 0x66, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x22, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76,
+	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x52, 0x65, 0x66, 0x2e, 0x4d,
+	0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x03, 0x72, 0x65, 0x66, 0x22, 0x4e, 0x0a, 0x12, 0x47,
+	0x65, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x38, 0x0a, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76,
+	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x63, 0x68, 0x69,
+	0x6e, 0x65, 0x52, 0x07, 0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x22, 0x58, 0x0a, 0x12, 0x4c,
+	0x69, 0x73, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x42, 0x0a, 0x09, 0x77, 0x6f, 0x72, 0x6b, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x24, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x52, 0x65, 0x66,
+	0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x73, 0x70, 0x61, 0x63, 0x65, 0x52, 0x09, 0x77, 0x6f, 0x72, 0x6b,
+	0x73, 0x70, 0x61, 0x63, 0x65, 0x22, 0x51, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x63,
+	0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a, 0x0a, 0x08,
+	0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1e,
+	0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61,
+	0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x08,
+	0x6d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x73, 0x32, 0xc6, 0x02, 0x0a, 0x0e, 0x4d, 0x61, 0x63,
+	0x68, 0x69, 0x6e, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x61, 0x0a, 0x0a, 0x47,
+	0x65, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x12, 0x28, 0x2e, 0x68, 0x61, 0x73, 0x68,
+	0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64,
+	0x6b, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e,
+	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x47, 0x65, 0x74, 0x4d,
+	0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x65,
+	0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x73, 0x12, 0x29,
+	0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61,
+	0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69,
+	0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2a, 0x2e, 0x68, 0x61, 0x73, 0x68,
+	0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64,
+	0x6b, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6a, 0x0a, 0x0d, 0x55, 0x70, 0x73, 0x65, 0x72, 0x74, 0x4d,
+	0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x12, 0x2b, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
+	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x55,
+	0x70, 0x73, 0x65, 0x72, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e,
+	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x55, 0x70, 0x73, 0x65,
+	0x72, 0x74, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1474,28 +1961,37 @@ func file_core_proto_rawDescGZIP() []byte {
 }
 
 var file_core_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_core_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_core_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_core_proto_goTypes = []interface{}{
-	(WinrmInfo_Transport)(0),   // 0: hashicorp.vagrant.sdk.WinrmInfo.Transport
-	(*LabelSet)(nil),           // 1: hashicorp.vagrant.sdk.LabelSet
-	(*Options)(nil),            // 2: hashicorp.vagrant.sdk.Options
-	(*SSHInfo)(nil),            // 3: hashicorp.vagrant.sdk.SSHInfo
-	(*WinrmInfo)(nil),          // 4: hashicorp.vagrant.sdk.WinrmInfo
-	(*MachineState)(nil),       // 5: hashicorp.vagrant.sdk.MachineState
-	(*MachineIndex)(nil),       // 6: hashicorp.vagrant.sdk.MachineIndex
-	(*BoxCollection)(nil),      // 7: hashicorp.vagrant.sdk.BoxCollection
-	(*Box)(nil),                // 8: hashicorp.vagrant.sdk.Box
-	(*Environment)(nil),        // 9: hashicorp.vagrant.sdk.Environment
-	(*MachineProvider)(nil),    // 10: hashicorp.vagrant.sdk.MachineProvider
-	(*Configuration)(nil),      // 11: hashicorp.vagrant.sdk.Configuration
-	(*Machine)(nil),            // 12: hashicorp.vagrant.sdk.Machine
-	(*Vagrantfile)(nil),        // 13: hashicorp.vagrant.sdk.Vagrantfile
-	(*UI)(nil),                 // 14: hashicorp.vagrant.sdk.UI
-	nil,                        // 15: hashicorp.vagrant.sdk.LabelSet.LabelsEntry
-	(*MachineIndex_Entry)(nil), // 16: hashicorp.vagrant.sdk.MachineIndex.Entry
+	(WinrmInfo_Transport)(0),      // 0: hashicorp.vagrant.sdk.WinrmInfo.Transport
+	(*LabelSet)(nil),              // 1: hashicorp.vagrant.sdk.LabelSet
+	(*Options)(nil),               // 2: hashicorp.vagrant.sdk.Options
+	(*SSHInfo)(nil),               // 3: hashicorp.vagrant.sdk.SSHInfo
+	(*WinrmInfo)(nil),             // 4: hashicorp.vagrant.sdk.WinrmInfo
+	(*MachineState)(nil),          // 5: hashicorp.vagrant.sdk.MachineState
+	(*MachineIndex)(nil),          // 6: hashicorp.vagrant.sdk.MachineIndex
+	(*BoxCollection)(nil),         // 7: hashicorp.vagrant.sdk.BoxCollection
+	(*Box)(nil),                   // 8: hashicorp.vagrant.sdk.Box
+	(*Environment)(nil),           // 9: hashicorp.vagrant.sdk.Environment
+	(*MachineProvider)(nil),       // 10: hashicorp.vagrant.sdk.MachineProvider
+	(*Configuration)(nil),         // 11: hashicorp.vagrant.sdk.Configuration
+	(*Machine)(nil),               // 12: hashicorp.vagrant.sdk.Machine
+	(*Vagrantfile)(nil),           // 13: hashicorp.vagrant.sdk.Vagrantfile
+	(*UI)(nil),                    // 14: hashicorp.vagrant.sdk.UI
+	(*Ref)(nil),                   // 15: hashicorp.vagrant.sdk.Ref
+	(*UpsertMachineRequest)(nil),  // 16: hashicorp.vagrant.sdk.UpsertMachineRequest
+	(*UpsertMachineResponse)(nil), // 17: hashicorp.vagrant.sdk.UpsertMachineResponse
+	(*GetMachineRequest)(nil),     // 18: hashicorp.vagrant.sdk.GetMachineRequest
+	(*GetMachineResponse)(nil),    // 19: hashicorp.vagrant.sdk.GetMachineResponse
+	(*ListMachineRequest)(nil),    // 20: hashicorp.vagrant.sdk.ListMachineRequest
+	(*ListMachineResponse)(nil),   // 21: hashicorp.vagrant.sdk.ListMachineResponse
+	nil,                           // 22: hashicorp.vagrant.sdk.LabelSet.LabelsEntry
+	(*MachineIndex_Entry)(nil),    // 23: hashicorp.vagrant.sdk.MachineIndex.Entry
+	(*Ref_Machine)(nil),           // 24: hashicorp.vagrant.sdk.Ref.Machine
+	(*Ref_Workspace)(nil),         // 25: hashicorp.vagrant.sdk.Ref.Workspace
 }
 var file_core_proto_depIdxs = []int32{
-	15, // 0: hashicorp.vagrant.sdk.LabelSet.labels:type_name -> hashicorp.vagrant.sdk.LabelSet.LabelsEntry
+	22, // 0: hashicorp.vagrant.sdk.LabelSet.labels:type_name -> hashicorp.vagrant.sdk.LabelSet.LabelsEntry
 	1,  // 1: hashicorp.vagrant.sdk.Options.opt:type_name -> hashicorp.vagrant.sdk.LabelSet
 	0,  // 2: hashicorp.vagrant.sdk.WinrmInfo.transport:type_name -> hashicorp.vagrant.sdk.WinrmInfo.Transport
 	2,  // 3: hashicorp.vagrant.sdk.Box.metadata:type_name -> hashicorp.vagrant.sdk.Options
@@ -1508,12 +2004,24 @@ var file_core_proto_depIdxs = []int32{
 	2,  // 10: hashicorp.vagrant.sdk.Machine.provider_options:type_name -> hashicorp.vagrant.sdk.Options
 	14, // 11: hashicorp.vagrant.sdk.Machine.ui:type_name -> hashicorp.vagrant.sdk.UI
 	13, // 12: hashicorp.vagrant.sdk.Machine.vagrantfile:type_name -> hashicorp.vagrant.sdk.Vagrantfile
-	2,  // 13: hashicorp.vagrant.sdk.MachineIndex.Entry.extra_data:type_name -> hashicorp.vagrant.sdk.Options
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	12, // 13: hashicorp.vagrant.sdk.UpsertMachineRequest.machine:type_name -> hashicorp.vagrant.sdk.Machine
+	12, // 14: hashicorp.vagrant.sdk.UpsertMachineResponse.machine:type_name -> hashicorp.vagrant.sdk.Machine
+	24, // 15: hashicorp.vagrant.sdk.GetMachineRequest.ref:type_name -> hashicorp.vagrant.sdk.Ref.Machine
+	12, // 16: hashicorp.vagrant.sdk.GetMachineResponse.machine:type_name -> hashicorp.vagrant.sdk.Machine
+	25, // 17: hashicorp.vagrant.sdk.ListMachineRequest.workspace:type_name -> hashicorp.vagrant.sdk.Ref.Workspace
+	12, // 18: hashicorp.vagrant.sdk.ListMachineResponse.machines:type_name -> hashicorp.vagrant.sdk.Machine
+	2,  // 19: hashicorp.vagrant.sdk.MachineIndex.Entry.extra_data:type_name -> hashicorp.vagrant.sdk.Options
+	18, // 20: hashicorp.vagrant.sdk.MachineService.GetMachine:input_type -> hashicorp.vagrant.sdk.GetMachineRequest
+	20, // 21: hashicorp.vagrant.sdk.MachineService.ListMachines:input_type -> hashicorp.vagrant.sdk.ListMachineRequest
+	16, // 22: hashicorp.vagrant.sdk.MachineService.UpsertMachine:input_type -> hashicorp.vagrant.sdk.UpsertMachineRequest
+	19, // 23: hashicorp.vagrant.sdk.MachineService.GetMachine:output_type -> hashicorp.vagrant.sdk.GetMachineResponse
+	21, // 24: hashicorp.vagrant.sdk.MachineService.ListMachines:output_type -> hashicorp.vagrant.sdk.ListMachineResponse
+	17, // 25: hashicorp.vagrant.sdk.MachineService.UpsertMachine:output_type -> hashicorp.vagrant.sdk.UpsertMachineResponse
+	23, // [23:26] is the sub-list for method output_type
+	20, // [20:23] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_core_proto_init() }
@@ -1690,8 +2198,116 @@ func file_core_proto_init() {
 				return nil
 			}
 		}
+		file_core_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Ref); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_core_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpsertMachineRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpsertMachineResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMachineRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMachineResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListMachineRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListMachineResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MachineIndex_Entry); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Ref_Machine); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_core_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Ref_Workspace); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1709,9 +2325,9 @@ func file_core_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_core_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   16,
+			NumMessages:   25,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_core_proto_goTypes,
 		DependencyIndexes: file_core_proto_depIdxs,
@@ -1722,4 +2338,162 @@ func file_core_proto_init() {
 	file_core_proto_rawDesc = nil
 	file_core_proto_goTypes = nil
 	file_core_proto_depIdxs = nil
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// MachineServiceClient is the client API for MachineService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MachineServiceClient interface {
+	// GetMachine returns the achine.
+	GetMachine(ctx context.Context, in *GetMachineRequest, opts ...grpc.CallOption) (*GetMachineResponse, error)
+	// ListMachines returns a list of all the machine.
+	ListMachines(ctx context.Context, in *ListMachineRequest, opts ...grpc.CallOption) (*ListMachineResponse, error)
+	// UpsertMachine updates or inserts a machine.
+	UpsertMachine(ctx context.Context, in *UpsertMachineRequest, opts ...grpc.CallOption) (*UpsertMachineResponse, error)
+}
+
+type machineServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewMachineServiceClient(cc grpc.ClientConnInterface) MachineServiceClient {
+	return &machineServiceClient{cc}
+}
+
+func (c *machineServiceClient) GetMachine(ctx context.Context, in *GetMachineRequest, opts ...grpc.CallOption) (*GetMachineResponse, error) {
+	out := new(GetMachineResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.MachineService/GetMachine", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *machineServiceClient) ListMachines(ctx context.Context, in *ListMachineRequest, opts ...grpc.CallOption) (*ListMachineResponse, error) {
+	out := new(ListMachineResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.MachineService/ListMachines", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *machineServiceClient) UpsertMachine(ctx context.Context, in *UpsertMachineRequest, opts ...grpc.CallOption) (*UpsertMachineResponse, error) {
+	out := new(UpsertMachineResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.MachineService/UpsertMachine", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MachineServiceServer is the server API for MachineService service.
+type MachineServiceServer interface {
+	// GetMachine returns the achine.
+	GetMachine(context.Context, *GetMachineRequest) (*GetMachineResponse, error)
+	// ListMachines returns a list of all the machine.
+	ListMachines(context.Context, *ListMachineRequest) (*ListMachineResponse, error)
+	// UpsertMachine updates or inserts a machine.
+	UpsertMachine(context.Context, *UpsertMachineRequest) (*UpsertMachineResponse, error)
+}
+
+// UnimplementedMachineServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedMachineServiceServer struct {
+}
+
+func (*UnimplementedMachineServiceServer) GetMachine(context.Context, *GetMachineRequest) (*GetMachineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMachine not implemented")
+}
+func (*UnimplementedMachineServiceServer) ListMachines(context.Context, *ListMachineRequest) (*ListMachineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMachines not implemented")
+}
+func (*UnimplementedMachineServiceServer) UpsertMachine(context.Context, *UpsertMachineRequest) (*UpsertMachineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertMachine not implemented")
+}
+
+func RegisterMachineServiceServer(s *grpc.Server, srv MachineServiceServer) {
+	s.RegisterService(&_MachineService_serviceDesc, srv)
+}
+
+func _MachineService_GetMachine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMachineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MachineServiceServer).GetMachine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.MachineService/GetMachine",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MachineServiceServer).GetMachine(ctx, req.(*GetMachineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MachineService_ListMachines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMachineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MachineServiceServer).ListMachines(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.MachineService/ListMachines",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MachineServiceServer).ListMachines(ctx, req.(*ListMachineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MachineService_UpsertMachine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertMachineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MachineServiceServer).UpsertMachine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.MachineService/UpsertMachine",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MachineServiceServer).UpsertMachine(ctx, req.(*UpsertMachineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MachineService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.MachineService",
+	HandlerType: (*MachineServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetMachine",
+			Handler:    _MachineService_GetMachine_Handler,
+		},
+		{
+			MethodName: "ListMachines",
+			Handler:    _MachineService_ListMachines_Handler,
+		},
+		{
+			MethodName: "UpsertMachine",
+			Handler:    _MachineService_UpsertMachine_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "core.proto",
 }

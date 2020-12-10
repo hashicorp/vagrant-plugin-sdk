@@ -128,3 +128,68 @@ message Vagrantfile {
 message UI {
   uint32 stream_id = 1;
 }
+
+/********************************************************************
+* Shared Messages
+********************************************************************/
+
+// Ref contains shared messages used for references to other resources.
+//
+// Refs should be used when the full type shouldn't be embedded in the message.
+message Ref {
+  // Machine references a machine.
+  message Machine {
+    string id = 1;
+  }
+
+  // Workspace references a workspace.
+  message Workspace {
+    string workspace = 1;
+  }
+}
+
+/********************************************************************
+* Core services
+********************************************************************/
+service MachineService {
+  // GetMachine returns the achine.
+  rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
+
+  // ListMachines returns a list of all the machine.
+  rpc ListMachines(ListMachineRequest) returns (ListMachineResponse);
+
+  // UpsertMachine updates or inserts a machine.
+  rpc UpsertMachine(UpsertMachineRequest) returns (UpsertMachineResponse);
+ }
+
+/********************************************************************
+* Machine
+********************************************************************/
+message UpsertMachineRequest {
+  // Machine to upsert
+  Machine machine = 1;
+}
+
+message UpsertMachineResponse {
+  // resulting pushed machine
+  Machine machine = 1;
+}
+
+message GetMachineRequest {
+  Ref.Machine ref = 1;
+}
+
+message GetMachineResponse {
+  Machine machine = 1;
+}
+
+message ListMachineRequest {
+  // The workspace to list machines for. If this isn't set, then all builds
+  // for the other filters are listed.
+  Ref.Workspace workspace = 2;
+}
+
+message ListMachineResponse {
+  // machines is the list of Machine.
+  repeated Machine machines = 1;
+}
