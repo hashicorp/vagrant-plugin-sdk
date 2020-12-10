@@ -8,7 +8,16 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/rpc/status.proto";
 import "protostructure.proto";
-import "plugin.proto";
+
+// LabelSet is a set of labels for anything that can be labelled, such
+// as a deployment, build, etc.
+message LabelSet {
+  map<string, string> labels = 1;
+}
+
+message Options {
+  LabelSet opt = 1;
+}
 
 message SSHInfo {
   string host = 1;
@@ -57,91 +66,70 @@ message MachineState {
   string long_description = 3;
 }
 
-message Machine {
-  message ActionResp {
-    bool success = 1;
-    string err = 2;
-  }
-
-  message CommunicateResp {
-    Communicator communicator = 3;
-  }
-
-  message GuestResp {
-    Guest guest = 4;
-  }
-
-  message SetIDResp {
-    bool success = 5;
-    string err = 6;
-  }
-
-  message IndexUUIDResp {
-    string uuid = 7;
-  }
-
-  message InspectResp {
-    string inspect = 8;
-  }
-
-  message ReloadResp {
-    string id = 9;
-  }
-
-  message ConnectionInfoResp {
-    oneof connection {
-      SSHInfo ssh = 4;
-      WinrmInfo winrm = 9;
-    }
-  }
-
-  message StateResp {
-    MachineState state = 14;
-  }
-
-  message UIDResp {
-    string uid = 15;
-  }
-  
-  message SyncedFoldersResp{
+message MachineIndex {
+  message Entry {
+    string id = 1;
+    string local_data_path = 2;
+    string name = 3;
+    string provider = 4;
+    string state = 5;
+    string vagrantfile_name = 6;
+    string vagrantfile_path = 7;
+    string updated_at = 8; // TODO(spox): should we make this an int?
+    Options extra_data = 9;
   }
 }
 
-service MachineService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+message BoxCollection {
+  string directory = 1;
+}
 
-  rpc ActionSpec(google.protobuf.Empty) returns (FuncSpec);
-	rpc Action(FuncSpec.Args) returns (Machine.ActionResp);
+message Box {
+  string name = 1;
+  string provider = 2;
+  string version = 3;
+  string directory = 4;
+  Options metadata = 5;
+  string metadata_url = 6;
+}
 
-  rpc CommunicateSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Communicate(FuncSpec.Args) returns (Machine.CommunicateResp);
+message Environment {
+  string cwd = 1;
+  string data_dir = 2;
+  string vagrantfile_name = 3;
+  UI ui = 4;
+  string home_path = 5;
+  string local_data_path = 6;
+  string tmp_path = 7;
+  string aliases_path = 8;
+  string boxes_path = 9;
+  string gems_path = 10;
+  string default_private_key_path = 11;
+}
 
-  rpc GuestSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Guest(FuncSpec.Args) returns (Machine.GuestResp);
+message Provider {}
 
-  rpc SetIDSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc SetID(FuncSpec.Args) returns (Machine.SetIDResp);
+message Configuration {}
 
-  rpc IndexUUIDSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc IndexUUID(FuncSpec.Args) returns (Machine.IndexUUIDResp);
+message Machine {
+  Box box = 1;
+  Configuration config = 2;
+  string data_dir = 3;
+  Environment env = 4;
+  string id = 5;
+  string name = 6;
+  Provider provider = 7;
+  Configuration provider_config = 8;
+  string provider_name = 9;
+  Options provider_options = 10;
+  UI ui = 11;
+  Vagrantfile vagrantfile = 12;
+}
 
-  rpc InspectSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Inspect(FuncSpec.Args) returns (Machine.InspectResp);
+message Vagrantfile {
+}
 
-  rpc ReloadSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Reload(FuncSpec.Args) returns (Machine.ReloadResp);
-
-  rpc ConnectionInfoSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ConnectionInfo(FuncSpec.Args) returns (Machine.ConnectionInfoResp);
-
-  rpc StateSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc State(FuncSpec.Args) returns (Machine.StateResp);
-
-  rpc UIDSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc UID(FuncSpec.Args) returns (Machine.UIDResp);
-
-  rpc SyncedFoldersSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc SyncedFolders(FuncSpec.Args) returns (Machine.SyncedFoldersResp);
+// TerminalUI is used to construct the terminal.UI for the plugin.
+message UI {
+  uint32 stream_id = 1;
 }

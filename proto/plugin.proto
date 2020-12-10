@@ -8,6 +8,8 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/rpc/status.proto";
 import "protostructure.proto";
+import "core.proto";
+
 
 /********************************************************************
 * Generic Args
@@ -17,62 +19,6 @@ import "protostructure.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
-  message MachineIndex {
-    message Entry {
-      string id = 1;
-      string local_data_path = 2;
-      string name = 3;
-      string provider = 4;
-      string state = 5;
-      string vagrantfile_name = 6;
-      string vagrantfile_path = 7;
-      string updated_at = 8; // TODO(spox): should we make this an int?
-      Options extra_data = 9;
-    }
-  }
-
-  message BoxCollection {
-    string directory = 1;
-  }
-
-  message Box {
-    string name = 1;
-    string provider = 2;
-    string version = 3;
-    string directory = 4;
-    Options metadata = 5;
-    string metadata_url = 6;
-  }
-
-  message Environment {
-    string cwd = 1;
-    string data_dir = 2;
-    string vagrantfile_name = 3;
-    TerminalUI ui = 4;
-    string home_path = 5;
-    string local_data_path = 6;
-    string tmp_path = 7;
-    string aliases_path = 8;
-    string boxes_path = 9;
-    string gems_path = 10;
-    string default_private_key_path = 11;
-  }
-
-  message Machine {
-    Box box = 1;
-    Configuration config = 2;
-    string data_dir = 3;
-    Environment env = 4;
-    string id = 5;
-    string name = 6;
-    Provider provider = 7;
-    Configuration provider_config = 8;
-    string provider_name = 9;
-    Options provider_options = 10;
-    TerminalUI ui = 11;
-    Vagrantfile vagrantfile = 12;
-  }
-
   message Configuration {
     message Vagrant {
     }
@@ -80,7 +26,6 @@ message Args {
     }
     message Provider {
     }
-
   }
 
   // LabelSet is a set of labels for anything that can be labelled, such
@@ -91,9 +36,6 @@ message Args {
 
   message Options {
     LabelSet opt = 1;
-  }
-
-  message Vagrantfile {
   }
 
   // See component.Source
@@ -116,11 +58,6 @@ message Args {
   message Logger {
     // name is the name of the logger
     string name = 1;
-  }
-
-  // TerminalUI is used to construct the terminal.UI for the plugin.
-  message TerminalUI {
-    uint32 stream_id = 1;
   }
 }
 
@@ -390,13 +327,13 @@ service ProviderService {
 
   // rpc Usable(google.protobuf.Empty) returns (Provider.UsableResp);
   // rpc Installed(google.protobuf.Empty) returns (Provider.InstalledResp);
-  rpc Usable(FuncSpec.Args) returns (Provider.UsableResp);
+  rpc Usable(FuncSpec.Args) returns (ProviderResp.UsableResp);
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Installed(FuncSpec.Args) returns (Provider.InstalledResp);
+  rpc Installed(FuncSpec.Args) returns (ProviderResp.InstalledResp);
   rpc InstalledSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Init(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ActionUp(FuncSpec.Args) returns (Provider.ActionResp);
+  rpc ActionUp(FuncSpec.Args) returns (ProviderResp.ActionResp);
   rpc ActionUpSpec(google.protobuf.Empty) returns (FuncSpec);
   // rpc ActionHalt(FuncSpec.Args) returns (Provider.Action.Resp);
   // rpc ActionHaltSpec(google.protobuf.Empty) returns (FuncSpec);
@@ -422,7 +359,7 @@ service ProviderService {
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
 
-message Provider {
+message ProviderResp {
   message UsableResp {
     bool is_usable = 1;
   }
@@ -502,9 +439,9 @@ message Communicator {
   }
 
   message ExecutionRequest {
-    Args.Machine machine = 1;
+    Machine machine = 1;
     string command = 2;
-    Args.LabelSet options = 3;
+    LabelSet options = 3;
   }
 
   message ExecuteResp {
