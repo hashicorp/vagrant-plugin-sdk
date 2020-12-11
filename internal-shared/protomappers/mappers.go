@@ -11,7 +11,7 @@ import (
 
 	//	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	//	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
@@ -36,6 +36,8 @@ var All = []interface{}{
 	TerminalUIProto,
 	LabelSet,
 	LabelSetProto,
+	Machine,
+	MachineProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -195,4 +197,16 @@ func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
 
 func LabelSetProto(labels *component.LabelSet) *pb.Args_LabelSet {
 	return &pb.Args_LabelSet{Labels: labels.Labels}
+}
+
+// Machine maps Machine proto to core.Machine.
+func Machine(input *pb.Machine) (*core.Machine, error) {
+	var result core.Machine
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// MachineProto
+func MachineProto(input *core.Machine) (*pb.Machine, error) {
+	var result pb.Machine
+	return &result, mapstructure.Decode(input, &result)
 }

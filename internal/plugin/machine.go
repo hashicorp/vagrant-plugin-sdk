@@ -6,7 +6,9 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 )
 
@@ -15,6 +17,7 @@ type Machine struct {
 	plugin.NetRPCUnsupportedPlugin
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Impl    core.Machine
 }
 
 func (p *Machine) GRPCClient(
@@ -40,6 +43,27 @@ func (p *Machine) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 type machineClient struct {
 	*baseClient
 	client proto.MachineServiceClient
+}
+
+func (m *machineClient) GetMachine() (*core.Machine, error) {
+	return nil, nil
+}
+
+func (m *machineClient) ListMachines() ([]*core.Machine, error) {
+	rawMachines, err := m.client.ListMachines(
+		context.Background(),
+		&proto.ListMachineRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	var machines []*core.Machine
+	mapstructure.Decode(rawMachines, &machines)
+	return machines, nil
+}
+
+func (m *machineClient) UpsertMachine(*core.Machine) error {
+	return nil
 }
 
 var (
