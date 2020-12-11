@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"google.golang.org/grpc"
 )
 
@@ -38,7 +39,7 @@ func (p *Machine) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 
 type machineClient struct {
 	*baseClient
-	// client proto.MachineServiceClient
+	client proto.MachineServiceClient
 }
 
 var (
