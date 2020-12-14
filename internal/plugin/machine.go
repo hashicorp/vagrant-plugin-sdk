@@ -45,8 +45,17 @@ type machineClient struct {
 	client proto.MachineServiceClient
 }
 
-func (m *machineClient) GetMachine() (*core.Machine, error) {
-	return nil, nil
+func (m *machineClient) GetMachine(id string) (*core.Machine, error) {
+	rawMachine, err := m.client.GetMachine(
+		context.Background(),
+		&proto.GetMachineRequest{Ref: &proto.Ref_Machine{Id: id}})
+	if err != nil {
+		return nil, err
+	}
+
+	var machine *core.Machine
+	mapstructure.Decode(rawMachine, &machine)
+	return machine, nil
 }
 
 func (m *machineClient) ListMachines() ([]*core.Machine, error) {
@@ -62,9 +71,20 @@ func (m *machineClient) ListMachines() ([]*core.Machine, error) {
 	return machines, nil
 }
 
-func (m *machineClient) UpsertMachine(*core.Machine) error {
+func (m *machineClient) UpsertMachine(machine *core.Machine) error {
+	var machineProto *proto.Machine
+	mapstructure.Decode(machine, &machineProto)
+	_, err := m.client.UpsertMachine(
+		context.Background(),
+		&proto.UpsertMachineRequest{Machine: machineProto})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
+
+// TODO: (sophia) delete machine
 
 var (
 	_ plugin.Plugin     = (*Machine)(nil)
