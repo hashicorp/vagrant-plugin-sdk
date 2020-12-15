@@ -53,7 +53,7 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
-func (b *baseClient) callRemoteDynamicFunc(
+func (b *base) callRemoteDynamicFunc(
 	ctx context.Context,
 	mappers []*argmapper.Func,
 	result interface{}, // expected result type
@@ -109,14 +109,14 @@ func (b *baseClient) callRemoteDynamicFunc(
 	return raw, nil
 }
 
-func (b *baseClient) generateFunc(spec *pb.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
+func (b *base) generateFunc(spec *pb.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.Typed(b.internal()))...,
 	)
 }
 
-func (b *baseServer) callLocalDynamicFunc(
+func (b *base) callLocalDynamicFunc(
 	f interface{},
 	args funcspec.Args,
 	result interface{}, // expected result type
@@ -187,7 +187,7 @@ func (b *baseServer) callLocalDynamicFunc(
 	return raw, nil
 }
 
-func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
+func (b *base) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
 	return funcspec.Spec(fn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
