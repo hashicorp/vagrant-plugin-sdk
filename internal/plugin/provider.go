@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -270,11 +272,20 @@ func (s *providerServer) ActionUpSpec(
 	ctx context.Context,
 	args *empty.Empty,
 ) (*proto.FuncSpec, error) {
-	if err := isImplemented(s, "provider"); err != nil {
-		return nil, err
+	if s.Impl == nil {
+		return nil, status.Errorf(codes.Unimplemented, "plugin does not implement: provider")
 	}
 
-	return s.generateSpec(s.Impl.ActionUpFunc())
+	return funcspec.Spec(s.Impl.ActionUpFunc(),
+		argmapper.Logger(s.Logger),
+		argmapper.ConverterFunc(s.Mappers...),
+		argmapper.Typed(s.internal()),
+	)
+	// if err := isImplemented(s, "provider"); err != nil {
+	// 	return nil, err
+	// }
+
+	// return s.generateSpec(s.Impl.ActionUpFunc())
 }
 
 func (s *providerServer) ActionUp(
