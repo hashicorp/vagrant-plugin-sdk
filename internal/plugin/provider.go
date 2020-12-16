@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
@@ -92,7 +93,14 @@ func (c *providerClient) UsableFunc() interface{} {
 		}
 		return resp.IsUsable, nil
 	}
-	return c.generateFunc(spec, cb)
+	return funcspec.Func(spec, cb,
+		argmapper.Logger(c.logger),
+		argmapper.Typed(&pluginargs.Internal{
+			Broker:  c.broker,
+			Mappers: c.mappers,
+			Cleanup: &pluginargs.Cleanup{},
+		}),
+	)
 }
 
 func (c *providerClient) Usable() (bool, error) {
@@ -118,7 +126,14 @@ func (c *providerClient) InitFunc() interface{} {
 		}
 		return true, nil
 	}
-	return c.generateFunc(spec, cb)
+	return funcspec.Func(spec, cb,
+		argmapper.Logger(c.logger),
+		argmapper.Typed(&pluginargs.Internal{
+			Broker:  c.broker,
+			Mappers: c.mappers,
+			Cleanup: &pluginargs.Cleanup{},
+		}),
+	)
 }
 
 func (c *providerClient) Init(machine core.Machine) (bool, error) {
@@ -146,7 +161,14 @@ func (c *providerClient) InstalledFunc() interface{} {
 		}
 		return resp.IsInstalled, nil
 	}
-	return c.generateFunc(spec, cb)
+	return funcspec.Func(spec, cb,
+		argmapper.Logger(c.logger),
+		argmapper.Typed(&pluginargs.Internal{
+			Broker:  c.broker,
+			Mappers: c.mappers,
+			Cleanup: &pluginargs.Cleanup{},
+		}),
+	)
 }
 
 func (c *providerClient) Installed() (bool, error) {
@@ -172,7 +194,14 @@ func (c *providerClient) ActionUpFunc() interface{} {
 		}
 		return resp.Result, nil
 	}
-	return c.generateFunc(spec, cb)
+	return funcspec.Func(spec, cb,
+		argmapper.Logger(c.logger),
+		argmapper.Typed(&pluginargs.Internal{
+			Broker:  c.broker,
+			Mappers: c.mappers,
+			Cleanup: &pluginargs.Cleanup{},
+		}),
+	)
 }
 
 func (c *providerClient) ActionUp(machine core.Machine, state multistep.StateBag) (interface{}, error) {
