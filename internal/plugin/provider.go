@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
 // ProviderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -30,6 +30,7 @@ type ProviderPlugin struct {
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	proto.RegisterProviderServiceServer(s, &providerServer{
+		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
 				Mappers: p.Mappers,
@@ -47,6 +48,7 @@ func (p *ProviderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &providerClient{
+		client: proto.NewProviderServiceClient(c),
 		baseClient: &baseClient{
 			base: &base{
 				Mappers: p.Mappers,
