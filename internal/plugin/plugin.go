@@ -39,6 +39,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"config":       &ConfigPlugin{},
 			"guest":        &GuestPlugin{},
 			"host":         &HostPlugin{},
+			"mapper":       &MapperPlugin{},
 			"provider":     &ProviderPlugin{},
 			"provisioner":  &ProvisionerPlugin{},
 			"syncedfolder": &SyncedFolderPlugin{},
