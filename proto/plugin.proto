@@ -373,6 +373,7 @@ message Provider {
   }
   message ActionResp {
     google.protobuf.Any result = 1;
+    map<string, string> labels = 2;
   }
 }
 

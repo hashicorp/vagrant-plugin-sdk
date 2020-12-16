@@ -8,8 +8,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -94,10 +92,10 @@ func (c *providerClient) UsableFunc() interface{} {
 		return resp.IsUsable, nil
 	}
 	return funcspec.Func(spec, cb,
-		argmapper.Logger(c.logger),
+		argmapper.Logger(c.Logger),
 		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.broker,
-			Mappers: c.mappers,
+			Broker:  c.Broker,
+			Mappers: c.Mappers,
 			Cleanup: &pluginargs.Cleanup{},
 		}),
 	)
@@ -127,10 +125,10 @@ func (c *providerClient) InitFunc() interface{} {
 		return true, nil
 	}
 	return funcspec.Func(spec, cb,
-		argmapper.Logger(c.logger),
+		argmapper.Logger(c.Logger),
 		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.broker,
-			Mappers: c.mappers,
+			Broker:  c.Broker,
+			Mappers: c.Mappers,
 			Cleanup: &pluginargs.Cleanup{},
 		}),
 	)
@@ -162,10 +160,10 @@ func (c *providerClient) InstalledFunc() interface{} {
 		return resp.IsInstalled, nil
 	}
 	return funcspec.Func(spec, cb,
-		argmapper.Logger(c.logger),
+		argmapper.Logger(c.Logger),
 		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.broker,
-			Mappers: c.mappers,
+			Broker:  c.Broker,
+			Mappers: c.Mappers,
 			Cleanup: &pluginargs.Cleanup{},
 		}),
 	)
@@ -195,10 +193,10 @@ func (c *providerClient) ActionUpFunc() interface{} {
 		return resp.Result, nil
 	}
 	return funcspec.Func(spec, cb,
-		argmapper.Logger(c.logger),
+		argmapper.Logger(c.Logger),
 		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.broker,
-			Mappers: c.mappers,
+			Broker:  c.Broker,
+			Mappers: c.Mappers,
 			Cleanup: &pluginargs.Cleanup{},
 		}),
 	)
@@ -302,10 +300,6 @@ func (s *providerServer) ActionUpSpec(
 	ctx context.Context,
 	args *empty.Empty,
 ) (*proto.FuncSpec, error) {
-	if s.Impl == nil {
-		return nil, status.Errorf(codes.Unimplemented, "plugin does not implement: provider")
-	}
-
 	return funcspec.Spec(s.Impl.ActionUpFunc(),
 		argmapper.Logger(s.Logger),
 		argmapper.ConverterFunc(s.Mappers...),

@@ -4,6 +4,20 @@ package hashicorp.vagrant.sdk;
 
 option go_package = ".;proto";
 
+import "google/protobuf/any.proto";
+
+
+message StateBag {
+  map<string, Value> data = 1;
+
+  message Value {
+    oneof value {
+      string text = 1;
+      google.protobuf.Any map = 2;
+    }
+  }
+}
+
 // LabelSet is a set of labels for anything that can be labelled, such
 // as a deployment, build, etc.
 message LabelSet {

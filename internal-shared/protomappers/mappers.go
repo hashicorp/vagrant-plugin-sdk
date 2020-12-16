@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -208,5 +209,17 @@ func Machine(input *pb.Machine) (*core.Machine, error) {
 // MachineProto
 func MachineProto(input *core.Machine) (*pb.Machine, error) {
 	var result pb.Machine
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// StateBag maps StateBag proto to multistep.StateBag.
+func StateBag(input *pb.StateBag) (*multistep.StateBag, error) {
+	var result multistep.StateBag
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// StateBag
+func StateBagProto(input *multistep.StateBag) (*pb.StateBag, error) {
+	var result pb.StateBag
 	return &result, mapstructure.Decode(input, &result)
 }
