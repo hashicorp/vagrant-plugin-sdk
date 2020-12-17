@@ -2,20 +2,22 @@ package plugin
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
-	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
 // ProviderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -29,7 +31,7 @@ type ProviderPlugin struct {
 }
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterProviderServiceServer(s, &providerServer{
+	pb.RegisterProviderServiceServer(s, &providerServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -48,7 +50,7 @@ func (p *ProviderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &providerClient{
-		client: proto.NewProviderServiceClient(c),
+		client: pb.NewProviderServiceClient(c),
 		baseClient: &baseClient{
 			base: &base{
 				Mappers: p.Mappers,
@@ -63,7 +65,7 @@ func (p *ProviderPlugin) GRPCClient(
 type providerClient struct {
 	*baseClient
 
-	client proto.ProviderServiceClient
+	client pb.ProviderServiceClient
 }
 
 func (c *providerClient) Config() (interface{}, error) {
@@ -85,7 +87,7 @@ func (c *providerClient) UsableFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Usable(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Usable(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -111,7 +113,7 @@ func (c *providerClient) InitFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		_, err := c.client.Init(ctx, &proto.FuncSpec_Args{Args: args})
+		_, err := c.client.Init(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -139,7 +141,7 @@ func (c *providerClient) InstalledFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Installed(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Installed(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -165,7 +167,7 @@ func (c *providerClient) ActionUpFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		resp, err := c.client.ActionUp(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.ActionUp(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -174,17 +176,17 @@ func (c *providerClient) ActionUpFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *providerClient) ActionUp(machine core.Machine, state multistep.StateBag) (interface{}, error) {
+func (c *providerClient) ActionUp(machine core.Machine, state multistep.StateBag) error {
 	f := c.ActionUpFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f,
+	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f,
 		argmapper.Typed(machine),
 		argmapper.Typed(state),
 	)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return raw, nil
+	return nil
 }
 
 // providerServer is a gRPC server that the client talks to and calls a
@@ -198,13 +200,13 @@ type providerServer struct {
 func (s *providerServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*pb.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *providerServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *pb.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -212,14 +214,14 @@ func (s *providerServer) Configure(
 func (s *providerServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*pb.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *providerServer) UsableSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*pb.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -229,8 +231,8 @@ func (s *providerServer) UsableSpec(
 
 func (s *providerServer) Usable(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Provider_UsableResp, error) {
+	args *pb.FuncSpec_Args,
+) (*pb.Provider_UsableResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.UsableFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -239,13 +241,13 @@ func (s *providerServer) Usable(
 		return nil, err
 	}
 
-	return &proto.Provider_UsableResp{IsUsable: raw.(bool)}, nil
+	return &pb.Provider_UsableResp{IsUsable: raw.(bool)}, nil
 }
 
 func (s *providerServer) InstalledSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*pb.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -255,8 +257,8 @@ func (s *providerServer) InstalledSpec(
 
 func (s *providerServer) Installed(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Provider_InstalledResp, error) {
+	args *pb.FuncSpec_Args,
+) (*pb.Provider_InstalledResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.InstalledFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -265,13 +267,13 @@ func (s *providerServer) Installed(
 		return nil, err
 	}
 
-	return &proto.Provider_InstalledResp{IsInstalled: raw.(bool)}, nil
+	return &pb.Provider_InstalledResp{IsInstalled: raw.(bool)}, nil
 }
 
 func (s *providerServer) ActionUpSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*pb.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -281,23 +283,33 @@ func (s *providerServer) ActionUpSpec(
 
 func (s *providerServer) ActionUp(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Provider_ActionResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.ActionUpFunc(), args.Args, (*bool)(nil),
+	args *pb.FuncSpec_Args,
+) (*pb.Provider_ActionResp, error) {
+	raw, err := s.callLocalDynamicFunc(
+		s.Impl.ActionUpFunc(),
+		args.Args,
+		(*proto.Message)(nil),
 		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
+	// Expect the results to be proto.Messages
+	msg, ok := raw.(proto.Message)
+	if !ok {
+		return nil, fmt.Errorf(
+			"result of plugin-based function must be a proto.Message, got %T", msg)
+	}
+	anyVal, err := ptypes.MarshalAny(msg)
 
-	return &proto.Provider_ActionResp{Result: raw.(*anypb.Any)}, nil
+	return &pb.Provider_ActionResp{Result: anyVal}, nil
 }
 
 func (s *providerServer) InitSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*pb.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -307,7 +319,7 @@ func (s *providerServer) InitSpec(
 
 func (s *providerServer) Init(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
+	args *pb.FuncSpec_Args,
 ) (*empty.Empty, error) {
 	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args, (*interface{})(nil),
 		argmapper.Typed(ctx),
@@ -321,8 +333,10 @@ func (s *providerServer) Init(
 }
 
 var (
-	_ plugin.Plugin               = (*ProviderPlugin)(nil)
-	_ plugin.GRPCPlugin           = (*ProviderPlugin)(nil)
-	_ proto.ProviderServiceServer = (*providerServer)(nil)
-	_ component.Provider          = (*providerClient)(nil)
+	_ plugin.Plugin            = (*ProviderPlugin)(nil)
+	_ plugin.GRPCPlugin        = (*ProviderPlugin)(nil)
+	_ pb.ProviderServiceServer = (*providerServer)(nil)
+	_ component.Provider       = (*providerClient)(nil)
+	_ component.Configurable   = (*providerClient)(nil)
+	_ component.Documented     = (*providerClient)(nil)
 )

@@ -175,6 +175,8 @@ func (b *baseServer) callLocalDynamicFunc(
 
 	raw := callResult.Out(0)
 
+	// TODO: Maybe this should just assert that the result
+	// implements proto.Message
 	// Verify
 	interfaceType := reflect.TypeOf(result).Elem()
 	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
@@ -183,7 +185,6 @@ func (b *baseServer) callLocalDynamicFunc(
 			interfaceType.String(),
 			rawType.String())
 	}
-
 	return raw, nil
 }
 
