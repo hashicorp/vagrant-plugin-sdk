@@ -39,6 +39,8 @@ var All = []interface{}{
 	LabelSetProto,
 	Machine,
 	MachineProto,
+	StateBag,
+	StateBagProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -213,13 +215,13 @@ func MachineProto(input *core.Machine) (*pb.Machine, error) {
 }
 
 // StateBag maps StateBag proto to multistep.StateBag.
-func StateBag(input *pb.StateBag) (*multistep.StateBag, error) {
-	var result multistep.StateBag
+func StateBag(input *pb.StateBag) (*multistep.BasicStateBag, error) {
+	var result multistep.BasicStateBag
 	return &result, mapstructure.Decode(input, &result)
 }
 
 // StateBag
-func StateBagProto(input *multistep.StateBag) (*pb.StateBag, error) {
+func StateBagProto(input *multistep.BasicStateBag) (*pb.StateBag, error) {
 	var result pb.StateBag
 	return &result, mapstructure.Decode(input, &result)
 }

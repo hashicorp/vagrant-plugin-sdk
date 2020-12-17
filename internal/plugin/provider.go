@@ -192,19 +192,12 @@ func (c *providerClient) ActionUpFunc() interface{} {
 		}
 		return resp.Result, nil
 	}
-	return funcspec.Func(spec, cb,
-		argmapper.Logger(c.Logger),
-		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.Broker,
-			Mappers: c.Mappers,
-			Cleanup: &pluginargs.Cleanup{},
-		}),
-	)
+	return c.generateFunc(spec, cb)
 }
 
 func (c *providerClient) ActionUp(machine core.Machine, state multistep.StateBag) (interface{}, error) {
 	f := c.ActionUpFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f,
+	raw, err := c.callRemoteDynamicFunc(context.Background(), c.Mappers, (interface{})(nil), f,
 		argmapper.Typed(machine),
 		argmapper.Typed(state),
 	)
@@ -300,16 +293,11 @@ func (s *providerServer) ActionUpSpec(
 	ctx context.Context,
 	args *empty.Empty,
 ) (*proto.FuncSpec, error) {
-	return funcspec.Spec(s.Impl.ActionUpFunc(),
-		argmapper.Logger(s.Logger),
-		argmapper.ConverterFunc(s.Mappers...),
-		argmapper.Typed(s.internal()),
-	)
-	// if err := isImplemented(s, "provider"); err != nil {
-	// 	return nil, err
-	// }
+	if err := isImplemented(s, "provider"); err != nil {
+		return nil, err
+	}
 
-	// return s.generateSpec(s.Impl.ActionUpFunc())
+	return s.generateSpec(s.Impl.ActionUpFunc())
 }
 
 func (s *providerServer) ActionUp(
