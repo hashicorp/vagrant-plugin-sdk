@@ -123,7 +123,7 @@ func (c *providerClient) InitFunc() interface{} {
 }
 
 func (c *providerClient) Init(machine core.Machine) (bool, error) {
-	f := c.UsableFunc()
+	f := c.InitFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
 	)
@@ -233,7 +233,7 @@ func (s *providerServer) Usable(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*pb.Provider_UsableResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.UsableFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callLocalDynamicFunc(s.Impl.UsableFunc(), args.Args, nil,
 		argmapper.Typed(ctx),
 	)
 
@@ -259,7 +259,7 @@ func (s *providerServer) Installed(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*pb.Provider_InstalledResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.InstalledFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callLocalDynamicFunc(s.Impl.InstalledFunc(), args.Args, nil,
 		argmapper.Typed(ctx),
 	)
 
@@ -321,7 +321,7 @@ func (s *providerServer) Init(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*empty.Empty, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args, (*interface{})(nil),
+	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args, nil,
 		argmapper.Typed(ctx),
 	)
 

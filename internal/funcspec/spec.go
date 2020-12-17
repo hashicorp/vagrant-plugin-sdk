@@ -22,10 +22,14 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
 
 	filterProto := argmapper.FilterType(protoMessageType)
 
+	outputFilter := argmapper.FilterOr(
+		filterProto,
+		argmapper.FilterType(boolType),
+	)
 	// Copy our args cause we're going to use append() and we don't
 	// want to modify our caller.
 	args = append([]argmapper.Arg{
-		argmapper.FilterOutput(filterProto),
+		argmapper.FilterOutput(outputFilter),
 	}, args...)
 
 	// Build our function
@@ -86,4 +90,5 @@ func typeToMessage(typ reflect.Type) string {
 var (
 	contextType      = reflect.TypeOf((*context.Context)(nil)).Elem()
 	protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
+	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
 )

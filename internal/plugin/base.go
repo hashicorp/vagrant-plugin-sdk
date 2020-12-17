@@ -175,6 +175,12 @@ func (b *baseServer) callLocalDynamicFunc(
 
 	raw := callResult.Out(0)
 
+	// If we don't have an expected result type, then just return as-is.
+	// Otherwise, we need to verify the result type matches properly.
+	if result == nil {
+		return raw, nil
+	}
+
 	// TODO: Maybe this should just assert that the result
 	// implements proto.Message
 	// Verify
