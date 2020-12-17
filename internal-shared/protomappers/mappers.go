@@ -11,9 +11,9 @@ import (
 
 	//	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	//	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -36,6 +36,8 @@ var All = []interface{}{
 	TerminalUIProto,
 	LabelSet,
 	LabelSetProto,
+	StateBag,
+	StateBagProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -195,4 +197,16 @@ func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
 
 func LabelSetProto(labels *component.LabelSet) *pb.Args_LabelSet {
 	return &pb.Args_LabelSet{Labels: labels.Labels}
+}
+
+// StateBag maps StateBag proto to multistep.StateBag.
+func StateBag(input *pb.StateBag) (*multistep.BasicStateBag, error) {
+	var result multistep.BasicStateBag
+	return &result, mapstructure.Decode(input, &result)
+}
+
+// StateBag
+func StateBagProto(input *multistep.BasicStateBag) (*pb.StateBag, error) {
+	var result pb.StateBag
+	return &result, mapstructure.Decode(input, &result)
 }
