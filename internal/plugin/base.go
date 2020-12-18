@@ -116,10 +116,9 @@ func (b *baseClient) generateFunc(spec *pb.FuncSpec, cbFn interface{}, args ...a
 	)
 }
 
-func (b *baseServer) callLocalDynamicFunc(
+func (b *baseServer) callUncheckedLocalDynamicFunc(
 	f interface{},
 	args funcspec.Args,
-	result interface{}, // expected result type
 	callArgs ...argmapper.Arg,
 ) (interface{}, error) {
 	internal := b.internal()
@@ -174,15 +173,20 @@ func (b *baseServer) callLocalDynamicFunc(
 	}
 
 	raw := callResult.Out(0)
+	return raw, nil
+}
 
-	// If we don't have an expected result type, then just return as-is.
-	// Otherwise, we need to verify the result type matches properly.
-	if result == nil {
-		return raw, nil
+func (b *baseServer) callLocalDynamicFunc(
+	f interface{},
+	args funcspec.Args,
+	result interface{}, // expected result type
+	callArgs ...argmapper.Arg,
+) (interface{}, error) {
+	raw, err := b.callUncheckedLocalDynamicFunc(f, args, callArgs...)
+	if err != nil {
+		return nil, err
 	}
 
-	// TODO: Maybe this should just assert that the result
-	// implements proto.Message
 	// Verify
 	interfaceType := reflect.TypeOf(result).Elem()
 	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
@@ -192,6 +196,19 @@ func (b *baseServer) callLocalDynamicFunc(
 			rawType.String())
 	}
 	return raw, nil
+}
+
+func (b *baseServer) callBoolLocalDynamicFunc(
+	f interface{},
+	args funcspec.Args,
+	callArgs ...argmapper.Arg,
+) (bool, error) {
+	raw, err := b.callUncheckedLocalDynamicFunc(f, args, callArgs...)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
 }
 
 func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
