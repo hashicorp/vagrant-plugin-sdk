@@ -5,8 +5,6 @@ package hashicorp.vagrant.sdk;
 option go_package = ".;proto";
 
 import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
-import "plugin.proto";
 
 message StateBag {
   map<string, Value> data = 1;
@@ -19,19 +17,192 @@ message StateBag {
   }
 }
 
-message Machine {
-  message DataDirResp {
-    string path = 1;
-  }
+// LabelSet is a set of labels for anything that can be labelled, such
+// as a deployment, build, etc.
+message LabelSet {
+  map<string, string> labels = 1;
+}
 
-  message IDResp {
-    string ID = 1;
+message Options {
+  LabelSet opt = 1;
+}
+
+message SSHInfo {
+  string host = 1;
+  string port = 2;
+  string private_key_path = 3;
+  bool keys_only = 4;
+  bool verify_host_key = 5;
+  string username = 6;
+  string remote_user = 7;
+  bool compression = 8;
+  bool dsa_authentication = 9;
+  string config = 10;
+  repeated string extra_args = 11;
+  bool forward_agent = 12;
+  bool forward_x11 = 13;
+  repeated string forward_env = 14;
+  int64 connect_timeout = 15;
+  string ssh_command = 16;
+  string proxy_command = 17;
+}
+
+message WinrmInfo {
+  string username = 1;
+  string password = 2;
+  string host = 3;
+  int64 port = 4;  
+  int64 guest_port = 5;
+  int64 max_tries = 6;
+  int64 retry_delay = 7;
+  int64 timeout = 8;
+  enum Transport {
+    NEGOTIATE = 0;  // default
+    SSL = 1;
+    PLAINTEXT = 2;
+  }
+  Transport transport = 9;
+  bool ssl_peer_verification = 10;
+  string execution_time_limit = 11;
+  bool basic_auth_only = 12;
+  string codepage = 13;
+}
+
+message MachineState {
+  string id = 1;
+  string short_description = 2;
+  string long_description = 3;
+}
+
+message MachineIndex {
+  message Entry {
+    string id = 1;
+    string local_data_path = 2;
+    string name = 3;
+    string provider = 4;
+    string state = 5;
+    string vagrantfile_name = 6;
+    string vagrantfile_path = 7;
+    string updated_at = 8; // TODO(spox): should we make this an int?
+    Options extra_data = 9;
   }
 }
 
+message BoxCollection {
+  string directory = 1;
+}
+
+message Box {
+  string name = 1;
+  string provider = 2;
+  string version = 3;
+  string directory = 4;
+  Options metadata = 5;
+  string metadata_url = 6;
+}
+
+message Environment {
+  string cwd = 1;
+  string data_dir = 2;
+  string vagrantfile_name = 3;
+  UI ui = 4;
+  string home_path = 5;
+  string local_data_path = 6;
+  string tmp_path = 7;
+  string aliases_path = 8;
+  string boxes_path = 9;
+  string gems_path = 10;
+  string default_private_key_path = 11;
+}
+
+message MachineProvider {}
+
+message Configuration {}
+
+message Machine {
+  Box box = 1;
+  Configuration config = 2;
+  string data_dir = 3;
+  Environment env = 4;
+  string id = 5;
+  string name = 6;
+  MachineProvider provider = 7;
+  Configuration provider_config = 8;
+  string provider_name = 9;
+  Options provider_options = 10;
+  UI ui = 11;
+  Vagrantfile vagrantfile = 12;
+}
+
+message Vagrantfile {
+}
+
+// TerminalUI is used to construct the terminal.UI for the plugin.
+message UI {
+  uint32 stream_id = 1;
+}
+
+/********************************************************************
+* Shared Messages
+********************************************************************/
+
+// Ref contains shared messages used for references to other resources.
+//
+// Refs should be used when the full type shouldn't be embedded in the message.
+message Ref {
+  // Machine references a machine.
+  message Machine {
+    string id = 1;
+  }
+
+  // Workspace references a workspace.
+  message Workspace {
+    string workspace = 1;
+  }
+}
+
+/********************************************************************
+* Core services
+********************************************************************/
 service MachineService {
-  rpc Box(google.protobuf.Empty) returns (Args.Box);
-  rpc DataDir(google.protobuf.Empty) returns (Machine.DataDirResp);
-  rpc Environment(google.protobuf.Empty) returns (Args.Environment);
-  rpc ID(google.protobuf.Empty) returns (Machine.IDResp);
+  // GetMachine returns the achine.
+  rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
+
+  // ListMachines returns a list of all the machine.
+  rpc ListMachines(ListMachineRequest) returns (ListMachineResponse);
+
+  // UpsertMachine updates or inserts a machine.
+  rpc UpsertMachine(UpsertMachineRequest) returns (UpsertMachineResponse);
+ }
+
+/********************************************************************
+* Machine
+********************************************************************/
+message UpsertMachineRequest {
+  // Machine to upsert
+  Machine machine = 1;
+}
+
+message UpsertMachineResponse {
+  // resulting pushed machine
+  Machine machine = 1;
+}
+
+message GetMachineRequest {
+  Ref.Machine ref = 1;
+}
+
+message GetMachineResponse {
+  Machine machine = 1;
+}
+
+message ListMachineRequest {
+  // The workspace to list machines for. If this isn't set, then all builds
+  // for the other filters are listed.
+  Ref.Workspace workspace = 2;
+}
+
+message ListMachineResponse {
+  // machines is the list of Machine.
+  repeated Machine machines = 1;
 }

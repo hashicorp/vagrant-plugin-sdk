@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
-	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 // the ssh info in vagrant core ends up dumping out
@@ -18,19 +17,6 @@ type MachineState struct {
 }
 
 type Machine interface {
-	// accessors
-	Box() (box Box, err error)
-	DataDir() (path string, err error)
-	Environment() (env Environment, err error)
-	ID() (id string, err error)
-	Name() (name string, err error)
-	Provider() (p Provider, err error)
-	// ProviderConfig
-	ProviderName() (name string, err error)
-	// Triggers
-	UI() (ui terminal.UI, err error)
-	Vagrantfile() (file Vagrantfile, err error)
-
 	// actual workers
 	Action(name string, state multistep.StateBag) (err error)
 	Communicate() (comm Communicator, err error)
