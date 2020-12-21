@@ -124,7 +124,7 @@ message Machine {
   Configuration config = 2;
   string data_dir = 3;
   Environment env = 4;
-  string id = 5;
+  uint32 id = 5;
   string name = 6;
   MachineProvider provider = 7;
   Configuration provider_config = 8;

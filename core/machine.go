@@ -1,8 +1,6 @@
 package core
 
-import (
-	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
-)
+import "github.com/hashicorp/vagrant-plugin-sdk/multistep"
 
 // the ssh info in vagrant core ends up dumping out
 // a bunch of options, but they are also ssh specific
@@ -30,3 +28,9 @@ type Machine interface {
 	UID() (user_id int, err error)
 	SyncedFolders() (folders []SyncedFolder, err error)
 }
+
+// type MachineClient interface {
+// 	GetMachine(id string) (*Machine, error)
+// 	ListMachines() ([]*Machine, error)
+// 	UpsertMachine(machine *Machine)
+// }

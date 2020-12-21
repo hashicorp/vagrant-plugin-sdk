@@ -1,4 +1,4 @@
-package plugin
+package core
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/mitchellh/mapstructure"
@@ -27,13 +28,10 @@ func (p *Machine) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &machineClient{
-		baseClient: &baseClient{
-			base: &base{
-				Mappers: p.Mappers,
-				Logger:  p.Logger,
-				Broker:  broker,
-			},
-		},
+		client:  pb.NewMachineServiceClient(c),
+		Mappers: p.Mappers,
+		Logger:  p.Logger,
+		Broker:  broker,
 	}, nil
 }
 
@@ -43,10 +41,13 @@ func (p *Machine) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 }
 
 type machineClient struct {
-	*baseClient
-	client pb.MachineServiceClient
+	Broker  *plugin.GRPCBroker
+	Logger  hclog.Logger
+	Mappers []*argmapper.Func
+	client  pb.MachineServiceClient
 }
 
+// Implements component.Machine
 func (m *machineClient) GetMachine(id string) (*core.Machine, error) {
 	rawMachine, err := m.client.GetMachine(
 		context.Background(),
@@ -60,6 +61,7 @@ func (m *machineClient) GetMachine(id string) (*core.Machine, error) {
 	return machine, nil
 }
 
+// Implements component.Machine
 func (m *machineClient) ListMachines() ([]*core.Machine, error) {
 	rawMachines, err := m.client.ListMachines(
 		context.Background(),
@@ -73,6 +75,7 @@ func (m *machineClient) ListMachines() ([]*core.Machine, error) {
 	return machines, nil
 }
 
+// Implements component.Machine
 func (m *machineClient) UpsertMachine(machine *core.Machine) error {
 	var machinepb *pb.Machine
 	mapstructure.Decode(machine, &machinepb)
@@ -86,10 +89,8 @@ func (m *machineClient) UpsertMachine(machine *core.Machine) error {
 	return nil
 }
 
-// TODO: (sophia) delete machine
-
 var (
 	_ plugin.Plugin     = (*Machine)(nil)
 	_ plugin.GRPCPlugin = (*Machine)(nil)
-	// _ core.Machine      = (*machineClient)(nil)
+	_ component.Machine = (*machineClient)(nil)
 )

@@ -11,6 +11,7 @@ import (
 
 	//	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
@@ -38,6 +39,8 @@ var All = []interface{}{
 	LabelSetProto,
 	StateBag,
 	StateBagProto,
+	Machine,
+	MachineProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -187,6 +190,48 @@ func TerminalUIProto(
 	})
 
 	return &pb.Args_TerminalUI{StreamId: id}
+}
+
+// Machine maps *pb.Machine to a component.Machine
+func Machine(
+	ctx context.Context,
+	input *pb.Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (component.Machine, error) {
+	// Create our plugin
+	p := &plugincore.Machine{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	conn, err := internal.Broker.Dial(input.Id)
+	if err != nil {
+		return nil, err
+	}
+	internal.Cleanup.Do(func() { conn.Close() })
+
+	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	if err != nil {
+		return nil, err
+	}
+
+	// Our UI should implement close since we have to stop streams and
+	// such but we gate it here in case we ever change the implementation.
+	if closer, ok := client.(io.Closer); ok {
+		internal.Cleanup.Do(func() { closer.Close() })
+	}
+
+	return client.(component.Machine), nil
+}
+
+// Machine maps component.Machine to a *pb.Machine
+func MachineProto(
+	machine component.Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*pb.Machine, error) {
+	return &pb.Machine{}, nil
 }
 
 func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {

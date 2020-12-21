@@ -176,7 +176,7 @@ func (c *providerClient) ActionUpFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *providerClient) ActionUp(machine core.Machine, state multistep.StateBag) error {
+func (c *providerClient) ActionUp(machine *pb.MachineServiceClient, state multistep.StateBag) error {
 	f := c.ActionUpFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f,
 		argmapper.Typed(machine),

@@ -98,8 +98,8 @@ type Host interface {
 
 type Machine interface {
 	GetMachine(id string) (*core.Machine, error)
-	ListMachines() (*[]core.Machine, error)
-	UpsertMachine(core.Machine) error
+	ListMachines() ([]*core.Machine, error)
+	UpsertMachine(*core.Machine) error
 }
 
 type Provider interface {
