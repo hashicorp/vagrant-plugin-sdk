@@ -123,7 +123,7 @@ func (c *providerClient) InitFunc() interface{} {
 }
 
 func (c *providerClient) Init(machine core.Machine) (bool, error) {
-	f := c.UsableFunc()
+	f := c.InitFunc()
 	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
 		argmapper.Typed(machine),
 	)
@@ -233,15 +233,15 @@ func (s *providerServer) Usable(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*pb.Provider_UsableResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.UsableFunc(), args.Args, (*bool)(nil),
-		argmapper.Typed(ctx),
+	raw, err := s.callBoolLocalDynamicFunc(
+		s.Impl.UsableFunc(), args.Args, argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.Provider_UsableResp{IsUsable: raw.(bool)}, nil
+	return &pb.Provider_UsableResp{IsUsable: raw}, nil
 }
 
 func (s *providerServer) InstalledSpec(
@@ -259,15 +259,15 @@ func (s *providerServer) Installed(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*pb.Provider_InstalledResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.InstalledFunc(), args.Args, (*bool)(nil),
-		argmapper.Typed(ctx),
+	raw, err := s.callBoolLocalDynamicFunc(
+		s.Impl.InstalledFunc(), args.Args, argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.Provider_InstalledResp{IsInstalled: raw.(bool)}, nil
+	return &pb.Provider_InstalledResp{IsInstalled: raw}, nil
 }
 
 func (s *providerServer) ActionUpSpec(
@@ -321,8 +321,8 @@ func (s *providerServer) Init(
 	ctx context.Context,
 	args *pb.FuncSpec_Args,
 ) (*empty.Empty, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args, (*interface{})(nil),
-		argmapper.Typed(ctx),
+	_, err := s.callBoolLocalDynamicFunc(
+		s.Impl.InitFunc(), args.Args, argmapper.Typed(ctx),
 	)
 
 	if err != nil {
