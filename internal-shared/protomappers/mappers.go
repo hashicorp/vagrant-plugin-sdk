@@ -206,8 +206,7 @@ func Machine(
 		Logger:  log,
 	}
 
-	timeout := 10 * time.Second
-
+	timeout := 5 * time.Second
 	// Create a new cancellation context so we can cancel in the case of an error
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
@@ -216,8 +215,6 @@ func Machine(
 	conn, err := grpc.DialContext(ctx, input.ServerAddr,
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
-		// grpc.WithUnaryInterceptor(protocolversion.UnaryClientInterceptor(protocolversion.Current())),
-		// grpc.WithStreamInterceptor(protocolversion.StreamClientInterceptor(protocolversion.Current())),
 	)
 	if err != nil {
 		return nil, err

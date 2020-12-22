@@ -50,25 +50,34 @@ type machineClient struct {
 // Implements component.Machine
 func (m *machineClient) GetServerAddr() string {
 	// TODO
-	return ""
+	return "nothing!"
 }
 
 // Implements component.Machine
-func (m *machineClient) GetMachine(id string) (*core.Machine, error) {
+func (m *machineClient) GetMachine(id string) (core.Machine, error) {
 	rawMachine, err := m.client.GetMachine(
 		context.Background(),
-		&pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: id}})
+		&pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: id}},
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	var machine *core.Machine
-	mapstructure.Decode(rawMachine, &machine)
+	// TODO: I think this needs to have a GetMachineFunc with the mappers and
+	//   everything. Then you can maybe decode the response into a more useful
+	//   machine implementation?
+	var machine core.Machine
+	mapstructure.Decode(rawMachine.Machine, &machine)
 	return machine, nil
 }
 
+type ahherror struct {
+}
+
+func (m *ahherror) Error() string { return "ahh" }
+
 // Implements component.Machine
-func (m *machineClient) ListMachines() ([]*core.Machine, error) {
+func (m *machineClient) ListMachines() ([]core.Machine, error) {
 	rawMachines, err := m.client.ListMachines(
 		context.Background(),
 		&pb.ListMachineRequest{})
@@ -76,13 +85,13 @@ func (m *machineClient) ListMachines() ([]*core.Machine, error) {
 		return nil, err
 	}
 
-	var machines []*core.Machine
+	var machines []core.Machine
 	mapstructure.Decode(rawMachines, &machines)
 	return machines, nil
 }
 
 // Implements component.Machine
-func (m *machineClient) UpsertMachine(machine *core.Machine) error {
+func (m *machineClient) UpsertMachine(machine core.Machine) error {
 	var machinepb *pb.Machine
 	mapstructure.Decode(machine, &machinepb)
 	_, err := m.client.UpsertMachine(
