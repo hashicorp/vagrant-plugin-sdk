@@ -48,6 +48,12 @@ type machineClient struct {
 }
 
 // Implements component.Machine
+func (m *machineClient) GetServerAddr() string {
+	// TODO
+	return ""
+}
+
+// Implements component.Machine
 func (m *machineClient) GetMachine(id string) (*core.Machine, error) {
 	rawMachine, err := m.client.GetMachine(
 		context.Background(),

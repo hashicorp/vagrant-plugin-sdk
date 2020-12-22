@@ -3,6 +3,7 @@ package protomappers
 import (
 	"context"
 	"io"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -192,10 +193,10 @@ func TerminalUIProto(
 	return &pb.Args_TerminalUI{StreamId: id}
 }
 
-// Machine maps *pb.Machine to a component.Machine
+// Machine maps *pb.Args_Machine to a component.Machine
 func Machine(
 	ctx context.Context,
-	input *pb.Machine,
+	input *pb.Args_Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (component.Machine, error) {
@@ -205,7 +206,19 @@ func Machine(
 		Logger:  log,
 	}
 
-	conn, err := internal.Broker.Dial(input.Id)
+	timeout := 10 * time.Second
+
+	// Create a new cancellation context so we can cancel in the case of an error
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	// Connect to the local server
+	conn, err := grpc.DialContext(ctx, input.ServerAddr,
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+		// grpc.WithUnaryInterceptor(protocolversion.UnaryClientInterceptor(protocolversion.Current())),
+		// grpc.WithStreamInterceptor(protocolversion.StreamClientInterceptor(protocolversion.Current())),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -225,13 +238,19 @@ func Machine(
 	return client.(component.Machine), nil
 }
 
-// Machine maps component.Machine to a *pb.Machine
+// Machine maps component.Machine to a *pb.Args_Machine
 func MachineProto(
 	machine component.Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) (*pb.Machine, error) {
-	return &pb.Machine{}, nil
+) (*pb.Args_Machine, error) {
+	var resultMachine *pb.Machine
+	mapstructure.Decode(machine, &resultMachine)
+
+	return &pb.Args_Machine{
+		Machine:    resultMachine,
+		ServerAddr: machine.GetServerAddr(),
+	}, nil
 }
 
 func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {

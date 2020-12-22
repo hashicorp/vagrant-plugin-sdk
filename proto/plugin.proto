@@ -18,6 +18,11 @@ import "core.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
+  message Machine {
+    hashicorp.vagrant.sdk.Machine machine = 1;
+    string serverAddr = 2;
+  }
+
   message Configuration {
     message Vagrant {
     }
