@@ -66,7 +66,7 @@ func (m *machineClient) GetMachine(id string) (core.Machine, error) {
 	// TODO: I think this needs to have a GetMachineFunc with the mappers and
 	//   everything. Then you can maybe decode the response into a more useful
 	//   machine implementation?
-	var machine core.Machine
+	var machine *TestMachine
 	mapstructure.Decode(rawMachine.Machine, &machine)
 	return machine, nil
 }
@@ -75,6 +75,18 @@ type ahherror struct {
 }
 
 func (m *ahherror) Error() string { return "ahh" }
+
+// Machine implements sdkCore.Machine interface
+type TestMachine struct {
+	Datadir       string
+	Id            string
+	LocalDataPath string
+	Name          string
+}
+
+func (m *TestMachine) UID() (user_id int, err error) {
+	return 0, nil
+}
 
 // Implements component.Machine
 func (m *machineClient) ListMachines() ([]core.Machine, error) {

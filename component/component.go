@@ -10,7 +10,9 @@
 // framework (see internal/mapper) to call these functions.
 package component
 
-import "github.com/hashicorp/vagrant-plugin-sdk/core"
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
+)
 
 //go:generate stringer -type=Type -linecomment
 //go:generate mockery --all
