@@ -201,7 +201,7 @@ func Machine(
 	internal *pluginargs.Internal,
 ) (component.Machine, error) {
 	// Create our plugin
-	p := &plugincore.Machine{
+	p := &plugincore.MachinePlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
 	}

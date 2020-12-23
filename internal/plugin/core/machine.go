@@ -2,27 +2,88 @@ package core
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 )
 
 // Machine is just a GRCP client for a machine
-type Machine struct {
+type MachinePlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Impl    core.Machine
 }
 
+// Machine implements sdkCore.Machine interface
+type Machine struct {
+	Box             *core.Box
+	Datadir         string
+	Environment     *core.Environment
+	Id              string
+	LocalDataPath   string
+	Name            string
+	Provider        *core.Provider
+	VagrantfileName string
+	VagrantfilePath string
+	UpdatedAt       *time.Time
+	UI              *terminal.UI
+}
+
+func (m *Machine) Action(name string, state multistep.StateBag) (err error) {
+	return nil
+}
+
+func (m *Machine) Communicate() (comm core.Communicator, err error) {
+	return nil, nil
+}
+
+func (m *Machine) Guest() (g core.Guest, err error) {
+	return nil, nil
+}
+
+func (m *Machine) SetID(value string) (err error) {
+	return nil
+}
+
+func (m *Machine) State() (state *core.MachineState, err error) {
+	return nil, nil
+}
+
+func (m *Machine) IndexUUID() (id string, err error) {
+	return "", nil
+}
+
+func (m *Machine) Inspect() (printable string, err error) {
+	return "", nil
+}
+
+func (m *Machine) Reload() (err error) {
+	return nil
+}
+
+func (m *Machine) ConnectionInfo() (info core.ConnectionInfo, err error) {
+	return nil, nil
+}
+
+func (m *Machine) UID() (user_id int, err error) {
+	return 10, nil
+}
+func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+	return nil, nil
+}
+
 // Implements plugin.GRPCPlugin
-func (p *Machine) GRPCClient(
+func (p *MachinePlugin) GRPCClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
@@ -36,7 +97,7 @@ func (p *Machine) GRPCClient(
 }
 
 // Implements plugin.GRPCPlugin
-func (p *Machine) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+func (p *MachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	return nil
 }
 
@@ -62,30 +123,9 @@ func (m *machineClient) GetMachine(id string) (core.Machine, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: I think this needs to have a GetMachineFunc with the mappers and
-	//   everything. Then you can maybe decode the response into a more useful
-	//   machine implementation?
-	var machine *TestMachine
+	var machine *Machine
 	mapstructure.Decode(rawMachine.Machine, &machine)
 	return machine, nil
-}
-
-type ahherror struct {
-}
-
-func (m *ahherror) Error() string { return "ahh" }
-
-// Machine implements sdkCore.Machine interface
-type TestMachine struct {
-	Datadir       string
-	Id            string
-	LocalDataPath string
-	Name          string
-}
-
-func (m *TestMachine) UID() (user_id int, err error) {
-	return 0, nil
 }
 
 // Implements component.Machine
@@ -117,7 +157,8 @@ func (m *machineClient) UpsertMachine(machine core.Machine) error {
 }
 
 var (
-	_ plugin.Plugin     = (*Machine)(nil)
-	_ plugin.GRPCPlugin = (*Machine)(nil)
+	_ plugin.Plugin     = (*MachinePlugin)(nil)
+	_ plugin.GRPCPlugin = (*MachinePlugin)(nil)
 	_ component.Machine = (*machineClient)(nil)
+	_ core.Machine      = (*Machine)(nil)
 )
