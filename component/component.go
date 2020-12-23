@@ -12,6 +12,7 @@ package component
 
 import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
 //go:generate stringer -type=Type -linecomment
@@ -100,7 +101,7 @@ type Host interface {
 
 type Machine interface {
 	GetServerAddr() string
-	GetMachine(id string) (core.Machine, error)
+	GetMachine(id string) (*pb.Machine, error)
 	ListMachines() ([]core.Machine, error)
 	UpsertMachine(core.Machine) error
 }
