@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 	"github.com/mitchellh/mapstructure"
@@ -39,15 +38,11 @@ type Machine struct {
 	UI              *terminal.UI
 }
 
-func (m *Machine) Action(name string, state multistep.StateBag) (err error) {
-	return nil
-}
-
-func (m *Machine) Communicate() (comm core.Communicator, err error) {
+func (m *Machine) Communicate() (comm *core.Communicator, err error) {
 	return nil, nil
 }
 
-func (m *Machine) Guest() (g core.Guest, err error) {
+func (m *Machine) Guest() (g *core.Guest, err error) {
 	return nil, nil
 }
 
@@ -71,14 +66,19 @@ func (m *Machine) Reload() (err error) {
 	return nil
 }
 
-func (m *Machine) ConnectionInfo() (info core.ConnectionInfo, err error) {
+func (m *Machine) ConnectionInfo() (info *core.ConnectionInfo, err error) {
 	return nil, nil
 }
 
 func (m *Machine) UID() (user_id int, err error) {
 	return 10, nil
 }
-func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+
+func (m *Machine) GetName() (name string) {
+	return m.Name
+}
+
+func (m *Machine) SyncedFolders() (folders []*core.SyncedFolder, err error) {
 	return nil, nil
 }
 

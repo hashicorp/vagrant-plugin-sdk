@@ -200,10 +200,14 @@ func Machine(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (component.Machine, error) {
+	var resultMachine *plugincore.Machine
+	mapstructure.Decode(input.Machine, &resultMachine)
+
 	// Create our plugin
 	p := &plugincore.MachinePlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Impl:    resultMachine,
 	}
 
 	timeout := 5 * time.Second
