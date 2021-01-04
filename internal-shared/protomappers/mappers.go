@@ -41,7 +41,7 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Machine,
-	MachineProto,
+	MachineComponentProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -200,16 +200,6 @@ func Machine(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*plugincore.Machine, error) {
-	// var resultMachine *plugincore.Machine
-	// mapstructure.Decode(input.Machine, &resultMachine)
-
-	// Create our plugin
-	// p := &plugincore.MachinePlugin{
-	// 	Mappers: internal.Mappers,
-	// 	Logger:  log,
-	// 	Impl:    resultMachine,
-	// }
-
 	timeout := 5 * time.Second
 	// Create a new cancellation context so we can cancel in the case of an error
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -225,18 +215,6 @@ func Machine(
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
-	// client, err := p.GRPCClient(ctx, internal.Broker, conn)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// Our UI should implement close since we have to stop streams and
-	// such but we gate it here in case we ever change the implementation.
-	// if closer, ok := client.(io.Closer); ok {
-	// 	internal.Cleanup.Do(func() { closer.Close() })
-	// }
-
-	// TODO: set this id to input.Machine.Id
 	machineReq := &pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: input.MachineId}}
 	client := pb.NewMachineServiceClient(conn)
 	rawMachine, err := client.GetMachine(
@@ -252,7 +230,7 @@ func Machine(
 }
 
 // Machine maps component.Machine to a *pb.Args_Machine
-func MachineProto(
+func MachineComponentProto(
 	machine component.Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
