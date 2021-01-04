@@ -237,7 +237,7 @@ func Machine(
 	// }
 
 	// TODO: set this id to input.Machine.Id
-	machineReq := &pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: "mymachine"}}
+	machineReq := &pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: input.MachineId}}
 	client := pb.NewMachineServiceClient(conn)
 	rawMachine, err := client.GetMachine(
 		context.Background(),
@@ -261,7 +261,7 @@ func MachineProto(
 	mapstructure.Decode(machine, &resultMachine)
 
 	return &pb.Args_Machine{
-		Machine:    resultMachine,
+		MachineId:  resultMachine.Id,
 		ServerAddr: machine.GetServerAddr(),
 	}, nil
 }

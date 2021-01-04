@@ -50,6 +50,10 @@ func (m *Machine) SetID(value string) (err error) {
 	return nil
 }
 
+func (m *Machine) GetID() string {
+	return m.Id
+}
+
 func (m *Machine) State() (state *core.MachineState, err error) {
 	return nil, nil
 }

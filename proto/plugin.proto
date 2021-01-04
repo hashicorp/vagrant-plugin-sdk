@@ -19,7 +19,7 @@ import "core.proto";
 // on the Go interface docs.
 message Args {
   message Machine {
-    hashicorp.vagrant.sdk.Machine machine = 1;
+    string machineId = 1;
     string serverAddr = 2;
   }
 

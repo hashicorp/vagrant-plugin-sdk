@@ -14,6 +14,7 @@ type MachineState struct {
 
 type Machine interface {
 	GetName() (name string)
+	GetID() (id string)
 	// actual workers
 	Communicate() (comm *Communicator, err error)
 	Guest() (g *Guest, err error)
