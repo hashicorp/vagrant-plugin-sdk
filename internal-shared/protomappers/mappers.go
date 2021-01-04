@@ -193,22 +193,22 @@ func TerminalUIProto(
 	return &pb.Args_TerminalUI{StreamId: id}
 }
 
-// Machine maps *pb.Args_Machine to a component.Machine
+// Machine maps *pb.Args_Machine to a core.Machine
 func Machine(
 	ctx context.Context,
 	input *pb.Args_Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) (component.Machine, error) {
-	var resultMachine *plugincore.Machine
-	mapstructure.Decode(input.Machine, &resultMachine)
+) (*plugincore.Machine, error) {
+	// var resultMachine *plugincore.Machine
+	// mapstructure.Decode(input.Machine, &resultMachine)
 
 	// Create our plugin
-	p := &plugincore.MachinePlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Impl:    resultMachine,
-	}
+	// p := &plugincore.MachinePlugin{
+	// 	Mappers: internal.Mappers,
+	// 	Logger:  log,
+	// 	Impl:    resultMachine,
+	// }
 
 	timeout := 5 * time.Second
 	// Create a new cancellation context so we can cancel in the case of an error
@@ -225,18 +225,30 @@ func Machine(
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
-	client, err := p.GRPCClient(ctx, internal.Broker, conn)
-	if err != nil {
-		return nil, err
-	}
+	// client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Our UI should implement close since we have to stop streams and
 	// such but we gate it here in case we ever change the implementation.
-	if closer, ok := client.(io.Closer); ok {
-		internal.Cleanup.Do(func() { closer.Close() })
-	}
+	// if closer, ok := client.(io.Closer); ok {
+	// 	internal.Cleanup.Do(func() { closer.Close() })
+	// }
 
-	return client.(component.Machine), nil
+	// TODO: set this id to input.Machine.Id
+	machineReq := &pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: "mymachine"}}
+	client := pb.NewMachineServiceClient(conn)
+	rawMachine, err := client.GetMachine(
+		context.Background(),
+		machineReq,
+	)
+	if err != nil {
+		return nil, err
+	}
+	var machine *plugincore.Machine
+	mapstructure.Decode(rawMachine.Machine, &machine)
+	return machine, nil
 }
 
 // Machine maps component.Machine to a *pb.Args_Machine
