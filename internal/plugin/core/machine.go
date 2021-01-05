@@ -48,14 +48,17 @@ type Machine struct {
 }
 
 func (m *Machine) Communicate() (comm core.Communicator, err error) {
+	// TODO
 	return nil, nil
 }
 
 func (m *Machine) Guest() (g core.Guest, err error) {
+	// TODO
 	return nil, nil
 }
 
 func (m *Machine) SetID(value string) (err error) {
+	// TODO
 	return nil
 }
 
@@ -64,26 +67,32 @@ func (m *Machine) GetID() string {
 }
 
 func (m *Machine) State() (state *core.MachineState, err error) {
+	// TODO
 	return nil, nil
 }
 
 func (m *Machine) IndexUUID() (id string, err error) {
+	// TODO
 	return "", nil
 }
 
 func (m *Machine) Inspect() (printable string, err error) {
+	// TODO
 	return "", nil
 }
 
 func (m *Machine) Reload() (err error) {
+	// TODO
 	return nil
 }
 
 func (m *Machine) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+	// TODO
 	return nil, nil
 }
 
 func (m *Machine) UID() (user_id int, err error) {
+	// TODO
 	return 10, nil
 }
 
@@ -104,6 +113,7 @@ func (m *Machine) SetName(name string) (err error) {
 }
 
 func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+	// TODO
 	return nil, nil
 }
 
@@ -136,7 +146,7 @@ type MachineClient struct {
 
 // Implements component.Machine
 func (m *MachineClient) GetServerAddr() string {
-	// TODO
+	// TODO: I don't think this is needed on the client side
 	return "nothing!"
 }
 
@@ -163,6 +173,7 @@ func (m *MachineClient) ListMachines() ([]core.Machine, error) {
 		return nil, err
 	}
 
+	// TODO: test
 	var machines []core.Machine
 	mapstructure.Decode(rawMachines, &machines)
 	return machines, nil

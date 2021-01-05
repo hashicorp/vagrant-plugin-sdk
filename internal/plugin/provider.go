@@ -16,7 +16,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
 
@@ -176,12 +175,9 @@ func (c *providerClient) ActionUpFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *providerClient) ActionUp(machine *pb.MachineServiceClient, state multistep.StateBag) error {
+func (c *providerClient) ActionUp() error {
 	f := c.ActionUpFunc()
-	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f,
-		argmapper.Typed(machine),
-		argmapper.Typed(state),
-	)
+	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f)
 	if err != nil {
 		return err
 	}

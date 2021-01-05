@@ -218,19 +218,3 @@ func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.Fu
 		argmapper.Typed(b.internal()))...,
 	)
 }
-
-// type MachineComponent struct {
-// 	machine *Machine
-// }
-
-// func (m *MachineComponent) GetMachine(id string) (*Machine, error) {
-// 	return nil, nil
-// }
-
-// func (m *MachineComponent) ListMachines() ([]*Machine, error) {
-// 	return nil, nil
-// }
-
-// func (m *MachineComponent) UpsertMachine(*Machine) error {
-// 	return nil
-// }
