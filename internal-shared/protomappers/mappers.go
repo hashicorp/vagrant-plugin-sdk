@@ -200,6 +200,11 @@ func Machine(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*plugincore.Machine, error) {
+	p := &plugincore.MachinePlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
 	timeout := 5 * time.Second
 	// Create a new cancellation context so we can cancel in the case of an error
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -215,17 +220,15 @@ func Machine(
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
-	machineReq := &pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: input.MachineId}}
-	client := pb.NewMachineServiceClient(conn)
-	rawMachine, err := client.GetMachine(
-		context.Background(),
-		machineReq,
-	)
+	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
+	machineClient := mc.(*plugincore.MachineClient)
+	rawMachine, err := machineClient.GetMachine(input.MachineId)
 	if err != nil {
 		return nil, err
 	}
-	var machine *plugincore.Machine
-	mapstructure.Decode(rawMachine.Machine, &machine)
+
+	machine := plugincore.NewMachine(machineClient)
+	mapstructure.Decode(rawMachine, &machine)
 	return machine, nil
 }
 

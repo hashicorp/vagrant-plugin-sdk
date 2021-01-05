@@ -23,8 +23,15 @@ type MachinePlugin struct {
 	Impl    core.Machine
 }
 
-// Machine implements sdkCore.Machine interface
+func NewMachine(client *MachineClient) *Machine {
+	return &Machine{
+		client: client,
+	}
+}
+
+// Machine implements core.Machine interface
 type Machine struct {
+	client          *MachineClient
 	Box             *core.Box
 	Datadir         string
 	Environment     *core.Environment
@@ -92,7 +99,7 @@ func (p *MachinePlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &machineClient{
+	return &MachineClient{
 		client:  pb.NewMachineServiceClient(c),
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
@@ -102,10 +109,11 @@ func (p *MachinePlugin) GRPCClient(
 
 // Implements plugin.GRPCPlugin
 func (p *MachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+	// Not implemented. The machine plugin server is in vagrant core
 	return nil
 }
 
-type machineClient struct {
+type MachineClient struct {
 	Broker  *plugin.GRPCBroker
 	Logger  hclog.Logger
 	Mappers []*argmapper.Func
@@ -113,13 +121,13 @@ type machineClient struct {
 }
 
 // Implements component.Machine
-func (m *machineClient) GetServerAddr() string {
+func (m *MachineClient) GetServerAddr() string {
 	// TODO
 	return "nothing!"
 }
 
 // Implements component.Machine
-func (m *machineClient) GetMachine(id string) (core.Machine, error) {
+func (m *MachineClient) GetMachine(id string) (core.Machine, error) {
 	rawMachine, err := m.client.GetMachine(
 		context.Background(),
 		&pb.GetMachineRequest{Ref: &pb.Ref_Machine{Id: id}},
@@ -133,7 +141,7 @@ func (m *machineClient) GetMachine(id string) (core.Machine, error) {
 }
 
 // Implements component.Machine
-func (m *machineClient) ListMachines() ([]core.Machine, error) {
+func (m *MachineClient) ListMachines() ([]core.Machine, error) {
 	rawMachines, err := m.client.ListMachines(
 		context.Background(),
 		&pb.ListMachineRequest{})
@@ -147,7 +155,7 @@ func (m *machineClient) ListMachines() ([]core.Machine, error) {
 }
 
 // Implements component.Machine
-func (m *machineClient) UpsertMachine(machine core.Machine) error {
+func (m *MachineClient) UpsertMachine(machine core.Machine) error {
 	var machinepb *pb.Machine
 	mapstructure.Decode(machine, &machinepb)
 	_, err := m.client.UpsertMachine(
@@ -163,6 +171,6 @@ func (m *machineClient) UpsertMachine(machine core.Machine) error {
 var (
 	_ plugin.Plugin     = (*MachinePlugin)(nil)
 	_ plugin.GRPCPlugin = (*MachinePlugin)(nil)
-	_ component.Machine = (*machineClient)(nil)
+	_ component.Machine = (*MachineClient)(nil)
 	_ core.Machine      = (*Machine)(nil)
 )
