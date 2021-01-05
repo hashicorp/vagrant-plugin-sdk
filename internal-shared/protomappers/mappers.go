@@ -227,8 +227,7 @@ func Machine(
 		return nil, err
 	}
 
-	machine := plugincore.NewMachine(machineClient)
-	mapstructure.Decode(rawMachine, &machine)
+	machine := plugincore.NewMachine(machineClient, rawMachine)
 	return machine, nil
 }
 

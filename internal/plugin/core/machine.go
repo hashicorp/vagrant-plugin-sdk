@@ -23,15 +23,17 @@ type MachinePlugin struct {
 	Impl    core.Machine
 }
 
-func NewMachine(client *MachineClient) *Machine {
-	return &Machine{
-		client: client,
-	}
+func NewMachine(client *MachineClient, m core.Machine) *Machine {
+	var machine *Machine
+	mapstructure.Decode(m, &machine)
+	machine.client = client
+	return machine
 }
 
 // Machine implements core.Machine interface
 type Machine struct {
-	client          *MachineClient
+	client *MachineClient
+
 	Box             *core.Box
 	Datadir         string
 	Environment     *core.Environment
@@ -45,11 +47,11 @@ type Machine struct {
 	UI              *terminal.UI
 }
 
-func (m *Machine) Communicate() (comm *core.Communicator, err error) {
+func (m *Machine) Communicate() (comm core.Communicator, err error) {
 	return nil, nil
 }
 
-func (m *Machine) Guest() (g *core.Guest, err error) {
+func (m *Machine) Guest() (g core.Guest, err error) {
 	return nil, nil
 }
 
@@ -86,10 +88,22 @@ func (m *Machine) UID() (user_id int, err error) {
 }
 
 func (m *Machine) GetName() (name string) {
+	m.client.GetMachine(m.Id)
 	return m.Name
 }
 
-func (m *Machine) SyncedFolders() (folders []*core.SyncedFolder, err error) {
+func (m *Machine) SetName(name string) (err error) {
+	oldValue := m.Name
+	m.Name = name
+	_, err = m.client.UpsertMachine(m)
+	if err != nil {
+		m.Name = oldValue
+		return err
+	}
+	return nil
+}
+
+func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
 	return nil, nil
 }
 
@@ -155,17 +169,20 @@ func (m *MachineClient) ListMachines() ([]core.Machine, error) {
 }
 
 // Implements component.Machine
-func (m *MachineClient) UpsertMachine(machine core.Machine) error {
+func (m *MachineClient) UpsertMachine(mach core.Machine) (core.Machine, error) {
 	var machinepb *pb.Machine
-	mapstructure.Decode(machine, &machinepb)
-	_, err := m.client.UpsertMachine(
-		context.Background(),
-		&pb.UpsertMachineRequest{Machine: machinepb})
-	if err != nil {
-		return err
-	}
+	mapstructure.Decode(mach.(*Machine), &machinepb)
 
-	return nil
+	resp, err := m.client.UpsertMachine(
+		context.Background(),
+		&pb.UpsertMachineRequest{Machine: machinepb},
+	)
+	if err != nil {
+		return nil, err
+	}
+	var resultMachine *Machine
+	mapstructure.Decode(resp.Machine, &resultMachine)
+	return resultMachine, nil
 }
 
 var (

@@ -14,16 +14,18 @@ type MachineState struct {
 
 type Machine interface {
 	GetName() (name string)
+	SetName(value string) (err error)
 	GetID() (id string)
-	// actual workers
-	Communicate() (comm *Communicator, err error)
-	Guest() (g *Guest, err error)
 	SetID(value string) (err error)
+
+	// actual workers
+	Communicate() (comm Communicator, err error)
+	Guest() (g Guest, err error)
 	IndexUUID() (id string, err error)
 	Inspect() (printable string, err error)
 	Reload() (err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	State() (state *MachineState, err error)
 	UID() (user_id int, err error)
-	SyncedFolders() (folders []*SyncedFolder, err error)
+	SyncedFolders() (folders []SyncedFolder, err error)
 }

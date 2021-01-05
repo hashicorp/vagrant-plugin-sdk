@@ -102,7 +102,7 @@ type Machine interface {
 	GetServerAddr() string
 	GetMachine(id string) (core.Machine, error)
 	ListMachines() ([]core.Machine, error)
-	UpsertMachine(core.Machine) error
+	UpsertMachine(core.Machine) (core.Machine, error)
 }
 
 type Provider interface {
