@@ -378,6 +378,9 @@ message Provider {
   }
   message ActionResp {
     google.protobuf.Any result = 1;
+    map<string, string> labels = 2;
+    bytes template_data = 3;
+    bool success = 4;
   }
 }
 
