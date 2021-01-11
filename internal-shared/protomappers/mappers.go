@@ -3,11 +3,13 @@ package protomappers
 import (
 	"context"
 	"io"
+	"net"
 	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
+	"github.com/oklog/run"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -184,18 +186,69 @@ func TerminalUIProto(
 		Logger:  log,
 	}
 
+	server := plugin.DefaultGRPCServer(nil)
+	if err := p.GRPCServer(internal.Broker, server); err != nil {
+		panic(err)
+	}
+
 	id := internal.Broker.NextId()
+	// go internal.Broker.Run()
+
+	l, err := internal.Broker.Accept(id)
+	if err != nil {
+		panic(err)
+	}
+
+	go RunServer(l, server)
 
 	// Serve it
-	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-		server := plugin.DefaultGRPCServer(opts)
-		if err := p.GRPCServer(internal.Broker, server); err != nil {
-			panic(err)
-		}
-		return server
-	})
+	// go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
+	// 	server := plugin.DefaultGRPCServer(opts)
+	// 	if err := p.GRPCServer(internal.Broker, server); err != nil {
+	// 		panic(err)
+	// 	}
+	// 	return server
+	// })
+	// conn, err := internal.Broker.Dial()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer conn.Close()
 
-	return &pb.Args_TerminalUI{StreamId: id}
+	addr := l.Addr().String()
+	return &pb.Args_TerminalUI{StreamId: id, Addr: addr}
+}
+
+func RunServer(listener net.Listener, server *grpc.Server) {
+	doneCh := make(chan struct{})
+	// Here we use a run group to close this goroutine if the server is shutdown
+	// or the broker is shutdown.
+	var g run.Group
+	{
+		// Serve on the listener, if shutting down call GracefulStop.
+		g.Add(func() error {
+			return server.Serve(listener)
+		}, func(err error) {
+			server.GracefulStop()
+		})
+	}
+	{
+		// block on the closeCh or the doneCh. If we are shutting down close the
+		// closeCh.
+		closeCh := make(chan struct{})
+		g.Add(func() error {
+			select {
+			case <-doneCh:
+			case <-closeCh:
+			}
+			return nil
+		}, func(err error) {
+			close(closeCh)
+		})
+	}
+
+	// Block until we are done
+	g.Run()
 }
 
 // Machine maps *pb.Args_Machine to a core.Machine
