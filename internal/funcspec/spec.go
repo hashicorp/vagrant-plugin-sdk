@@ -38,7 +38,7 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
 		return nil, err
 	}
 
-	filter := argmapper.FilterOr(
+	inputFilter := argmapper.FilterOr(
 		argmapper.FilterType(contextType),
 		filterProto,
 	)
@@ -47,7 +47,7 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
 	// the inputs of a function to only require values that match our filter
 	// function. In our case, that is protobuf messages.
 	f, err = f.Redefine(append(args,
-		argmapper.FilterInput(filter),
+		argmapper.FilterInput(inputFilter),
 	)...)
 	if err != nil {
 		return nil, err

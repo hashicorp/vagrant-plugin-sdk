@@ -3,6 +3,7 @@ package protomappers
 import (
 	"context"
 	"io"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -11,6 +12,7 @@ import (
 
 	//	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
@@ -38,6 +40,8 @@ var All = []interface{}{
 	LabelSetProto,
 	StateBag,
 	StateBagProto,
+	Machine,
+	MachineComponentProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -187,6 +191,59 @@ func TerminalUIProto(
 	})
 
 	return &pb.Args_TerminalUI{StreamId: id}
+}
+
+// Machine maps *pb.Args_Machine to a core.Machine
+func Machine(
+	ctx context.Context,
+	input *pb.Args_Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*plugincore.Machine, error) {
+	p := &plugincore.MachinePlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	timeout := 5 * time.Second
+	// Create a new cancellation context so we can cancel in the case of an error
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	// Connect to the local server
+	conn, err := grpc.DialContext(ctx, input.ServerAddr,
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	internal.Cleanup.Do(func() { conn.Close() })
+
+	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
+	machineClient := mc.(*plugincore.MachineClient)
+	rawMachine, err := machineClient.GetMachine(input.MachineId)
+	if err != nil {
+		return nil, err
+	}
+
+	machine := plugincore.NewMachine(machineClient, rawMachine)
+	return machine, nil
+}
+
+// Machine maps component.Machine to a *pb.Args_Machine
+func MachineComponentProto(
+	machine component.Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*pb.Args_Machine, error) {
+	var resultMachine *pb.Machine
+	mapstructure.Decode(machine, &resultMachine)
+
+	return &pb.Args_Machine{
+		MachineId:  resultMachine.Id,
+		ServerAddr: machine.GetServerAddr(),
+	}, nil
 }
 
 func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
