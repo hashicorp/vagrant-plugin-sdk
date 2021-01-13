@@ -18,6 +18,77 @@ import "core.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
+  message DataDir {
+    message Basis {
+      string cache_dir = 1;
+      string data_dir = 2;
+      string root_dir = 3;
+      string temp_dir = 4;
+    }
+
+    message Project {
+      string cache_dir = 1;
+      string data_dir = 2;
+      string root_dir = 3;
+      string temp_dir = 4;
+    }
+
+    message Machine {
+      string cache_dir = 1;
+      string data_dir = 2;
+      string root_dir = 3;
+      string temp_dir = 4;
+    }
+
+    message Component {
+      string cache_dir = 1;
+      string data_dir = 2;
+      string root_dir = 3;
+      string temp_dir = 4;
+    }
+  }
+
+  message MachineIndex {
+    message Entry {
+      string id = 1;
+      string local_data_path = 2;
+      string name = 3;
+      string provider = 4;
+      string state = 5;
+      string vagrantfile_name = 6;
+      string vagrantfile_path = 7;
+      string updated_at = 8; // TODO(spox): should we make this an int?
+      Options extra_data = 9;
+    }
+  }
+
+  message BoxCollection {
+    string directory = 1;
+  }
+
+  message Box {
+    string name = 1;
+    string provider = 2;
+    string version = 3;
+    string directory = 4;
+    Options metadata = 5;
+    string metadata_url = 6;
+  }
+
+  message Environment {
+    string cwd = 1;
+    string data_dir = 2;
+    string vagrantfile_name = 3;
+    TerminalUI ui = 4;
+    string home_path = 5;
+    string local_data_path = 6;
+    string tmp_path = 7;
+    string aliases_path = 8;
+    string boxes_path = 9;
+    string gems_path = 10;
+    string default_private_key_path = 11;
+  }
+
   message Machine {
     string machineId = 1;
     string serverAddr = 2;
@@ -43,13 +114,8 @@ message Args {
     LabelSet opt = 1;
   }
 
-  // See component.Source
-  message Source {
-    // app is the name of the application being deployed.
-    string app = 1;
+  message Vagrantfile {
 
-    // path is the absolute directory path to the root directory for source files.
-    string path = 2;
   }
 
   // See component.JobInfo
