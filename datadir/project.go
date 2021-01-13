@@ -1,7 +1,7 @@
 package datadir
 
 import (
-	"path/filepath"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 )
 
 // Project is an implementation of Dir that encapsulates the directory
@@ -25,13 +25,13 @@ func NewProject(path string) (*Project, error) {
 }
 
 // App returns the Dir implementation scoped to a specific app.
-func (p *Project) App(name string) (*App, error) {
-	dir, err := NewScopedDir(p, filepath.Join("app", name))
+func (p *Project) Machine(name string) (*Machine, error) {
+	dir, err := NewScopedDir(p, path.NewPath("machine").Join(name).String())
 	if err != nil {
 		return nil, err
 	}
 
-	return &App{Dir: dir}, nil
+	return &Machine{Dir: dir}, nil
 }
 
 // Assert implementation

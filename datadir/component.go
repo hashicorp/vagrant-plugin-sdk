@@ -1,7 +1,7 @@
 package datadir
 
 // Component is an implementation of Dir that encapsulates the directories for a
-// single app.
+// specific component
 type Component struct {
 	Dir
 }
