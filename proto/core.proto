@@ -51,7 +51,7 @@ message WinrmInfo {
   string username = 1;
   string password = 2;
   string host = 3;
-  int64 port = 4;  
+  int64 port = 4;
   int64 guest_port = 5;
   int64 max_tries = 6;
   int64 retry_delay = 7;
@@ -164,7 +164,7 @@ message Ref {
 /********************************************************************
 * Core services
 ********************************************************************/
-service MachineService {
+service Core {
   // GetMachine returns the achine.
   rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
 
