@@ -24,18 +24,18 @@ type Type uint
 
 const (
 	InvalidType       Type = iota // Invalid
-	AuthenticatorType             // Authenticator
 	CommandType                   // Command
 	CommunicatorType              // Communicator
-	ConfigType                    // Config
 	GuestType                     // Guest
 	HostType                      // Host
-	LogPlatformType               // LogPlatform
-	LogViewerType                 // LogViewer
 	ProviderType                  // Provider
 	ProvisionerType               // Provisioner
 	SyncedFolderType              // Synced Folder
+	AuthenticatorType             // Authenticator
+	LogPlatformType               // LogPlatform
+	LogViewerType                 // LogViewer
 	MapperType                    // Mapper
+	ConfigType                    // Config
 	maxType
 )
 
@@ -157,13 +157,8 @@ type JobInfo struct {
 
 	// Workspace is the workspace that this job is executing in. This should
 	// be used by plugins to properly isolate resources from each other.
+	// TODO(spox): this needs to be removed
 	Workspace string
-}
-
-// See Args.Source in the protobuf protocol.
-type Source struct {
-	App  string
-	Path string
 }
 
 // AuthResult is the return value expected from Authenticator.AuthFunc.

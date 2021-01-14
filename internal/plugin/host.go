@@ -47,6 +47,7 @@ func (p *HostPlugin) GRPCClient(
 	return &hostClient{
 		client: proto.NewHostServiceClient(c),
 		baseClient: &baseClient{
+			ctx: context.Background(),
 			base: &base{
 				Mappers: p.Mappers,
 				Logger:  p.Logger,
@@ -64,19 +65,19 @@ type hostClient struct {
 }
 
 func (c *hostClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *hostClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *hostClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *hostClient) DetectFunc() interface{} {
-	spec, err := c.client.DetectSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -86,6 +87,7 @@ func (c *hostClient) DetectFunc() interface{} {
 		if err != nil {
 			return false, err
 		}
+
 		return resp.Detected, nil
 	}
 	return c.generateFunc(spec, cb)
@@ -93,7 +95,7 @@ func (c *hostClient) DetectFunc() interface{} {
 
 func (c *hostClient) Detect() (bool, error) {
 	f := c.DetectFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
 	if err != nil {
 		return false, err
 	}
@@ -145,6 +147,7 @@ func (s *hostServer) Detect(
 	ctx context.Context,
 	args *proto.FuncSpec_Args,
 ) (*proto.Host_DetectResp, error) {
+	s.Logger.Debug("running the detect function on the server to call real implementation")
 	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)

@@ -51,6 +51,7 @@ func (p *ProviderPlugin) GRPCClient(
 	return &providerClient{
 		client: pb.NewProviderServiceClient(c),
 		baseClient: &baseClient{
+			ctx: context.Background(),
 			base: &base{
 				Mappers: p.Mappers,
 				Logger:  p.Logger,
@@ -68,19 +69,19 @@ type providerClient struct {
 }
 
 func (c *providerClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *providerClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *providerClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *providerClient) UsableFunc() interface{} {
-	spec, err := c.client.UsableSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.UsableSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -97,7 +98,7 @@ func (c *providerClient) UsableFunc() interface{} {
 
 func (c *providerClient) Usable() (bool, error) {
 	f := c.UsableFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
 	if err != nil {
 		return false, err
 	}
@@ -106,7 +107,7 @@ func (c *providerClient) Usable() (bool, error) {
 }
 
 func (c *providerClient) InitFunc() interface{} {
-	spec, err := c.client.InitSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.InitSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -134,7 +135,7 @@ func (c *providerClient) Init(machine core.Machine) (bool, error) {
 }
 
 func (c *providerClient) InstalledFunc() interface{} {
-	spec, err := c.client.InstalledSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.InstalledSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -151,7 +152,7 @@ func (c *providerClient) InstalledFunc() interface{} {
 
 func (c *providerClient) Installed() (bool, error) {
 	f := c.InstalledFunc()
-	raw, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
 	if err != nil {
 		return false, err
 	}
@@ -160,7 +161,7 @@ func (c *providerClient) Installed() (bool, error) {
 }
 
 func (c *providerClient) ActionUpFunc() interface{} {
-	spec, err := c.client.ActionUpSpec(context.Background(), &empty.Empty{})
+	spec, err := c.client.ActionUpSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}

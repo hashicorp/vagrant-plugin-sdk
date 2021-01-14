@@ -26,10 +26,14 @@ type ProvisionerPlugin struct {
 
 func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	proto.RegisterProvisionerServiceServer(s, &provisionerServer{
-		Impl:    p.Impl,
-		Mappers: p.Mappers,
-		Logger:  p.Logger,
-		Broker:  broker,
+		Impl: p.Impl,
+		baseServer: &baseServer{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	})
 	return nil
 }
@@ -41,29 +45,34 @@ func (p *ProvisionerPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &provisionerClient{
 		client: proto.NewProvisionerServiceClient(c),
-		logger: p.Logger,
-		broker: broker,
+		baseClient: &baseClient{
+			ctx: context.Background(),
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	}, nil
 }
 
 // provisionerClient is an implementation of component.Provisioner over gRPC.
 type provisionerClient struct {
-	client  proto.ProvisionerServiceClient
-	logger  hclog.Logger
-	broker  *plugin.GRPCBroker
-	mappers []*argmapper.Func
+	*baseClient
+
+	client proto.ProvisionerServiceClient
 }
 
 func (c *provisionerClient) Config() (interface{}, error) {
-	return configStructCall(context.Background(), c.client)
+	return configStructCall(c.ctx, c.client)
 }
 
 func (c *provisionerClient) ConfigSet(v interface{}) error {
-	return configureCall(context.Background(), c.client, v)
+	return configureCall(c.ctx, c.client, v)
 }
 
 func (c *provisionerClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(context.Background(), c.client)
+	return documentationCall(c.ctx, c.client)
 }
 
 func (c *provisionerClient) ProvisionerFunc() interface{} {
@@ -74,10 +83,9 @@ func (c *provisionerClient) ProvisionerFunc() interface{} {
 // provisionerServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type provisionerServer struct {
-	Impl    component.Provisioner
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Broker  *plugin.GRPCBroker
+	*baseServer
+
+	Impl component.Provisioner
 }
 
 func (s *provisionerServer) ConfigStruct(

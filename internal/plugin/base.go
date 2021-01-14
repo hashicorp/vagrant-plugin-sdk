@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/golang/protobuf/proto"
@@ -36,6 +37,8 @@ type base struct {
 
 type baseClient struct {
 	*base
+
+	ctx context.Context
 }
 
 type baseServer struct {
@@ -51,6 +54,13 @@ func (b *base) internal() *pluginargs.Internal {
 		Mappers: b.Mappers,
 		Cleanup: &pluginargs.Cleanup{},
 	}
+}
+
+// This is here for internal usage on plugin setup
+// to provide extra information to ruby based plugins
+func (b *baseClient) SetPluginName(name string) {
+	b.ctx = metadata.AppendToOutgoingContext(b.ctx, "plugin_name", name)
+	b.Logger.Debug("new context has been set for base client", "plugin_name", name, "ctx", b.ctx)
 }
 
 func (b *baseClient) callRemoteDynamicFunc(
@@ -99,7 +109,8 @@ func (b *baseClient) callRemoteDynamicFunc(
 
 	// Verify
 	interfaceType := reflect.TypeOf(result).Elem()
-	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
+	rawType := reflect.TypeOf(raw)
+	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
 		return nil, status.Errorf(codes.FailedPrecondition,
 			"operation expected result type %s, got %s",
 			interfaceType.String(),
@@ -189,7 +200,8 @@ func (b *baseServer) callLocalDynamicFunc(
 
 	// Verify
 	interfaceType := reflect.TypeOf(result).Elem()
-	if rawType := reflect.TypeOf(raw); !rawType.Implements(interfaceType) {
+	rawType := reflect.TypeOf(raw)
+	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
 		return nil, status.Errorf(codes.FailedPrecondition,
 			"operation expected result type %s, got %s",
 			interfaceType.String(),
