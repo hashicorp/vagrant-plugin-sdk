@@ -4,18 +4,20 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 )
 
-// Machine is just a GRCP client for a machine
+// MachinePlugin is just a GRPC client for a machine
 type MachinePlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Mappers []*argmapper.Func // Mappers
@@ -31,88 +33,113 @@ func NewMachine(client *MachineClient, m core.Machine) *Machine {
 }
 
 // Machine implements core.Machine interface
-type Machine struct {
-	client *MachineClient
+type machineClient struct {
+	Broker     *plugin.GRPCBroker
+	Logger     hclog.Logger
+	Mappers    []*argmapper.Func
+	ResourceID string // NOTE(spox): This needs to be added (resource identifier)
 
-	Box             *core.Box
-	Datadir         string
-	Environment     *core.Environment
-	Id              string
-	LocalDataPath   string
-	Name            string
-	Provider        *core.Provider
-	VagrantfileName string
-	VagrantfilePath string
-	UpdatedAt       *time.Time
-	UI              *terminal.UI
+	client proto.MachineServiceClient
 }
 
-func (m *Machine) Communicate() (comm core.Communicator, err error) {
+func (m *machineClient) Communicate() (comm core.Communicator, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) Guest() (g core.Guest, err error) {
+func (m *machineClient) Guest() (g core.Guest, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) SetID(value string) (err error) {
-	// TODO
-	return nil
-}
-
-func (m *Machine) GetID() string {
-	return m.Id
-}
-
-func (m *Machine) State() (state *core.MachineState, err error) {
+func (m *machineClient) State() (state *core.MachineState, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) IndexUUID() (id string, err error) {
+func (m *machineClient) IndexUUID() (id string, err error) {
 	// TODO
 	return "", nil
 }
 
-func (m *Machine) Inspect() (printable string, err error) {
+func (m *machineClient) Inspect() (printable string, err error) {
 	// TODO
 	return "", nil
 }
 
-func (m *Machine) Reload() (err error) {
+func (m *machineClient) Reload() (err error) {
 	// TODO
 	return nil
 }
 
-func (m *Machine) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+func (m *machineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) UID() (user_id int, err error) {
+func (m *machineClient) UID() (user_id int, err error) {
 	// TODO
 	return 10, nil
 }
 
-func (m *Machine) GetName() (name string) {
-	m.client.GetMachine(m.Id)
-	return m.Name
-}
-
-func (m *Machine) SetName(name string) (err error) {
-	oldValue := m.Name
-	m.Name = name
-	_, err = m.client.UpsertMachine(m)
+func (m *machineClient) GetName() (name string, err error) {
+	r, err := m.client.GetName(context.Background(), &pb.Machine_GetNameRequest{ResourceId: m.ResourceID})
 	if err != nil {
-		m.Name = oldValue
-		return err
+		return "", err
 	}
-	return nil
+
+	return r.Name, nil
 }
 
-func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+func (m *machineClient) SetName(name string) (err error) {
+	_, err := m.client.SetName(
+		context.Background(),
+		&pb.Machine_SetNameRequest{
+			ResourceId: m.ResourceID,
+			Name:       name,
+		},
+	)
+	return
+}
+
+func (m *machineClient) GetID() (id string, err error) {
+	r, err := m.client.GetID(
+		context.Background(),
+		&pb.Machine_GetIDRequest{
+			ResourceId: m.ResourceID,
+		},
+	)
+	if err != nil {
+		return
+	}
+	id = r.Id
+	return
+}
+
+func (m *machineClient) SetID(id string) (err error) {
+	_, err := m.client.SetID(
+		context.Background(),
+		&pb.Machine_SetIDRequest{
+			ResourceId: m.ResourceID,
+		},
+	)
+	return
+}
+
+func (m *machineClient) Box() (b Box, err error) {
+	_, err := m.client.Box(
+		context.Background(),
+		&empty.Empty{},
+	)
+	if err != nil {
+		return
+	}
+	// TODO(spox): this needs to be converted
+	//	b = r.Box
+	return
+}
+
+func (m *machineClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
 	// TODO
 	return nil, nil
 }
@@ -123,7 +150,7 @@ func (p *MachinePlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &MachineClient{
+	return &machineClient{
 		client:  pb.NewMachineServiceClient(c),
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
