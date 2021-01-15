@@ -226,28 +226,24 @@ func Machine(
 	internal.Cleanup.Do(func() { conn.Close() })
 
 	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
-	machineClient := mc.(*plugincore.MachineClient)
-	rawMachine, err := machineClient.GetMachine(input.MachineId)
-	if err != nil {
-		return nil, err
+	machineClient, ok := mc.(*plugincore.MachineClient)
+	if !ok {
+		panic("failed to create machine client")
 	}
 
-	machine := plugincore.NewMachine(machineClient, rawMachine)
-	return machine, nil
+	return plugincore.NewMachine(machineClient, input.ResourceId), nil
 }
 
 // Machine maps component.Machine to a *pb.Args_Machine
-func MachineComponentProto(
-	machine component.Machine,
+func MachineProto(
+	machine *plugincore.Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*pb.Args_Machine, error) {
-	var resultMachine *pb.Machine
-	mapstructure.Decode(machine, &resultMachine)
 
 	return &pb.Args_Machine{
-		MachineId:  resultMachine.Id,
-		ServerAddr: machine.GetServerAddr(),
+		ResourceId: machine.ResourceID,
+		ServerAddr: machine.ServerAddr,
 	}, nil
 }
 
