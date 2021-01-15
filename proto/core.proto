@@ -4,6 +4,9 @@ package hashicorp.vagrant.sdk;
 
 option go_package = ".;proto";
 
+import "plugin.proto";
+
+import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
 
 message StateBag {
@@ -101,45 +104,13 @@ message Box {
   string metadata_url = 6;
 }
 
-message Environment {
-  string cwd = 1;
-  string data_dir = 2;
-  string vagrantfile_name = 3;
-  UI ui = 4;
-  string home_path = 5;
-  string local_data_path = 6;
-  string tmp_path = 7;
-  string aliases_path = 8;
-  string boxes_path = 9;
-  string gems_path = 10;
-  string default_private_key_path = 11;
-}
+message Environment {}
 
 message MachineProvider {}
 
 message Configuration {}
 
-message Machine {
-  Box box = 1;
-  Configuration config = 2;
-  string data_dir = 3;
-  Environment env = 4;
-  string id = 5;
-  string name = 6;
-  MachineProvider provider = 7;
-  Configuration provider_config = 8;
-  string provider_name = 9;
-  Options provider_options = 10;
-  UI ui = 11;
-  Vagrantfile vagrantfile = 12;
-}
-
 message Vagrantfile {
-}
-
-// TerminalUI is used to construct the terminal.UI for the plugin.
-message UI {
-  uint32 stream_id = 1;
 }
 
 /********************************************************************
@@ -162,18 +133,85 @@ message Ref {
 }
 
 /********************************************************************
-* Core services
+* Machine services
 ********************************************************************/
-service Core {
-  // GetMachine returns the achine.
-  rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
-
-  // ListMachines returns a list of all the machine.
-  rpc ListMachines(ListMachineRequest) returns (ListMachineResponse);
-
-  // UpsertMachine updates or inserts a machine.
-  rpc UpsertMachine(UpsertMachineRequest) returns (UpsertMachineResponse);
+service MachineService {
+  rpc SetName(Machine.SetNameRequest) returns (Machine.SetNameResponse);
+  rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
+  rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
+  rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
+  rpc Box(google.protobuf.Empty) returns (Machine.BoxResponse);
+  rpc Datadir(google.protobuf.Empty) returns (Machine.DatadirResponse);
+  rpc LocalDataPath(google.protobuf.Empty) returns (Machine.LocalDataPathResponse);
+  rpc Provider(google.protobuf.Empty) returns (Machine.ProviderResponse);
+  rpc VagrantfileName(google.protobuf.Empty) returns (Machine.VagrantfileNameResponse);
+  rpc VagrantfilePath(google.protobuf.Empty) returns (Machine.VagrantfilePathResponse);
+  rpc UpdatedAt(google.protobuf.Empty) returns (Machine.UpdatedAtResponse);
+  rpc UI(google.protobuf.Empty) returns (Machine.UIResponse);
  }
+
+/**********************************************
+ * Machine message used with machine service
+ **********************************************/
+message Machine {
+  // SetName
+  message SetNameRequest {
+    string resource_id = 1;
+    string name = 2;
+  }
+  message SetNameResponse {}
+  // GetName
+  message GetNameRequest {
+    string resource_id = 1;
+  }
+  message GetNameResponse {
+    string name = 1;
+  }
+  // SetID
+  message SetIDRequest {
+    string resource_id = 1;
+    string id = 2;
+  }
+  message SetIDResponse {}
+  // GetID
+  message GetIDRequest {
+    string resource_id = 1;
+  }
+  message GetIDResponse {
+    string id = 1;
+  }
+  // Box
+  message BoxResponse {
+    Args.Box box = 1;
+  }
+  // Datadir
+  message DatadirResponse {
+    Args.DataDir.Machine datadir = 1;
+  }
+  // LocalDataPath
+  message LocalDataPathResponse {
+    string path = 1;
+  }
+  // Provider
+  message ProviderResponse {
+    // TODO(spox): component info here?
+  }
+  // VagrantfileName
+  message VagrantfileNameResponse {
+    string name = 1;
+  }
+  // VagrantfilePath
+  message VagrantfilePathResponse {
+    string path = 1;
+  }
+  // UpdatedAt
+  message UpdatedAtResponse {
+    // TODO(spox): is there a time type or just stringify and parse?
+  }
+  message UIResponse {
+    Args.TerminalUI ui = 1;
+  }
+}
 
 /********************************************************************
 * Machine
