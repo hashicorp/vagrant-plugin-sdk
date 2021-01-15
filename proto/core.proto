@@ -119,6 +119,8 @@ message MachineProvider {}
 
 message Configuration {}
 
+// This is the full representation of a machine.
+// It can be transformed into core.Machine
 message Machine {
   Box box = 1;
   Configuration config = 2;
@@ -137,27 +139,25 @@ message Machine {
 message Vagrantfile {
 }
 
-// TerminalUI is used to construct the terminal.UI for the plugin.
-message UI {
-  uint32 stream_id = 1;
-}
-
 /********************************************************************
 * Shared Messages
 ********************************************************************/
 
 // Ref contains shared messages used for references to other resources.
+// These Refs are specifically for the core services, assuming that the 
+// client/server connection has already been made.
 //
 // Refs should be used when the full type shouldn't be embedded in the message.
 message Ref {
-  // Machine references a machine.
+  // Machine references a machine by id
   message Machine {
     string id = 1;
   }
 
-  // Workspace references a workspace.
-  message Workspace {
-    string workspace = 1;
+  // Project references a Project.
+  // Maybe this should be a project id?
+  message Project {
+    string project = 1;
   }
 }
 
@@ -169,6 +169,10 @@ service MachineService {
   rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
 
   // ListMachines returns a list of all the machine.
+  // This should never be used by a plugin, however, should
+  // be defined here as it is required that the Machine service
+  // provides this functionality. It will be used by Vagrant core to 
+  // manage/list/move machines.
   rpc ListMachines(ListMachineRequest) returns (ListMachineResponse);
 
   // UpsertMachine updates or inserts a machine.
@@ -197,9 +201,9 @@ message GetMachineResponse {
 }
 
 message ListMachineRequest {
-  // The workspace to list machines for. If this isn't set, then all builds
-  // for the other filters are listed.
-  Ref.Workspace workspace = 2;
+  // The project to list machines for. If this isn't set, then all
+  // machines are listed.
+  Ref.Project project = 2;
 }
 
 message ListMachineResponse {

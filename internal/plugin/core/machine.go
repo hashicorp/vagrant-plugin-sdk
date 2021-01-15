@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -199,6 +198,5 @@ func (m *MachineClient) UpsertMachine(mach core.Machine) (core.Machine, error) {
 var (
 	_ plugin.Plugin     = (*MachinePlugin)(nil)
 	_ plugin.GRPCPlugin = (*MachinePlugin)(nil)
-	_ component.Machine = (*MachineClient)(nil)
 	_ core.Machine      = (*Machine)(nil)
 )

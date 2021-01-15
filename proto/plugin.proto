@@ -89,8 +89,13 @@ message Args {
     string default_private_key_path = 11;
   }
 
+  // Reference a machine. It is used to setup a
+  // machine client and retrieve a machine by id
   message Machine {
+    // Machine reference by id
     string machineId = 1;
+   
+    // Location of the Vagrant core service
     string serverAddr = 2;
   }
 

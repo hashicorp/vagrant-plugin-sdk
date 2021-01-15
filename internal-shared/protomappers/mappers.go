@@ -41,7 +41,6 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Machine,
-	MachineComponentProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -234,21 +233,6 @@ func Machine(
 
 	machine := plugincore.NewMachine(machineClient, rawMachine)
 	return machine, nil
-}
-
-// Machine maps component.Machine to a *pb.Args_Machine
-func MachineComponentProto(
-	machine component.Machine,
-	log hclog.Logger,
-	internal *pluginargs.Internal,
-) (*pb.Args_Machine, error) {
-	var resultMachine *pb.Machine
-	mapstructure.Decode(machine, &resultMachine)
-
-	return &pb.Args_Machine{
-		MachineId:  resultMachine.Id,
-		ServerAddr: machine.GetServerAddr(),
-	}, nil
 }
 
 func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
