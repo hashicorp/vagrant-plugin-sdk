@@ -8,7 +8,6 @@ import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/rpc/status.proto";
 import "protostructure.proto";
-import "core.proto";
 
 /********************************************************************
 * Generic Args
@@ -90,7 +89,7 @@ message Args {
   }
 
   message Machine {
-    string machineId = 1;
+    string resource_id = 1;
     string serverAddr = 2;
   }
 
@@ -518,9 +517,9 @@ message Communicator {
   }
 
   message ExecutionRequest {
-    Machine machine = 1;
+    Args.Machine machine = 1;
     string command = 2;
-    LabelSet options = 3;
+    Args.LabelSet options = 3;
   }
 
   message ExecuteResp {
