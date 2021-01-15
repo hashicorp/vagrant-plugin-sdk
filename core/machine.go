@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -27,10 +28,10 @@ type Machine interface {
 	SetID(value string) (err error)
 	Box() (b Box, err error)
 	Datadir() (d *datadir.Machine, err error)
-	LocalDataPath() (path string, err error) // TODO(spox): difference from data dir?
+	LocalDataPath() (p path.Path, err error) // TODO(spox): difference from data dir?
 	Provider() (p *Provider, err error)
 	VagrantfileName() (name string, err error)
-	VagrantfilePath() (path string, err error)
+	VagrantfilePath() (p path.Path, err error)
 	UpdatedAt() (t *time.Time, err error)
 	UI() (ui *terminal.UI, err error)
 
