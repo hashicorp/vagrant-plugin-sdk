@@ -6,8 +6,8 @@ option go_package = ".;proto";
 
 import "plugin.proto";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 message StateBag {
   map<string, Value> data = 1;
@@ -180,7 +180,7 @@ message Machine {
     Ref.Machine machine = 1;
   }
   message BoxResponse {
-    Args.Box box = 1;
+    Box box = 1;
   }
   // Datadir
   message DatadirRequest {
@@ -222,7 +222,7 @@ message Machine {
     Ref.Machine machine = 1;
   }
   message UpdatedAtResponse {
-    // TODO(spox): is there a time type or just stringify and parse?
+    google.protobuf.Timestamp updated_at = 1;
   }
   message UIRequest {
     Ref.Machine machine = 1;
