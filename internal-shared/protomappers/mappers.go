@@ -41,7 +41,6 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Machine,
-	MachineComponentProto,
 }
 
 // TODO(spox): make sure these new mappers actually work

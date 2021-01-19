@@ -123,12 +123,7 @@ message Vagrantfile {
 message Ref {
   // Machine references a machine.
   message Machine {
-    string id = 1;
-  }
-
-  // Workspace references a workspace.
-  message Workspace {
-    string workspace = 1;
+    string resource_id = 1;
   }
 }
 
@@ -140,14 +135,14 @@ service MachineService {
   rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
   rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
   rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
-  rpc Box(google.protobuf.Empty) returns (Machine.BoxResponse);
-  rpc Datadir(google.protobuf.Empty) returns (Machine.DatadirResponse);
-  rpc LocalDataPath(google.protobuf.Empty) returns (Machine.LocalDataPathResponse);
-  rpc Provider(google.protobuf.Empty) returns (Machine.ProviderResponse);
-  rpc VagrantfileName(google.protobuf.Empty) returns (Machine.VagrantfileNameResponse);
-  rpc VagrantfilePath(google.protobuf.Empty) returns (Machine.VagrantfilePathResponse);
-  rpc UpdatedAt(google.protobuf.Empty) returns (Machine.UpdatedAtResponse);
-  rpc UI(google.protobuf.Empty) returns (Machine.UIResponse);
+  rpc Box(Machine.BoxRequest) returns (Machine.BoxResponse);
+  rpc Datadir(Machine.DatadirRequest) returns (Machine.DatadirResponse);
+  rpc LocalDataPath(Machine.LocalDataPathRequest) returns (Machine.LocalDataPathResponse);
+  rpc Provider(Machine.ProviderRequest) returns (Machine.ProviderResponse);
+  rpc VagrantfileName(Machine.VagrantfileNameRequest) returns (Machine.VagrantfileNameResponse);
+  rpc VagrantfilePath(Machine.VagrantfilePathRequest) returns (Machine.VagrantfilePathResponse);
+  rpc UpdatedAt(Machine.UpdatedAtRequest) returns (Machine.UpdatedAtResponse);
+  rpc UI(Machine.UIRequest) returns (Machine.UIResponse);
  }
 
 /**********************************************
@@ -156,91 +151,83 @@ service MachineService {
 message Machine {
   // SetName
   message SetNameRequest {
-    string resource_id = 1;
+    Ref.Machine machine = 1;
     string name = 2;
   }
   message SetNameResponse {}
   // GetName
   message GetNameRequest {
-    string resource_id = 1;
+    Ref.Machine machine = 1;
   }
   message GetNameResponse {
     string name = 1;
   }
   // SetID
   message SetIDRequest {
-    string resource_id = 1;
+    Ref.Machine machine = 1;
     string id = 2;
   }
   message SetIDResponse {}
   // GetID
   message GetIDRequest {
-    string resource_id = 1;
+    Ref.Machine machine = 1;
   }
   message GetIDResponse {
     string id = 1;
   }
   // Box
+  message BoxRequest {
+    Ref.Machine machine = 1;
+  }
   message BoxResponse {
     Args.Box box = 1;
   }
   // Datadir
+  message DatadirRequest {
+    Ref.Machine machine = 1;
+  }
   message DatadirResponse {
     Args.DataDir.Machine datadir = 1;
   }
   // LocalDataPath
+  message LocalDataPathRequest {
+    Ref.Machine machine = 1;
+  }
   message LocalDataPathResponse {
     string path = 1;
   }
   // Provider
+  message ProviderRequest {
+    Ref.Machine machine = 1;
+  }
   message ProviderResponse {
     // TODO(spox): component info here?
   }
   // VagrantfileName
+  message VagrantfileNameRequest {
+    Ref.Machine machine = 1;
+  }
   message VagrantfileNameResponse {
     string name = 1;
   }
   // VagrantfilePath
+  message VagrantfilePathRequest {
+    Ref.Machine machine = 1;
+  }
   message VagrantfilePathResponse {
     string path = 1;
   }
   // UpdatedAt
+  message UpdatedAtRequest {
+    Ref.Machine machine = 1;
+  }
   message UpdatedAtResponse {
     // TODO(spox): is there a time type or just stringify and parse?
+  }
+  message UIRequest {
+    Ref.Machine machine = 1;
   }
   message UIResponse {
     Args.TerminalUI ui = 1;
   }
-}
-
-/********************************************************************
-* Machine
-********************************************************************/
-message UpsertMachineRequest {
-  // Machine to upsert
-  Machine machine = 1;
-}
-
-message UpsertMachineResponse {
-  // resulting pushed machine
-  Machine machine = 1;
-}
-
-message GetMachineRequest {
-  Ref.Machine ref = 1;
-}
-
-message GetMachineResponse {
-  Machine machine = 1;
-}
-
-message ListMachineRequest {
-  // The workspace to list machines for. If this isn't set, then all builds
-  // for the other filters are listed.
-  Ref.Workspace workspace = 2;
-}
-
-message ListMachineResponse {
-  // machines is the list of Machine.
-  repeated Machine machines = 1;
 }

@@ -2,17 +2,15 @@ package core
 
 import (
 	"context"
+	"errors"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
@@ -22,7 +20,7 @@ import (
 )
 
 type Machine struct {
-	client     *MachineClient
+	c          *MachineClient
 	ResourceID string
 	ServerAddr string
 }
@@ -50,9 +48,16 @@ func (p *MachinePlugin) GRPCClient(
 	}, nil
 }
 
+func (p *MachinePlugin) GRPCServer(
+	broker *plugin.GRPCBroker,
+	s *grpc.Server,
+) error {
+	return errors.New("Server plugin not provided")
+}
+
 func NewMachine(client *MachineClient, resourceID string) *Machine {
 	return &Machine{
-		client:     client,
+		c:          client,
 		ResourceID: resourceID,
 		ServerAddr: client.ServerTarget,
 	}
@@ -111,9 +116,13 @@ func (m *Machine) UID() (user_id int, err error) {
 }
 
 func (m *Machine) GetName() (name string, err error) {
-	r, err := m.client.client.GetName(
+	r, err := m.c.client.GetName(
 		context.Background(),
-		&pb.Machine_GetNameRequest{ResourceId: m.ResourceID},
+		&pb.Machine_GetNameRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
 	)
 	if err != nil {
 		return "", err
@@ -123,21 +132,25 @@ func (m *Machine) GetName() (name string, err error) {
 }
 
 func (m *Machine) SetName(name string) (err error) {
-	_, err := m.client.client.SetName(
+	_, err = m.c.client.SetName(
 		context.Background(),
 		&pb.Machine_SetNameRequest{
-			ResourceId: m.ResourceID,
-			Name:       name,
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+			Name: name,
 		},
 	)
 	return
 }
 
 func (m *Machine) GetID() (id string, err error) {
-	r, err := m.client.client.GetID(
+	r, err := m.c.client.GetID(
 		context.Background(),
 		&pb.Machine_GetIDRequest{
-			ResourceId: m.ResourceID,
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
 		},
 	)
 	if err != nil {
@@ -148,19 +161,26 @@ func (m *Machine) GetID() (id string, err error) {
 }
 
 func (m *Machine) SetID(id string) (err error) {
-	_, err := m.client.client.SetID(
+	_, err = m.c.client.SetID(
 		context.Background(),
 		&pb.Machine_SetIDRequest{
-			ResourceId: m.ResourceID,
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+			Id: id,
 		},
 	)
 	return
 }
 
-func (m *Machine) Box() (b Box, err error) {
-	_, err := m.client.client.Box(
+func (m *Machine) Box() (b core.Box, err error) {
+	_, err = m.c.client.Box(
 		context.Background(),
-		&empty.Empty{},
+		&pb.Machine_BoxRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
 	)
 	if err != nil {
 		return
@@ -170,8 +190,15 @@ func (m *Machine) Box() (b Box, err error) {
 	return
 }
 
-func (m *Machine) Datadir() (d datadir.Machine, err error) {
-	_, err := m.client.client.Datadir(context.Background(), &empty.Empty{})
+func (m *Machine) Datadir() (d *datadir.Machine, err error) {
+	_, err = m.c.client.Datadir(
+		context.Background(),
+		&pb.Machine_DatadirRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}
@@ -181,7 +208,14 @@ func (m *Machine) Datadir() (d datadir.Machine, err error) {
 }
 
 func (m *Machine) LocalDataPath() (p path.Path, err error) {
-	r, err := m.client.client.LocalDataPath(context.Background(), &empty.Empty{})
+	r, err := m.c.client.LocalDataPath(
+		context.Background(),
+		&pb.Machine_LocalDataPathRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}
@@ -190,7 +224,14 @@ func (m *Machine) LocalDataPath() (p path.Path, err error) {
 }
 
 func (m *Machine) Provider() (p core.Provider, err error) {
-	_, err := m.client.client.Provider(context.Background(), &empty.Empty{})
+	_, err = m.c.client.Provider(
+		context.Background(),
+		&pb.Machine_ProviderRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}
@@ -199,7 +240,14 @@ func (m *Machine) Provider() (p core.Provider, err error) {
 }
 
 func (m *Machine) VagrantfileName() (name string, err error) {
-	r, err := m.client.client.VagrantfileName(context.Background(), &empty.Empty{})
+	r, err := m.c.client.VagrantfileName(
+		context.Background(),
+		&pb.Machine_VagrantfileNameRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}
@@ -209,7 +257,15 @@ func (m *Machine) VagrantfileName() (name string, err error) {
 }
 
 func (m *Machine) VagrantfilePath() (p path.Path, err error) {
-	r, err := m.client.client.VagrantfilePath(context.Background(), &empty.Empty{})
+	r, err := m.c.client.VagrantfilePath(
+		context.Background(),
+		&pb.Machine_VagrantfilePathRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
+
 	if err != nil {
 		return
 	}
@@ -219,7 +275,14 @@ func (m *Machine) VagrantfilePath() (p path.Path, err error) {
 }
 
 func (m *Machine) UpdatedAt() (t *time.Time, err error) {
-	_, err := m.client.client.UpdatedAt(context.Background(), &empty.Empty{})
+	_, err = m.c.client.UpdatedAt(
+		context.Background(),
+		&pb.Machine_UpdatedAtRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}
@@ -229,7 +292,14 @@ func (m *Machine) UpdatedAt() (t *time.Time, err error) {
 }
 
 func (m *Machine) UI() (ui *terminal.UI, err error) {
-	_, err := m.client.client.UI(context.Background(), &empty.Empty{})
+	_, err = m.c.client.UI(
+		context.Background(),
+		&pb.Machine_UIRequest{
+			Machine: &pb.Ref_Machine{
+				ResourceId: m.ResourceID,
+			},
+		},
+	)
 	if err != nil {
 		return
 	}

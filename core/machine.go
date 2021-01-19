@@ -29,7 +29,7 @@ type Machine interface {
 	Box() (b Box, err error)
 	Datadir() (d *datadir.Machine, err error)
 	LocalDataPath() (p path.Path, err error) // TODO(spox): difference from data dir?
-	Provider() (p *Provider, err error)
+	Provider() (p Provider, err error)
 	VagrantfileName() (name string, err error)
 	VagrantfilePath() (p path.Path, err error)
 	UpdatedAt() (t *time.Time, err error)
