@@ -4,7 +4,10 @@ package hashicorp.vagrant.sdk;
 
 option go_package = ".;proto";
 
+import "plugin.proto";
+
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 message StateBag {
   map<string, Value> data = 1;
@@ -51,7 +54,7 @@ message WinrmInfo {
   string username = 1;
   string password = 2;
   string host = 3;
-  int64 port = 4;  
+  int64 port = 4;
   int64 guest_port = 5;
   int64 max_tries = 6;
   int64 retry_delay = 7;
@@ -101,45 +104,13 @@ message Box {
   string metadata_url = 6;
 }
 
-message Environment {
-  string cwd = 1;
-  string data_dir = 2;
-  string vagrantfile_name = 3;
-  UI ui = 4;
-  string home_path = 5;
-  string local_data_path = 6;
-  string tmp_path = 7;
-  string aliases_path = 8;
-  string boxes_path = 9;
-  string gems_path = 10;
-  string default_private_key_path = 11;
-}
+message Environment {}
 
 message MachineProvider {}
 
 message Configuration {}
 
-message Machine {
-  Box box = 1;
-  Configuration config = 2;
-  string data_dir = 3;
-  Environment env = 4;
-  string id = 5;
-  string name = 6;
-  MachineProvider provider = 7;
-  Configuration provider_config = 8;
-  string provider_name = 9;
-  Options provider_options = 10;
-  UI ui = 11;
-  Vagrantfile vagrantfile = 12;
-}
-
 message Vagrantfile {
-}
-
-// TerminalUI is used to construct the terminal.UI for the plugin.
-message UI {
-  uint32 stream_id = 1;
 }
 
 /********************************************************************
@@ -152,57 +123,111 @@ message UI {
 message Ref {
   // Machine references a machine.
   message Machine {
-    string id = 1;
-  }
-
-  // Workspace references a workspace.
-  message Workspace {
-    string workspace = 1;
+    string resource_id = 1;
   }
 }
 
 /********************************************************************
-* Core services
+* Machine services
 ********************************************************************/
 service MachineService {
-  // GetMachine returns the achine.
-  rpc GetMachine(GetMachineRequest) returns (GetMachineResponse);
-
-  // ListMachines returns a list of all the machine.
-  rpc ListMachines(ListMachineRequest) returns (ListMachineResponse);
-
-  // UpsertMachine updates or inserts a machine.
-  rpc UpsertMachine(UpsertMachineRequest) returns (UpsertMachineResponse);
+  rpc SetName(Machine.SetNameRequest) returns (Machine.SetNameResponse);
+  rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
+  rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
+  rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
+  rpc Box(Machine.BoxRequest) returns (Machine.BoxResponse);
+  rpc Datadir(Machine.DatadirRequest) returns (Machine.DatadirResponse);
+  rpc LocalDataPath(Machine.LocalDataPathRequest) returns (Machine.LocalDataPathResponse);
+  rpc Provider(Machine.ProviderRequest) returns (Machine.ProviderResponse);
+  rpc VagrantfileName(Machine.VagrantfileNameRequest) returns (Machine.VagrantfileNameResponse);
+  rpc VagrantfilePath(Machine.VagrantfilePathRequest) returns (Machine.VagrantfilePathResponse);
+  rpc UpdatedAt(Machine.UpdatedAtRequest) returns (Machine.UpdatedAtResponse);
+  rpc UI(Machine.UIRequest) returns (Machine.UIResponse);
  }
 
-/********************************************************************
-* Machine
-********************************************************************/
-message UpsertMachineRequest {
-  // Machine to upsert
-  Machine machine = 1;
-}
-
-message UpsertMachineResponse {
-  // resulting pushed machine
-  Machine machine = 1;
-}
-
-message GetMachineRequest {
-  Ref.Machine ref = 1;
-}
-
-message GetMachineResponse {
-  Machine machine = 1;
-}
-
-message ListMachineRequest {
-  // The workspace to list machines for. If this isn't set, then all builds
-  // for the other filters are listed.
-  Ref.Workspace workspace = 2;
-}
-
-message ListMachineResponse {
-  // machines is the list of Machine.
-  repeated Machine machines = 1;
+/**********************************************
+ * Machine message used with machine service
+ **********************************************/
+message Machine {
+  // SetName
+  message SetNameRequest {
+    Ref.Machine machine = 1;
+    string name = 2;
+  }
+  message SetNameResponse {}
+  // GetName
+  message GetNameRequest {
+    Ref.Machine machine = 1;
+  }
+  message GetNameResponse {
+    string name = 1;
+  }
+  // SetID
+  message SetIDRequest {
+    Ref.Machine machine = 1;
+    string id = 2;
+  }
+  message SetIDResponse {}
+  // GetID
+  message GetIDRequest {
+    Ref.Machine machine = 1;
+  }
+  message GetIDResponse {
+    string id = 1;
+  }
+  // Box
+  message BoxRequest {
+    Ref.Machine machine = 1;
+  }
+  message BoxResponse {
+    Box box = 1;
+  }
+  // Datadir
+  message DatadirRequest {
+    Ref.Machine machine = 1;
+  }
+  message DatadirResponse {
+    Args.DataDir.Machine datadir = 1;
+  }
+  // LocalDataPath
+  message LocalDataPathRequest {
+    Ref.Machine machine = 1;
+  }
+  message LocalDataPathResponse {
+    string path = 1;
+  }
+  // Provider
+  message ProviderRequest {
+    Ref.Machine machine = 1;
+  }
+  message ProviderResponse {
+    // TODO(spox): component info here?
+  }
+  // VagrantfileName
+  message VagrantfileNameRequest {
+    Ref.Machine machine = 1;
+  }
+  message VagrantfileNameResponse {
+    string name = 1;
+  }
+  // VagrantfilePath
+  message VagrantfilePathRequest {
+    Ref.Machine machine = 1;
+  }
+  message VagrantfilePathResponse {
+    string path = 1;
+  }
+  // UpdatedAt
+  message UpdatedAtRequest {
+    Ref.Machine machine = 1;
+  }
+  message UpdatedAtResponse {
+    google.protobuf.Timestamp updated_at = 1;
+  }
+  message UIRequest {
+    Ref.Machine machine = 1;
+  }
+  message UIResponse {
+    Args.TerminalUI ui = 1;
+  }
 }

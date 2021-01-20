@@ -10,10 +10,6 @@
 // framework (see internal/mapper) to call these functions.
 package component
 
-import (
-	"github.com/hashicorp/vagrant-plugin-sdk/core"
-)
-
 //go:generate stringer -type=Type -linecomment
 //go:generate mockery --all
 
@@ -56,6 +52,12 @@ var TypeMap = map[Type]interface{}{
 }
 
 type Command interface {
+	// Return synopsis of command
+	SynopsisFunc() interface{}
+	// Return help information of command
+	HelpFunc() interface{}
+	// Return flags used by command
+	FlagsFunc() interface{}
 }
 
 type Config interface {
@@ -96,13 +98,6 @@ type Guest interface {
 type Host interface {
 	// Detect if machine is supported host
 	DetectFunc() interface{}
-}
-
-type Machine interface {
-	GetServerAddr() string
-	GetMachine(id string) (core.Machine, error)
-	ListMachines() ([]core.Machine, error)
-	UpsertMachine(core.Machine) (core.Machine, error)
 }
 
 type Provider interface {

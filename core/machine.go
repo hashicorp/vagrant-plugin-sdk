@@ -1,5 +1,13 @@
 package core
 
+import (
+	"time"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
+)
+
 // the ssh info in vagrant core ends up dumping out
 // a bunch of options, but they are also ssh specific
 // where this would be used for other stuff too (like
@@ -13,12 +21,21 @@ type MachineState struct {
 }
 
 type Machine interface {
-	GetName() (name string)
+	// Attributes
+	GetName() (name string, err error)
 	SetName(value string) (err error)
-	GetID() (id string)
+	GetID() (id string, err error)
 	SetID(value string) (err error)
+	Box() (b Box, err error)
+	Datadir() (d *datadir.Machine, err error)
+	LocalDataPath() (p path.Path, err error) // TODO(spox): difference from data dir?
+	Provider() (p Provider, err error)
+	VagrantfileName() (name string, err error)
+	VagrantfilePath() (p path.Path, err error)
+	UpdatedAt() (t *time.Time, err error)
+	UI() (ui *terminal.UI, err error)
 
-	// actual workers
+	// Functions
 	Communicate() (comm Communicator, err error)
 	Guest() (g Guest, err error)
 	IndexUUID() (id string, err error)
@@ -26,6 +43,6 @@ type Machine interface {
 	Reload() (err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	State() (state *MachineState, err error)
-	UID() (user_id int, err error)
+	UID() (userId int, err error)
 	SyncedFolders() (folders []SyncedFolder, err error)
 }
