@@ -52,6 +52,12 @@ var TypeMap = map[Type]interface{}{
 }
 
 type Command interface {
+	// Return synopsis of command
+	SynopsisFunc() interface{}
+	// Return help information of command
+	HelpFunc() interface{}
+	// Return flags used by command
+	FlagsFunc() interface{}
 }
 
 type Config interface {
