@@ -124,6 +124,7 @@ message Args {
   // TerminalUI is used to construct the terminal.UI for the plugin.
   message TerminalUI {
     uint32 stream_id = 1;
+    string addr = 2;
   }
 }
 
