@@ -1,6 +1,15 @@
+// This package provides a simple way to represent a path
+// value and perform common operations on it. All the functions
+// expected with `path/filepath` are provided. The reason
+// for using this over a simple string is that it allows
+// Vagrant to modify the format of the path on demand. For
+// example, if we wanted to reference all paths on Windows
+// via UNC, or short names, or msys2, we simply have to
+// enable it here.
 package path
 
 import (
+	"os/user"
 	"path/filepath"
 )
 
@@ -29,6 +38,15 @@ type path struct {
 }
 
 func NewPath(p string) Path {
+	if p[0:1] == "~" {
+		u, err := user.Current()
+		if err != nil {
+			// TODO(spox): remove the panic and just retain when error
+			// is encountered. panic for now to see if we run into it.
+			panic("cannot determine current user")
+		}
+		p = filepath.Join(u.HomeDir, p[1:])
+	}
 	return &path{path: p}
 }
 
