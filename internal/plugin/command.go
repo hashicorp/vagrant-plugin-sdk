@@ -163,7 +163,7 @@ func (c *commandClient) ExecuteFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
-		resp, err := c.client.Execute(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Execute(c.ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
 		}
