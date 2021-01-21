@@ -462,6 +462,8 @@ service CommandService {
   rpc Help(FuncSpec.Args) returns (Command.HelpResp);
   rpc FlagsSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Flags(FuncSpec.Args) returns (Command.FlagsResp);
+  rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Execute(FuncSpec.Args) returns (Command.ExecuteResp);
 }
 
 message Command {
@@ -473,6 +475,9 @@ message Command {
   }
   message FlagsResp {
     string flags = 1;
+  }
+  message ExecuteResp {
+    int64 exit_code = 1;
   }
 }
 
