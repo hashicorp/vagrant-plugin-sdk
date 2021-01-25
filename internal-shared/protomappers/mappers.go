@@ -3,6 +3,7 @@ package protomappers
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -49,6 +50,7 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Machine,
+	Flags,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -63,6 +65,24 @@ var All = []interface{}{
 // }
 
 // TODO(spox): end of mappers to validate
+
+// Flags maps
+func Flags(input []*pb.Command_Flag) (set *flag.FlagSet, err error) {
+	set = flag.NewFlagSet("", flag.ContinueOnError)
+	for _, f := range input {
+		switch f.Type {
+		case pb.Command_Flag_STRING:
+			set.String(f.LongName, f.DefaultValue, f.Description)
+		case pb.Command_Flag_BOOL:
+			b, _ := strconv.ParseBool(f.DefaultValue)
+			set.Bool(f.LongName, b, f.Description)
+		case pb.Command_Flag_INT:
+			i, _ := strconv.Atoi(f.DefaultValue)
+			set.Int(f.LongName, i, f.Description)
+		}
+	}
+	return
+}
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
 func JobInfo(input *pb.Args_JobInfo) (*component.JobInfo, error) {

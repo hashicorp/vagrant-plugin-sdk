@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"flag"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
@@ -62,7 +64,8 @@ func (p *CommandPlugin) GRPCClient(
 type commandClient struct {
 	*baseClient
 
-	client pb.CommandServiceClient
+	Mappers []*argmapper.Func
+	client  pb.CommandServiceClient
 }
 
 func (c *commandClient) Config() (interface{}, error) {
@@ -140,24 +143,24 @@ func (c *commandClient) FlagsFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+	cb := func(ctx context.Context, args funcspec.Args) ([]*pb.Command_Flag, error) {
 		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		return resp.Flags, nil
 	}
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Flags() (string, error) {
+func (c *commandClient) Flags() (*flag.FlagSet, error) {
 	f := c.FlagsFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
+	flagMapper, err := argmapper.NewFunc(protomappers.Flags)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, []*argmapper.Func{flagMapper}, (*flag.FlagSet)(nil), f)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return raw.(string), nil
+	return raw.(*flag.FlagSet), nil
 }
 
 func (c *commandClient) ExecuteFunc() interface{} {
@@ -291,7 +294,7 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	return &pb.Command_FlagsResp{Flags: raw.(string)}, nil
+	return &pb.Command_FlagsResp{Flags: raw.([]*pb.Command_Flag)}, nil
 }
 
 func (s *commandServer) ExecuteSpec(
