@@ -64,8 +64,7 @@ func (p *CommandPlugin) GRPCClient(
 type commandClient struct {
 	*baseClient
 
-	Mappers []*argmapper.Func
-	client  pb.CommandServiceClient
+	client pb.CommandServiceClient
 }
 
 func (c *commandClient) Config() (interface{}, error) {
@@ -155,12 +154,15 @@ func (c *commandClient) FlagsFunc() interface{} {
 
 func (c *commandClient) Flags() (*flag.FlagSet, error) {
 	f := c.FlagsFunc()
-	flagMapper, err := argmapper.NewFunc(protomappers.Flags)
-	raw, err := c.callRemoteDynamicFunc(c.ctx, []*argmapper.Func{flagMapper}, (*flag.FlagSet)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*pb.Command_Flag)(nil), f)
 	if err != nil {
 		return nil, err
 	}
-	return raw.(*flag.FlagSet), nil
+	flags, err := protomappers.Flags(raw.([]*pb.Command_Flag))
+	if err != nil {
+		return nil, err
+	}
+	return flags, nil
 }
 
 func (c *commandClient) ExecuteFunc() interface{} {
