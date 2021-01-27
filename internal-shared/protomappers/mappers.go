@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DavidGamba/go-getoptions"
+	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
@@ -67,33 +67,21 @@ var All = []interface{}{
 // TODO(spox): end of mappers to validate
 
 // Flags maps
-func Flags(input []*pb.Command_Flag) (opt *getoptions.GetOpt, err error) {
-	opt = getoptions.New()
+func Flags(input []*pb.Command_Flag) (opt []*option.Option, err error) {
+	opt = []*option.Option{}
 	// TODO: add short description as alias
+	// https://godoc.org/github.com/DavidGamba/go-getoptions#GetOpt.Alias
 	for _, f := range input {
+		var newOpt *option.Option
 		switch f.Type {
 		case pb.Command_Flag_STRING:
-			opt.String(
-				f.LongName,
-				f.DefaultValue,
-				opt.Description(f.Description),
-			)
+			newOpt = option.New(f.LongName, option.StringType)
 		case pb.Command_Flag_BOOL:
-			var b bool
-			if f.DefaultValue == "" {
-				b = false
-			} else {
-				b, err = strconv.ParseBool(f.DefaultValue)
-				if err != nil {
-					return nil, err
-				}
-			}
-			opt.Bool(
-				f.LongName,
-				b,
-				opt.Description(f.Description),
-			)
+			newOpt = option.New(f.LongName, option.BoolType)
 		}
+		newOpt.Description = f.Description
+		newOpt.DefaultStr = f.DefaultValue
+		opt = append(opt, newOpt)
 	}
 	return opt, err
 }

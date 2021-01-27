@@ -3,11 +3,8 @@ package plugin
 import (
 	"context"
 
-<<<<<<< HEAD
+	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/LK4D4/joincontext"
-=======
-	"github.com/DavidGamba/go-getoptions"
->>>>>>> Use go-getoptions lib
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -155,7 +152,7 @@ func (c *commandClient) FlagsFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Flags() (*getoptions.GetOpt, error) {
+func (c *commandClient) Flags() ([]*option.Option, error) {
 	f := c.FlagsFunc()
 	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*pb.Command_Flag)(nil), f)
 	if err != nil {
