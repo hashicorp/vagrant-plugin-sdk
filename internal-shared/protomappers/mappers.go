@@ -3,7 +3,6 @@ package protomappers
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/DavidGamba/go-getoptions"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
@@ -67,21 +67,42 @@ var All = []interface{}{
 // TODO(spox): end of mappers to validate
 
 // Flags maps
-func Flags(input []*pb.Command_Flag) (set *flag.FlagSet, err error) {
-	set = flag.NewFlagSet("", flag.ContinueOnError)
+func Flags(input []*pb.Command_Flag) (opt *getoptions.GetOpt, err error) {
+	opt = getoptions.New()
 	for _, f := range input {
 		switch f.Type {
 		case pb.Command_Flag_STRING:
-			set.String(f.LongName, f.DefaultValue, f.Description)
+			opt.String(
+				f.LongName,
+				f.DefaultValue,
+				opt.Alias(f.ShortName),
+				opt.Description(f.Description),
+			)
 		case pb.Command_Flag_BOOL:
-			b, _ := strconv.ParseBool(f.DefaultValue)
-			set.Bool(f.LongName, b, f.Description)
+			b, err := strconv.ParseBool(f.DefaultValue)
+			if err != nil {
+				return nil, err
+			}
+			opt.Bool(
+				f.LongName,
+				b,
+				opt.Alias(f.ShortName),
+				opt.Description(f.Description),
+			)
 		case pb.Command_Flag_INT:
-			i, _ := strconv.Atoi(f.DefaultValue)
-			set.Int(f.LongName, i, f.Description)
+			i, err := strconv.Atoi(f.DefaultValue)
+			if err != nil {
+				return nil, err
+			}
+			opt.Int(
+				f.LongName,
+				i,
+				opt.Alias(f.ShortName),
+				opt.Description(f.Description),
+			)
 		}
 	}
-	return
+	return opt, err
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
