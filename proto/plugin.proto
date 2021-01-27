@@ -477,7 +477,6 @@ message Command {
     enum Type {
       STRING = 0;
       BOOL = 2;
-      INT = 3;
     }
   }
 

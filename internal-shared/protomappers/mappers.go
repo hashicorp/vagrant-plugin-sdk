@@ -69,35 +69,28 @@ var All = []interface{}{
 // Flags maps
 func Flags(input []*pb.Command_Flag) (opt *getoptions.GetOpt, err error) {
 	opt = getoptions.New()
+	// TODO: add short description as alias
 	for _, f := range input {
 		switch f.Type {
 		case pb.Command_Flag_STRING:
 			opt.String(
 				f.LongName,
 				f.DefaultValue,
-				opt.Alias(f.ShortName),
 				opt.Description(f.Description),
 			)
 		case pb.Command_Flag_BOOL:
-			b, err := strconv.ParseBool(f.DefaultValue)
-			if err != nil {
-				return nil, err
+			var b bool
+			if f.DefaultValue == "" {
+				b = false
+			} else {
+				b, err = strconv.ParseBool(f.DefaultValue)
+				if err != nil {
+					return nil, err
+				}
 			}
 			opt.Bool(
 				f.LongName,
 				b,
-				opt.Alias(f.ShortName),
-				opt.Description(f.Description),
-			)
-		case pb.Command_Flag_INT:
-			i, err := strconv.Atoi(f.DefaultValue)
-			if err != nil {
-				return nil, err
-			}
-			opt.Int(
-				f.LongName,
-				i,
-				opt.Alias(f.ShortName),
 				opt.Description(f.Description),
 			)
 		}
