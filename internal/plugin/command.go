@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -88,6 +89,7 @@ func (c *commandClient) SynopsisFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Synopsis(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -113,6 +115,7 @@ func (c *commandClient) HelpFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Help(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -138,6 +141,7 @@ func (c *commandClient) FlagsFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -163,7 +167,8 @@ func (c *commandClient) ExecuteFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
-		resp, err := c.client.Execute(c.ctx, &pb.FuncSpec_Args{Args: args})
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Execute(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
 		}
