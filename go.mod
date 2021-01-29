@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/DavidGamba/go-getoptions v0.23.0
+	github.com/LK4D4/joincontext v0.0.0-20171026170139-1724345da6d5
 	github.com/bgentry/speakeasy v0.1.0
 	github.com/briandowns/spinner v1.11.1
 	github.com/containerd/console v1.0.1
