@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -88,6 +89,7 @@ func (c *commandClient) SynopsisFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Synopsis(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -113,6 +115,7 @@ func (c *commandClient) HelpFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Help(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -138,6 +141,7 @@ func (c *commandClient) FlagsFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
@@ -154,6 +158,33 @@ func (c *commandClient) Flags() (string, error) {
 		return "", err
 	}
 	return raw.(string), nil
+}
+
+func (c *commandClient) ExecuteFunc() interface{} {
+	spec, err := c.client.ExecuteSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Execute(ctx, &pb.FuncSpec_Args{Args: args})
+		if err != nil {
+			return -1, err
+		}
+		return resp.ExitCode, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *commandClient) Execute(name string) (int64, error) {
+	f := c.ExecuteFunc()
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int64)(nil), f)
+	if err != nil {
+		return -1, err
+	}
+
+	return raw.(int64), nil
 }
 
 // commandServer is a gRPC server that the client talks to and calls a
@@ -261,6 +292,32 @@ func (s *commandServer) Flags(
 	}
 
 	return &pb.Command_FlagsResp{Flags: raw.(string)}, nil
+}
+
+func (s *commandServer) ExecuteSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*pb.FuncSpec, error) {
+	if err := isImplemented(s, "command"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.ExecuteFunc())
+}
+
+func (s *commandServer) Execute(
+	ctx context.Context,
+	args *pb.FuncSpec_Args,
+) (*pb.Command_ExecuteResp, error) {
+	raw, err := s.callLocalDynamicFunc(
+		s.Impl.ExecuteFunc(), args.Args, argmapper.Typed(ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Command_ExecuteResp{ExitCode: raw.(int64)}, nil
 }
 
 var (

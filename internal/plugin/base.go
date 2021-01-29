@@ -58,9 +58,10 @@ func (b *base) internal() *pluginargs.Internal {
 
 // This is here for internal usage on plugin setup
 // to provide extra information to ruby based plugins
-func (b *baseClient) SetPluginName(name string) {
-	b.ctx = metadata.AppendToOutgoingContext(b.ctx, "plugin_name", name)
-	b.Logger.Debug("new context has been set for base client", "plugin_name", name, "ctx", b.ctx)
+func (b *baseClient) SetRequestMetadata(key, value string) {
+	b.ctx = metadata.AppendToOutgoingContext(b.ctx, key, value)
+	b.Logger.Trace("new metadata has been set for outgoing requests",
+		"key", key, "value", value, "context", b.ctx)
 }
 
 func (b *baseClient) callRemoteDynamicFunc(

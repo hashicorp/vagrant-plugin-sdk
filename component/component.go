@@ -58,6 +58,8 @@ type Command interface {
 	HelpFunc() interface{}
 	// Return flags used by command
 	FlagsFunc() interface{}
+	// Execute a command
+	ExecuteFunc() interface{}
 }
 
 type Config interface {

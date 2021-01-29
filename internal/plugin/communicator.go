@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -88,6 +89,7 @@ func (c *communicatorClient) MatchFunc() interface{} {
 
 	// Create a callback to call the actual function on the server
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Match(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -120,6 +122,7 @@ func (c *communicatorClient) InitFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		_, err := c.client.Init(ctx, &proto.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
@@ -140,6 +143,7 @@ func (c *communicatorClient) ReadyFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Ready(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -167,6 +171,7 @@ func (c *communicatorClient) WaitForReadyFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.WaitForReady(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -196,6 +201,7 @@ func (c *communicatorClient) DownloadFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		_, err := c.client.Download(ctx, &proto.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
@@ -219,6 +225,7 @@ func (c *communicatorClient) UploadFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		_, err := c.client.Upload(ctx, &proto.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
@@ -242,6 +249,7 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		result, err := c.client.Execute(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
@@ -273,6 +281,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		result, err := c.client.PrivilegedExecute(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
@@ -304,6 +313,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		result, err := c.client.Test(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -335,6 +345,7 @@ func (c *communicatorClient) ResetFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		_, err := c.client.Reset(ctx, &proto.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
