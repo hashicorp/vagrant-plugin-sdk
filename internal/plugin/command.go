@@ -324,14 +324,17 @@ func (s *commandServer) Execute(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.ExecuteFunc(), args.Args, argmapper.Typed(ctx),
+		s.Impl.ExecuteFunc(),
+		args.Args,
+		(*pb.Command_ExecuteResp)(nil),
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_ExecuteResp{ExitCode: raw.(int64)}, nil
+	return raw.(*pb.Command_ExecuteResp), nil
 }
 
 var (
