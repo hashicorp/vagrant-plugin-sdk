@@ -143,6 +143,7 @@ func (c *commandClient) FlagsFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) ([]*pb.Command_Flag, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
