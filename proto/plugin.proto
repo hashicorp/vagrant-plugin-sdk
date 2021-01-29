@@ -81,7 +81,7 @@ message Args {
 
   message Machine {
     string resource_id = 1;
-    string serverAddr = 2;
+    string server_addr = 2;
   }
 
   message Configuration {
