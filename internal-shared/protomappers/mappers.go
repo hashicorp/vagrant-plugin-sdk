@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
@@ -49,6 +50,7 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Machine,
+	Flags,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -63,6 +65,26 @@ var All = []interface{}{
 // }
 
 // TODO(spox): end of mappers to validate
+
+// Flags maps
+func Flags(input []*pb.Command_Flag) (opt []*option.Option, err error) {
+	opt = []*option.Option{}
+	// TODO: add short description as alias
+	// https://godoc.org/github.com/DavidGamba/go-getoptions#GetOpt.Alias
+	for _, f := range input {
+		var newOpt *option.Option
+		switch f.Type {
+		case pb.Command_Flag_STRING:
+			newOpt = option.New(f.LongName, option.StringType)
+		case pb.Command_Flag_BOOL:
+			newOpt = option.New(f.LongName, option.BoolType)
+		}
+		newOpt.Description = f.Description
+		newOpt.DefaultStr = f.DefaultValue
+		opt = append(opt, newOpt)
+	}
+	return opt, err
+}
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
 func JobInfo(input *pb.Args_JobInfo) (*component.JobInfo, error) {

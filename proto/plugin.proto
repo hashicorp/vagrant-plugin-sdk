@@ -467,6 +467,19 @@ service CommandService {
 }
 
 message Command {
+  message Flag {
+    string long_name = 1;
+    string short_name = 2;
+    string description = 3;
+    string default_value = 4;
+    Type type = 5;
+
+    enum Type {
+      STRING = 0;
+      BOOL = 2;
+    }
+  }
+
   message HelpResp {
     string help = 1;
   }
@@ -474,7 +487,7 @@ message Command {
     string synopsis = 1;
   }
   message FlagsResp {
-    string flags = 1;
+    repeated Flag flags = 1;
   }
   message ExecuteResp {
     int64 exit_code = 1;

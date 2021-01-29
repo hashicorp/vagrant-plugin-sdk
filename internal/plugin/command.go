@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
 )
@@ -140,24 +142,28 @@ func (c *commandClient) FlagsFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+	cb := func(ctx context.Context, args funcspec.Args) ([]*pb.Command_Flag, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		return resp.Flags, nil
 	}
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Flags() (string, error) {
+func (c *commandClient) Flags() ([]*option.Option, error) {
 	f := c.FlagsFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*pb.Command_Flag)(nil), f)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return raw.(string), nil
+	flags, err := protomappers.Flags(raw.([]*pb.Command_Flag))
+	if err != nil {
+		return nil, err
+	}
+	return flags, nil
 }
 
 func (c *commandClient) ExecuteFunc() interface{} {
@@ -291,7 +297,7 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	return &pb.Command_FlagsResp{Flags: raw.(string)}, nil
+	return &pb.Command_FlagsResp{Flags: raw.([]*pb.Command_Flag)}, nil
 }
 
 func (s *commandServer) ExecuteSpec(
