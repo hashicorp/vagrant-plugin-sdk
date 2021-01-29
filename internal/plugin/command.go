@@ -239,14 +239,17 @@ func (s *commandServer) Synopsis(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_SynopsisResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.SynopsisFunc(), args.Args, argmapper.Typed(ctx),
+		s.Impl.SynopsisFunc(),
+		args.Args,
+		(*pb.Command_SynopsisResp)(nil),
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_SynopsisResp{Synopsis: raw.(string)}, nil
+	return raw.(*pb.Command_SynopsisResp), nil
 }
 
 func (s *commandServer) HelpSpec(
@@ -265,14 +268,18 @@ func (s *commandServer) Help(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_HelpResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.HelpFunc(), args.Args, argmapper.Typed(ctx),
+		s.Impl.HelpFunc(),
+		args.Args,
+		// TODO: this should be changed to any?
+		(*pb.Command_HelpResp)(nil),
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_HelpResp{Help: raw.(string)}, nil
+	return raw.(*pb.Command_HelpResp), nil
 }
 
 func (s *commandServer) FlagsSpec(
