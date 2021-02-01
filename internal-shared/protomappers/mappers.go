@@ -181,7 +181,12 @@ func TerminalUI(
 		Logger:  log,
 	}
 
-	conn, err := internal.Broker.Dial(input.StreamId)
+	// TODO: allow for using not unix addrs
+	addr := "unix:" + input.Addr
+	conn, err := grpc.DialContext(ctx, addr,
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+	)
 	if err != nil {
 		return nil, err
 	}
