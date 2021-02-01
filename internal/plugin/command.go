@@ -298,14 +298,17 @@ func (s *commandServer) Flags(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_FlagsResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.FlagsFunc(), args.Args, argmapper.Typed(ctx),
+		s.Impl.FlagsFunc(),
+		args.Args,
+		(*pb.Command_FlagsResp)(nil),
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_FlagsResp{Flags: raw.([]*vagrant_plugin_sdk.Command_Flag)}, nil
+	return raw.(*pb.Command_FlagsResp), nil
 }
 
 func (s *commandServer) ExecuteSpec(
