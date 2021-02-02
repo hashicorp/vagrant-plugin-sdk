@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // CommunicatorPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -28,7 +28,7 @@ type CommunicatorPlugin struct {
 }
 
 func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterCommunicatorServiceServer(s, &communicatorServer{
+	vagrant_plugin_sdk.RegisterCommunicatorServiceServer(s, &communicatorServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -47,7 +47,7 @@ func (p *CommunicatorPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &communicatorClient{
-		client: proto.NewCommunicatorServiceClient(c),
+		client: vagrant_plugin_sdk.NewCommunicatorServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -63,7 +63,7 @@ func (p *CommunicatorPlugin) GRPCClient(
 type communicatorClient struct {
 	*baseClient
 
-	client proto.CommunicatorServiceClient
+	client vagrant_plugin_sdk.CommunicatorServiceClient
 }
 
 func (c *communicatorClient) Config() (interface{}, error) {
@@ -90,7 +90,7 @@ func (c *communicatorClient) MatchFunc() interface{} {
 	// Create a callback to call the actual function on the server
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Match(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Match(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -123,7 +123,7 @@ func (c *communicatorClient) InitFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		_, err := c.client.Init(ctx, &proto.FuncSpec_Args{Args: args})
+		_, err := c.client.Init(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
 	return c.generateFunc(spec, cb)
@@ -144,7 +144,7 @@ func (c *communicatorClient) ReadyFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Ready(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Ready(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -172,7 +172,7 @@ func (c *communicatorClient) WaitForReadyFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.WaitForReady(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.WaitForReady(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -202,7 +202,7 @@ func (c *communicatorClient) DownloadFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		_, err := c.client.Download(ctx, &proto.FuncSpec_Args{Args: args})
+		_, err := c.client.Download(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
 	return c.generateFunc(spec, cb)
@@ -226,7 +226,7 @@ func (c *communicatorClient) UploadFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		_, err := c.client.Upload(ctx, &proto.FuncSpec_Args{Args: args})
+		_, err := c.client.Upload(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err == nil, err
 	}
 	return c.generateFunc(spec, cb)
@@ -250,7 +250,7 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		result, err := c.client.Execute(ctx, &proto.FuncSpec_Args{Args: args})
+		result, err := c.client.Execute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
 		}
@@ -282,7 +282,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		result, err := c.client.PrivilegedExecute(ctx, &proto.FuncSpec_Args{Args: args})
+		result, err := c.client.PrivilegedExecute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
 		}
@@ -314,7 +314,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		result, err := c.client.Test(ctx, &proto.FuncSpec_Args{Args: args})
+		result, err := c.client.Test(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -346,7 +346,7 @@ func (c *communicatorClient) ResetFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		_, err := c.client.Reset(ctx, &proto.FuncSpec_Args{Args: args})
+		_, err := c.client.Reset(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -373,18 +373,19 @@ type communicatorServer struct {
 	*baseServer
 
 	Impl component.Communicator
+	vagrant_plugin_sdk.UnimplementedCommunicatorServiceServer
 }
 
 func (s *communicatorServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *communicatorServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -392,14 +393,14 @@ func (s *communicatorServer) Configure(
 func (s *communicatorServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *communicatorServer) MatchSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -409,8 +410,8 @@ func (s *communicatorServer) MatchSpec(
 
 func (s *communicatorServer) Match(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_MatchResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_MatchResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.MatchFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -418,13 +419,13 @@ func (s *communicatorServer) Match(
 		return nil, err
 	}
 
-	return &proto.Communicator_MatchResp{Match: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Communicator_MatchResp{Match: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) InitSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -434,18 +435,18 @@ func (s *communicatorServer) InitSpec(
 
 func (s *communicatorServer) Init(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_InitResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_InitResp, error) {
 	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args,
 		argmapper.Typed(ctx),
 	)
-	return &proto.Communicator_InitResp{}, err
+	return &vagrant_plugin_sdk.Communicator_InitResp{}, err
 }
 
 func (s *communicatorServer) ReadySpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -455,8 +456,8 @@ func (s *communicatorServer) ReadySpec(
 
 func (s *communicatorServer) Ready(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_ReadyResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_ReadyResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.ReadyFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -465,13 +466,13 @@ func (s *communicatorServer) Ready(
 		return nil, err
 	}
 
-	return &proto.Communicator_ReadyResp{Ready: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Communicator_ReadyResp{Ready: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) WaitForReadySpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -481,8 +482,8 @@ func (s *communicatorServer) WaitForReadySpec(
 
 func (s *communicatorServer) WaitForReady(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_ReadyResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_ReadyResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.WaitForReadyFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx))
 
@@ -490,13 +491,13 @@ func (s *communicatorServer) WaitForReady(
 		return nil, err
 	}
 
-	return &proto.Communicator_ReadyResp{Ready: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Communicator_ReadyResp{Ready: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) DownloadSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -506,8 +507,8 @@ func (s *communicatorServer) DownloadSpec(
 
 func (s *communicatorServer) Download(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_FileTransferResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
 	_, err := s.callLocalDynamicFunc(s.Impl.DownloadFunc(), args.Args, (interface{})(nil),
 		argmapper.Typed(ctx))
 
@@ -515,13 +516,13 @@ func (s *communicatorServer) Download(
 		return nil, err
 	}
 
-	return &proto.Communicator_FileTransferResp{}, nil
+	return &vagrant_plugin_sdk.Communicator_FileTransferResp{}, nil
 }
 
 func (s *communicatorServer) UploadSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -531,8 +532,8 @@ func (s *communicatorServer) UploadSpec(
 
 func (s *communicatorServer) Upload(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_FileTransferResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
 	_, err := s.callLocalDynamicFunc(s.Impl.UploadFunc(), args.Args, (interface{})(nil),
 		argmapper.Typed(ctx))
 
@@ -540,13 +541,13 @@ func (s *communicatorServer) Upload(
 		return nil, err
 	}
 
-	return &proto.Communicator_FileTransferResp{}, nil
+	return &vagrant_plugin_sdk.Communicator_FileTransferResp{}, nil
 }
 
 func (s *communicatorServer) ExecuteSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -556,8 +557,8 @@ func (s *communicatorServer) ExecuteSpec(
 
 func (s *communicatorServer) Execute(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_ExecuteResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.ExecuteFunc(), args.Args, (*int32)(nil),
 		argmapper.Typed(ctx))
 
@@ -565,13 +566,13 @@ func (s *communicatorServer) Execute(
 		return nil, err
 	}
 
-	return &proto.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+	return &vagrant_plugin_sdk.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
 }
 
 func (s *communicatorServer) PrivilegedExecuteSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -581,8 +582,8 @@ func (s *communicatorServer) PrivilegedExecuteSpec(
 
 func (s *communicatorServer) PrivilegedExecute(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_ExecuteResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.PrivilegedExecuteFunc(), args.Args, (*int32)(nil),
 		argmapper.Typed(ctx))
 
@@ -590,13 +591,13 @@ func (s *communicatorServer) PrivilegedExecute(
 		return nil, err
 	}
 
-	return &proto.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+	return &vagrant_plugin_sdk.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
 }
 
 func (s *communicatorServer) TestSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -606,8 +607,8 @@ func (s *communicatorServer) TestSpec(
 
 func (s *communicatorServer) Test(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_TestResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_TestResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.TestFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx))
 
@@ -615,13 +616,13 @@ func (s *communicatorServer) Test(
 		return nil, err
 	}
 
-	return &proto.Communicator_TestResp{Valid: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Communicator_TestResp{Valid: raw.(bool)}, nil
 }
 
 func (s *communicatorServer) ResetSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "communicator"); err != nil {
 		return nil, err
 	}
@@ -631,8 +632,8 @@ func (s *communicatorServer) ResetSpec(
 
 func (s *communicatorServer) Reset(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Communicator_ResetResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Communicator_ResetResp, error) {
 	_, err := s.callLocalDynamicFunc(s.Impl.ResetFunc(), args.Args, (interface{})(nil),
 		argmapper.Typed(ctx))
 
@@ -640,12 +641,12 @@ func (s *communicatorServer) Reset(
 		return nil, err
 	}
 
-	return &proto.Communicator_ResetResp{}, nil
+	return &vagrant_plugin_sdk.Communicator_ResetResp{}, nil
 }
 
 var (
-	_ plugin.Plugin                   = (*CommunicatorPlugin)(nil)
-	_ plugin.GRPCPlugin               = (*CommunicatorPlugin)(nil)
-	_ proto.CommunicatorServiceServer = (*communicatorServer)(nil)
-	_ component.Communicator          = (*communicatorClient)(nil)
+	_ plugin.Plugin                                = (*CommunicatorPlugin)(nil)
+	_ plugin.GRPCPlugin                            = (*CommunicatorPlugin)(nil)
+	_ vagrant_plugin_sdk.CommunicatorServiceServer = (*communicatorServer)(nil)
+	_ component.Communicator                       = (*communicatorClient)(nil)
 )

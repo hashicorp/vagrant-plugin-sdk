@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // HostPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -26,7 +26,7 @@ type HostPlugin struct {
 }
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterHostServiceServer(s, &hostServer{
+	vagrant_plugin_sdk.RegisterHostServiceServer(s, &hostServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -45,7 +45,7 @@ func (p *HostPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &hostClient{
-		client: proto.NewHostServiceClient(c),
+		client: vagrant_plugin_sdk.NewHostServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -61,7 +61,7 @@ func (p *HostPlugin) GRPCClient(
 type hostClient struct {
 	*baseClient
 
-	client proto.HostServiceClient
+	client vagrant_plugin_sdk.HostServiceClient
 }
 
 func (c *hostClient) Config() (interface{}, error) {
@@ -83,7 +83,7 @@ func (c *hostClient) DetectFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Detect(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Detect(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -109,18 +109,19 @@ type hostServer struct {
 	*baseServer
 
 	Impl component.Host
+	vagrant_plugin_sdk.UnimplementedHostServiceServer
 }
 
 func (s *hostServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *hostServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -128,14 +129,14 @@ func (s *hostServer) Configure(
 func (s *hostServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *hostServer) DetectSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "host"); err != nil {
 		return nil, err
 	}
@@ -145,8 +146,8 @@ func (s *hostServer) DetectSpec(
 
 func (s *hostServer) Detect(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Host_DetectResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Host_DetectResp, error) {
 	s.Logger.Debug("running the detect function on the server to call real implementation")
 	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
@@ -156,12 +157,12 @@ func (s *hostServer) Detect(
 		return nil, err
 	}
 
-	return &proto.Host_DetectResp{Detected: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
 }
 
 var (
-	_ plugin.Plugin           = (*HostPlugin)(nil)
-	_ plugin.GRPCPlugin       = (*HostPlugin)(nil)
-	_ proto.HostServiceServer = (*hostServer)(nil)
-	_ component.Host          = (*hostClient)(nil)
+	_ plugin.Plugin                        = (*HostPlugin)(nil)
+	_ plugin.GRPCPlugin                    = (*HostPlugin)(nil)
+	_ vagrant_plugin_sdk.HostServiceServer = (*hostServer)(nil)
+	_ component.Host                       = (*hostClient)(nil)
 )

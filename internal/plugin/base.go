@@ -17,7 +17,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 func isImplemented(t interface{}, name string) error {
@@ -121,7 +121,7 @@ func (b *baseClient) callRemoteDynamicFunc(
 	return raw, nil
 }
 
-func (b *baseClient) generateFunc(spec *pb.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
+func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.Typed(b.internal()))...,
@@ -224,7 +224,7 @@ func (b *baseServer) callBoolLocalDynamicFunc(
 	return raw.(bool), nil
 }
 
-func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*pb.FuncSpec, error) {
+func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
 	return funcspec.Spec(fn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),

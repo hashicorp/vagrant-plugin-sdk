@@ -14,8 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
-	proto "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -40,7 +39,7 @@ func (p *MachinePlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &MachineClient{
-		client:       pb.NewMachineServiceClient(c),
+		client:       vagrant_plugin_sdk.NewMachineServiceClient(c),
 		ServerTarget: c.Target(),
 		Mappers:      p.Mappers,
 		Logger:       p.Logger,
@@ -71,7 +70,7 @@ type MachineClient struct {
 	ResourceID   string // NOTE(spox): This needs to be added (resource identifier)
 	ServerTarget string
 
-	client proto.MachineServiceClient
+	client vagrant_plugin_sdk.MachineServiceClient
 }
 
 func (m *Machine) Communicate() (comm core.Communicator, err error) {
@@ -118,8 +117,8 @@ func (m *Machine) UID() (user_id int, err error) {
 func (m *Machine) GetName() (name string, err error) {
 	r, err := m.c.client.GetName(
 		context.Background(),
-		&pb.Machine_GetNameRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_GetNameRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -134,8 +133,8 @@ func (m *Machine) GetName() (name string, err error) {
 func (m *Machine) SetName(name string) (err error) {
 	_, err = m.c.client.SetName(
 		context.Background(),
-		&pb.Machine_SetNameRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_SetNameRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 			Name: name,
@@ -147,8 +146,8 @@ func (m *Machine) SetName(name string) (err error) {
 func (m *Machine) GetID() (id string, err error) {
 	r, err := m.c.client.GetID(
 		context.Background(),
-		&pb.Machine_GetIDRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_GetIDRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -163,8 +162,8 @@ func (m *Machine) GetID() (id string, err error) {
 func (m *Machine) SetID(id string) (err error) {
 	_, err = m.c.client.SetID(
 		context.Background(),
-		&pb.Machine_SetIDRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_SetIDRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 			Id: id,
@@ -176,8 +175,8 @@ func (m *Machine) SetID(id string) (err error) {
 func (m *Machine) Box() (b core.Box, err error) {
 	_, err = m.c.client.Box(
 		context.Background(),
-		&pb.Machine_BoxRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_BoxRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -193,8 +192,8 @@ func (m *Machine) Box() (b core.Box, err error) {
 func (m *Machine) Datadir() (d *datadir.Machine, err error) {
 	_, err = m.c.client.Datadir(
 		context.Background(),
-		&pb.Machine_DatadirRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_DatadirRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -210,8 +209,8 @@ func (m *Machine) Datadir() (d *datadir.Machine, err error) {
 func (m *Machine) LocalDataPath() (p path.Path, err error) {
 	r, err := m.c.client.LocalDataPath(
 		context.Background(),
-		&pb.Machine_LocalDataPathRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_LocalDataPathRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -226,8 +225,8 @@ func (m *Machine) LocalDataPath() (p path.Path, err error) {
 func (m *Machine) Provider() (p core.Provider, err error) {
 	_, err = m.c.client.Provider(
 		context.Background(),
-		&pb.Machine_ProviderRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_ProviderRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -242,8 +241,8 @@ func (m *Machine) Provider() (p core.Provider, err error) {
 func (m *Machine) VagrantfileName() (name string, err error) {
 	r, err := m.c.client.VagrantfileName(
 		context.Background(),
-		&pb.Machine_VagrantfileNameRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_VagrantfileNameRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -259,8 +258,8 @@ func (m *Machine) VagrantfileName() (name string, err error) {
 func (m *Machine) VagrantfilePath() (p path.Path, err error) {
 	r, err := m.c.client.VagrantfilePath(
 		context.Background(),
-		&pb.Machine_VagrantfilePathRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_VagrantfilePathRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -277,8 +276,8 @@ func (m *Machine) VagrantfilePath() (p path.Path, err error) {
 func (m *Machine) UpdatedAt() (t *time.Time, err error) {
 	_, err = m.c.client.UpdatedAt(
 		context.Background(),
-		&pb.Machine_UpdatedAtRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_UpdatedAtRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},
@@ -294,8 +293,8 @@ func (m *Machine) UpdatedAt() (t *time.Time, err error) {
 func (m *Machine) UI() (ui *terminal.UI, err error) {
 	_, err = m.c.client.UI(
 		context.Background(),
-		&pb.Machine_UIRequest{
-			Machine: &pb.Ref_Machine{
+		&vagrant_plugin_sdk.Machine_UIRequest{
+			Machine: &vagrant_plugin_sdk.Ref_Machine{
 				ResourceId: m.ResourceID,
 			},
 		},

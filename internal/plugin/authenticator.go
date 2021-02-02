@@ -14,17 +14,17 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/testproto"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // authenticatorProtoClient is the interface implemented by all gRPC services that
 // have the authenticator RPC methods.
 type authenticatorProtoClient interface {
-	IsAuthenticator(context.Context, *empty.Empty, ...grpc.CallOption) (*pb.ImplementsResp, error)
-	Auth(context.Context, *pb.FuncSpec_Args, ...grpc.CallOption) (*pb.Auth_AuthResponse, error)
-	ValidateAuth(context.Context, *pb.FuncSpec_Args, ...grpc.CallOption) (*empty.Empty, error)
-	AuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*pb.FuncSpec, error)
-	ValidateAuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*pb.FuncSpec, error)
+	IsAuthenticator(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.ImplementsResp, error)
+	Auth(context.Context, *vagrant_plugin_sdk.FuncSpec_Args, ...grpc.CallOption) (*vagrant_plugin_sdk.Auth_AuthResponse, error)
+	ValidateAuth(context.Context, *vagrant_plugin_sdk.FuncSpec_Args, ...grpc.CallOption) (*empty.Empty, error)
+	AuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
+	ValidateAuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 }
 
 // authenticatorClient implements component.Authenticator for a service that
@@ -106,7 +106,7 @@ func (c *authenticatorClient) auth(
 	defer internal.Cleanup.Close()
 
 	// Call our function
-	resp, err := c.Client.Auth(ctx, &pb.FuncSpec_Args{Args: args})
+	resp, err := c.Client.Auth(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func (c *authenticatorClient) validateAuth(
 	defer internal.Cleanup.Close()
 
 	// Call our function
-	_, err := c.Client.ValidateAuth(ctx, &pb.FuncSpec_Args{Args: args})
+	_, err := c.Client.ValidateAuth(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 	return err
 }
 
@@ -138,15 +138,15 @@ type authenticatorServer struct {
 func (s *authenticatorServer) IsAuthenticator(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.ImplementsResp, error) {
+) (*vagrant_plugin_sdk.ImplementsResp, error) {
 	_, ok := s.Impl.(component.Authenticator)
-	return &pb.ImplementsResp{Implements: ok}, nil
+	return &vagrant_plugin_sdk.ImplementsResp{Implements: ok}, nil
 }
 
 func (s *authenticatorServer) AuthSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	return funcspec.Spec(s.Impl.(component.Authenticator).AuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
 		argmapper.Logger(s.Logger),
@@ -164,8 +164,8 @@ func (s *authenticatorServer) AuthSpec(
 
 func (s *authenticatorServer) Auth(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Auth_AuthResponse, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Auth_AuthResponse, error) {
 	internal := s.internal()
 	defer internal.Cleanup.Close()
 
@@ -180,12 +180,12 @@ func (s *authenticatorServer) Auth(
 
 	result, ok := raw.(*component.AuthResult)
 	if !ok {
-		return &pb.Auth_AuthResponse{
+		return &vagrant_plugin_sdk.Auth_AuthResponse{
 			Authenticated: false,
 		}, nil
 	}
 
-	return &pb.Auth_AuthResponse{
+	return &vagrant_plugin_sdk.Auth_AuthResponse{
 		Authenticated: result.Authenticated,
 	}, nil
 }
@@ -193,7 +193,7 @@ func (s *authenticatorServer) Auth(
 func (s *authenticatorServer) ValidateAuthSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	return funcspec.Spec(s.Impl.(component.Authenticator).ValidateAuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
 		argmapper.Logger(s.Logger),
@@ -203,7 +203,7 @@ func (s *authenticatorServer) ValidateAuthSpec(
 
 func (s *authenticatorServer) ValidateAuth(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*empty.Empty, error) {
 	internal := s.internal()
 	defer internal.Cleanup.Close()

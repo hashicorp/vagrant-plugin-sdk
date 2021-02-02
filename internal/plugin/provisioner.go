@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // ProvisionerPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -25,7 +25,7 @@ type ProvisionerPlugin struct {
 }
 
 func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterProvisionerServiceServer(s, &provisionerServer{
+	vagrant_plugin_sdk.RegisterProvisionerServiceServer(s, &provisionerServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -44,7 +44,7 @@ func (p *ProvisionerPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &provisionerClient{
-		client: proto.NewProvisionerServiceClient(c),
+		client: vagrant_plugin_sdk.NewProvisionerServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -60,7 +60,7 @@ func (p *ProvisionerPlugin) GRPCClient(
 type provisionerClient struct {
 	*baseClient
 
-	client proto.ProvisionerServiceClient
+	client vagrant_plugin_sdk.ProvisionerServiceClient
 }
 
 func (c *provisionerClient) Config() (interface{}, error) {
@@ -86,18 +86,19 @@ type provisionerServer struct {
 	*baseServer
 
 	Impl component.Provisioner
+	vagrant_plugin_sdk.UnimplementedProvisionerServiceServer
 }
 
 func (s *provisionerServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *provisionerServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -105,13 +106,13 @@ func (s *provisionerServer) Configure(
 func (s *provisionerServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 var (
-	_ plugin.Plugin                  = (*ProvisionerPlugin)(nil)
-	_ plugin.GRPCPlugin              = (*ProvisionerPlugin)(nil)
-	_ proto.ProvisionerServiceServer = (*provisionerServer)(nil)
-	_ component.Provisioner          = (*provisionerClient)(nil)
+	_ plugin.Plugin                               = (*ProvisionerPlugin)(nil)
+	_ plugin.GRPCPlugin                           = (*ProvisionerPlugin)(nil)
+	_ vagrant_plugin_sdk.ProvisionerServiceServer = (*provisionerServer)(nil)
+	_ component.Provisioner                       = (*provisionerClient)(nil)
 )

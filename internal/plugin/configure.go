@@ -10,20 +10,20 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // configStruct is the shared helper to implement the ConfigStruct RPC call
 // for components. The logic is the same regardless of component so this can
 // be called instead.
-func configStruct(impl interface{}) (*pb.Config_StructResp, error) {
+func configStruct(impl interface{}) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	c, ok := impl.(component.Configurable)
 
 	// If Configurable isn't implemented, we just return an empty response.
 	// The nil struct signals to the receiving side that this component
 	// is not configurable.
 	if !ok {
-		return &pb.Config_StructResp{}, nil
+		return &vagrant_plugin_sdk.Config_StructResp{}, nil
 	}
 
 	v, err := c.Config()
@@ -36,7 +36,7 @@ func configStruct(impl interface{}) (*pb.Config_StructResp, error) {
 		return nil, err
 	}
 
-	return &pb.Config_StructResp{Struct: s}, nil
+	return &vagrant_plugin_sdk.Config_StructResp{Struct: s}, nil
 }
 
 // configStructCall is the shared helper to call the ConfigStruct RPC call
@@ -65,7 +65,7 @@ func configStructCall(ctx context.Context, c configurableClient) (interface{}, e
 }
 
 // configure is the shared helper to implement the Configure RPC call.
-func configure(impl interface{}, req *pb.Config_ConfigureRequest) (*empty.Empty, error) {
+func configure(impl interface{}, req *vagrant_plugin_sdk.Config_ConfigureRequest) (*empty.Empty, error) {
 	c, ok := impl.(component.Configurable)
 
 	// This should never happen but if it does just do nothing. This
@@ -103,7 +103,7 @@ func configureCall(ctx context.Context, c configurableClient, v interface{}) err
 		return err
 	}
 
-	_, err = c.Configure(ctx, &pb.Config_ConfigureRequest{
+	_, err = c.Configure(ctx, &vagrant_plugin_sdk.Config_ConfigureRequest{
 		Json: jsonv,
 	})
 	return err
@@ -112,7 +112,7 @@ func configureCall(ctx context.Context, c configurableClient, v interface{}) err
 // documentation is the shared helper to implement the Documentation RPC call
 // for components. The logic is the same regardless of component so this can
 // be called instead.
-func documentation(impl interface{}) (*pb.Config_Documentation, error) {
+func documentation(impl interface{}) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	d, err := component.Documentation(impl)
 	if err != nil {
 		return nil, err
@@ -120,16 +120,16 @@ func documentation(impl interface{}) (*pb.Config_Documentation, error) {
 
 	dets := d.Details()
 
-	v := &pb.Config_Documentation{
+	v := &vagrant_plugin_sdk.Config_Documentation{
 		Description: dets.Description,
 		Example:     dets.Example,
 		Input:       dets.Input,
 		Output:      dets.Output,
-		Fields:      make(map[string]*pb.Config_FieldDocumentation),
+		Fields:      make(map[string]*vagrant_plugin_sdk.Config_FieldDocumentation),
 	}
 
 	for _, f := range d.Fields() {
-		v.Fields[f.Field] = &pb.Config_FieldDocumentation{
+		v.Fields[f.Field] = &vagrant_plugin_sdk.Config_FieldDocumentation{
 			Name:     f.Field,
 			Type:     f.Type,
 			Default:  f.Default,
@@ -141,7 +141,7 @@ func documentation(impl interface{}) (*pb.Config_Documentation, error) {
 	}
 
 	for _, m := range dets.Mappers {
-		v.Mappers = append(v.Mappers, &pb.Config_MapperDocumentation{
+		v.Mappers = append(v.Mappers, &vagrant_plugin_sdk.Config_MapperDocumentation{
 			Input:       m.Input,
 			Output:      m.Output,
 			Description: m.Description,
@@ -192,7 +192,7 @@ func documentationCall(ctx context.Context, c configurableClient) (*docs.Documen
 // have the configuration RPC methods. We use this with the helpers above
 // to extract shared logic for component configuration.
 type configurableClient interface {
-	ConfigStruct(context.Context, *empty.Empty, ...grpc.CallOption) (*pb.Config_StructResp, error)
-	Configure(context.Context, *pb.Config_ConfigureRequest, ...grpc.CallOption) (*empty.Empty, error)
-	Documentation(context.Context, *empty.Empty, ...grpc.CallOption) (*pb.Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_StructResp, error)
+	Configure(context.Context, *vagrant_plugin_sdk.Config_ConfigureRequest, ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_Documentation, error)
 }

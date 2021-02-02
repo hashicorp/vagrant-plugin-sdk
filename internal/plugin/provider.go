@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // ProviderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -30,7 +30,7 @@ type ProviderPlugin struct {
 }
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	pb.RegisterProviderServiceServer(s, &providerServer{
+	vagrant_plugin_sdk.RegisterProviderServiceServer(s, &providerServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -49,7 +49,7 @@ func (p *ProviderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &providerClient{
-		client: pb.NewProviderServiceClient(c),
+		client: vagrant_plugin_sdk.NewProviderServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -65,7 +65,7 @@ func (p *ProviderPlugin) GRPCClient(
 type providerClient struct {
 	*baseClient
 
-	client pb.ProviderServiceClient
+	client vagrant_plugin_sdk.ProviderServiceClient
 }
 
 func (c *providerClient) Config() (interface{}, error) {
@@ -87,7 +87,7 @@ func (c *providerClient) UsableFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Usable(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Usable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -113,7 +113,7 @@ func (c *providerClient) InitFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		_, err := c.client.Init(ctx, &pb.FuncSpec_Args{Args: args})
+		_, err := c.client.Init(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -141,7 +141,7 @@ func (c *providerClient) InstalledFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Installed(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Installed(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -167,7 +167,7 @@ func (c *providerClient) ActionUpFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		resp, err := c.client.ActionUp(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.ActionUp(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -192,18 +192,19 @@ type providerServer struct {
 	*baseServer
 
 	Impl component.Provider
+	vagrant_plugin_sdk.UnimplementedProviderServiceServer
 }
 
 func (s *providerServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *providerServer) Configure(
 	ctx context.Context,
-	req *pb.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -211,14 +212,14 @@ func (s *providerServer) Configure(
 func (s *providerServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *providerServer) UsableSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -228,8 +229,8 @@ func (s *providerServer) UsableSpec(
 
 func (s *providerServer) Usable(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Provider_UsableResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Provider_UsableResp, error) {
 	raw, err := s.callBoolLocalDynamicFunc(
 		s.Impl.UsableFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -238,13 +239,13 @@ func (s *providerServer) Usable(
 		return nil, err
 	}
 
-	return &pb.Provider_UsableResp{IsUsable: raw}, nil
+	return &vagrant_plugin_sdk.Provider_UsableResp{IsUsable: raw}, nil
 }
 
 func (s *providerServer) InstalledSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -254,8 +255,8 @@ func (s *providerServer) InstalledSpec(
 
 func (s *providerServer) Installed(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Provider_InstalledResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Provider_InstalledResp, error) {
 	raw, err := s.callBoolLocalDynamicFunc(
 		s.Impl.InstalledFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -264,13 +265,13 @@ func (s *providerServer) Installed(
 		return nil, err
 	}
 
-	return &pb.Provider_InstalledResp{IsInstalled: raw}, nil
+	return &vagrant_plugin_sdk.Provider_InstalledResp{IsInstalled: raw}, nil
 }
 
 func (s *providerServer) ActionUpSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -280,8 +281,8 @@ func (s *providerServer) ActionUpSpec(
 
 func (s *providerServer) ActionUp(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Provider_ActionResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Provider_ActionResp, error) {
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.ActionUpFunc(),
 		args.Args,
@@ -301,13 +302,13 @@ func (s *providerServer) ActionUp(
 	anyVal, err := ptypes.MarshalAny(msg)
 
 	// TODO: This maybe needs to be expanded
-	return &pb.Provider_ActionResp{Result: anyVal}, nil
+	return &vagrant_plugin_sdk.Provider_ActionResp{Result: anyVal}, nil
 }
 
 func (s *providerServer) InitSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "provider"); err != nil {
 		return nil, err
 	}
@@ -317,7 +318,7 @@ func (s *providerServer) InitSpec(
 
 func (s *providerServer) Init(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*empty.Empty, error) {
 	_, err := s.callBoolLocalDynamicFunc(
 		s.Impl.InitFunc(), args.Args, argmapper.Typed(ctx),
@@ -331,10 +332,10 @@ func (s *providerServer) Init(
 }
 
 var (
-	_ plugin.Plugin            = (*ProviderPlugin)(nil)
-	_ plugin.GRPCPlugin        = (*ProviderPlugin)(nil)
-	_ pb.ProviderServiceServer = (*providerServer)(nil)
-	_ component.Provider       = (*providerClient)(nil)
-	_ component.Configurable   = (*providerClient)(nil)
-	_ component.Documented     = (*providerClient)(nil)
+	_ plugin.Plugin                            = (*ProviderPlugin)(nil)
+	_ plugin.GRPCPlugin                        = (*ProviderPlugin)(nil)
+	_ vagrant_plugin_sdk.ProviderServiceServer = (*providerServer)(nil)
+	_ component.Provider                       = (*providerClient)(nil)
+	_ component.Configurable                   = (*providerClient)(nil)
+	_ component.Documented                     = (*providerClient)(nil)
 )
