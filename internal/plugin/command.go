@@ -105,6 +105,7 @@ func (c *commandClient) Synopsis() (string, error) {
 	f := c.SynopsisFunc()
 	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
 	if err != nil {
+		// panic(err)
 		return "", err
 	}
 	return raw.(string), nil
@@ -238,10 +239,9 @@ func (s *commandServer) Synopsis(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_SynopsisResp, error) {
-	raw, err := s.callLocalDynamicFunc(
+	raw, err := s.callUncheckedLocalDynamicFunc(
 		s.Impl.SynopsisFunc(),
 		args.Args,
-		(*pb.Command_SynopsisResp)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -249,7 +249,11 @@ func (s *commandServer) Synopsis(
 		return nil, err
 	}
 
-	return raw.(*pb.Command_SynopsisResp), nil
+	result := &vagrant_plugin_sdk.Command_SynopsisResp{
+		Synopsis: raw.(string),
+	}
+
+	return result, nil
 }
 
 func (s *commandServer) HelpSpec(
@@ -267,11 +271,9 @@ func (s *commandServer) Help(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_HelpResp, error) {
-	raw, err := s.callLocalDynamicFunc(
+	raw, err := s.callUncheckedLocalDynamicFunc(
 		s.Impl.HelpFunc(),
 		args.Args,
-		// TODO: this should be changed to any?
-		(*pb.Command_HelpResp)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -279,7 +281,10 @@ func (s *commandServer) Help(
 		return nil, err
 	}
 
-	return raw.(*pb.Command_HelpResp), nil
+	result := &vagrant_plugin_sdk.Command_HelpResp{
+		Help: raw.(string),
+	}
+	return result, nil
 }
 
 func (s *commandServer) FlagsSpec(
@@ -300,7 +305,7 @@ func (s *commandServer) Flags(
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.FlagsFunc(),
 		args.Args,
-		(*pb.Command_FlagsResp)(nil),
+		(*vagrant_plugin_sdk.Command_FlagsResp)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -308,7 +313,7 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	return raw.(*pb.Command_FlagsResp), nil
+	return raw.(*vagrant_plugin_sdk.Command_FlagsResp), nil
 }
 
 func (s *commandServer) ExecuteSpec(
@@ -326,10 +331,9 @@ func (s *commandServer) Execute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
-	raw, err := s.callLocalDynamicFunc(
+	raw, err := s.callUncheckedLocalDynamicFunc(
 		s.Impl.ExecuteFunc(),
 		args.Args,
-		(*pb.Command_ExecuteResp)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -337,7 +341,10 @@ func (s *commandServer) Execute(
 		return nil, err
 	}
 
-	return raw.(*pb.Command_ExecuteResp), nil
+	result := &vagrant_plugin_sdk.Command_ExecuteResp{
+		ExitCode: raw.(int64),
+	}
+	return result, nil
 }
 
 var (
