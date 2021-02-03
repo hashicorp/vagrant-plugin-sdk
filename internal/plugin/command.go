@@ -9,13 +9,12 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"google.golang.org/grpc"
-
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"google.golang.org/grpc"
 )
 
 // CommandPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -238,15 +237,21 @@ func (s *commandServer) Synopsis(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_SynopsisResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.SynopsisFunc(), args.Args, argmapper.Typed(ctx),
+	raw, err := s.callUncheckedLocalDynamicFunc(
+		s.Impl.SynopsisFunc(),
+		args.Args,
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_SynopsisResp{Synopsis: raw.(string)}, nil
+	result := &vagrant_plugin_sdk.Command_SynopsisResp{
+		Synopsis: raw.(string),
+	}
+
+	return result, nil
 }
 
 func (s *commandServer) HelpSpec(
@@ -264,15 +269,20 @@ func (s *commandServer) Help(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_HelpResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.HelpFunc(), args.Args, argmapper.Typed(ctx),
+	raw, err := s.callUncheckedLocalDynamicFunc(
+		s.Impl.HelpFunc(),
+		args.Args,
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_HelpResp{Help: raw.(string)}, nil
+	result := &vagrant_plugin_sdk.Command_HelpResp{
+		Help: raw.(string),
+	}
+	return result, nil
 }
 
 func (s *commandServer) FlagsSpec(
@@ -291,14 +301,22 @@ func (s *commandServer) Flags(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_FlagsResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.FlagsFunc(), args.Args, argmapper.Typed(ctx),
+		s.Impl.FlagsFunc(),
+		args.Args,
+		([]*vagrant_plugin_sdk.Command_Flag)(nil),
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_FlagsResp{Flags: raw.([]*vagrant_plugin_sdk.Command_Flag)}, nil
+	flags, err := protomappers.FlagsProto(raw.([]*option.Option))
+	flagResp := &vagrant_plugin_sdk.Command_FlagsResp{
+		Flags: flags,
+	}
+
+	return flagResp, nil
 }
 
 func (s *commandServer) ExecuteSpec(
@@ -316,15 +334,20 @@ func (s *commandServer) Execute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.ExecuteFunc(), args.Args, argmapper.Typed(ctx),
+	raw, err := s.callUncheckedLocalDynamicFunc(
+		s.Impl.ExecuteFunc(),
+		args.Args,
+		argmapper.Typed(ctx),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Command_ExecuteResp{ExitCode: raw.(int64)}, nil
+	result := &vagrant_plugin_sdk.Command_ExecuteResp{
+		ExitCode: raw.(int64),
+	}
+	return result, nil
 }
 
 var (

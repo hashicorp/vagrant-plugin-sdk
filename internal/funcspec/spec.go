@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/grpc/codes"
@@ -25,6 +26,9 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 	outputFilter := argmapper.FilterOr(
 		filterProto,
 		argmapper.FilterType(boolType),
+		argmapper.FilterType(stringType),
+		argmapper.FilterType(intType),
+		argmapper.FilterType(cliOptType),
 	)
 	// Copy our args cause we're going to use append() and we don't
 	// want to modify our caller.
@@ -91,4 +95,7 @@ var (
 	contextType      = reflect.TypeOf((*context.Context)(nil)).Elem()
 	protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
 	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
+	stringType       = reflect.TypeOf((*string)(nil)).Elem()
+	intType          = reflect.TypeOf((*int64)(nil)).Elem()
+	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
 )
