@@ -9,13 +9,12 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"google.golang.org/grpc"
-
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"google.golang.org/grpc"
 )
 
 // CommandPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -105,7 +104,6 @@ func (c *commandClient) Synopsis() (string, error) {
 	f := c.SynopsisFunc()
 	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
 	if err != nil {
-		// panic(err)
 		return "", err
 	}
 	return raw.(string), nil
@@ -305,7 +303,7 @@ func (s *commandServer) Flags(
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.FlagsFunc(),
 		args.Args,
-		(*vagrant_plugin_sdk.Command_FlagsResp)(nil),
+		([]*vagrant_plugin_sdk.Command_Flag)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -313,7 +311,12 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	return raw.(*vagrant_plugin_sdk.Command_FlagsResp), nil
+	flags, err := protomappers.FlagsProto(raw.([]*option.Option))
+	flagResp := &vagrant_plugin_sdk.Command_FlagsResp{
+		Flags: flags,
+	}
+
+	return flagResp, nil
 }
 
 func (s *commandServer) ExecuteSpec(

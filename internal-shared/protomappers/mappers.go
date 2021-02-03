@@ -86,6 +86,32 @@ func Flags(input []*vagrant_plugin_sdk.Command_Flag) (opt []*option.Option, err 
 	return opt, err
 }
 
+// Flags maps
+func FlagsProto(input []*option.Option) (output []*vagrant_plugin_sdk.Command_Flag, err error) {
+	output = []*vagrant_plugin_sdk.Command_Flag{}
+
+	for _, f := range input {
+		var flagType vagrant_plugin_sdk.Command_Flag_Type
+		switch f.OptType {
+		case option.StringType:
+			flagType = vagrant_plugin_sdk.Command_Flag_STRING
+		case option.BoolType:
+			flagType = vagrant_plugin_sdk.Command_Flag_BOOL
+		}
+
+		// TODO: get aliases
+		j := &vagrant_plugin_sdk.Command_Flag{
+			LongName:     f.Name,
+			ShortName:    f.Name,
+			Description:  f.Description,
+			DefaultValue: f.DefaultStr,
+			Type:         flagType,
+		}
+		output = append(output, j)
+	}
+	return output, nil
+}
+
 // JobInfo maps Args.JobInfo to component.JobInfo.
 func JobInfo(input *vagrant_plugin_sdk.Args_JobInfo) (*component.JobInfo, error) {
 	var result component.JobInfo
