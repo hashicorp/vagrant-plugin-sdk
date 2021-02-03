@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hashicorp/go-hclog"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 func init() {
@@ -59,9 +59,9 @@ func TestFunc(t *testing.T) {
 		})
 
 		// Create an argument with the wrong type
-		msg, err := ptypes.MarshalAny(&pb.FuncSpec{})
+		msg, err := ptypes.MarshalAny(&vagrant_plugin_sdk.FuncSpec{})
 		require.NoError(err)
-		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&pb.FuncSpec{})))
+		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&vagrant_plugin_sdk.FuncSpec{})))
 
 		// We should have an error
 		require.Error(result.Err())

@@ -16,7 +16,7 @@ import (
 	statuspkg "google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pkg/pty"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -31,7 +31,7 @@ type UIPlugin struct {
 }
 
 func (p *UIPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	pb.RegisterTerminalUIServiceServer(s, &uiServer{
+	vagrant_plugin_sdk.RegisterTerminalUIServiceServer(s, &uiServer{
 		Impl:    p.Impl,
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
@@ -44,7 +44,7 @@ func (p *UIPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	client := pb.NewTerminalUIServiceClient(c)
+	client := vagrant_plugin_sdk.NewTerminalUIServiceClient(c)
 	resp, err := client.IsInteractive(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
@@ -71,11 +71,13 @@ type uiServer struct {
 	Impl    terminal.UI
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
+
+	vagrant_plugin_sdk.UnimplementedTerminalUIServiceServer
 }
 
 func (s *uiServer) Output(
 	ctx context.Context,
-	req *pb.TerminalUI_OutputRequest,
+	req *vagrant_plugin_sdk.TerminalUI_OutputRequest,
 ) (*empty.Empty, error) {
 	for _, line := range req.Lines {
 		s.Impl.Output(line)
@@ -87,13 +89,13 @@ func (s *uiServer) Output(
 func (s *uiServer) IsInteractive(
 	ctx context.Context,
 	req *empty.Empty,
-) (*pb.TerminalUI_IsInteractiveResponse, error) {
-	return &pb.TerminalUI_IsInteractiveResponse{
+) (*vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse, error) {
+	return &vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse{
 		Interactive: s.Impl.Interactive(),
 	}, nil
 }
 
-func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
+func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServer) error {
 	type stepData struct {
 		terminal.Step
 		out io.Writer
@@ -119,9 +121,9 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 		}
 
 		switch ev := ev.Event.(type) {
-		case *pb.TerminalUI_Event_Line_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Line_:
 			s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style))
-		case *pb.TerminalUI_Event_NamedValues_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_NamedValues_:
 			var values []terminal.NamedValue
 
 			for _, nv := range ev.NamedValues.Values {
@@ -132,7 +134,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 			}
 
 			s.Impl.NamedValues(values)
-		case *pb.TerminalUI_Event_Status_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Status_:
 			if ev.Status.Msg == "" && !ev.Status.Step {
 				if status != nil {
 					status.Close()
@@ -149,7 +151,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 					status.Update(ev.Status.Msg)
 				}
 			}
-		case *pb.TerminalUI_Event_Raw_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Raw_:
 			if stdout == nil {
 				stdout, stderr, err = s.Impl.OutputWriters()
 				if err != nil {
@@ -162,7 +164,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 			} else {
 				stdout.Write(ev.Raw.Data)
 			}
-		case *pb.TerminalUI_Event_Table_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Table_:
 			tbl := terminal.NewTable(ev.Table.Headers...)
 
 			for _, row := range ev.Table.Rows {
@@ -177,7 +179,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 			}
 
 			s.Impl.Table(tbl)
-		case *pb.TerminalUI_Event_StepGroup_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_StepGroup_:
 			if sg != nil {
 				sg.Wait()
 			}
@@ -185,7 +187,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 			if !ev.StepGroup.Close {
 				sg = s.Impl.StepGroup()
 			}
-		case *pb.TerminalUI_Event_Step_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Step_:
 			if sg == nil {
 				continue
 			}
@@ -221,7 +223,7 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 			if ev.Step.Close {
 				step.Done()
 			}
-		case *pb.TerminalUI_Event_Input_:
+		case *vagrant_plugin_sdk.TerminalUI_Event_Input_:
 			result, err := s.Impl.Input(&terminal.Input{
 				Prompt: ev.Input.Prompt,
 				Style:  ev.Input.Style,
@@ -234,9 +236,9 @@ func (s *uiServer) Events(stream pb.TerminalUIService_EventsServer) error {
 				sterr = st.Proto()
 			}
 
-			respEvent := &pb.TerminalUI_Response{
-				Event: &pb.TerminalUI_Response_Input{
-					Input: &pb.TerminalUI_Event_InputResp{
+			respEvent := &vagrant_plugin_sdk.TerminalUI_Response{
+				Event: &vagrant_plugin_sdk.TerminalUI_Response_Input{
+					Input: &vagrant_plugin_sdk.TerminalUI_Event_InputResp{
 						Input: result,
 						Error: sterr,
 					},
@@ -255,7 +257,7 @@ type uiBridge struct {
 	ctx         context.Context
 	cancel      func()
 	mu          sync.Mutex
-	evc         pb.TerminalUIService_EventsClient
+	evc         vagrant_plugin_sdk.TerminalUIService_EventsClient
 	interactive bool
 
 	evcRecvLock    sync.Mutex
@@ -282,9 +284,9 @@ func (u *uiBridge) Input(input *terminal.Input) (string, error) {
 	u.evcRecvLock.Lock()
 	defer u.evcRecvLock.Unlock()
 
-	err := u.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Input_{
-			Input: &pb.TerminalUI_Event_Input{
+	err := u.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Input_{
+			Input: &vagrant_plugin_sdk.TerminalUI_Event_Input{
 				Prompt: input.Prompt,
 				Style:  input.Style,
 				Secret: input.Secret,
@@ -301,7 +303,7 @@ func (u *uiBridge) Input(input *terminal.Input) (string, error) {
 		return "", err
 	}
 
-	respEvent, ok := resp.Event.(*pb.TerminalUI_Response_Input)
+	respEvent, ok := resp.Event.(*vagrant_plugin_sdk.TerminalUI_Response_Input)
 	if !ok {
 		return "", fmt.Errorf("unexpected response type: %T", resp.Event)
 	}
@@ -323,9 +325,9 @@ func (u *uiBridge) Interactive() bool {
 func (u *uiBridge) Output(msg string, raw ...interface{}) {
 	msg, style, _ := terminal.Interpret(msg, raw...)
 
-	ev := &pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Line_{
-			Line: &pb.TerminalUI_Event_Line{
+	ev := &vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Line_{
+			Line: &vagrant_plugin_sdk.TerminalUI_Event_Line{
 				Msg:   msg,
 				Style: style,
 			},
@@ -345,10 +347,10 @@ func (u *uiBridge) Output(msg string, raw ...interface{}) {
 // Output data as a table of data. Each entry is a row which will be output
 // with the columns lined up nicely.
 func (u *uiBridge) NamedValues(tvalues []terminal.NamedValue, _ ...terminal.Option) {
-	var values []*pb.TerminalUI_Event_NamedValue
+	var values []*vagrant_plugin_sdk.TerminalUI_Event_NamedValue
 
 	for _, nv := range tvalues {
-		values = append(values, &pb.TerminalUI_Event_NamedValue{
+		values = append(values, &vagrant_plugin_sdk.TerminalUI_Event_NamedValue{
 			Name:  nv.Name,
 			Value: fmt.Sprintf("%s", nv.Value),
 		})
@@ -361,9 +363,9 @@ func (u *uiBridge) NamedValues(tvalues []terminal.NamedValue, _ ...terminal.Opti
 		return
 	}
 
-	u.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_NamedValues_{
-			NamedValues: &pb.TerminalUI_Event_NamedValues{
+	u.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_NamedValues_{
+			NamedValues: &vagrant_plugin_sdk.TerminalUI_Event_NamedValues{
 				Values: values,
 			},
 		},
@@ -425,9 +427,9 @@ func (u *uiBridge) sendData(r io.ReadCloser, stderr bool) {
 
 		data := buf[:n]
 
-		ev := &pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Raw_{
-				Raw: &pb.TerminalUI_Event_Raw{
+		ev := &vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Raw_{
+				Raw: &vagrant_plugin_sdk.TerminalUI_Event_Raw{
 					Data:   data,
 					Stderr: stderr,
 				},
@@ -447,23 +449,23 @@ func (u *uiBridge) sendData(r io.ReadCloser, stderr bool) {
 
 func (u *uiBridge) Table(tbl *terminal.Table, opts ...terminal.Option) {
 	var (
-		ptbl *pb.TerminalUI_Event_Table
-		rows []*pb.TerminalUI_Event_TableRow
+		ptbl *vagrant_plugin_sdk.TerminalUI_Event_Table
+		rows []*vagrant_plugin_sdk.TerminalUI_Event_TableRow
 	)
 
 	ptbl.Headers = tbl.Headers
 
 	for _, row := range tbl.Rows {
-		var entries []*pb.TerminalUI_Event_TableEntry
+		var entries []*vagrant_plugin_sdk.TerminalUI_Event_TableEntry
 
 		for _, ent := range row {
-			entries = append(entries, &pb.TerminalUI_Event_TableEntry{
+			entries = append(entries, &vagrant_plugin_sdk.TerminalUI_Event_TableEntry{
 				Value: ent.Value,
 				Color: ent.Color,
 			})
 		}
 
-		rows = append(rows, &pb.TerminalUI_Event_TableRow{
+		rows = append(rows, &vagrant_plugin_sdk.TerminalUI_Event_TableRow{
 			Entries: entries,
 		})
 	}
@@ -475,8 +477,8 @@ func (u *uiBridge) Table(tbl *terminal.Table, opts ...terminal.Option) {
 		return
 	}
 
-	u.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Table_{
+	u.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Table_{
 			Table: ptbl,
 		},
 	})
@@ -526,9 +528,9 @@ func (u *uiBridgeSGStep) sendData(r io.ReadCloser, stderr bool) {
 
 		data := buf[:n]
 
-		ev := &pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Step_{
-				Step: &pb.TerminalUI_Event_Step{
+		ev := &vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+				Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 					Id:     u.id,
 					Output: data,
 				},
@@ -553,9 +555,9 @@ func (u *uiBridgeSGStep) Update(str string, args ...interface{}) {
 	defer u.sg.ui.mu.Unlock()
 
 	if u.sg.ui.evc != nil {
-		u.sg.ui.evc.Send(&pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Step_{
-				Step: &pb.TerminalUI_Event_Step{
+		u.sg.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+				Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 					Id:  u.id,
 					Msg: msg,
 				},
@@ -569,9 +571,9 @@ func (u *uiBridgeSGStep) Status(status string) {
 	defer u.sg.ui.mu.Unlock()
 
 	if u.sg.ui.evc != nil {
-		u.sg.ui.evc.Send(&pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Step_{
-				Step: &pb.TerminalUI_Event_Step{
+		u.sg.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+				Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 					Id:     u.id,
 					Status: status,
 				},
@@ -591,9 +593,9 @@ func (u *uiBridgeSGStep) Done() {
 	u.done = true
 
 	if u.sg.ui.evc != nil {
-		u.sg.ui.evc.Send(&pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Step_{
-				Step: &pb.TerminalUI_Event_Step{
+		u.sg.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+				Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 					Id:    u.id,
 					Close: true,
 				},
@@ -615,9 +617,9 @@ func (u *uiBridgeSGStep) Abort() {
 	u.done = true
 
 	if u.sg.ui.evc != nil {
-		u.sg.ui.evc.Send(&pb.TerminalUI_Event{
-			Event: &pb.TerminalUI_Event_Step_{
-				Step: &pb.TerminalUI_Event_Step{
+		u.sg.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+			Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+				Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 					Id:     u.id,
 					Close:  true,
 					Status: terminal.StatusAbort,
@@ -655,9 +657,9 @@ func (u *uiBridgeSG) Add(str string, args ...interface{}) terminal.Step {
 
 	u.steps = append(u.steps, step)
 
-	u.ui.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Step_{
-			Step: &pb.TerminalUI_Event_Step{
+	u.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Step_{
+			Step: &vagrant_plugin_sdk.TerminalUI_Event_Step{
 				Id:  step.id,
 				Msg: msg,
 			},
@@ -671,9 +673,9 @@ func (u *uiBridgeSG) Wait() {
 	u.wg.Wait()
 	u.cancel()
 
-	u.ui.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_StepGroup_{
-			StepGroup: &pb.TerminalUI_Event_StepGroup{
+	u.ui.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_StepGroup_{
+			StepGroup: &vagrant_plugin_sdk.TerminalUI_Event_StepGroup{
 				Close: true,
 			},
 		},
@@ -690,9 +692,9 @@ func (u *uiBridge) StepGroup() terminal.StepGroup {
 		cancel: cancel,
 	}
 
-	u.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_StepGroup_{
-			StepGroup: &pb.TerminalUI_Event_StepGroup{},
+	u.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_StepGroup_{
+			StepGroup: &vagrant_plugin_sdk.TerminalUI_Event_StepGroup{},
 		},
 	})
 
@@ -718,9 +720,9 @@ func (u *uiBridgeStatus) Update(msg string) {
 		return
 	}
 
-	u.b.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Status_{
-			Status: &pb.TerminalUI_Event_Status{
+	u.b.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Status_{
+			Status: &vagrant_plugin_sdk.TerminalUI_Event_Status{
 				Msg: msg,
 			},
 		},
@@ -739,9 +741,9 @@ func (u *uiBridgeStatus) Step(status string, msg string) {
 		return
 	}
 
-	u.b.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Status_{
-			Status: &pb.TerminalUI_Event_Status{
+	u.b.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Status_{
+			Status: &vagrant_plugin_sdk.TerminalUI_Event_Status{
 				Status: status,
 				Msg:    msg,
 				Step:   true,
@@ -760,9 +762,9 @@ func (u *uiBridgeStatus) Close() error {
 		return nil
 	}
 
-	u.b.evc.Send(&pb.TerminalUI_Event{
-		Event: &pb.TerminalUI_Event_Status_{
-			Status: &pb.TerminalUI_Event_Status{},
+	u.b.evc.Send(&vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_Status_{
+			Status: &vagrant_plugin_sdk.TerminalUI_Event_Status{},
 		},
 	})
 
@@ -770,9 +772,9 @@ func (u *uiBridgeStatus) Close() error {
 }
 
 var (
-	_ plugin.Plugin              = (*UIPlugin)(nil)
-	_ plugin.GRPCPlugin          = (*UIPlugin)(nil)
-	_ pb.TerminalUIServiceServer = (*uiServer)(nil)
-	_ terminal.UI                = (*uiBridge)(nil)
-	_ terminal.Status            = (*uiBridgeStatus)(nil)
+	_ plugin.Plugin                              = (*UIPlugin)(nil)
+	_ plugin.GRPCPlugin                          = (*UIPlugin)(nil)
+	_ vagrant_plugin_sdk.TerminalUIServiceServer = (*uiServer)(nil)
+	_ terminal.UI                                = (*uiBridge)(nil)
+	_ terminal.Status                            = (*uiBridgeStatus)(nil)
 )

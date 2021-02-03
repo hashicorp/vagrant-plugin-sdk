@@ -25,7 +25,7 @@ import (
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -54,29 +54,29 @@ var All = []interface{}{
 }
 
 // TODO(spox): make sure these new mappers actually work
-// func Machine(input *pb.Args_Machine) (*core.Machine, error) {
+// func Machine(input *vagrant_plugin_sdk.Args_Machine) (*core.Machine, error) {
 // 	var result core.Machine
 // 	return &result, mapstructure.Decode(input, &result)
 // }
 
-// func MachineProto(input *core.Machine) (*pb.Args_Machine, error) {
-// 	var result pb.Args_Machine
+// func MachineProto(input *core.Machine) (*vagrant_plugin_sdk.Args_Machine, error) {
+// 	var result vagrant_plugin_sdk.Args_Machine
 // 	return &result, mapstructure.Decode(intput, &result)
 // }
 
 // TODO(spox): end of mappers to validate
 
 // Flags maps
-func Flags(input []*pb.Command_Flag) (opt []*option.Option, err error) {
+func Flags(input []*vagrant_plugin_sdk.Command_Flag) (opt []*option.Option, err error) {
 	opt = []*option.Option{}
 	// TODO: add short description as alias
 	// https://godoc.org/github.com/DavidGamba/go-getoptions#GetOpt.Alias
 	for _, f := range input {
 		var newOpt *option.Option
 		switch f.Type {
-		case pb.Command_Flag_STRING:
+		case vagrant_plugin_sdk.Command_Flag_STRING:
 			newOpt = option.New(f.LongName, option.StringType)
-		case pb.Command_Flag_BOOL:
+		case vagrant_plugin_sdk.Command_Flag_BOOL:
 			newOpt = option.New(f.LongName, option.BoolType)
 		}
 		newOpt.Description = f.Description
@@ -87,39 +87,39 @@ func Flags(input []*pb.Command_Flag) (opt []*option.Option, err error) {
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
-func JobInfo(input *pb.Args_JobInfo) (*component.JobInfo, error) {
+func JobInfo(input *vagrant_plugin_sdk.Args_JobInfo) (*component.JobInfo, error) {
 	var result component.JobInfo
 	return &result, mapstructure.Decode(input, &result)
 }
 
 // JobInfoProto
-func JobInfoProto(input *component.JobInfo) (*pb.Args_JobInfo, error) {
-	var result pb.Args_JobInfo
+func JobInfoProto(input *component.JobInfo) (*vagrant_plugin_sdk.Args_JobInfo, error) {
+	var result vagrant_plugin_sdk.Args_JobInfo
 	return &result, mapstructure.Decode(input, &result)
 }
 
-func DatadirBasis(input *pb.Args_DataDir_Basis) *datadir.Basis {
+func DatadirBasis(input *vagrant_plugin_sdk.Args_DataDir_Basis) *datadir.Basis {
 	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Basis{Dir: dir}
 }
 
-func DatadirProject(input *pb.Args_DataDir_Project) *datadir.Project {
+func DatadirProject(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Project {
 	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Project{Dir: dir}
 }
 
-func DatadirMachine(input *pb.Args_DataDir_Project) *datadir.Machine {
+func DatadirMachine(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Machine {
 	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Machine{Dir: dir}
 }
 
-func DatadirComponent(input *pb.Args_DataDir_Project) *datadir.Component {
+func DatadirComponent(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Component {
 	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Component{Dir: dir}
 }
 
-func DatadirBasisProto(input *datadir.Basis) *pb.Args_DataDir_Basis {
-	return &pb.Args_DataDir_Basis{
+func DatadirBasisProto(input *datadir.Basis) *vagrant_plugin_sdk.Args_DataDir_Basis {
+	return &vagrant_plugin_sdk.Args_DataDir_Basis{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
 		TempDir:  input.TempDir().String(),
@@ -127,8 +127,8 @@ func DatadirBasisProto(input *datadir.Basis) *pb.Args_DataDir_Basis {
 	}
 }
 
-func DatadirProjectProto(input *datadir.Project) *pb.Args_DataDir_Project {
-	return &pb.Args_DataDir_Project{
+func DatadirProjectProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Project {
+	return &vagrant_plugin_sdk.Args_DataDir_Project{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
 		TempDir:  input.TempDir().String(),
@@ -136,8 +136,8 @@ func DatadirProjectProto(input *datadir.Project) *pb.Args_DataDir_Project {
 	}
 }
 
-func DatadirMachineProto(input *datadir.Project) *pb.Args_DataDir_Machine {
-	return &pb.Args_DataDir_Machine{
+func DatadirMachineProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Machine {
+	return &vagrant_plugin_sdk.Args_DataDir_Machine{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
 		TempDir:  input.TempDir().String(),
@@ -145,8 +145,8 @@ func DatadirMachineProto(input *datadir.Project) *pb.Args_DataDir_Machine {
 	}
 }
 
-func DatadirComponentProto(input *datadir.Project) *pb.Args_DataDir_Component {
-	return &pb.Args_DataDir_Component{
+func DatadirComponentProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Component {
+	return &vagrant_plugin_sdk.Args_DataDir_Component{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
 		TempDir:  input.TempDir().String(),
@@ -154,24 +154,24 @@ func DatadirComponentProto(input *datadir.Project) *pb.Args_DataDir_Component {
 	}
 }
 
-// Logger maps *pb.Args_Logger to an hclog.Logger
-func Logger(input *pb.Args_Logger) hclog.Logger {
+// Logger maps *vagrant_plugin_sdk.Args_Logger to an hclog.Logger
+func Logger(input *vagrant_plugin_sdk.Args_Logger) hclog.Logger {
 	// We use the default logger as the base. Within a plugin we always set
 	// it so we can confidently use this. This lets plugins potentially mess
 	// with this but that's a risk we have to take.
 	return hclog.L().ResetNamed(input.Name)
 }
 
-func LoggerProto(log hclog.Logger) *pb.Args_Logger {
-	return &pb.Args_Logger{
+func LoggerProto(log hclog.Logger) *vagrant_plugin_sdk.Args_Logger {
+	return &vagrant_plugin_sdk.Args_Logger{
 		Name: log.Name(),
 	}
 }
 
-// TerminalUI maps *pb.Args_TerminalUI to an hclog.TerminalUI
+// TerminalUI maps *vagrant_plugin_sdk.Args_TerminalUI to an hclog.TerminalUI
 func TerminalUI(
 	ctx context.Context,
-	input *pb.Args_TerminalUI,
+	input *vagrant_plugin_sdk.Args_TerminalUI,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (terminal.UI, error) {
@@ -205,7 +205,7 @@ func TerminalUIProto(
 	ui terminal.UI,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) *pb.Args_TerminalUI {
+) *vagrant_plugin_sdk.Args_TerminalUI {
 	// Create our plugin
 	p := &pluginterminal.UIPlugin{
 		Impl:    ui,
@@ -233,13 +233,13 @@ func TerminalUIProto(
 	go runServer(listener, server)
 
 	addr := listener.Addr().String()
-	return &pb.Args_TerminalUI{StreamId: id, Addr: addr}
+	return &vagrant_plugin_sdk.Args_TerminalUI{StreamId: id, Addr: addr}
 }
 
-// Machine maps *pb.Args_Machine to a core.Machine
+// Machine maps *vagrant_plugin_sdk.Args_Machine to a core.Machine
 func Machine(
 	ctx context.Context,
-	input *pb.Args_Machine,
+	input *vagrant_plugin_sdk.Args_Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*plugincore.Machine, error) {
@@ -272,38 +272,38 @@ func Machine(
 	return plugincore.NewMachine(machineClient, input.ResourceId), nil
 }
 
-// Machine maps component.Machine to a *pb.Args_Machine
+// Machine maps component.Machine to a *vagrant_plugin_sdk.Args_Machine
 func MachineProto(
 	machine *plugincore.Machine,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) (*pb.Args_Machine, error) {
+) (*vagrant_plugin_sdk.Args_Machine, error) {
 
-	return &pb.Args_Machine{
+	return &vagrant_plugin_sdk.Args_Machine{
 		ResourceId: machine.ResourceID,
 		ServerAddr: machine.ServerAddr,
 	}, nil
 }
 
-func LabelSet(input *pb.Args_LabelSet) *component.LabelSet {
+func LabelSet(input *vagrant_plugin_sdk.Args_LabelSet) *component.LabelSet {
 	return &component.LabelSet{
 		Labels: input.Labels,
 	}
 }
 
-func LabelSetProto(labels *component.LabelSet) *pb.Args_LabelSet {
-	return &pb.Args_LabelSet{Labels: labels.Labels}
+func LabelSetProto(labels *component.LabelSet) *vagrant_plugin_sdk.Args_LabelSet {
+	return &vagrant_plugin_sdk.Args_LabelSet{Labels: labels.Labels}
 }
 
 // StateBag maps StateBag proto to multistep.StateBag.
-func StateBag(input *pb.StateBag) (*multistep.BasicStateBag, error) {
+func StateBag(input *vagrant_plugin_sdk.StateBag) (*multistep.BasicStateBag, error) {
 	var result multistep.BasicStateBag
 	return &result, mapstructure.Decode(input, &result)
 }
 
 // StateBag
-func StateBagProto(input *multistep.BasicStateBag) (*pb.StateBag, error) {
-	var result pb.StateBag
+func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.StateBag, error) {
+	var result vagrant_plugin_sdk.StateBag
 	return &result, mapstructure.Decode(input, &result)
 }
 

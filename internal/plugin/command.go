@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // CommandPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -29,7 +29,7 @@ type CommandPlugin struct {
 }
 
 func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	pb.RegisterCommandServiceServer(s, &commandServer{
+	vagrant_plugin_sdk.RegisterCommandServiceServer(s, &commandServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -48,7 +48,7 @@ func (p *CommandPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &commandClient{
-		client: pb.NewCommandServiceClient(c),
+		client: vagrant_plugin_sdk.NewCommandServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -64,7 +64,7 @@ func (p *CommandPlugin) GRPCClient(
 type commandClient struct {
 	*baseClient
 
-	client pb.CommandServiceClient
+	client vagrant_plugin_sdk.CommandServiceClient
 }
 
 func (c *commandClient) Config() (interface{}, error) {
@@ -92,7 +92,7 @@ func (c *commandClient) SynopsisFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Synopsis(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Synopsis(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
 		}
@@ -118,7 +118,7 @@ func (c *commandClient) HelpFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Help(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Help(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return "", err
 		}
@@ -142,9 +142,9 @@ func (c *commandClient) FlagsFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) ([]*pb.Command_Flag, error) {
+	cb := func(ctx context.Context, args funcspec.Args) ([]*vagrant_plugin_sdk.Command_Flag, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Flags(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Flags(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
 		}
@@ -155,11 +155,11 @@ func (c *commandClient) FlagsFunc() interface{} {
 
 func (c *commandClient) Flags() ([]*option.Option, error) {
 	f := c.FlagsFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*pb.Command_Flag)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*vagrant_plugin_sdk.Command_Flag)(nil), f)
 	if err != nil {
 		return nil, err
 	}
-	flags, err := protomappers.Flags(raw.([]*pb.Command_Flag))
+	flags, err := protomappers.Flags(raw.([]*vagrant_plugin_sdk.Command_Flag))
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (c *commandClient) ExecuteFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Execute(ctx, &pb.FuncSpec_Args{Args: args})
+		resp, err := c.client.Execute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return -1, err
 		}
@@ -199,18 +199,19 @@ type commandServer struct {
 	*baseServer
 
 	Impl component.Command
+	vagrant_plugin_sdk.UnimplementedCommandServiceServer
 }
 
 func (s *commandServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *commandServer) Configure(
 	ctx context.Context,
-	req *pb.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -218,14 +219,14 @@ func (s *commandServer) Configure(
 func (s *commandServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *commandServer) SynopsisSpec(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
@@ -235,8 +236,8 @@ func (s *commandServer) SynopsisSpec(
 
 func (s *commandServer) Synopsis(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Command_SynopsisResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_SynopsisResp, error) {
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.SynopsisFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -245,13 +246,13 @@ func (s *commandServer) Synopsis(
 		return nil, err
 	}
 
-	return &pb.Command_SynopsisResp{Synopsis: raw.(string)}, nil
+	return &vagrant_plugin_sdk.Command_SynopsisResp{Synopsis: raw.(string)}, nil
 }
 
 func (s *commandServer) HelpSpec(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
@@ -261,8 +262,8 @@ func (s *commandServer) HelpSpec(
 
 func (s *commandServer) Help(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Command_HelpResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_HelpResp, error) {
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.HelpFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -271,13 +272,13 @@ func (s *commandServer) Help(
 		return nil, err
 	}
 
-	return &pb.Command_HelpResp{Help: raw.(string)}, nil
+	return &vagrant_plugin_sdk.Command_HelpResp{Help: raw.(string)}, nil
 }
 
 func (s *commandServer) FlagsSpec(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
@@ -287,8 +288,8 @@ func (s *commandServer) FlagsSpec(
 
 func (s *commandServer) Flags(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Command_FlagsResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_FlagsResp, error) {
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.FlagsFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -297,13 +298,13 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	return &pb.Command_FlagsResp{Flags: raw.([]*pb.Command_Flag)}, nil
+	return &vagrant_plugin_sdk.Command_FlagsResp{Flags: raw.([]*vagrant_plugin_sdk.Command_Flag)}, nil
 }
 
 func (s *commandServer) ExecuteSpec(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*pb.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
@@ -313,8 +314,8 @@ func (s *commandServer) ExecuteSpec(
 
 func (s *commandServer) Execute(
 	ctx context.Context,
-	args *pb.FuncSpec_Args,
-) (*pb.Command_ExecuteResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.ExecuteFunc(), args.Args, argmapper.Typed(ctx),
 	)
@@ -323,12 +324,12 @@ func (s *commandServer) Execute(
 		return nil, err
 	}
 
-	return &pb.Command_ExecuteResp{ExitCode: raw.(int64)}, nil
+	return &vagrant_plugin_sdk.Command_ExecuteResp{ExitCode: raw.(int64)}, nil
 }
 
 var (
-	_ plugin.Plugin           = (*CommandPlugin)(nil)
-	_ plugin.GRPCPlugin       = (*CommandPlugin)(nil)
-	_ pb.CommandServiceServer = (*commandServer)(nil)
-	_ component.Command       = (*commandClient)(nil)
+	_ plugin.Plugin                           = (*CommandPlugin)(nil)
+	_ plugin.GRPCPlugin                       = (*CommandPlugin)(nil)
+	_ vagrant_plugin_sdk.CommandServiceServer = (*commandServer)(nil)
+	_ component.Command                       = (*commandClient)(nil)
 )

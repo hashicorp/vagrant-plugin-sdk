@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // SyncedFolderPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -25,7 +25,7 @@ type SyncedFolderPlugin struct {
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
+	vagrant_plugin_sdk.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
@@ -44,7 +44,7 @@ func (p *SyncedFolderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &syncedFolderClient{
-		client: proto.NewSyncedFolderServiceClient(c),
+		client: vagrant_plugin_sdk.NewSyncedFolderServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -60,7 +60,7 @@ func (p *SyncedFolderPlugin) GRPCClient(
 type syncedFolderClient struct {
 	*baseClient
 
-	client proto.SyncedFolderServiceClient
+	client vagrant_plugin_sdk.SyncedFolderServiceClient
 }
 
 func (c *syncedFolderClient) Config() (interface{}, error) {
@@ -86,18 +86,19 @@ type syncedFolderServer struct {
 	*baseServer
 
 	Impl component.SyncedFolder
+	vagrant_plugin_sdk.UnimplementedSyncedFolderServiceServer
 }
 
 func (s *syncedFolderServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *syncedFolderServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -105,13 +106,13 @@ func (s *syncedFolderServer) Configure(
 func (s *syncedFolderServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 var (
-	_ plugin.Plugin                   = (*SyncedFolderPlugin)(nil)
-	_ plugin.GRPCPlugin               = (*SyncedFolderPlugin)(nil)
-	_ proto.SyncedFolderServiceServer = (*syncedFolderServer)(nil)
-	_ component.SyncedFolder          = (*syncedFolderClient)(nil)
+	_ plugin.Plugin                                = (*SyncedFolderPlugin)(nil)
+	_ plugin.GRPCPlugin                            = (*SyncedFolderPlugin)(nil)
+	_ vagrant_plugin_sdk.SyncedFolderServiceServer = (*syncedFolderServer)(nil)
+	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
 )

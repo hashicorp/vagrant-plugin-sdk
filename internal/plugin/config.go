@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // ConfigPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -25,7 +25,7 @@ type ConfigPlugin struct {
 }
 
 func (p *ConfigPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterConfigServiceServer(s, &configServer{
+	vagrant_plugin_sdk.RegisterConfigServiceServer(s, &configServer{
 		Impl:    p.Impl,
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
@@ -40,7 +40,7 @@ func (p *ConfigPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &configClient{
-		client: proto.NewConfigServiceClient(c),
+		client: vagrant_plugin_sdk.NewConfigServiceClient(c),
 		logger: p.Logger,
 		broker: broker,
 	}, nil
@@ -48,7 +48,7 @@ func (p *ConfigPlugin) GRPCClient(
 
 // configClient is an implementation of component.Config over gRPC.
 type configClient struct {
-	client  proto.ConfigServiceClient
+	client  vagrant_plugin_sdk.ConfigServiceClient
 	logger  hclog.Logger
 	broker  *plugin.GRPCBroker
 	mappers []*argmapper.Func
@@ -78,18 +78,20 @@ type configServer struct {
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
 	Broker  *plugin.GRPCBroker
+
+	vagrant_plugin_sdk.UnimplementedConfigServiceServer
 }
 
 func (s *configServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *configServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -97,13 +99,13 @@ func (s *configServer) Configure(
 func (s *configServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 var (
-	_ plugin.Plugin             = (*ConfigPlugin)(nil)
-	_ plugin.GRPCPlugin         = (*ConfigPlugin)(nil)
-	_ proto.ConfigServiceServer = (*configServer)(nil)
-	_ component.Config          = (*configClient)(nil)
+	_ plugin.Plugin                          = (*ConfigPlugin)(nil)
+	_ plugin.GRPCPlugin                      = (*ConfigPlugin)(nil)
+	_ vagrant_plugin_sdk.ConfigServiceServer = (*configServer)(nil)
+	_ component.Config                       = (*configClient)(nil)
 )

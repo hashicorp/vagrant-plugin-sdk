@@ -85,6 +85,7 @@ github.com/hashicorp/go-plugin v1.3.0 h1:4d/wJojzvHV1I4i/rrjVaeuyxWrLzDE1mDCyDy8
 github.com/hashicorp/go-plugin v1.3.0/go.mod h1:F9eH4LrE/ZsRdbwhfjs9k9HoDUwAHnYtXdgmf1AVNs0=
 github.com/hashicorp/hcl/v2 v2.6.0 h1:3krZOfGY6SziUXa6H9PJU6TyohHn7I+ARYnhbeNBz+o=
 github.com/hashicorp/hcl/v2 v2.6.0/go.mod h1:bQTN5mpo+jewjJgh8jr0JUguIi7qPHUF6yIfAEN3jqY=
+github.com/hashicorp/vagrant v1.9.8 h1:0pcTSO3zWJdv1H49VLyg9XSSVbUKHtcMbOw34DxMNo8=
 github.com/hashicorp/vagrant v2.2.14+incompatible h1:ovlRVbv8Br600zV0CmubJDvtERUAh9hi/f1cqO9DLOw=
 github.com/hashicorp/waypoint-plugin-sdk v0.0.0-20201107013852-c3b6eb26185d h1:48hf8moNSkXPONblBot2y5c5cuY1s3c0tVKKm4oefWc=
 github.com/hashicorp/waypoint-plugin-sdk v0.0.0-20201107013852-c3b6eb26185d/go.mod h1:/TtZN4o0eunv4v50BF8kEVDnADsk8v8a12e8Y8SE+K8=
@@ -250,6 +251,8 @@ google.golang.org/grpc v1.32.0/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM
 google.golang.org/grpc v1.33.2 h1:EQyQC3sa8M+p6Ulc8yy9SWSS2GVwyRc83gAbG8lrl4o=
 google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1 h1:M8spwkmx0pHrPq+uMdl22w5CvJ/Y+oAJTIs9oGoCpOE=
 google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1/go.mod h1:6Kw0yEErY5E/yWrBtf03jp27GLLJujG4z/JK95pnjjw=
+google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 h1:M1YKkFIboKNieVO5DLUEVzQfGwJD30Nv2jfUgzb5UcE=
+google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0/go.mod h1:6Kw0yEErY5E/yWrBtf03jp27GLLJujG4z/JK95pnjjw=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=

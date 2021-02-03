@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen/vagrant_plugin_sdk"
 )
 
 func TestMappers(t *testing.T) {
@@ -21,7 +21,7 @@ func TestMappers(t *testing.T) {
 		{
 			"Source",
 			Source,
-			[]interface{}{&pb.Args_Source{App: "foo"}},
+			[]interface{}{&vagrant_plugin_sdk.Args_Source{App: "foo"}},
 			&component.Source{App: "foo"},
 			"",
 		},
@@ -30,7 +30,7 @@ func TestMappers(t *testing.T) {
 			"SourceProto",
 			SourceProto,
 			[]interface{}{&component.Source{App: "foo"}},
-			&pb.Args_Source{App: "foo"},
+			&vagrant_plugin_sdk.Args_Source{App: "foo"},
 			"",
 		},
 	}

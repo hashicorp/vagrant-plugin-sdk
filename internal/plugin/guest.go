@@ -14,11 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-
-	// "github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
-
-	// "github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // GuestPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -32,7 +28,7 @@ type GuestPlugin struct {
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterGuestServiceServer(s, &guestServer{
+	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
 		baseServer: &baseServer{
 			base: &base{
 				Mappers: p.Mappers,
@@ -65,7 +61,7 @@ func (p *GuestPlugin) GRPCClient(
 type guestClient struct {
 	*baseClient
 
-	client proto.GuestServiceClient
+	client vagrant_plugin_sdk.GuestServiceClient
 }
 
 func (c *guestClient) Config() (interface{}, error) {
@@ -87,7 +83,7 @@ func (c *guestClient) DetectFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.Detect(ctx, &proto.FuncSpec_Args{Args: args})
+		resp, err := c.client.Detect(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
@@ -108,13 +104,13 @@ func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 }
 
 func (c *guestClient) HasCapabilityFunc(capName string) interface{} {
-	spec, err := c.client.HasCapabilitySpec(c.ctx, &proto.Guest_Capability_NamedRequest{Name: capName})
+	spec, err := c.client.HasCapabilitySpec(c.ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.HasCapability(ctx, &proto.Guest_Capability_NamedRequest{Name: capName, FuncArgs: &proto.FuncSpec_Args{Args: args}})
+		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName, FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args}})
 		if err != nil {
 			return false, err
 		}
@@ -138,13 +134,13 @@ func (c *guestClient) HasCapability(machine core.Machine, capName string) (bool,
 }
 
 func (c *guestClient) CapabilityFunc(capName string) interface{} {
-	spec, err := c.client.CapabilitySpec(c.ctx, &proto.Guest_Capability_NamedRequest{Name: capName})
+	spec, err := c.client.CapabilitySpec(c.ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		resp, err := c.client.Capability(ctx, &proto.Guest_Capability_NamedRequest{Name: capName, FuncArgs: &proto.FuncSpec_Args{Args: args}})
+		resp, err := c.client.Capability(ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName, FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args}})
 		if err != nil {
 			return nil, err
 		}
@@ -176,18 +172,19 @@ type guestServer struct {
 	*baseServer
 
 	Impl component.Guest
+	vagrant_plugin_sdk.UnimplementedGuestServiceServer
 }
 
 func (s *guestServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_StructResp, error) {
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
 
 func (s *guestServer) Configure(
 	ctx context.Context,
-	req *proto.Config_ConfigureRequest,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*empty.Empty, error) {
 	return configure(s.Impl, req)
 }
@@ -195,14 +192,14 @@ func (s *guestServer) Configure(
 func (s *guestServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*proto.Config_Documentation, error) {
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *guestServer) DetectSpec(
 	ctx context.Context,
 	args *empty.Empty,
-) (*proto.FuncSpec, error) {
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
 	}
@@ -212,8 +209,8 @@ func (s *guestServer) DetectSpec(
 
 func (s *guestServer) Detect(
 	ctx context.Context,
-	args *proto.FuncSpec_Args,
-) (*proto.Guest_DetectResp, error) {
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Guest_DetectResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.DetectFunc(), args.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -222,13 +219,13 @@ func (s *guestServer) Detect(
 		return nil, err
 	}
 
-	return &proto.Guest_DetectResp{Detected: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Guest_DetectResp{Detected: raw.(bool)}, nil
 }
 
 func (s *guestServer) HasCapabilitySpec(
 	ctx context.Context,
-	args *proto.Guest_Capability_NamedRequest,
-) (*proto.FuncSpec, error) {
+	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
 	}
@@ -238,8 +235,8 @@ func (s *guestServer) HasCapabilitySpec(
 
 func (s *guestServer) HasCapability(
 	ctx context.Context,
-	args *proto.Guest_Capability_NamedRequest,
-) (*proto.Guest_Capability_CheckResp, error) {
+	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Guest_Capability_CheckResp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.HasCapabilityFunc(args.Name), args.FuncArgs.Args, (*bool)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -248,13 +245,13 @@ func (s *guestServer) HasCapability(
 		return nil, err
 	}
 
-	return &proto.Guest_Capability_CheckResp{HasCapability: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Guest_Capability_CheckResp{HasCapability: raw.(bool)}, nil
 }
 
 func (s *guestServer) CapabilitySpec(
 	ctx context.Context,
-	args *proto.Guest_Capability_NamedRequest,
-) (*proto.FuncSpec, error) {
+	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
 	}
@@ -264,8 +261,8 @@ func (s *guestServer) CapabilitySpec(
 
 func (s *guestServer) Capability(
 	ctx context.Context,
-	args *proto.Guest_Capability_NamedRequest,
-) (*proto.Guest_Capability_Resp, error) {
+	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Guest_Capability_Resp, error) {
 	raw, err := s.callLocalDynamicFunc(s.Impl.CapabilityFunc(args.Name), args.FuncArgs.Args, (interface{})(nil),
 		argmapper.Typed(ctx),
 	)
@@ -274,12 +271,12 @@ func (s *guestServer) Capability(
 		return nil, err
 	}
 
-	return &proto.Guest_Capability_Resp{Result: raw.(*anypb.Any)}, nil
+	return &vagrant_plugin_sdk.Guest_Capability_Resp{Result: raw.(*anypb.Any)}, nil
 }
 
 var (
-	_ plugin.Plugin            = (*GuestPlugin)(nil)
-	_ plugin.GRPCPlugin        = (*GuestPlugin)(nil)
-	_ proto.GuestServiceServer = (*guestServer)(nil)
-	_ component.Guest          = (*guestClient)(nil)
+	_ plugin.Plugin                         = (*GuestPlugin)(nil)
+	_ plugin.GRPCPlugin                     = (*GuestPlugin)(nil)
+	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
+	_ component.Guest                       = (*guestClient)(nil)
 )

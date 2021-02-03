@@ -16,7 +16,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	pb "github.com/hashicorp/vagrant-plugin-sdk/proto/gen"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // MapperPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -29,7 +29,7 @@ type MapperPlugin struct {
 }
 
 func (p *MapperPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	pb.RegisterMapperServer(s, &mapperServer{
+	vagrant_plugin_sdk.RegisterMapperServer(s, &mapperServer{
 		Mappers: p.Mappers,
 		Logger:  p.Logger,
 	})
@@ -42,14 +42,14 @@ func (p *MapperPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &MapperClient{
-		client: pb.NewMapperClient(c),
+		client: vagrant_plugin_sdk.NewMapperClient(c),
 		logger: p.Logger,
 	}, nil
 }
 
 // MapperClient is an implementation of component.Mapper over gRPC.
 type MapperClient struct {
-	client pb.MapperClient
+	client vagrant_plugin_sdk.MapperClient
 	logger hclog.Logger
 }
 
@@ -71,8 +71,8 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 		// the correct result type. All we're doing is making our callback
 		// call the Map RPC call and return the result/error.
 		cb := func(ctx context.Context, args funcspec.Args) (*any.Any, error) {
-			resp, err := c.client.Map(ctx, &pb.Map_Request{
-				Args:   &pb.FuncSpec_Args{Args: args},
+			resp, err := c.client.Map(ctx, &vagrant_plugin_sdk.Map_Request{
+				Args:   &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 				Result: specCopy.Result[0].Type,
 			})
 			if err != nil {
@@ -96,14 +96,16 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 type mapperServer struct {
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
+
+	vagrant_plugin_sdk.UnimplementedMapperServer
 }
 
 func (s *mapperServer) ListMappers(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*pb.Map_ListResponse, error) {
+) (*vagrant_plugin_sdk.Map_ListResponse, error) {
 	// Go through each mapper and build up our FuncSpecs for each of them.
-	var result pb.Map_ListResponse
+	var result vagrant_plugin_sdk.Map_ListResponse
 	for _, m := range s.Mappers {
 		fn := m.Func()
 
@@ -132,8 +134,8 @@ func (s *mapperServer) ListMappers(
 
 func (s *mapperServer) Map(
 	ctx context.Context,
-	args *pb.Map_Request,
-) (*pb.Map_Response, error) {
+	args *vagrant_plugin_sdk.Map_Request,
+) (*vagrant_plugin_sdk.Map_Response, error) {
 	// Find the output type, which we should know about.
 	typ := proto.MessageType(args.Result)
 	if typ == nil {
@@ -163,13 +165,13 @@ func (s *mapperServer) Map(
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Map_Response{Result: result}, nil
+	return &vagrant_plugin_sdk.Map_Response{Result: result}, nil
 }
 
 var (
-	_ plugin.Plugin     = (*MapperPlugin)(nil)
-	_ plugin.GRPCPlugin = (*MapperPlugin)(nil)
-	_ pb.MapperServer   = (*mapperServer)(nil)
+	_ plugin.Plugin                   = (*MapperPlugin)(nil)
+	_ plugin.GRPCPlugin               = (*MapperPlugin)(nil)
+	_ vagrant_plugin_sdk.MapperServer = (*mapperServer)(nil)
 
 	// protomapperAllMap is a set of all the protomapper mappers so
 	// that we can easily filter them in ListMappers.
