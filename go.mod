@@ -8,9 +8,11 @@ require (
 	github.com/bgentry/speakeasy v0.1.0
 	github.com/briandowns/spinner v1.11.1
 	github.com/containerd/console v1.0.1
+	github.com/containerd/containerd v1.4.3
 	github.com/creack/pty v1.1.11
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.9.0
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/hashicorp/go-argmapper v0.0.0-20200721221215-04ae500ede3b
 	github.com/hashicorp/go-hclog v0.14.1
@@ -33,7 +35,6 @@ require (
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
-	golang.org/x/tools v0.0.0-20201123182755-a9763abba00f // indirect
 	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
 	google.golang.org/grpc v1.32.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect

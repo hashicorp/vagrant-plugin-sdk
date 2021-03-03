@@ -27,6 +27,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // All is the list of all mappers as raw function pointers.
@@ -51,6 +52,9 @@ var All = []interface{}{
 	StateBagProto,
 	Machine,
 	Flags,
+	FlagsProto,
+	MapToProto,
+	ProtoToMap,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -110,6 +114,14 @@ func FlagsProto(input []*option.Option) (output []*vagrant_plugin_sdk.Command_Fl
 		output = append(output, j)
 	}
 	return output, nil
+}
+
+func MapToProto(input map[string]interface{}) (*structpb.Struct, error) {
+	return structpb.NewStruct(input)
+}
+
+func ProtoToMap(input *structpb.Struct) (map[string]interface{}, error) {
+	return input.AsMap(), nil
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
