@@ -3811,3 +3811,86 @@ var MachineService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
+
+// EnvironmentServiceClient is the client API for EnvironmentService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type EnvironmentServiceClient interface {
+	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Environment_MachineNamesResponse, error)
+}
+
+type environmentServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEnvironmentServiceClient(cc grpc.ClientConnInterface) EnvironmentServiceClient {
+	return &environmentServiceClient{cc}
+}
+
+func (c *environmentServiceClient) MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Environment_MachineNamesResponse, error) {
+	out := new(Environment_MachineNamesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.EnvironmentService/MachineNames", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// EnvironmentServiceServer is the server API for EnvironmentService service.
+// All implementations must embed UnimplementedEnvironmentServiceServer
+// for forward compatibility
+type EnvironmentServiceServer interface {
+	MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error)
+	mustEmbedUnimplementedEnvironmentServiceServer()
+}
+
+// UnimplementedEnvironmentServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedEnvironmentServiceServer struct {
+}
+
+func (UnimplementedEnvironmentServiceServer) MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
+}
+func (UnimplementedEnvironmentServiceServer) mustEmbedUnimplementedEnvironmentServiceServer() {}
+
+// UnsafeEnvironmentServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EnvironmentServiceServer will
+// result in compilation errors.
+type UnsafeEnvironmentServiceServer interface {
+	mustEmbedUnimplementedEnvironmentServiceServer()
+}
+
+func RegisterEnvironmentServiceServer(s grpc.ServiceRegistrar, srv EnvironmentServiceServer) {
+	s.RegisterService(&_EnvironmentService_serviceDesc, srv)
+}
+
+func _EnvironmentService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EnvironmentServiceServer).MachineNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.EnvironmentService/MachineNames",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EnvironmentServiceServer).MachineNames(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _EnvironmentService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.EnvironmentService",
+	HandlerType: (*EnvironmentServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "MachineNames",
+			Handler:    _EnvironmentService_MachineNames_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
