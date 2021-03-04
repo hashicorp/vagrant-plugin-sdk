@@ -10,10 +10,10 @@ type Environment interface {
 	DataDir() (path string, err error)
 	VagrantfileName() (name string, err error)
 	UI() (ui terminal.UI, err error)
-	HomePath() (path string, err error)
-	LocalDataPath() (path string, err error)
-	TmpPath() (path string, err error)
-	DefaultPrivateKeyPath() (path string, err error)
+	Home() (path string, err error)
+	LocalData() (path string, err error)
+	Tmp() (path string, err error)
+	DefaultPrivateKey() (path string, err error)
 
 	// actual workers
 	// Inspect() (printable string, err error)

@@ -22,15 +22,15 @@ type Environment struct {
 	ServerAddr string
 
 	Cwd                   string
-	dataDir               string
-	vagrantfileName       string
-	homePath              string
-	localDataPath         string
-	tmpPath               string
-	aliasesPath           string
-	boxesPath             string
-	gemsPath              string
-	defaultPrivateKeyPath string
+	Datadir               string
+	Vagrantfilename       string
+	HomePath              string
+	LocalDataPath         string
+	TmpPath               string
+	AliasesPath           string
+	BoxesPath             string
+	GemsPath              string
+	DefaultPrivateKeyPath string
 }
 
 // EnvironmentPlugin is just a GRPC client for a environment
@@ -83,30 +83,30 @@ func (e *Environment) CWD() (path string, err error) {
 }
 
 func (e *Environment) DataDir() (path string, err error) {
-	return e.dataDir, nil
+	return e.Datadir, nil
 }
 
 func (e *Environment) VagrantfileName() (name string, err error) {
-	return e.vagrantfileName, nil
+	return e.Vagrantfilename, nil
 }
 
 func (e *Environment) UI() (ui terminal.UI, err error) {
 	return
 }
 
-func (e *Environment) HomePath() (path string, err error) {
-	return e.homePath, nil
+func (e *Environment) Home() (path string, err error) {
+	return e.HomePath, nil
 }
-func (e *Environment) LocalDataPath() (path string, err error) {
-	return e.localDataPath, nil
-}
-
-func (e *Environment) TmpPath() (path string, err error) {
-	return e.tmpPath, nil
+func (e *Environment) LocalData() (path string, err error) {
+	return e.LocalDataPath, nil
 }
 
-func (e *Environment) DefaultPrivateKeyPath() (path string, err error) {
-	return e.defaultPrivateKeyPath, nil
+func (e *Environment) Tmp() (path string, err error) {
+	return e.TmpPath, nil
+}
+
+func (e *Environment) DefaultPrivateKey() (path string, err error) {
+	return e.DefaultPrivateKeyPath, nil
 }
 
 func (e *Environment) MachineNames() (names []string, err error) {
