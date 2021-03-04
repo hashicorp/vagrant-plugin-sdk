@@ -12,8 +12,6 @@ import (
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -23,16 +21,16 @@ type Environment struct {
 	c          *EnvironmentClient
 	ServerAddr string
 
-	cwd                   path.Path
-	dataDir               *datadir.Basis
+	Cwd                   string
+	dataDir               string
 	vagrantfileName       string
-	homePath              path.Path
-	localDataPath         path.Path
-	tmpPath               path.Path
-	aliasesPath           path.Path
-	boxesPath             path.Path
-	gemsPath              path.Path
-	defaultPrivateKeyPath path.Path
+	homePath              string
+	localDataPath         string
+	tmpPath               string
+	aliasesPath           string
+	boxesPath             string
+	gemsPath              string
+	defaultPrivateKeyPath string
 }
 
 // EnvironmentPlugin is just a GRPC client for a environment
@@ -81,11 +79,11 @@ type EnvironmentClient struct {
 }
 
 func (e *Environment) CWD() (path string, err error) {
-	return e.cwd.String(), nil
+	return e.Cwd, nil
 }
 
 func (e *Environment) DataDir() (path string, err error) {
-	return e.dataDir.Dir.DataDir().String(), nil
+	return e.dataDir, nil
 }
 
 func (e *Environment) VagrantfileName() (name string, err error) {
@@ -97,18 +95,18 @@ func (e *Environment) UI() (ui terminal.UI, err error) {
 }
 
 func (e *Environment) HomePath() (path string, err error) {
-	return e.homePath.String(), nil
+	return e.homePath, nil
 }
 func (e *Environment) LocalDataPath() (path string, err error) {
-	return e.localDataPath.String(), nil
+	return e.localDataPath, nil
 }
 
 func (e *Environment) TmpPath() (path string, err error) {
-	return e.tmpPath.String(), nil
+	return e.tmpPath, nil
 }
 
 func (e *Environment) DefaultPrivateKeyPath() (path string, err error) {
-	return e.defaultPrivateKeyPath.String(), nil
+	return e.defaultPrivateKeyPath, nil
 }
 
 func (e *Environment) MachineNames() (names []string, err error) {
