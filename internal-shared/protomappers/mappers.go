@@ -55,6 +55,7 @@ var All = []interface{}{
 	FlagsProto,
 	MapToProto,
 	ProtoToMap,
+	Environment,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -321,11 +322,50 @@ func MachineProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Machine, error) {
-
 	return &vagrant_plugin_sdk.Args_Machine{
 		ResourceId: machine.ResourceID,
 		ServerAddr: machine.ServerAddr,
 	}, nil
+}
+
+// Environment maps *vagrant_plugin_sdk.Args_Environment to a core.Environment
+func Environment(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Environment,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*plugincore.Environment, error) {
+	p := &plugincore.EnvironmentPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	timeout := 5 * time.Second
+	// Create a new cancellation context so we can cancel in the case of an error
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	// Connect to the local server
+	conn, err := grpc.DialContext(ctx, input.ServerAddr,
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	internal.Cleanup.Do(func() { conn.Close() })
+
+	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
+	environmentClient, ok := mc.(*plugincore.EnvironmentClient)
+	if !ok {
+		panic("failed to create machine client")
+	}
+
+	// TODO: decode input environment into an environment
+	result := plugincore.NewEnvironment(environmentClient)
+	mapstructure.Decode(input, &result)
+
+	return result, nil
 }
 
 func LabelSet(input *vagrant_plugin_sdk.Args_LabelSet) *component.LabelSet {

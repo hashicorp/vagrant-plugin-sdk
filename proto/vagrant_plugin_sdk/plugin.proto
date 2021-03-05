@@ -79,6 +79,7 @@ message Args {
     string boxes_path = 9;
     string gems_path = 10;
     string default_private_key_path = 11;
+    string server_addr = 12;
   }
 
   message Machine {
@@ -735,8 +736,6 @@ message Box {
   string metadata_url = 6;
 }
 
-message Environment {}
-
 message MachineProvider {}
 
 message Configuration {}
@@ -922,5 +921,21 @@ message Machine {
 
   message UIResponse {
     Args.TerminalUI ui = 1;
+  }
+}
+
+/********************************************************************
+* Environment services
+********************************************************************/
+service EnvironmentService {
+  rpc MachineNames(google.protobuf.Empty) returns (Environment.MachineNamesResponse);
+}
+
+/*******************************************************
+ * Environment message used with environment service
+ *******************************************************/
+message Environment {
+ message MachineNamesResponse {
+    repeated string names = 1;
   }
 }
