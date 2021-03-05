@@ -494,6 +494,25 @@ message Command {
   message ExecuteResp {
     int64 exit_code = 1;
   }
+
+  message Arguments {
+    message Flag {
+      string name = 1;
+      oneof value {
+        string string = 2;
+        bool bool = 3;
+      }
+      Type type = 4;
+
+      enum Type {
+        STRING = 0;
+        BOOL = 1;
+      }
+    }
+
+    repeated Flag flags = 1;
+    repeated string args = 2;
+  }
 }
 
 service CommunicatorService {
@@ -802,7 +821,7 @@ message Machine {
     string id = 1;
   }
 
-    message SetStateRequest {
+  message SetStateRequest {
     Ref.Machine machine = 1;
     MachineState state = 2;
   }

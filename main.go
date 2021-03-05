@@ -42,18 +42,21 @@ func Main(opts ...Option) {
 	// Create our logger. We also set this as the default logger in case
 	// any other libraries are using hclog and our plugin doesn't properly
 	// chain it along.
-	log := hclog.New(&hclog.LoggerOptions{
-		Name:   "plugin",
-		Level:  hclog.Trace,
-		Output: os.Stderr,
-		Color:  hclog.AutoColor,
+	log := c.Log
+	if log == nil {
+		log = hclog.New(&hclog.LoggerOptions{
+			Name:   "plugin",
+			Level:  hclog.Trace,
+			Output: os.Stderr,
+			Color:  hclog.AutoColor,
 
-		// Critical that this is JSON-formatted. Since we're a plugin this
-		// will enable the host to parse our logs and output them in a
-		// structured way.
-		JSONFormat: true,
-	})
-	hclog.SetDefault(log)
+			// Critical that this is JSON-formatted. Since we're a plugin this
+			// will enable the host to parse our logs and output them in a
+			// structured way.
+			JSONFormat: true,
+		})
+		hclog.SetDefault(log)
+	}
 
 	// Build up our mappers
 	var mappers []*argmapper.Func
@@ -81,6 +84,7 @@ func Main(opts ...Option) {
 		),
 		GRPCServer: plugin.DefaultGRPCServer,
 		Logger:     log,
+		Test:       c.InProcess,
 	})
 }
 
@@ -92,10 +96,22 @@ type config struct {
 
 	// Mappers is the list of mapper functions.
 	Mappers []interface{}
+
+	InProcess *plugin.ServeTestConfig
+
+	Log hclog.Logger
 }
 
 // Option modifies config. Zero or more can be passed to Main.
 type Option func(*config)
+
+func InProcess(tc *plugin.ServeTestConfig) Option {
+	return func(c *config) { c.InProcess = tc }
+}
+
+func WithLogger(l hclog.Logger) Option {
+	return func(c *config) { c.Log = l }
+}
 
 // WithComponents specifies a list of components to serve from the plugin
 // binary. This will append to the list of components to serve. You can
