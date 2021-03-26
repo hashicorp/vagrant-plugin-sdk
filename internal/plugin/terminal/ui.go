@@ -123,6 +123,13 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 		switch ev := ev.Event.(type) {
 		case *vagrant_plugin_sdk.TerminalUI_Event_Line_:
 			s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style))
+			stream.Send(&vagrant_plugin_sdk.TerminalUI_Response{
+				Event: &vagrant_plugin_sdk.TerminalUI_Response_Input{
+					Input: &vagrant_plugin_sdk.TerminalUI_Event_InputResp{
+						Input: "complete",
+					},
+				},
+			})
 		case *vagrant_plugin_sdk.TerminalUI_Event_NamedValues_:
 			var values []terminal.NamedValue
 
@@ -342,6 +349,7 @@ func (u *uiBridge) Output(msg string, raw ...interface{}) {
 	}
 
 	u.evc.Send(ev)
+	u.evc.Recv()
 }
 
 // Output data as a table of data. Each entry is a row which will be output
