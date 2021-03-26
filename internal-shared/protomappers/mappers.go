@@ -379,14 +379,14 @@ func LabelSetProto(labels *component.LabelSet) *vagrant_plugin_sdk.Args_LabelSet
 }
 
 // StateBag maps StateBag proto to multistep.StateBag.
-func StateBag(input *vagrant_plugin_sdk.StateBag) (*multistep.BasicStateBag, error) {
+func StateBag(input *vagrant_plugin_sdk.Args_StateBag) (*multistep.BasicStateBag, error) {
 	var result multistep.BasicStateBag
 	return &result, mapstructure.Decode(input, &result)
 }
 
 // StateBag
-func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.StateBag, error) {
-	var result vagrant_plugin_sdk.StateBag
+func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_StateBag, error) {
+	var result vagrant_plugin_sdk.Args_StateBag
 	return &result, mapstructure.Decode(input, &result)
 }
 
