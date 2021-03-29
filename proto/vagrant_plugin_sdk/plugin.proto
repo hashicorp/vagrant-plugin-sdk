@@ -726,13 +726,18 @@ service SyncedFolderService {
 //
 // Refs should be used when the full type shouldn't be embedded in the message.
 message Ref {
-  // Machine references a machine.
-  message Machine {
+  // Box references a Box.
+  message Box {
     string resource_id = 1;
   }
 
-  // Box references a Box.
-  message Box {
+  // Represents an Environment
+  message Environment {
+    string project_id = 1;
+  }
+
+  // Machine references a machine.
+  message Machine {
     string resource_id = 1;
   }
 }
@@ -910,13 +915,27 @@ message Machine {
 ********************************************************************/
 service EnvironmentService {
   rpc MachineNames(google.protobuf.Empty) returns (Environment.MachineNamesResponse);
+  rpc ActiveMachines(Environment.ActiveMachinesRequest) returns (Environment.ActiveMachinesResponse);
 }
 
 /*******************************************************
  * Environment message used with environment service
  *******************************************************/
 message Environment {
- message MachineNamesResponse {
+  message MachineAndProvider {  
+    string name = 1;
+    string provider = 2;
+  }
+  
+  message MachineNamesResponse {
     repeated string names = 1;
+  }
+
+  message ActiveMachinesRequest {
+    Ref.Environment env = 1;
+  }
+
+  message ActiveMachinesResponse {
+    repeated MachineAndProvider machines = 1;
   }
 }

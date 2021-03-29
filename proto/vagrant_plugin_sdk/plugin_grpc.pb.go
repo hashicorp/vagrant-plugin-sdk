@@ -3783,6 +3783,7 @@ var _MachineService_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EnvironmentServiceClient interface {
 	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Environment_MachineNamesResponse, error)
+	ActiveMachines(ctx context.Context, in *Environment_ActiveMachinesRequest, opts ...grpc.CallOption) (*Environment_ActiveMachinesResponse, error)
 }
 
 type environmentServiceClient struct {
@@ -3802,11 +3803,21 @@ func (c *environmentServiceClient) MachineNames(ctx context.Context, in *empty.E
 	return out, nil
 }
 
+func (c *environmentServiceClient) ActiveMachines(ctx context.Context, in *Environment_ActiveMachinesRequest, opts ...grpc.CallOption) (*Environment_ActiveMachinesResponse, error) {
+	out := new(Environment_ActiveMachinesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.EnvironmentService/ActiveMachines", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EnvironmentServiceServer is the server API for EnvironmentService service.
 // All implementations must embed UnimplementedEnvironmentServiceServer
 // for forward compatibility
 type EnvironmentServiceServer interface {
 	MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error)
+	ActiveMachines(context.Context, *Environment_ActiveMachinesRequest) (*Environment_ActiveMachinesResponse, error)
 	mustEmbedUnimplementedEnvironmentServiceServer()
 }
 
@@ -3816,6 +3827,9 @@ type UnimplementedEnvironmentServiceServer struct {
 
 func (UnimplementedEnvironmentServiceServer) MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
+}
+func (UnimplementedEnvironmentServiceServer) ActiveMachines(context.Context, *Environment_ActiveMachinesRequest) (*Environment_ActiveMachinesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActiveMachines not implemented")
 }
 func (UnimplementedEnvironmentServiceServer) mustEmbedUnimplementedEnvironmentServiceServer() {}
 
@@ -3848,6 +3862,24 @@ func _EnvironmentService_MachineNames_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EnvironmentService_ActiveMachines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Environment_ActiveMachinesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EnvironmentServiceServer).ActiveMachines(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.EnvironmentService/ActiveMachines",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EnvironmentServiceServer).ActiveMachines(ctx, req.(*Environment_ActiveMachinesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _EnvironmentService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.EnvironmentService",
 	HandlerType: (*EnvironmentServiceServer)(nil),
@@ -3855,6 +3887,10 @@ var _EnvironmentService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MachineNames",
 			Handler:    _EnvironmentService_MachineNames_Handler,
+		},
+		{
+			MethodName: "ActiveMachines",
+			Handler:    _EnvironmentService_ActiveMachines_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
