@@ -67,6 +67,15 @@ message Args {
     string directory = 1;
   }
 
+  message Box {
+    string name = 1;
+    string provider = 2;
+    string version = 3;
+    string directory = 4;
+    map<string, string> metadata = 5;
+    string metadata_url = 6;
+  }
+
   message Environment {
     string cwd = 1;
     string data_dir = 2;
@@ -128,6 +137,64 @@ message Args {
   message TerminalUI {
     uint32 stream_id = 1;
     string addr = 2;
+  }
+
+  message StateBag {
+    map<string, Value> data = 1;
+
+    message Value {
+      oneof value {
+        string text = 1;
+        google.protobuf.Any map = 2;
+      }
+    }
+  }
+
+  message MachineState {
+    string id = 1;
+    string short_description = 2;
+    string long_description = 3;
+  }
+
+  message SSHInfo {
+    string host = 1;
+    string port = 2;
+    string private_key_path = 3;
+    bool keys_only = 4;
+    bool verify_host_key = 5;
+    string username = 6;
+    string remote_user = 7;
+    bool compression = 8;
+    bool dsa_authentication = 9;
+    string config = 10;
+    repeated string extra_args = 11;
+    bool forward_agent = 12;
+    bool forward_x11 = 13;
+    repeated string forward_env = 14;
+    int64 connect_timeout = 15;
+    string ssh_command = 16;
+    string proxy_command = 17;
+  }
+
+  message WinrmInfo {
+    string username = 1;
+    string password = 2;
+    string host = 3;
+    int64 port = 4;
+    int64 guest_port = 5;
+    int64 max_tries = 6;
+    int64 retry_delay = 7;
+    int64 timeout = 8;
+    enum Transport {
+      NEGOTIATE = 0;  // default
+      SSL = 1;
+      PLAINTEXT = 2;
+    }
+    Transport transport = 9;
+    bool ssl_peer_verification = 10;
+    string execution_time_limit = 11;
+    bool basic_auth_only = 12;
+    string codepage = 13;
   }
 }
 
@@ -651,98 +718,6 @@ service SyncedFolderService {
 
 /** core services **/
 
-message StateBag {
-  map<string, Value> data = 1;
-
-  message Value {
-    oneof value {
-      string text = 1;
-      google.protobuf.Any map = 2;
-    }
-  }
-}
-
-message SSHInfo {
-  string host = 1;
-  string port = 2;
-  string private_key_path = 3;
-  bool keys_only = 4;
-  bool verify_host_key = 5;
-  string username = 6;
-  string remote_user = 7;
-  bool compression = 8;
-  bool dsa_authentication = 9;
-  string config = 10;
-  repeated string extra_args = 11;
-  bool forward_agent = 12;
-  bool forward_x11 = 13;
-  repeated string forward_env = 14;
-  int64 connect_timeout = 15;
-  string ssh_command = 16;
-  string proxy_command = 17;
-}
-
-message WinrmInfo {
-  string username = 1;
-  string password = 2;
-  string host = 3;
-  int64 port = 4;
-  int64 guest_port = 5;
-  int64 max_tries = 6;
-  int64 retry_delay = 7;
-  int64 timeout = 8;
-  enum Transport {
-    NEGOTIATE = 0;  // default
-    SSL = 1;
-    PLAINTEXT = 2;
-  }
-  Transport transport = 9;
-  bool ssl_peer_verification = 10;
-  string execution_time_limit = 11;
-  bool basic_auth_only = 12;
-  string codepage = 13;
-}
-
-message MachineState {
-  string id = 1;
-  string short_description = 2;
-  string long_description = 3;
-}
-
-message MachineIndex {
-  message Entry {
-    string id = 1;
-    string local_data_path = 2;
-    string name = 3;
-    string provider = 4;
-    string state = 5;
-    string vagrantfile_name = 6;
-    string vagrantfile_path = 7;
-    google.protobuf.Timestamp updated_at = 8;
-    map<string, string> extra_data = 9;
-  }
-}
-
-message BoxCollection {
-  string directory = 1;
-}
-
-message Box {
-  string name = 1;
-  string provider = 2;
-  string version = 3;
-  string directory = 4;
-  map<string, string> metadata = 5;
-  string metadata_url = 6;
-}
-
-message MachineProvider {}
-
-message Configuration {}
-
-message Vagrantfile {
-}
-
 /********************************************************************
 * Shared Messages
 ********************************************************************/
@@ -753,6 +728,11 @@ message Vagrantfile {
 message Ref {
   // Machine references a machine.
   message Machine {
+    string resource_id = 1;
+  }
+
+  // Box references a Box.
+  message Box {
     string resource_id = 1;
   }
 }
@@ -822,7 +802,7 @@ message Machine {
 
   message SetStateRequest {
     Ref.Machine machine = 1;
-    MachineState state = 2;
+    Args.MachineState state = 2;
   }
 
   message SetStateResponse {}
@@ -833,7 +813,7 @@ message Machine {
   }
 
   message GetStateResponse {
-    MachineState state = 1;
+    Args.MachineState state = 1;
   }
 
 
@@ -857,8 +837,9 @@ message Machine {
     Ref.Machine machine = 1;
   }
 
+  // TODO: this should return a Ref.Box
   message BoxResponse {
-    Box box = 1;
+    Args.Box box = 1;
   }
 
   // Datadir
