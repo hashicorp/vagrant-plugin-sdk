@@ -871,7 +871,7 @@ message Machine {
   }
 
   message ProviderResponse {
-    // TODO(spox): component info here?
+    string provider = 1;
   }
 
   // VagrantfileName
@@ -916,6 +916,7 @@ message Machine {
 service EnvironmentService {
   rpc MachineNames(google.protobuf.Empty) returns (Environment.MachineNamesResponse);
   rpc ActiveMachines(Environment.ActiveMachinesRequest) returns (Environment.ActiveMachinesResponse);
+
 }
 
 /*******************************************************
