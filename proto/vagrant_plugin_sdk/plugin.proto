@@ -76,7 +76,7 @@ message Args {
     string metadata_url = 6;
   }
 
-  message Environment {
+  message Project {
     string cwd = 1;
     string data_dir = 2;
     string vagrantfile_name = 3;
@@ -726,13 +726,18 @@ service SyncedFolderService {
 //
 // Refs should be used when the full type shouldn't be embedded in the message.
 message Ref {
-  // Machine references a machine.
-  message Machine {
+  // Box references a Box.
+  message Box {
     string resource_id = 1;
   }
 
-  // Box references a Box.
-  message Box {
+  // Represents a Project (in vagrant-agogo), an Project (in vagrant-ruby)
+  message Project {
+    string project_id = 1;
+  }
+
+  // Machine references a machine.
+  message Machine {
     string resource_id = 1;
   }
 }
@@ -866,7 +871,7 @@ message Machine {
   }
 
   message ProviderResponse {
-    // TODO(spox): component info here?
+    string provider = 1;
   }
 
   // VagrantfileName
@@ -906,17 +911,32 @@ message Machine {
 }
 
 /********************************************************************
-* Environment services
+* Project services
 ********************************************************************/
-service EnvironmentService {
-  rpc MachineNames(google.protobuf.Empty) returns (Environment.MachineNamesResponse);
+service ProjectService {
+  rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
+  rpc ActiveMachines(Project.ActiveMachinesRequest) returns (Project.ActiveMachinesResponse);
+
 }
 
 /*******************************************************
- * Environment message used with environment service
+ * Project message used with Project service
  *******************************************************/
-message Environment {
- message MachineNamesResponse {
+message Project {
+  message MachineAndProvider {  
+    string name = 1;
+    string provider = 2;
+  }
+  
+  message MachineNamesResponse {
     repeated string names = 1;
+  }
+
+  message ActiveMachinesRequest {
+    Ref.Project env = 1;
+  }
+
+  message ActiveMachinesResponse {
+    repeated MachineAndProvider machines = 1;
   }
 }

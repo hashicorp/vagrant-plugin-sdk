@@ -55,7 +55,7 @@ var All = []interface{}{
 	FlagsProto,
 	MapToProto,
 	ProtoToMap,
-	Environment,
+	Project,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -328,14 +328,14 @@ func MachineProto(
 	}, nil
 }
 
-// Environment maps *vagrant_plugin_sdk.Args_Environment to a core.Environment
-func Environment(
+// Project maps *vagrant_plugin_sdk.Args_Project to a core.Project
+func Project(
 	ctx context.Context,
-	input *vagrant_plugin_sdk.Args_Environment,
+	input *vagrant_plugin_sdk.Args_Project,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) (*plugincore.Environment, error) {
-	p := &plugincore.EnvironmentPlugin{
+) (*plugincore.Project, error) {
+	p := &plugincore.ProjectPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
 	}
@@ -356,13 +356,13 @@ func Environment(
 	internal.Cleanup.Do(func() { conn.Close() })
 
 	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
-	environmentClient, ok := mc.(*plugincore.EnvironmentClient)
+	projectClient, ok := mc.(*plugincore.ProjectClient)
 	if !ok {
 		panic("failed to create machine client")
 	}
 
-	// TODO: decode input environment into an environment
-	result := plugincore.NewEnvironment(environmentClient)
+	// TODO: decode input project into a project
+	result := plugincore.NewProject(projectClient)
 	mapstructure.Decode(input, &result)
 
 	return result, nil

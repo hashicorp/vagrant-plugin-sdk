@@ -3778,83 +3778,119 @@ var _MachineService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
 
-// EnvironmentServiceClient is the client API for EnvironmentService service.
+// ProjectServiceClient is the client API for ProjectService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type EnvironmentServiceClient interface {
-	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Environment_MachineNamesResponse, error)
+type ProjectServiceClient interface {
+	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error)
+	ActiveMachines(ctx context.Context, in *Project_ActiveMachinesRequest, opts ...grpc.CallOption) (*Project_ActiveMachinesResponse, error)
 }
 
-type environmentServiceClient struct {
+type projectServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewEnvironmentServiceClient(cc grpc.ClientConnInterface) EnvironmentServiceClient {
-	return &environmentServiceClient{cc}
+func NewProjectServiceClient(cc grpc.ClientConnInterface) ProjectServiceClient {
+	return &projectServiceClient{cc}
 }
 
-func (c *environmentServiceClient) MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Environment_MachineNamesResponse, error) {
-	out := new(Environment_MachineNamesResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.EnvironmentService/MachineNames", in, out, opts...)
+func (c *projectServiceClient) MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error) {
+	out := new(Project_MachineNamesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/MachineNames", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// EnvironmentServiceServer is the server API for EnvironmentService service.
-// All implementations must embed UnimplementedEnvironmentServiceServer
+func (c *projectServiceClient) ActiveMachines(ctx context.Context, in *Project_ActiveMachinesRequest, opts ...grpc.CallOption) (*Project_ActiveMachinesResponse, error) {
+	out := new(Project_ActiveMachinesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/ActiveMachines", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ProjectServiceServer is the server API for ProjectService service.
+// All implementations must embed UnimplementedProjectServiceServer
 // for forward compatibility
-type EnvironmentServiceServer interface {
-	MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error)
-	mustEmbedUnimplementedEnvironmentServiceServer()
+type ProjectServiceServer interface {
+	MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error)
+	ActiveMachines(context.Context, *Project_ActiveMachinesRequest) (*Project_ActiveMachinesResponse, error)
+	mustEmbedUnimplementedProjectServiceServer()
 }
 
-// UnimplementedEnvironmentServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedEnvironmentServiceServer struct {
+// UnimplementedProjectServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedProjectServiceServer struct {
 }
 
-func (UnimplementedEnvironmentServiceServer) MachineNames(context.Context, *empty.Empty) (*Environment_MachineNamesResponse, error) {
+func (UnimplementedProjectServiceServer) MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
 }
-func (UnimplementedEnvironmentServiceServer) mustEmbedUnimplementedEnvironmentServiceServer() {}
+func (UnimplementedProjectServiceServer) ActiveMachines(context.Context, *Project_ActiveMachinesRequest) (*Project_ActiveMachinesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActiveMachines not implemented")
+}
+func (UnimplementedProjectServiceServer) mustEmbedUnimplementedProjectServiceServer() {}
 
-// UnsafeEnvironmentServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to EnvironmentServiceServer will
+// UnsafeProjectServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProjectServiceServer will
 // result in compilation errors.
-type UnsafeEnvironmentServiceServer interface {
-	mustEmbedUnimplementedEnvironmentServiceServer()
+type UnsafeProjectServiceServer interface {
+	mustEmbedUnimplementedProjectServiceServer()
 }
 
-func RegisterEnvironmentServiceServer(s grpc.ServiceRegistrar, srv EnvironmentServiceServer) {
-	s.RegisterService(&_EnvironmentService_serviceDesc, srv)
+func RegisterProjectServiceServer(s grpc.ServiceRegistrar, srv ProjectServiceServer) {
+	s.RegisterService(&_ProjectService_serviceDesc, srv)
 }
 
-func _EnvironmentService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EnvironmentServiceServer).MachineNames(ctx, in)
+		return srv.(ProjectServiceServer).MachineNames(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.EnvironmentService/MachineNames",
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/MachineNames",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnvironmentServiceServer).MachineNames(ctx, req.(*empty.Empty))
+		return srv.(ProjectServiceServer).MachineNames(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _EnvironmentService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "hashicorp.vagrant.sdk.EnvironmentService",
-	HandlerType: (*EnvironmentServiceServer)(nil),
+func _ProjectService_ActiveMachines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Project_ActiveMachinesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).ActiveMachines(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/ActiveMachines",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).ActiveMachines(ctx, req.(*Project_ActiveMachinesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _ProjectService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.ProjectService",
+	HandlerType: (*ProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "MachineNames",
-			Handler:    _EnvironmentService_MachineNames_Handler,
+			Handler:    _ProjectService_MachineNames_Handler,
+		},
+		{
+			MethodName: "ActiveMachines",
+			Handler:    _ProjectService_ActiveMachines_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
