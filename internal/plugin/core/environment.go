@@ -16,9 +16,9 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-// Environment implements core.Environment interface
-type Environment struct {
-	c          *EnvironmentClient
+// Project implements core.Project interface
+type Project struct {
+	c          *ProjectClient
 	ServerAddr string
 
 	Cwd                   string
@@ -33,22 +33,22 @@ type Environment struct {
 	DefaultPrivateKeyPath string
 }
 
-// EnvironmentPlugin is just a GRPC client for a environment
-type EnvironmentPlugin struct {
+// ProjectPlugin is just a GRPC client for a project
+type ProjectPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
-	Impl    core.Environment
+	Impl    core.Project
 }
 
 // Implements plugin.GRPCPlugin
-func (p *EnvironmentPlugin) GRPCClient(
+func (p *ProjectPlugin) GRPCClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &EnvironmentClient{
-		client:       vagrant_plugin_sdk.NewEnvironmentServiceClient(c),
+	return &ProjectClient{
+		client:       vagrant_plugin_sdk.NewProjectServiceClient(c),
 		ServerTarget: c.Target(),
 		Mappers:      p.Mappers,
 		Logger:       p.Logger,
@@ -56,60 +56,60 @@ func (p *EnvironmentPlugin) GRPCClient(
 	}, nil
 }
 
-func (p *EnvironmentPlugin) GRPCServer(
+func (p *ProjectPlugin) GRPCServer(
 	broker *plugin.GRPCBroker,
 	s *grpc.Server,
 ) error {
 	return errors.New("Server plugin not provided")
 }
 
-func NewEnvironment(client *EnvironmentClient) *Environment {
-	return &Environment{
+func NewProject(client *ProjectClient) *Project {
+	return &Project{
 		c:          client,
 		ServerAddr: client.ServerTarget,
 	}
 }
 
-type EnvironmentClient struct {
+type ProjectClient struct {
 	Broker       *plugin.GRPCBroker
 	Logger       hclog.Logger
 	Mappers      []*argmapper.Func
 	ServerTarget string
-	client       vagrant_plugin_sdk.EnvironmentServiceClient
+	client       vagrant_plugin_sdk.ProjectServiceClient
 }
 
-func (e *Environment) CWD() (path string, err error) {
+func (e *Project) CWD() (path string, err error) {
 	return e.Cwd, nil
 }
 
-func (e *Environment) DataDir() (path string, err error) {
+func (e *Project) DataDir() (path string, err error) {
 	return e.Datadir, nil
 }
 
-func (e *Environment) VagrantfileName() (name string, err error) {
+func (e *Project) VagrantfileName() (name string, err error) {
 	return e.Vagrantfilename, nil
 }
 
-func (e *Environment) UI() (ui terminal.UI, err error) {
+func (e *Project) UI() (ui terminal.UI, err error) {
 	return
 }
 
-func (e *Environment) Home() (path string, err error) {
+func (e *Project) Home() (path string, err error) {
 	return e.HomePath, nil
 }
-func (e *Environment) LocalData() (path string, err error) {
+func (e *Project) LocalData() (path string, err error) {
 	return e.LocalDataPath, nil
 }
 
-func (e *Environment) Tmp() (path string, err error) {
+func (e *Project) Tmp() (path string, err error) {
 	return e.TmpPath, nil
 }
 
-func (e *Environment) DefaultPrivateKey() (path string, err error) {
+func (e *Project) DefaultPrivateKey() (path string, err error) {
 	return e.DefaultPrivateKeyPath, nil
 }
 
-func (e *Environment) MachineNames() (names []string, err error) {
+func (e *Project) MachineNames() (names []string, err error) {
 	r, err := e.c.client.MachineNames(context.Background(), &empty.Empty{})
 	if err != nil {
 		return
@@ -119,7 +119,7 @@ func (e *Environment) MachineNames() (names []string, err error) {
 }
 
 var (
-	_ plugin.Plugin     = (*EnvironmentPlugin)(nil)
-	_ plugin.GRPCPlugin = (*EnvironmentPlugin)(nil)
-	_ core.Environment  = (*Environment)(nil)
+	_ plugin.Plugin     = (*ProjectPlugin)(nil)
+	_ plugin.GRPCPlugin = (*ProjectPlugin)(nil)
+	_ core.Project      = (*Project)(nil)
 )

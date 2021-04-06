@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-type Environment interface {
+type Project interface {
 	// accessors
 	CWD() (path string, err error)
 	DataDir() (path string, err error)
@@ -22,7 +22,7 @@ type Environment interface {
 	// CanInstallProvider() (can bool, err error)
 	// InstallProvider() (err error)
 	// Boxes() (boxes BoxCollection, err error)
-	// Environment(v Vagrantfile) (env Environment, err error)
+	// Project(v Vagrantfile) (env Project, err error)
 	// Hook(name string) (err error)
 	// Host() (h Host, err error)
 	// Lock(name string) (err error)

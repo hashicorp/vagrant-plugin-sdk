@@ -76,7 +76,7 @@ message Args {
     string metadata_url = 6;
   }
 
-  message Environment {
+  message Project {
     string cwd = 1;
     string data_dir = 2;
     string vagrantfile_name = 3;
@@ -731,8 +731,8 @@ message Ref {
     string resource_id = 1;
   }
 
-  // Represents an Environment
-  message Environment {
+  // Represents a Project (in vagrant-agogo), an Project (in vagrant-ruby)
+  message Project {
     string project_id = 1;
   }
 
@@ -911,18 +911,18 @@ message Machine {
 }
 
 /********************************************************************
-* Environment services
+* Project services
 ********************************************************************/
-service EnvironmentService {
-  rpc MachineNames(google.protobuf.Empty) returns (Environment.MachineNamesResponse);
-  rpc ActiveMachines(Environment.ActiveMachinesRequest) returns (Environment.ActiveMachinesResponse);
+service ProjectService {
+  rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
+  rpc ActiveMachines(Project.ActiveMachinesRequest) returns (Project.ActiveMachinesResponse);
 
 }
 
 /*******************************************************
- * Environment message used with environment service
+ * Project message used with Project service
  *******************************************************/
-message Environment {
+message Project {
   message MachineAndProvider {  
     string name = 1;
     string provider = 2;
@@ -933,7 +933,7 @@ message Environment {
   }
 
   message ActiveMachinesRequest {
-    Ref.Environment env = 1;
+    Ref.Project env = 1;
   }
 
   message ActiveMachinesResponse {

@@ -13,7 +13,7 @@ type MachineIndexEntry struct {
 // NOTE: Should include MachineIndexEntry
 type MachineEntry interface {
 	Valid(homePath string) (valid bool, err error)
-	Environment(homePath string) (env Environment, err error)
+	Project(homePath string) (env Project, err error)
 }
 
 type MachineIndex interface {
