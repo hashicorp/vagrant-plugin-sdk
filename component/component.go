@@ -60,6 +60,8 @@ type Command interface {
 	FlagsFunc() interface{}
 	// Execute a command
 	ExecuteFunc() interface{}
+	// Returns subcommands
+	SubcommandsFunc() interface{}
 }
 
 type Config interface {

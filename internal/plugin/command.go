@@ -2,14 +2,17 @@ package plugin
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/LK4D4/joincontext"
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
@@ -192,6 +195,43 @@ func (c *commandClient) Execute(name string) (int64, error) {
 	return raw.(int64), nil
 }
 
+func (c *commandClient) SubcommandsFunc() interface{} {
+	spec, err := c.client.SubcommandSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Subcommands(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *commandClient) Subcommands() ([]core.Command, error) {
+	f := c.SubcommandsFunc()
+	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (**vagrant_plugin_sdk.Command_SubcommandResp)(nil), f)
+	if err != nil {
+		return nil, err
+	}
+
+	res := []core.Command{}
+	subcommands := raw.(*vagrant_plugin_sdk.Command_SubcommandResp).Commands
+	for _, cmd := range subcommands {
+		sc_client := c
+		sc_client.SetRequestMetadata("subcommand", cmd)
+		res = append(res, sc_client)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 // commandServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type commandServer struct {
@@ -350,9 +390,49 @@ func (s *commandServer) Execute(
 	return result, nil
 }
 
+func (s *commandServer) SubcommandsSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "command"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.SubcommandsFunc())
+}
+
+func (s *commandServer) Subcommands(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
+	raw, err := s.callLocalDynamicFunc(
+		s.Impl.SubcommandsFunc(),
+		args.Args,
+		(*proto.Message)(nil),
+		argmapper.Typed(ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	// Expect the results to be proto.Messages
+	msg, ok := raw.(*vagrant_plugin_sdk.Command_SubcommandResp)
+	if !ok {
+		return nil, fmt.Errorf(
+			"result of plugin-based function must be a proto.Message, got %T", msg)
+	}
+
+	return msg, nil
+}
+
 var (
 	_ plugin.Plugin                           = (*CommandPlugin)(nil)
 	_ plugin.GRPCPlugin                       = (*CommandPlugin)(nil)
 	_ vagrant_plugin_sdk.CommandServiceServer = (*commandServer)(nil)
 	_ component.Command                       = (*commandClient)(nil)
+	_ core.Command                            = (*commandClient)(nil)
 )

@@ -7,4 +7,5 @@ type Command interface {
 	Synopsis() (string, error)
 	Flags() ([]*option.Option, error)
 	Execute(name string) (int64, error)
+	Subcommands() ([]Command, error)
 }

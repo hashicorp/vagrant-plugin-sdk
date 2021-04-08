@@ -955,6 +955,8 @@ type CommandServiceClient interface {
 	Flags(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_FlagsResp, error)
 	ExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Execute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_ExecuteResp, error)
+	SubcommandSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Subcommands(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_SubcommandResp, error)
 }
 
 type commandServiceClient struct {
@@ -1064,6 +1066,24 @@ func (c *commandServiceClient) Execute(ctx context.Context, in *FuncSpec_Args, o
 	return out, nil
 }
 
+func (c *commandServiceClient) SubcommandSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/SubcommandSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandServiceClient) Subcommands(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_SubcommandResp, error) {
+	out := new(Command_SubcommandResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Subcommands", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommandServiceServer is the server API for CommandService service.
 // All implementations must embed UnimplementedCommandServiceServer
 // for forward compatibility
@@ -1079,6 +1099,8 @@ type CommandServiceServer interface {
 	Flags(context.Context, *FuncSpec_Args) (*Command_FlagsResp, error)
 	ExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
 	Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error)
+	SubcommandSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Subcommands(context.Context, *FuncSpec_Args) (*Command_SubcommandResp, error)
 	mustEmbedUnimplementedCommandServiceServer()
 }
 
@@ -1118,6 +1140,12 @@ func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *emptypb.E
 }
 func (UnimplementedCommandServiceServer) Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
+}
+func (UnimplementedCommandServiceServer) SubcommandSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubcommandSpec not implemented")
+}
+func (UnimplementedCommandServiceServer) Subcommands(context.Context, *FuncSpec_Args) (*Command_SubcommandResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Subcommands not implemented")
 }
 func (UnimplementedCommandServiceServer) mustEmbedUnimplementedCommandServiceServer() {}
 
@@ -1330,10 +1358,43 @@ func _CommandService_Execute_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-// CommandService_ServiceDesc is the grpc.ServiceDesc for CommandService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var CommandService_ServiceDesc = grpc.ServiceDesc{
+func _CommandService_SubcommandSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).SubcommandSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/SubcommandSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).SubcommandSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommandService_Subcommands_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).Subcommands(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Subcommands",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).Subcommands(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _CommandService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.CommandService",
 	HandlerType: (*CommandServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -1380,6 +1441,14 @@ var CommandService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Execute",
 			Handler:    _CommandService_Execute_Handler,
+		},
+		{
+			MethodName: "SubcommandSpec",
+			Handler:    _CommandService_SubcommandSpec_Handler,
+		},
+		{
+			MethodName: "Subcommands",
+			Handler:    _CommandService_Subcommands_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

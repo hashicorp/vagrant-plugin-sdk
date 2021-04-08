@@ -533,6 +533,8 @@ service CommandService {
   rpc Flags(FuncSpec.Args) returns (Command.FlagsResp);
   rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Execute(FuncSpec.Args) returns (Command.ExecuteResp);
+  rpc SubcommandSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Subcommands(FuncSpec.Args) returns (Command.SubcommandResp);
 }
 
 message Command {
@@ -560,6 +562,10 @@ message Command {
   }
   message ExecuteResp {
     int64 exit_code = 1;
+  }
+
+  message SubcommandResp {
+    repeated string commands = 1;
   }
 
   message Arguments {
