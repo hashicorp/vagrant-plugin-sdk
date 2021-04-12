@@ -944,19 +944,15 @@ var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CommandServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
-	SynopsisSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Synopsis(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_SynopsisResp, error)
-	HelpSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Help(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_HelpResp, error)
-	FlagsSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Flags(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_FlagsResp, error)
-	ExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Execute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_ExecuteResp, error)
 	SubcommandSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Subcommands(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_SubcommandResp, error)
+	CommandInfoSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	CommandInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_CommandInfoResp, error)
 }
 
 type commandServiceClient struct {
@@ -994,61 +990,7 @@ func (c *commandServiceClient) Documentation(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
-func (c *commandServiceClient) SynopsisSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/SynopsisSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) Synopsis(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_SynopsisResp, error) {
-	out := new(Command_SynopsisResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Synopsis", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) HelpSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/HelpSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) Help(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_HelpResp, error) {
-	out := new(Command_HelpResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Help", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) FlagsSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/FlagsSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) Flags(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_FlagsResp, error) {
-	out := new(Command_FlagsResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Flags", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *commandServiceClient) ExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *commandServiceClient) ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/ExecuteSpec", in, out, opts...)
 	if err != nil {
@@ -1084,23 +1026,37 @@ func (c *commandServiceClient) Subcommands(ctx context.Context, in *FuncSpec_Arg
 	return out, nil
 }
 
+func (c *commandServiceClient) CommandInfoSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/CommandInfoSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandServiceClient) CommandInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_CommandInfoResp, error) {
+	out := new(Command_CommandInfoResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/CommandInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommandServiceServer is the server API for CommandService service.
 // All implementations must embed UnimplementedCommandServiceServer
 // for forward compatibility
 type CommandServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
-	SynopsisSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	Synopsis(context.Context, *FuncSpec_Args) (*Command_SynopsisResp, error)
-	HelpSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	Help(context.Context, *FuncSpec_Args) (*Command_HelpResp, error)
-	FlagsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	Flags(context.Context, *FuncSpec_Args) (*Command_FlagsResp, error)
-	ExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
+	ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error)
 	SubcommandSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Subcommands(context.Context, *FuncSpec_Args) (*Command_SubcommandResp, error)
+	CommandInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	CommandInfo(context.Context, *FuncSpec_Args) (*Command_CommandInfoResp, error)
 	mustEmbedUnimplementedCommandServiceServer()
 }
 
@@ -1117,25 +1073,7 @@ func (UnimplementedCommandServiceServer) Configure(context.Context, *Config_Conf
 func (UnimplementedCommandServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
-func (UnimplementedCommandServiceServer) SynopsisSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SynopsisSpec not implemented")
-}
-func (UnimplementedCommandServiceServer) Synopsis(context.Context, *FuncSpec_Args) (*Command_SynopsisResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Synopsis not implemented")
-}
-func (UnimplementedCommandServiceServer) HelpSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HelpSpec not implemented")
-}
-func (UnimplementedCommandServiceServer) Help(context.Context, *FuncSpec_Args) (*Command_HelpResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Help not implemented")
-}
-func (UnimplementedCommandServiceServer) FlagsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FlagsSpec not implemented")
-}
-func (UnimplementedCommandServiceServer) Flags(context.Context, *FuncSpec_Args) (*Command_FlagsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Flags not implemented")
-}
-func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteSpec not implemented")
 }
 func (UnimplementedCommandServiceServer) Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error) {
@@ -1146,6 +1084,12 @@ func (UnimplementedCommandServiceServer) SubcommandSpec(context.Context, *empty.
 }
 func (UnimplementedCommandServiceServer) Subcommands(context.Context, *FuncSpec_Args) (*Command_SubcommandResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subcommands not implemented")
+}
+func (UnimplementedCommandServiceServer) CommandInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CommandInfoSpec not implemented")
+}
+func (UnimplementedCommandServiceServer) CommandInfo(context.Context, *FuncSpec_Args) (*Command_CommandInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CommandInfo not implemented")
 }
 func (UnimplementedCommandServiceServer) mustEmbedUnimplementedCommandServiceServer() {}
 
@@ -1214,116 +1158,8 @@ func _CommandService_Documentation_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CommandService_SynopsisSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).SynopsisSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/SynopsisSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).SynopsisSpec(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CommandService_Synopsis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).Synopsis(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Synopsis",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).Synopsis(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CommandService_HelpSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).HelpSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/HelpSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).HelpSpec(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CommandService_Help_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).Help(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Help",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).Help(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CommandService_FlagsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).FlagsSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/FlagsSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).FlagsSpec(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CommandService_Flags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CommandServiceServer).Flags(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Flags",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).Flags(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _CommandService_ExecuteSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1335,7 +1171,7 @@ func _CommandService_ExecuteSpec_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/ExecuteSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).ExecuteSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommandServiceServer).ExecuteSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1394,6 +1230,42 @@ func _CommandService_Subcommands_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommandService_CommandInfoSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).CommandInfoSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/CommandInfoSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).CommandInfoSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommandService_CommandInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).CommandInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/CommandInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).CommandInfo(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _CommandService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.CommandService",
 	HandlerType: (*CommandServiceServer)(nil),
@@ -1411,30 +1283,6 @@ var _CommandService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _CommandService_Documentation_Handler,
 		},
 		{
-			MethodName: "SynopsisSpec",
-			Handler:    _CommandService_SynopsisSpec_Handler,
-		},
-		{
-			MethodName: "Synopsis",
-			Handler:    _CommandService_Synopsis_Handler,
-		},
-		{
-			MethodName: "HelpSpec",
-			Handler:    _CommandService_HelpSpec_Handler,
-		},
-		{
-			MethodName: "Help",
-			Handler:    _CommandService_Help_Handler,
-		},
-		{
-			MethodName: "FlagsSpec",
-			Handler:    _CommandService_FlagsSpec_Handler,
-		},
-		{
-			MethodName: "Flags",
-			Handler:    _CommandService_Flags_Handler,
-		},
-		{
 			MethodName: "ExecuteSpec",
 			Handler:    _CommandService_ExecuteSpec_Handler,
 		},
@@ -1449,6 +1297,14 @@ var _CommandService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Subcommands",
 			Handler:    _CommandService_Subcommands_Handler,
+		},
+		{
+			MethodName: "CommandInfoSpec",
+			Handler:    _CommandService_CommandInfoSpec_Handler,
+		},
+		{
+			MethodName: "CommandInfo",
+			Handler:    _CommandService_CommandInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
