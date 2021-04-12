@@ -18,6 +18,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 // CommandPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -84,6 +85,16 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 func (c *commandClient) CommandFunc() interface{} {
 	//TODO
 	return nil
+}
+
+func (c *commandClient) Name() (name []string, err error) {
+	meta, ok := metadata.FromOutgoingContext(c.ctx)
+	if !ok {
+		return
+	}
+	name = append(name, meta["plugin_name"]...)
+	name = append(name, meta["command"]...)
+	return
 }
 
 func (c *commandClient) SynopsisFunc() interface{} {
@@ -222,8 +233,18 @@ func (c *commandClient) Subcommands() ([]core.Command, error) {
 	res := []core.Command{}
 	subcommands := raw.(*vagrant_plugin_sdk.Command_SubcommandResp).Commands
 	for _, cmd := range subcommands {
-		sc_client := c
-		sc_client.SetRequestMetadata("subcommand", cmd)
+		sc_client := &commandClient{
+			client: c.client,
+			baseClient: &baseClient{
+				ctx: c.ctx,
+				base: &base{
+					Mappers: c.Mappers,
+					Logger:  c.Logger,
+					Broker:  c.Broker,
+				},
+			},
+		}
+		sc_client.SetRequestMetadata("command", cmd)
 		res = append(res, sc_client)
 	}
 	if err != nil {
