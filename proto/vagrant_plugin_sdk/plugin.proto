@@ -136,7 +136,6 @@ message Args {
   // TerminalUI is used to construct the terminal.UI for the plugin.
   message TerminalUI {
     uint32 stream_id = 1;
-    string addr = 2;
   }
 
   message StateBag {
@@ -923,11 +922,11 @@ service ProjectService {
  * Project message used with Project service
  *******************************************************/
 message Project {
-  message MachineAndProvider {  
+  message MachineAndProvider {
     string name = 1;
     string provider = 2;
   }
-  
+
   message MachineNamesResponse {
     repeated string names = 1;
   }

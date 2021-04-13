@@ -2,21 +2,13 @@ package protomappers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"io"
-	"io/ioutil"
-	"net"
-	"os"
-	"runtime"
-	"strconv"
 	"time"
 
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
-	"github.com/oklog/run"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -220,12 +212,7 @@ func TerminalUI(
 		Logger:  log,
 	}
 
-	// TODO: allow for using not unix addrs
-	addr := "unix:" + input.Addr
-	conn, err := grpc.DialContext(ctx, addr,
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
+	conn, err := internal.Broker.Dial(input.StreamId)
 	if err != nil {
 		return nil, err
 	}
@@ -258,26 +245,17 @@ func TerminalUIProto(
 	}
 
 	id := internal.Broker.NextId()
-	// listener, err := internal.Broker.Accept(id)
-	// Setting up a server like this is probably not the best -
-	// it would be nicer to use go plugin in order to setup a
-	// new connection through the broker. This is currently
-	// not possible since the ruby plugin doesn't have a broker
-	listener, err := serverListener()
-	if err != nil {
-		panic(err)
-	}
-
-	server := plugin.DefaultGRPCServer(nil)
-	if err := p.GRPCServer(internal.Broker, server); err != nil {
-		panic(err)
-	}
 
 	// Serve it
-	go runServer(listener, server)
+	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
+		server := plugin.DefaultGRPCServer(opts)
+		if err := p.GRPCServer(internal.Broker, server); err != nil {
+			panic(err)
+		}
+		return server
+	})
 
-	addr := listener.Addr().String()
-	return &vagrant_plugin_sdk.Args_TerminalUI{StreamId: id, Addr: addr}
+	return &vagrant_plugin_sdk.Args_TerminalUI{StreamId: id}
 }
 
 // Machine maps *vagrant_plugin_sdk.Args_Machine to a core.Machine
@@ -388,133 +366,4 @@ func StateBag(input *vagrant_plugin_sdk.Args_StateBag) (*multistep.BasicStateBag
 func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_StateBag, error) {
 	var result vagrant_plugin_sdk.Args_StateBag
 	return &result, mapstructure.Decode(input, &result)
-}
-
-func serverListener() (net.Listener, error) {
-	if runtime.GOOS == "windows" {
-		return serverListener_tcp()
-	}
-
-	return serverListener_unix()
-}
-
-func serverListener_tcp() (net.Listener, error) {
-	envMinPort := os.Getenv("PLUGIN_MIN_PORT")
-	envMaxPort := os.Getenv("PLUGIN_MAX_PORT")
-
-	var minPort, maxPort int64
-	var err error
-
-	switch {
-	case len(envMinPort) == 0:
-		minPort = 0
-	default:
-		minPort, err = strconv.ParseInt(envMinPort, 10, 32)
-		if err != nil {
-			return nil, fmt.Errorf("Couldn't get value from PLUGIN_MIN_PORT: %v", err)
-		}
-	}
-
-	switch {
-	case len(envMaxPort) == 0:
-		maxPort = 0
-	default:
-		maxPort, err = strconv.ParseInt(envMaxPort, 10, 32)
-		if err != nil {
-			return nil, fmt.Errorf("Couldn't get value from PLUGIN_MAX_PORT: %v", err)
-		}
-	}
-
-	if minPort > maxPort {
-		return nil, fmt.Errorf("PLUGIN_MIN_PORT value of %d is greater than PLUGIN_MAX_PORT value of %d", minPort, maxPort)
-	}
-
-	for port := minPort; port <= maxPort; port++ {
-		address := fmt.Sprintf("127.0.0.1:%d", port)
-		listener, err := net.Listen("tcp", address)
-		if err == nil {
-			return listener, nil
-		}
-	}
-
-	return nil, errors.New("Couldn't bind plugin TCP listener")
-}
-
-func serverListener_unix() (net.Listener, error) {
-	tf, err := ioutil.TempFile("", "plugin")
-	if err != nil {
-		return nil, err
-	}
-	path := tf.Name()
-
-	// Close the file and remove it because it has to not exist for
-	// the domain socket.
-	if err := tf.Close(); err != nil {
-		return nil, err
-	}
-	if err := os.Remove(path); err != nil {
-		return nil, err
-	}
-
-	l, err := net.Listen("unix", path)
-	if err != nil {
-		return nil, err
-	}
-
-	// Wrap the listener in rmListener so that the Unix domain socket file
-	// is removed on close.
-	return &rmListener{
-		Listener: l,
-		Path:     path,
-	}, nil
-}
-
-func (l *rmListener) Close() error {
-	// Close the listener itself
-	if err := l.Listener.Close(); err != nil {
-		return err
-	}
-
-	// Remove the file
-	return os.Remove(l.Path)
-}
-
-// rmListener is an implementation of net.Listener that forwards most
-// calls to the listener but also removes a file as part of the close. We
-// use this to cleanup the unix domain socket on close.
-type rmListener struct {
-	net.Listener
-	Path string
-}
-
-func runServer(listener net.Listener, server *grpc.Server) {
-	doneCh := make(chan struct{})
-	// Here we use a run group to close this goroutine if the server is shutdown
-	// or the broker is shutdown.
-	var g run.Group
-	{
-		// Serve on the listener, if shutting down call GracefulStop.
-		g.Add(func() error {
-			return server.Serve(listener)
-		}, func(err error) {
-			server.GracefulStop()
-		})
-	}
-	{
-		// block on the closeCh or the doneCh. If we are shutting down close the
-		// closeCh.
-		closeCh := make(chan struct{})
-		g.Add(func() error {
-			select {
-			case <-doneCh:
-			case <-closeCh:
-			}
-			return nil
-		}, func(err error) {
-			close(closeCh)
-		})
-	}
-
-	// Block until we are done
-	g.Run()
 }
