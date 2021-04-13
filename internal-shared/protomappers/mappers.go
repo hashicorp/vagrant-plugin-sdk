@@ -385,12 +385,22 @@ func SubcommandsProto(input []string) (*vagrant_plugin_sdk.Command_SubcommandRes
 
 func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfoResp) (*core.CommandInfo, error) {
 	var result core.CommandInfo
-	return &result, mapstructure.Decode(input, &result)
+	err := mapstructure.Decode(input, &result)
+	if err != nil {
+		return nil, err
+	}
+	result.Flags, err = Flags(input.Flags)
+	return &result, err
 }
 
 func CommandInfoProto(input *core.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
 	var result vagrant_plugin_sdk.Command_CommandInfoResp
-	return &result, mapstructure.Decode(input, &result)
+	err := mapstructure.Decode(input, &result)
+	if err != nil {
+		return nil, err
+	}
+	result.Flags, err = FlagsProto(input.Flags)
+	return &result, err
 }
 
 func serverListener() (net.Listener, error) {
