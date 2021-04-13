@@ -2,10 +2,8 @@ package plugin
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/LK4D4/joincontext"
-	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -317,7 +315,7 @@ func (s *commandServer) Subcommands(
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.SubcommandsFunc(),
 		args.Args,
-		(*proto.Message)(nil),
+		([]string)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -328,11 +326,8 @@ func (s *commandServer) Subcommands(
 	if err != nil {
 		return nil, err
 	}
-	// Expect the results to be proto.Messages
-	msg, ok := raw.(*vagrant_plugin_sdk.Command_SubcommandResp)
-	if !ok {
-		return nil, fmt.Errorf(
-			"result of plugin-based function must be a proto.Message, got %T", msg)
+	msg := &vagrant_plugin_sdk.Command_SubcommandResp{
+		Commands: raw.([]string),
 	}
 
 	return msg, nil

@@ -51,6 +51,8 @@ var All = []interface{}{
 	Project,
 	CommandInfo,
 	CommandInfoProto,
+	SubcommandsString,
+	SubcommandsProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -368,6 +370,16 @@ func StateBag(input *vagrant_plugin_sdk.Args_StateBag) (*multistep.BasicStateBag
 // StateBag
 func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_StateBag, error) {
 	var result vagrant_plugin_sdk.Args_StateBag
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func SubcommandsString(input *vagrant_plugin_sdk.Command_SubcommandResp) ([]string, error) {
+	var result []string
+	return result, mapstructure.Decode(input, &result)
+}
+
+func SubcommandsProto(input []string) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
+	var result vagrant_plugin_sdk.Command_SubcommandResp
 	return &result, mapstructure.Decode(input, &result)
 }
 

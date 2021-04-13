@@ -28,10 +28,10 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		filterProto,
 		argmapper.FilterType(boolType),
 		argmapper.FilterType(stringType),
+		argmapper.FilterType(stringsType),
 		argmapper.FilterType(intType),
 		argmapper.FilterType(cliOptType),
 		argmapper.FilterType(commandInfoType),
-		argmapper.FilterType(commandsType),
 	)
 	// Copy our args cause we're going to use append() and we don't
 	// want to modify our caller.
@@ -99,8 +99,8 @@ var (
 	protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
 	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
 	stringType       = reflect.TypeOf((*string)(nil)).Elem()
+	stringsType      = reflect.TypeOf((*[]string)(nil)).Elem()
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
-	commandsType     = reflect.TypeOf((*[]*plugincore.Command)(nil)).Elem()
 	commandInfoType  = reflect.TypeOf((**plugincore.CommandInfo)(nil)).Elem()
 )
