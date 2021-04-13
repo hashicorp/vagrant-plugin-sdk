@@ -256,7 +256,7 @@ func (s *commandServer) CommandInfo(
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.CommandInfoFunc(),
 		args.Args,
-		(*vagrant_plugin_sdk.Command_CommandInfoResp)(nil),
+		(*core.CommandInfo)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -299,7 +299,7 @@ func (s *commandServer) Execute(
 	return result, nil
 }
 
-func (s *commandServer) SubcommandsSpec(
+func (s *commandServer) SubcommandSpec(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {

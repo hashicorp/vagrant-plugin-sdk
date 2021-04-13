@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	plugincore "github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -29,6 +30,8 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		argmapper.FilterType(stringType),
 		argmapper.FilterType(intType),
 		argmapper.FilterType(cliOptType),
+		argmapper.FilterType(commandInfoType),
+		argmapper.FilterType(commandsType),
 	)
 	// Copy our args cause we're going to use append() and we don't
 	// want to modify our caller.
@@ -98,4 +101,6 @@ var (
 	stringType       = reflect.TypeOf((*string)(nil)).Elem()
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
+	commandsType     = reflect.TypeOf((*[]*plugincore.Command)(nil)).Elem()
+	commandInfoType  = reflect.TypeOf((**plugincore.CommandInfo)(nil)).Elem()
 )
