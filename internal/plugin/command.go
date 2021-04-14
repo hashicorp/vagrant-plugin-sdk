@@ -118,18 +118,8 @@ func (c *commandClient) CommandInfo() (*core.CommandInfo, error) {
 		return nil, err
 	}
 
-	commandInfo := raw.(*vagrant_plugin_sdk.Command_CommandInfoResp)
-	commandName, err := c.Name()
-	if err != nil {
-		return nil, err
-	}
-	flags, err := protomappers.Flags(commandInfo.Flags)
-	return &core.CommandInfo{
-		Name:     commandName,
-		Help:     commandInfo.Help,
-		Synopsis: commandInfo.Synopsis,
-		Flags:    flags,
-	}, nil
+	commandInfo, err := protomappers.CommandInfo(raw.(*vagrant_plugin_sdk.Command_CommandInfoResp).CommandInfo)
+	return commandInfo, err
 }
 
 func (c *commandClient) ExecuteFunc() interface{} {
@@ -157,53 +147,6 @@ func (c *commandClient) Execute(name string) (int64, error) {
 	}
 
 	return raw.(int64), nil
-}
-
-func (c *commandClient) SubcommandsFunc() interface{} {
-	spec, err := c.client.SubcommandSpec(c.ctx, &empty.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Subcommands(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
-	}
-	return c.generateFunc(spec, cb)
-}
-
-func (c *commandClient) Subcommands() ([]core.Command, error) {
-	f := c.SubcommandsFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (**vagrant_plugin_sdk.Command_SubcommandResp)(nil), f)
-	if err != nil {
-		return nil, err
-	}
-
-	res := []core.Command{}
-	subcommands := raw.(*vagrant_plugin_sdk.Command_SubcommandResp).Commands
-	for _, cmd := range subcommands {
-		sc_client := &commandClient{
-			client: c.client,
-			baseClient: &baseClient{
-				ctx: c.ctx,
-				base: &base{
-					Mappers: c.Mappers,
-					Logger:  c.Logger,
-					Broker:  c.Broker,
-				},
-			},
-		}
-		sc_client.SetRequestMetadata("command", cmd)
-		res = append(res, sc_client)
-	}
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
 }
 
 // commandServer is a gRPC server that the client talks to and calls a
@@ -263,7 +206,9 @@ func (s *commandServer) CommandInfo(
 	}
 
 	commandInfo, err := protomappers.CommandInfoProto(raw.(*core.CommandInfo))
-	return commandInfo, nil
+	return &vagrant_plugin_sdk.Command_CommandInfoResp{
+		CommandInfo: commandInfo,
+	}, nil
 }
 
 func (s *commandServer) ExecuteSpec(
@@ -295,42 +240,6 @@ func (s *commandServer) Execute(
 		ExitCode: raw.(int64),
 	}
 	return result, nil
-}
-
-func (s *commandServer) SubcommandSpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "command"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.SubcommandsFunc())
-}
-
-func (s *commandServer) Subcommands(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.SubcommandsFunc(),
-		args.Args,
-		([]string)(nil),
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err != nil {
-		return nil, err
-	}
-	msg := &vagrant_plugin_sdk.Command_SubcommandResp{
-		Commands: raw.([]string),
-	}
-
-	return msg, nil
 }
 
 var (

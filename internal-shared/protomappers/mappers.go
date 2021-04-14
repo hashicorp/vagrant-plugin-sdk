@@ -49,10 +49,8 @@ var All = []interface{}{
 	MapToProto,
 	ProtoToMap,
 	Project,
-	CommandInfo,
+	// CommandInfo,
 	CommandInfoProto,
-	SubcommandsString,
-	SubcommandsProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -373,33 +371,39 @@ func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_Sta
 	return &result, mapstructure.Decode(input, &result)
 }
 
-func SubcommandsString(input *vagrant_plugin_sdk.Command_SubcommandResp) ([]string, error) {
-	var result []string
-	return result, mapstructure.Decode(input, &result)
-}
+func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*core.CommandInfo, error) {
+	flags, err := Flags(input.Flags)
 
-func SubcommandsProto(input []string) (*vagrant_plugin_sdk.Command_SubcommandResp, error) {
-	var result vagrant_plugin_sdk.Command_SubcommandResp
-	return &result, mapstructure.Decode(input, &result)
-}
-
-func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfoResp) (*core.CommandInfo, error) {
-	var result core.CommandInfo
-	err := mapstructure.Decode(input, &result)
-	if err != nil {
-		return nil, err
+	subcommands := []*core.CommandInfo{}
+	for _, cmd := range input.Subcommands {
+		subcommand, err := CommandInfo(cmd)
+		if err != nil {
+			return nil, err
+		}
+		subcommands = append(subcommands, subcommand)
 	}
-	result.Flags, err = Flags(input.Flags)
-	return &result, err
+
+	name := []string{}
+	name = append(name, input.Name)
+	result := &core.CommandInfo{
+		Flags:       flags,
+		Name:        name,
+		Help:        input.Help,
+		Synopsis:    input.Synopsis,
+		Subcommands: subcommands,
+	}
+	return result, err
 }
 
-func CommandInfoProto(input *core.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
-	var result vagrant_plugin_sdk.Command_CommandInfoResp
+func CommandInfoProto(input *core.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfo, error) {
+	var result vagrant_plugin_sdk.Command_CommandInfo
 	err := mapstructure.Decode(input, &result)
 	if err != nil {
 		return nil, err
 	}
 	result.Flags, err = FlagsProto(input.Flags)
+	// TODO: subcommands
+	// result.Subcommands = CommandInfoProto()
 	return &result, err
 }
 

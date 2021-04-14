@@ -527,8 +527,6 @@ service CommandService {
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
   rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Execute(FuncSpec.Args) returns (Command.ExecuteResp);
-  rpc SubcommandSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Subcommands(FuncSpec.Args) returns (Command.SubcommandResp);
   rpc CommandInfoSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc CommandInfo(FuncSpec.Args) returns (Command.CommandInfoResp);
 }
@@ -547,18 +545,20 @@ message Command {
     }
   }
 
+  message CommandInfo {
+    string name = 1;
+    string help = 2;
+    string synopsis = 3;
+    repeated Flag flags = 4;
+    repeated CommandInfo subcommands = 5;
+  }
+
   message CommandInfoResp {
-    string help = 1;
-    string synopsis = 2;
-    repeated Flag flags = 3;
+    CommandInfo command_info = 1;
   }
 
   message ExecuteResp {
     int64 exit_code = 1;
-  }
-
-  message SubcommandResp {
-    repeated string commands = 1;
   }
 
   message Arguments {
