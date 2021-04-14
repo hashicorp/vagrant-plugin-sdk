@@ -383,11 +383,9 @@ func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*core.CommandIn
 		subcommands = append(subcommands, subcommand)
 	}
 
-	name := []string{}
-	name = append(name, input.Name)
 	result := &core.CommandInfo{
 		Flags:       flags,
-		Name:        name,
+		Name:        input.Name,
 		Help:        input.Help,
 		Synopsis:    input.Synopsis,
 		Subcommands: subcommands,

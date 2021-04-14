@@ -3,7 +3,7 @@ package core
 import "github.com/DavidGamba/go-getoptions/option"
 
 type CommandInfo struct {
-	Name        []string
+	Name        string
 	Help        string
 	Synopsis    string
 	Flags       []*option.Option
