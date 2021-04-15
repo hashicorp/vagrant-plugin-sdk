@@ -49,7 +49,7 @@ var All = []interface{}{
 	MapToProto,
 	ProtoToMap,
 	Project,
-	// CommandInfo,
+	CommandInfo,
 	CommandInfoProto,
 }
 
@@ -400,7 +400,14 @@ func CommandInfoProto(input *core.CommandInfo) (*vagrant_plugin_sdk.Command_Comm
 		return nil, err
 	}
 	result.Flags, err = FlagsProto(input.Flags)
-	// TODO: subcommands
-	// result.Subcommands = CommandInfoProto()
+	subcmds := []*vagrant_plugin_sdk.Command_CommandInfo{}
+	for _, cmd := range input.Subcommands {
+		toAdd, err := CommandInfoProto(cmd)
+		if err != nil {
+			return nil, err
+		}
+		subcmds = append(subcmds, toAdd)
+	}
+	result.Subcommands = subcmds
 	return &result, err
 }

@@ -15,7 +15,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 // CommandPlugin implements plugin.Plugin (specifically GRPCPlugin) for
@@ -82,16 +81,6 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 func (c *commandClient) CommandFunc() interface{} {
 	//TODO
 	return nil
-}
-
-func (c *commandClient) Name() (name []string, err error) {
-	meta, ok := metadata.FromOutgoingContext(c.ctx)
-	if !ok {
-		return
-	}
-	name = append(name, meta["plugin_name"]...)
-	name = append(name, meta["command"]...)
-	return
 }
 
 func (c *commandClient) CommandInfoFunc() interface{} {
