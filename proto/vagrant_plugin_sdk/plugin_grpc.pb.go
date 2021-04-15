@@ -4,24 +4,23 @@ package vagrant_plugin_sdk
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // TerminalUIServiceClient is the client API for TerminalUIService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TerminalUIServiceClient interface {
-	Output(ctx context.Context, in *TerminalUI_OutputRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Output(ctx context.Context, in *TerminalUI_OutputRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	Events(ctx context.Context, opts ...grpc.CallOption) (TerminalUIService_EventsClient, error)
-	IsInteractive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TerminalUI_IsInteractiveResponse, error)
+	IsInteractive(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*TerminalUI_IsInteractiveResponse, error)
 }
 
 type terminalUIServiceClient struct {
@@ -32,8 +31,8 @@ func NewTerminalUIServiceClient(cc grpc.ClientConnInterface) TerminalUIServiceCl
 	return &terminalUIServiceClient{cc}
 }
 
-func (c *terminalUIServiceClient) Output(ctx context.Context, in *TerminalUI_OutputRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *terminalUIServiceClient) Output(ctx context.Context, in *TerminalUI_OutputRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TerminalUIService/Output", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,7 +41,7 @@ func (c *terminalUIServiceClient) Output(ctx context.Context, in *TerminalUI_Out
 }
 
 func (c *terminalUIServiceClient) Events(ctx context.Context, opts ...grpc.CallOption) (TerminalUIService_EventsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &TerminalUIService_ServiceDesc.Streams[0], "/hashicorp.vagrant.sdk.TerminalUIService/Events", opts...)
+	stream, err := c.cc.NewStream(ctx, &_TerminalUIService_serviceDesc.Streams[0], "/hashicorp.vagrant.sdk.TerminalUIService/Events", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +71,7 @@ func (x *terminalUIServiceEventsClient) Recv() (*TerminalUI_Response, error) {
 	return m, nil
 }
 
-func (c *terminalUIServiceClient) IsInteractive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TerminalUI_IsInteractiveResponse, error) {
+func (c *terminalUIServiceClient) IsInteractive(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*TerminalUI_IsInteractiveResponse, error) {
 	out := new(TerminalUI_IsInteractiveResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TerminalUIService/IsInteractive", in, out, opts...)
 	if err != nil {
@@ -85,9 +84,9 @@ func (c *terminalUIServiceClient) IsInteractive(ctx context.Context, in *emptypb
 // All implementations must embed UnimplementedTerminalUIServiceServer
 // for forward compatibility
 type TerminalUIServiceServer interface {
-	Output(context.Context, *TerminalUI_OutputRequest) (*emptypb.Empty, error)
+	Output(context.Context, *TerminalUI_OutputRequest) (*empty.Empty, error)
 	Events(TerminalUIService_EventsServer) error
-	IsInteractive(context.Context, *emptypb.Empty) (*TerminalUI_IsInteractiveResponse, error)
+	IsInteractive(context.Context, *empty.Empty) (*TerminalUI_IsInteractiveResponse, error)
 	mustEmbedUnimplementedTerminalUIServiceServer()
 }
 
@@ -95,13 +94,13 @@ type TerminalUIServiceServer interface {
 type UnimplementedTerminalUIServiceServer struct {
 }
 
-func (UnimplementedTerminalUIServiceServer) Output(context.Context, *TerminalUI_OutputRequest) (*emptypb.Empty, error) {
+func (UnimplementedTerminalUIServiceServer) Output(context.Context, *TerminalUI_OutputRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Output not implemented")
 }
 func (UnimplementedTerminalUIServiceServer) Events(TerminalUIService_EventsServer) error {
 	return status.Errorf(codes.Unimplemented, "method Events not implemented")
 }
-func (UnimplementedTerminalUIServiceServer) IsInteractive(context.Context, *emptypb.Empty) (*TerminalUI_IsInteractiveResponse, error) {
+func (UnimplementedTerminalUIServiceServer) IsInteractive(context.Context, *empty.Empty) (*TerminalUI_IsInteractiveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsInteractive not implemented")
 }
 func (UnimplementedTerminalUIServiceServer) mustEmbedUnimplementedTerminalUIServiceServer() {}
@@ -114,7 +113,7 @@ type UnsafeTerminalUIServiceServer interface {
 }
 
 func RegisterTerminalUIServiceServer(s grpc.ServiceRegistrar, srv TerminalUIServiceServer) {
-	s.RegisterService(&TerminalUIService_ServiceDesc, srv)
+	s.RegisterService(&_TerminalUIService_serviceDesc, srv)
 }
 
 func _TerminalUIService_Output_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -162,7 +161,7 @@ func (x *terminalUIServiceEventsServer) Recv() (*TerminalUI_Event, error) {
 }
 
 func _TerminalUIService_IsInteractive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -174,15 +173,12 @@ func _TerminalUIService_IsInteractive_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/hashicorp.vagrant.sdk.TerminalUIService/IsInteractive",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TerminalUIServiceServer).IsInteractive(ctx, req.(*emptypb.Empty))
+		return srv.(TerminalUIServiceServer).IsInteractive(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TerminalUIService_ServiceDesc is the grpc.ServiceDesc for TerminalUIService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var TerminalUIService_ServiceDesc = grpc.ServiceDesc{
+var _TerminalUIService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TerminalUIService",
 	HandlerType: (*TerminalUIServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -211,7 +207,7 @@ var TerminalUIService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MapperClient interface {
 	// ListMappers returns the list of mappers that this plugin supports.
-	ListMappers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Map_ListResponse, error)
+	ListMappers(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Map_ListResponse, error)
 	// Map executes a mapper.
 	Map(ctx context.Context, in *Map_Request, opts ...grpc.CallOption) (*Map_Response, error)
 }
@@ -224,7 +220,7 @@ func NewMapperClient(cc grpc.ClientConnInterface) MapperClient {
 	return &mapperClient{cc}
 }
 
-func (c *mapperClient) ListMappers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Map_ListResponse, error) {
+func (c *mapperClient) ListMappers(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Map_ListResponse, error) {
 	out := new(Map_ListResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.Mapper/ListMappers", in, out, opts...)
 	if err != nil {
@@ -247,7 +243,7 @@ func (c *mapperClient) Map(ctx context.Context, in *Map_Request, opts ...grpc.Ca
 // for forward compatibility
 type MapperServer interface {
 	// ListMappers returns the list of mappers that this plugin supports.
-	ListMappers(context.Context, *emptypb.Empty) (*Map_ListResponse, error)
+	ListMappers(context.Context, *empty.Empty) (*Map_ListResponse, error)
 	// Map executes a mapper.
 	Map(context.Context, *Map_Request) (*Map_Response, error)
 	mustEmbedUnimplementedMapperServer()
@@ -257,7 +253,7 @@ type MapperServer interface {
 type UnimplementedMapperServer struct {
 }
 
-func (UnimplementedMapperServer) ListMappers(context.Context, *emptypb.Empty) (*Map_ListResponse, error) {
+func (UnimplementedMapperServer) ListMappers(context.Context, *empty.Empty) (*Map_ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMappers not implemented")
 }
 func (UnimplementedMapperServer) Map(context.Context, *Map_Request) (*Map_Response, error) {
@@ -273,11 +269,11 @@ type UnsafeMapperServer interface {
 }
 
 func RegisterMapperServer(s grpc.ServiceRegistrar, srv MapperServer) {
-	s.RegisterService(&Mapper_ServiceDesc, srv)
+	s.RegisterService(&_Mapper_serviceDesc, srv)
 }
 
 func _Mapper_ListMappers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -289,7 +285,7 @@ func _Mapper_ListMappers_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/hashicorp.vagrant.sdk.Mapper/ListMappers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MapperServer).ListMappers(ctx, req.(*emptypb.Empty))
+		return srv.(MapperServer).ListMappers(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -312,10 +308,7 @@ func _Mapper_Map_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-// Mapper_ServiceDesc is the grpc.ServiceDesc for Mapper service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Mapper_ServiceDesc = grpc.ServiceDesc{
+var _Mapper_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.Mapper",
 	HandlerType: (*MapperServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -339,16 +332,16 @@ type ProviderServiceClient interface {
 	// rpc Usable(google.protobuf.Empty) returns (Provider.UsableResp);
 	// rpc Installed(google.protobuf.Empty) returns (Provider.InstalledResp);
 	Usable(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Provider_UsableResp, error)
-	UsableSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	UsableSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Installed(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Provider_InstalledResp, error)
-	InstalledSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	InstalledSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
+	InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	ActionUp(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Provider_ActionResp, error)
-	ActionUpSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ActionUpSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type providerServiceClient struct {
@@ -368,7 +361,7 @@ func (c *providerServiceClient) Usable(ctx context.Context, in *FuncSpec_Args, o
 	return out, nil
 }
 
-func (c *providerServiceClient) UsableSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *providerServiceClient) UsableSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/UsableSpec", in, out, opts...)
 	if err != nil {
@@ -386,7 +379,7 @@ func (c *providerServiceClient) Installed(ctx context.Context, in *FuncSpec_Args
 	return out, nil
 }
 
-func (c *providerServiceClient) InstalledSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *providerServiceClient) InstalledSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/InstalledSpec", in, out, opts...)
 	if err != nil {
@@ -395,8 +388,8 @@ func (c *providerServiceClient) InstalledSpec(ctx context.Context, in *emptypb.E
 	return out, nil
 }
 
-func (c *providerServiceClient) Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *providerServiceClient) Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Init", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -404,7 +397,7 @@ func (c *providerServiceClient) Init(ctx context.Context, in *FuncSpec_Args, opt
 	return out, nil
 }
 
-func (c *providerServiceClient) InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *providerServiceClient) InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/InitSpec", in, out, opts...)
 	if err != nil {
@@ -422,7 +415,7 @@ func (c *providerServiceClient) ActionUp(ctx context.Context, in *FuncSpec_Args,
 	return out, nil
 }
 
-func (c *providerServiceClient) ActionUpSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *providerServiceClient) ActionUpSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/ActionUpSpec", in, out, opts...)
 	if err != nil {
@@ -431,7 +424,7 @@ func (c *providerServiceClient) ActionUpSpec(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
-func (c *providerServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *providerServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -440,8 +433,8 @@ func (c *providerServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
-func (c *providerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *providerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -449,7 +442,7 @@ func (c *providerServiceClient) Configure(ctx context.Context, in *Config_Config
 	return out, nil
 }
 
-func (c *providerServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *providerServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Documentation", in, out, opts...)
 	if err != nil {
@@ -465,16 +458,16 @@ type ProviderServiceServer interface {
 	// rpc Usable(google.protobuf.Empty) returns (Provider.UsableResp);
 	// rpc Installed(google.protobuf.Empty) returns (Provider.InstalledResp);
 	Usable(context.Context, *FuncSpec_Args) (*Provider_UsableResp, error)
-	UsableSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	UsableSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Installed(context.Context, *FuncSpec_Args) (*Provider_InstalledResp, error)
-	InstalledSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	Init(context.Context, *FuncSpec_Args) (*emptypb.Empty, error)
-	InitSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	InstalledSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Init(context.Context, *FuncSpec_Args) (*empty.Empty, error)
+	InitSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	ActionUp(context.Context, *FuncSpec_Args) (*Provider_ActionResp, error)
-	ActionUpSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ActionUpSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	mustEmbedUnimplementedProviderServiceServer()
 }
 
@@ -485,34 +478,34 @@ type UnimplementedProviderServiceServer struct {
 func (UnimplementedProviderServiceServer) Usable(context.Context, *FuncSpec_Args) (*Provider_UsableResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Usable not implemented")
 }
-func (UnimplementedProviderServiceServer) UsableSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedProviderServiceServer) UsableSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UsableSpec not implemented")
 }
 func (UnimplementedProviderServiceServer) Installed(context.Context, *FuncSpec_Args) (*Provider_InstalledResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Installed not implemented")
 }
-func (UnimplementedProviderServiceServer) InstalledSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedProviderServiceServer) InstalledSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InstalledSpec not implemented")
 }
-func (UnimplementedProviderServiceServer) Init(context.Context, *FuncSpec_Args) (*emptypb.Empty, error) {
+func (UnimplementedProviderServiceServer) Init(context.Context, *FuncSpec_Args) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
 }
-func (UnimplementedProviderServiceServer) InitSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedProviderServiceServer) InitSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitSpec not implemented")
 }
 func (UnimplementedProviderServiceServer) ActionUp(context.Context, *FuncSpec_Args) (*Provider_ActionResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActionUp not implemented")
 }
-func (UnimplementedProviderServiceServer) ActionUpSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedProviderServiceServer) ActionUpSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActionUpSpec not implemented")
 }
-func (UnimplementedProviderServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedProviderServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedProviderServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedProviderServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedProviderServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedProviderServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedProviderServiceServer) mustEmbedUnimplementedProviderServiceServer() {}
@@ -525,7 +518,7 @@ type UnsafeProviderServiceServer interface {
 }
 
 func RegisterProviderServiceServer(s grpc.ServiceRegistrar, srv ProviderServiceServer) {
-	s.RegisterService(&ProviderService_ServiceDesc, srv)
+	s.RegisterService(&_ProviderService_serviceDesc, srv)
 }
 
 func _ProviderService_Usable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -547,7 +540,7 @@ func _ProviderService_Usable_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _ProviderService_UsableSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -559,7 +552,7 @@ func _ProviderService_UsableSpec_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/UsableSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).UsableSpec(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).UsableSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -583,7 +576,7 @@ func _ProviderService_Installed_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _ProviderService_InstalledSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -595,7 +588,7 @@ func _ProviderService_InstalledSpec_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/InstalledSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).InstalledSpec(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).InstalledSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -619,7 +612,7 @@ func _ProviderService_Init_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _ProviderService_InitSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -631,7 +624,7 @@ func _ProviderService_InitSpec_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/InitSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).InitSpec(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).InitSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -655,7 +648,7 @@ func _ProviderService_ActionUp_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _ProviderService_ActionUpSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -667,13 +660,13 @@ func _ProviderService_ActionUpSpec_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/ActionUpSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).ActionUpSpec(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).ActionUpSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ProviderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -685,7 +678,7 @@ func _ProviderService_ConfigStruct_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -709,7 +702,7 @@ func _ProviderService_Configure_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _ProviderService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -721,15 +714,12 @@ func _ProviderService_Documentation_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(ProviderServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ProviderService_ServiceDesc is the grpc.ServiceDesc for ProviderService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ProviderService_ServiceDesc = grpc.ServiceDesc{
+var _ProviderService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProviderService",
 	HandlerType: (*ProviderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -786,9 +776,9 @@ var ProviderService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProvisionerServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type provisionerServiceClient struct {
@@ -799,7 +789,7 @@ func NewProvisionerServiceClient(cc grpc.ClientConnInterface) ProvisionerService
 	return &provisionerServiceClient{cc}
 }
 
-func (c *provisionerServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *provisionerServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -808,8 +798,8 @@ func (c *provisionerServiceClient) ConfigStruct(ctx context.Context, in *emptypb
 	return out, nil
 }
 
-func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -817,7 +807,7 @@ func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_Con
 	return out, nil
 }
 
-func (c *provisionerServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *provisionerServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Documentation", in, out, opts...)
 	if err != nil {
@@ -830,9 +820,9 @@ func (c *provisionerServiceClient) Documentation(ctx context.Context, in *emptyp
 // All implementations must embed UnimplementedProvisionerServiceServer
 // for forward compatibility
 type ProvisionerServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	mustEmbedUnimplementedProvisionerServiceServer()
 }
 
@@ -840,13 +830,13 @@ type ProvisionerServiceServer interface {
 type UnimplementedProvisionerServiceServer struct {
 }
 
-func (UnimplementedProvisionerServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedProvisionerServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedProvisionerServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedProvisionerServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedProvisionerServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedProvisionerServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedProvisionerServiceServer) mustEmbedUnimplementedProvisionerServiceServer() {}
@@ -859,11 +849,11 @@ type UnsafeProvisionerServiceServer interface {
 }
 
 func RegisterProvisionerServiceServer(s grpc.ServiceRegistrar, srv ProvisionerServiceServer) {
-	s.RegisterService(&ProvisionerService_ServiceDesc, srv)
+	s.RegisterService(&_ProvisionerService_serviceDesc, srv)
 }
 
 func _ProvisionerService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -875,7 +865,7 @@ func _ProvisionerService_ConfigStruct_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -899,7 +889,7 @@ func _ProvisionerService_Configure_Handler(srv interface{}, ctx context.Context,
 }
 
 func _ProvisionerService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -911,15 +901,12 @@ func _ProvisionerService_Documentation_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(ProvisionerServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ProvisionerService_ServiceDesc is the grpc.ServiceDesc for ProvisionerService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
+var _ProvisionerService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProvisionerService",
 	HandlerType: (*ProvisionerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -961,7 +948,7 @@ func NewCommandServiceClient(cc grpc.ClientConnInterface) CommandServiceClient {
 	return &commandServiceClient{cc}
 }
 
-func (c *commandServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *commandServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -970,8 +957,8 @@ func (c *commandServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
-func (c *commandServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *commandServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -979,7 +966,7 @@ func (c *commandServiceClient) Configure(ctx context.Context, in *Config_Configu
 	return out, nil
 }
 
-func (c *commandServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *commandServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Documentation", in, out, opts...)
 	if err != nil {
@@ -1042,13 +1029,13 @@ type CommandServiceServer interface {
 type UnimplementedCommandServiceServer struct {
 }
 
-func (UnimplementedCommandServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedCommandServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedCommandServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedCommandServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedCommandServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedCommandServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
@@ -1073,11 +1060,11 @@ type UnsafeCommandServiceServer interface {
 }
 
 func RegisterCommandServiceServer(s grpc.ServiceRegistrar, srv CommandServiceServer) {
-	s.RegisterService(&CommandService_ServiceDesc, srv)
+	s.RegisterService(&_CommandService_serviceDesc, srv)
 }
 
 func _CommandService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1089,7 +1076,7 @@ func _CommandService_ConfigStruct_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(CommandServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1113,7 +1100,7 @@ func _CommandService_Configure_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _CommandService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1125,7 +1112,7 @@ func _CommandService_Documentation_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(CommandServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1243,28 +1230,28 @@ var _CommandService_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CommunicatorServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
-	MatchSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	MatchSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Match(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_MatchResp, error)
-	InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_InitResp, error)
-	ReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ReadySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Ready(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error)
-	WaitForReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	WaitForReadySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	WaitForReady(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ReadyResp, error)
-	DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	DownloadSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Download(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error)
-	UploadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	UploadSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Upload(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_FileTransferResp, error)
-	ExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Execute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ExecuteResp, error)
-	PrivilegedExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	PrivilegedExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	PrivilegedExecute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ExecuteResp, error)
-	TestSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	TestSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Test(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_TestResp, error)
-	ResetSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	ResetSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Reset(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Communicator_ResetResp, error)
 }
 
@@ -1276,7 +1263,7 @@ func NewCommunicatorServiceClient(cc grpc.ClientConnInterface) CommunicatorServi
 	return &communicatorServiceClient{cc}
 }
 
-func (c *communicatorServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *communicatorServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -1285,8 +1272,8 @@ func (c *communicatorServiceClient) ConfigStruct(ctx context.Context, in *emptyp
 	return out, nil
 }
 
-func (c *communicatorServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *communicatorServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1294,7 +1281,7 @@ func (c *communicatorServiceClient) Configure(ctx context.Context, in *Config_Co
 	return out, nil
 }
 
-func (c *communicatorServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *communicatorServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/Documentation", in, out, opts...)
 	if err != nil {
@@ -1303,7 +1290,7 @@ func (c *communicatorServiceClient) Documentation(ctx context.Context, in *empty
 	return out, nil
 }
 
-func (c *communicatorServiceClient) MatchSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) MatchSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/MatchSpec", in, out, opts...)
 	if err != nil {
@@ -1321,7 +1308,7 @@ func (c *communicatorServiceClient) Match(ctx context.Context, in *FuncSpec_Args
 	return out, nil
 }
 
-func (c *communicatorServiceClient) InitSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/InitSpec", in, out, opts...)
 	if err != nil {
@@ -1339,7 +1326,7 @@ func (c *communicatorServiceClient) Init(ctx context.Context, in *FuncSpec_Args,
 	return out, nil
 }
 
-func (c *communicatorServiceClient) ReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) ReadySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ReadySpec", in, out, opts...)
 	if err != nil {
@@ -1357,7 +1344,7 @@ func (c *communicatorServiceClient) Ready(ctx context.Context, in *FuncSpec_Args
 	return out, nil
 }
 
-func (c *communicatorServiceClient) WaitForReadySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) WaitForReadySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReadySpec", in, out, opts...)
 	if err != nil {
@@ -1375,7 +1362,7 @@ func (c *communicatorServiceClient) WaitForReady(ctx context.Context, in *FuncSp
 	return out, nil
 }
 
-func (c *communicatorServiceClient) DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) DownloadSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/DownloadSpec", in, out, opts...)
 	if err != nil {
@@ -1393,7 +1380,7 @@ func (c *communicatorServiceClient) Download(ctx context.Context, in *FuncSpec_A
 	return out, nil
 }
 
-func (c *communicatorServiceClient) UploadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) UploadSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/UploadSpec", in, out, opts...)
 	if err != nil {
@@ -1411,7 +1398,7 @@ func (c *communicatorServiceClient) Upload(ctx context.Context, in *FuncSpec_Arg
 	return out, nil
 }
 
-func (c *communicatorServiceClient) ExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ExecuteSpec", in, out, opts...)
 	if err != nil {
@@ -1429,7 +1416,7 @@ func (c *communicatorServiceClient) Execute(ctx context.Context, in *FuncSpec_Ar
 	return out, nil
 }
 
-func (c *communicatorServiceClient) PrivilegedExecuteSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) PrivilegedExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/PrivilegedExecuteSpec", in, out, opts...)
 	if err != nil {
@@ -1447,7 +1434,7 @@ func (c *communicatorServiceClient) PrivilegedExecute(ctx context.Context, in *F
 	return out, nil
 }
 
-func (c *communicatorServiceClient) TestSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) TestSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/TestSpec", in, out, opts...)
 	if err != nil {
@@ -1465,7 +1452,7 @@ func (c *communicatorServiceClient) Test(ctx context.Context, in *FuncSpec_Args,
 	return out, nil
 }
 
-func (c *communicatorServiceClient) ResetSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *communicatorServiceClient) ResetSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/ResetSpec", in, out, opts...)
 	if err != nil {
@@ -1487,28 +1474,28 @@ func (c *communicatorServiceClient) Reset(ctx context.Context, in *FuncSpec_Args
 // All implementations must embed UnimplementedCommunicatorServiceServer
 // for forward compatibility
 type CommunicatorServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
-	MatchSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
+	MatchSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Match(context.Context, *FuncSpec_Args) (*Communicator_MatchResp, error)
-	InitSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	InitSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Init(context.Context, *FuncSpec_Args) (*Communicator_InitResp, error)
-	ReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	ReadySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Ready(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error)
-	WaitForReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	WaitForReadySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	WaitForReady(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error)
-	DownloadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	DownloadSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Download(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error)
-	UploadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	UploadSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Upload(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error)
-	ExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Execute(context.Context, *FuncSpec_Args) (*Communicator_ExecuteResp, error)
-	PrivilegedExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	PrivilegedExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	PrivilegedExecute(context.Context, *FuncSpec_Args) (*Communicator_ExecuteResp, error)
-	TestSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	TestSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Test(context.Context, *FuncSpec_Args) (*Communicator_TestResp, error)
-	ResetSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	ResetSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Reset(context.Context, *FuncSpec_Args) (*Communicator_ResetResp, error)
 	mustEmbedUnimplementedCommunicatorServiceServer()
 }
@@ -1517,70 +1504,70 @@ type CommunicatorServiceServer interface {
 type UnimplementedCommunicatorServiceServer struct {
 }
 
-func (UnimplementedCommunicatorServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedCommunicatorServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedCommunicatorServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedCommunicatorServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) MatchSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) MatchSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MatchSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Match(context.Context, *FuncSpec_Args) (*Communicator_MatchResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Match not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) InitSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) InitSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Init(context.Context, *FuncSpec_Args) (*Communicator_InitResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) ReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) ReadySpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadySpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Ready(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ready not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) WaitForReadySpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) WaitForReadySpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WaitForReadySpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) WaitForReady(context.Context, *FuncSpec_Args) (*Communicator_ReadyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WaitForReady not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) DownloadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) DownloadSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Download(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Download not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) UploadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) UploadSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Upload(context.Context, *FuncSpec_Args) (*Communicator_FileTransferResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) ExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Execute(context.Context, *FuncSpec_Args) (*Communicator_ExecuteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) PrivilegedExecuteSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) PrivilegedExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PrivilegedExecuteSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) PrivilegedExecute(context.Context, *FuncSpec_Args) (*Communicator_ExecuteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PrivilegedExecute not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) TestSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) TestSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Test(context.Context, *FuncSpec_Args) (*Communicator_TestResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
 }
-func (UnimplementedCommunicatorServiceServer) ResetSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedCommunicatorServiceServer) ResetSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetSpec not implemented")
 }
 func (UnimplementedCommunicatorServiceServer) Reset(context.Context, *FuncSpec_Args) (*Communicator_ResetResp, error) {
@@ -1596,11 +1583,11 @@ type UnsafeCommunicatorServiceServer interface {
 }
 
 func RegisterCommunicatorServiceServer(s grpc.ServiceRegistrar, srv CommunicatorServiceServer) {
-	s.RegisterService(&CommunicatorService_ServiceDesc, srv)
+	s.RegisterService(&_CommunicatorService_serviceDesc, srv)
 }
 
 func _CommunicatorService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1612,7 +1599,7 @@ func _CommunicatorService_ConfigStruct_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1636,7 +1623,7 @@ func _CommunicatorService_Configure_Handler(srv interface{}, ctx context.Context
 }
 
 func _CommunicatorService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1648,13 +1635,13 @@ func _CommunicatorService_Documentation_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CommunicatorService_MatchSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1666,7 +1653,7 @@ func _CommunicatorService_MatchSpec_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/MatchSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).MatchSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).MatchSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1690,7 +1677,7 @@ func _CommunicatorService_Match_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _CommunicatorService_InitSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1702,7 +1689,7 @@ func _CommunicatorService_InitSpec_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/InitSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).InitSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).InitSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1726,7 +1713,7 @@ func _CommunicatorService_Init_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _CommunicatorService_ReadySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1738,7 +1725,7 @@ func _CommunicatorService_ReadySpec_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ReadySpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).ReadySpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).ReadySpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1762,7 +1749,7 @@ func _CommunicatorService_Ready_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _CommunicatorService_WaitForReadySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1774,7 +1761,7 @@ func _CommunicatorService_WaitForReadySpec_Handler(srv interface{}, ctx context.
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/WaitForReadySpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).WaitForReadySpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).WaitForReadySpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1798,7 +1785,7 @@ func _CommunicatorService_WaitForReady_Handler(srv interface{}, ctx context.Cont
 }
 
 func _CommunicatorService_DownloadSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1810,7 +1797,7 @@ func _CommunicatorService_DownloadSpec_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/DownloadSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).DownloadSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).DownloadSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1834,7 +1821,7 @@ func _CommunicatorService_Download_Handler(srv interface{}, ctx context.Context,
 }
 
 func _CommunicatorService_UploadSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1846,7 +1833,7 @@ func _CommunicatorService_UploadSpec_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/UploadSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).UploadSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).UploadSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1870,7 +1857,7 @@ func _CommunicatorService_Upload_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _CommunicatorService_ExecuteSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1882,7 +1869,7 @@ func _CommunicatorService_ExecuteSpec_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ExecuteSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).ExecuteSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).ExecuteSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1906,7 +1893,7 @@ func _CommunicatorService_Execute_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _CommunicatorService_PrivilegedExecuteSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1918,7 +1905,7 @@ func _CommunicatorService_PrivilegedExecuteSpec_Handler(srv interface{}, ctx con
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/PrivilegedExecuteSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).PrivilegedExecuteSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).PrivilegedExecuteSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1942,7 +1929,7 @@ func _CommunicatorService_PrivilegedExecute_Handler(srv interface{}, ctx context
 }
 
 func _CommunicatorService_TestSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1954,7 +1941,7 @@ func _CommunicatorService_TestSpec_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/TestSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).TestSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).TestSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1978,7 +1965,7 @@ func _CommunicatorService_Test_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _CommunicatorService_ResetSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1990,7 +1977,7 @@ func _CommunicatorService_ResetSpec_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/ResetSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommunicatorServiceServer).ResetSpec(ctx, req.(*emptypb.Empty))
+		return srv.(CommunicatorServiceServer).ResetSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2013,10 +2000,7 @@ func _CommunicatorService_Reset_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-// CommunicatorService_ServiceDesc is the grpc.ServiceDesc for CommunicatorService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var CommunicatorService_ServiceDesc = grpc.ServiceDesc{
+var _CommunicatorService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.CommunicatorService",
 	HandlerType: (*CommunicatorServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2121,9 +2105,9 @@ var CommunicatorService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfigServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type configServiceClient struct {
@@ -2134,7 +2118,7 @@ func NewConfigServiceClient(cc grpc.ClientConnInterface) ConfigServiceClient {
 	return &configServiceClient{cc}
 }
 
-func (c *configServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *configServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -2143,8 +2127,8 @@ func (c *configServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *configServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *configServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2152,7 +2136,7 @@ func (c *configServiceClient) Configure(ctx context.Context, in *Config_Configur
 	return out, nil
 }
 
-func (c *configServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *configServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ConfigService/Documentation", in, out, opts...)
 	if err != nil {
@@ -2165,9 +2149,9 @@ func (c *configServiceClient) Documentation(ctx context.Context, in *emptypb.Emp
 // All implementations must embed UnimplementedConfigServiceServer
 // for forward compatibility
 type ConfigServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	mustEmbedUnimplementedConfigServiceServer()
 }
 
@@ -2175,13 +2159,13 @@ type ConfigServiceServer interface {
 type UnimplementedConfigServiceServer struct {
 }
 
-func (UnimplementedConfigServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedConfigServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedConfigServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedConfigServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedConfigServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedConfigServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedConfigServiceServer) mustEmbedUnimplementedConfigServiceServer() {}
@@ -2194,11 +2178,11 @@ type UnsafeConfigServiceServer interface {
 }
 
 func RegisterConfigServiceServer(s grpc.ServiceRegistrar, srv ConfigServiceServer) {
-	s.RegisterService(&ConfigService_ServiceDesc, srv)
+	s.RegisterService(&_ConfigService_serviceDesc, srv)
 }
 
 func _ConfigService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2210,7 +2194,7 @@ func _ConfigService_ConfigStruct_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.ConfigService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConfigServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(ConfigServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2234,7 +2218,7 @@ func _ConfigService_Configure_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _ConfigService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2246,15 +2230,12 @@ func _ConfigService_Documentation_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/hashicorp.vagrant.sdk.ConfigService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConfigServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(ConfigServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ConfigService_ServiceDesc is the grpc.ServiceDesc for ConfigService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ConfigService_ServiceDesc = grpc.ServiceDesc{
+var _ConfigService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ConfigService",
 	HandlerType: (*ConfigServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2279,11 +2260,11 @@ var ConfigService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GuestServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Guest_DetectResp, error)
-	DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	HasCapability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
 	Capability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_Resp, error)
@@ -2298,7 +2279,7 @@ func NewGuestServiceClient(cc grpc.ClientConnInterface) GuestServiceClient {
 	return &guestServiceClient{cc}
 }
 
-func (c *guestServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *guestServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -2307,8 +2288,8 @@ func (c *guestServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
-func (c *guestServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *guestServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2316,7 +2297,7 @@ func (c *guestServiceClient) Configure(ctx context.Context, in *Config_Configure
 	return out, nil
 }
 
-func (c *guestServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *guestServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Documentation", in, out, opts...)
 	if err != nil {
@@ -2334,7 +2315,7 @@ func (c *guestServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts
 	return out, nil
 }
 
-func (c *guestServiceClient) DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *guestServiceClient) DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/DetectSpec", in, out, opts...)
 	if err != nil {
@@ -2383,11 +2364,11 @@ func (c *guestServiceClient) CapabilitySpec(ctx context.Context, in *Guest_Capab
 // All implementations must embed UnimplementedGuestServiceServer
 // for forward compatibility
 type GuestServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	Detect(context.Context, *FuncSpec_Args) (*Guest_DetectResp, error)
-	DetectSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	HasCapability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_CheckResp, error)
 	HasCapabilitySpec(context.Context, *Guest_Capability_NamedRequest) (*FuncSpec, error)
 	Capability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_Resp, error)
@@ -2399,19 +2380,19 @@ type GuestServiceServer interface {
 type UnimplementedGuestServiceServer struct {
 }
 
-func (UnimplementedGuestServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedGuestServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedGuestServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedGuestServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedGuestServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedGuestServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedGuestServiceServer) Detect(context.Context, *FuncSpec_Args) (*Guest_DetectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
 }
-func (UnimplementedGuestServiceServer) DetectSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedGuestServiceServer) DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetectSpec not implemented")
 }
 func (UnimplementedGuestServiceServer) HasCapability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_CheckResp, error) {
@@ -2436,11 +2417,11 @@ type UnsafeGuestServiceServer interface {
 }
 
 func RegisterGuestServiceServer(s grpc.ServiceRegistrar, srv GuestServiceServer) {
-	s.RegisterService(&GuestService_ServiceDesc, srv)
+	s.RegisterService(&_GuestService_serviceDesc, srv)
 }
 
 func _GuestService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2452,7 +2433,7 @@ func _GuestService_ConfigStruct_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(GuestServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2476,7 +2457,7 @@ func _GuestService_Configure_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _GuestService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2488,7 +2469,7 @@ func _GuestService_Documentation_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(GuestServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2512,7 +2493,7 @@ func _GuestService_Detect_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _GuestService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2524,7 +2505,7 @@ func _GuestService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/DetectSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).DetectSpec(ctx, req.(*emptypb.Empty))
+		return srv.(GuestServiceServer).DetectSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2601,10 +2582,7 @@ func _GuestService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-// GuestService_ServiceDesc is the grpc.ServiceDesc for GuestService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var GuestService_ServiceDesc = grpc.ServiceDesc{
+var _GuestService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.GuestService",
 	HandlerType: (*GuestServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2653,11 +2631,11 @@ var GuestService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HostServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_DetectResp, error)
-	DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 }
 
 type hostServiceClient struct {
@@ -2668,7 +2646,7 @@ func NewHostServiceClient(cc grpc.ClientConnInterface) HostServiceClient {
 	return &hostServiceClient{cc}
 }
 
-func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -2677,8 +2655,8 @@ func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
-func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2686,7 +2664,7 @@ func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureR
 	return out, nil
 }
 
-func (c *hostServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *hostServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Documentation", in, out, opts...)
 	if err != nil {
@@ -2704,7 +2682,7 @@ func (c *hostServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts 
 	return out, nil
 }
 
-func (c *hostServiceClient) DetectSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *hostServiceClient) DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/DetectSpec", in, out, opts...)
 	if err != nil {
@@ -2717,11 +2695,11 @@ func (c *hostServiceClient) DetectSpec(ctx context.Context, in *emptypb.Empty, o
 // All implementations must embed UnimplementedHostServiceServer
 // for forward compatibility
 type HostServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	Detect(context.Context, *FuncSpec_Args) (*Host_DetectResp, error)
-	DetectSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	mustEmbedUnimplementedHostServiceServer()
 }
 
@@ -2729,19 +2707,19 @@ type HostServiceServer interface {
 type UnimplementedHostServiceServer struct {
 }
 
-func (UnimplementedHostServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedHostServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedHostServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedHostServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedHostServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedHostServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedHostServiceServer) Detect(context.Context, *FuncSpec_Args) (*Host_DetectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
 }
-func (UnimplementedHostServiceServer) DetectSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+func (UnimplementedHostServiceServer) DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetectSpec not implemented")
 }
 func (UnimplementedHostServiceServer) mustEmbedUnimplementedHostServiceServer() {}
@@ -2754,11 +2732,11 @@ type UnsafeHostServiceServer interface {
 }
 
 func RegisterHostServiceServer(s grpc.ServiceRegistrar, srv HostServiceServer) {
-	s.RegisterService(&HostService_ServiceDesc, srv)
+	s.RegisterService(&_HostService_serviceDesc, srv)
 }
 
 func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2770,7 +2748,7 @@ func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/hashicorp.vagrant.sdk.HostService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2794,7 +2772,7 @@ func _HostService_Configure_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2806,7 +2784,7 @@ func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/hashicorp.vagrant.sdk.HostService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(HostServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2830,7 +2808,7 @@ func _HostService_Detect_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _HostService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2842,15 +2820,12 @@ func _HostService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/hashicorp.vagrant.sdk.HostService/DetectSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).DetectSpec(ctx, req.(*emptypb.Empty))
+		return srv.(HostServiceServer).DetectSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// HostService_ServiceDesc is the grpc.ServiceDesc for HostService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var HostService_ServiceDesc = grpc.ServiceDesc{
+var _HostService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.HostService",
 	HandlerType: (*HostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2883,9 +2858,9 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SyncedFolderServiceClient interface {
-	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type syncedFolderServiceClient struct {
@@ -2896,7 +2871,7 @@ func NewSyncedFolderServiceClient(cc grpc.ClientConnInterface) SyncedFolderServi
 	return &syncedFolderServiceClient{cc}
 }
 
-func (c *syncedFolderServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+func (c *syncedFolderServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
 	out := new(Config_StructResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/ConfigStruct", in, out, opts...)
 	if err != nil {
@@ -2905,8 +2880,8 @@ func (c *syncedFolderServiceClient) ConfigStruct(ctx context.Context, in *emptyp
 	return out, nil
 }
 
-func (c *syncedFolderServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *syncedFolderServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/Configure", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2914,7 +2889,7 @@ func (c *syncedFolderServiceClient) Configure(ctx context.Context, in *Config_Co
 	return out, nil
 }
 
-func (c *syncedFolderServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+func (c *syncedFolderServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
 	out := new(Config_Documentation)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/Documentation", in, out, opts...)
 	if err != nil {
@@ -2927,9 +2902,9 @@ func (c *syncedFolderServiceClient) Documentation(ctx context.Context, in *empty
 // All implementations must embed UnimplementedSyncedFolderServiceServer
 // for forward compatibility
 type SyncedFolderServiceServer interface {
-	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
-	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	mustEmbedUnimplementedSyncedFolderServiceServer()
 }
 
@@ -2937,13 +2912,13 @@ type SyncedFolderServiceServer interface {
 type UnimplementedSyncedFolderServiceServer struct {
 }
 
-func (UnimplementedSyncedFolderServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+func (UnimplementedSyncedFolderServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
 }
-func (UnimplementedSyncedFolderServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+func (UnimplementedSyncedFolderServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedSyncedFolderServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+func (UnimplementedSyncedFolderServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 func (UnimplementedSyncedFolderServiceServer) mustEmbedUnimplementedSyncedFolderServiceServer() {}
@@ -2956,11 +2931,11 @@ type UnsafeSyncedFolderServiceServer interface {
 }
 
 func RegisterSyncedFolderServiceServer(s grpc.ServiceRegistrar, srv SyncedFolderServiceServer) {
-	s.RegisterService(&SyncedFolderService_ServiceDesc, srv)
+	s.RegisterService(&_SyncedFolderService_serviceDesc, srv)
 }
 
 func _SyncedFolderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2972,7 +2947,7 @@ func _SyncedFolderService_ConfigStruct_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/ConfigStruct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncedFolderServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+		return srv.(SyncedFolderServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2996,7 +2971,7 @@ func _SyncedFolderService_Configure_Handler(srv interface{}, ctx context.Context
 }
 
 func _SyncedFolderService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3008,15 +2983,12 @@ func _SyncedFolderService_Documentation_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/Documentation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncedFolderServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+		return srv.(SyncedFolderServiceServer).Documentation(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// SyncedFolderService_ServiceDesc is the grpc.ServiceDesc for SyncedFolderService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
+var _SyncedFolderService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.SyncedFolderService",
 	HandlerType: (*SyncedFolderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3298,7 +3270,7 @@ type UnsafeMachineServiceServer interface {
 }
 
 func RegisterMachineServiceServer(s grpc.ServiceRegistrar, srv MachineServiceServer) {
-	s.RegisterService(&MachineService_ServiceDesc, srv)
+	s.RegisterService(&_MachineService_serviceDesc, srv)
 }
 
 func _MachineService_SetName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3589,10 +3561,7 @@ func _MachineService_UI_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-// MachineService_ServiceDesc is the grpc.ServiceDesc for MachineService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var MachineService_ServiceDesc = grpc.ServiceDesc{
+var _MachineService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.MachineService",
 	HandlerType: (*MachineServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3669,7 +3638,7 @@ var MachineService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectServiceClient interface {
-	MachineNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error)
+	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error)
 	ActiveMachines(ctx context.Context, in *Project_ActiveMachinesRequest, opts ...grpc.CallOption) (*Project_ActiveMachinesResponse, error)
 }
 
@@ -3681,7 +3650,7 @@ func NewProjectServiceClient(cc grpc.ClientConnInterface) ProjectServiceClient {
 	return &projectServiceClient{cc}
 }
 
-func (c *projectServiceClient) MachineNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error) {
+func (c *projectServiceClient) MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error) {
 	out := new(Project_MachineNamesResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/MachineNames", in, out, opts...)
 	if err != nil {
@@ -3703,7 +3672,7 @@ func (c *projectServiceClient) ActiveMachines(ctx context.Context, in *Project_A
 // All implementations must embed UnimplementedProjectServiceServer
 // for forward compatibility
 type ProjectServiceServer interface {
-	MachineNames(context.Context, *emptypb.Empty) (*Project_MachineNamesResponse, error)
+	MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error)
 	ActiveMachines(context.Context, *Project_ActiveMachinesRequest) (*Project_ActiveMachinesResponse, error)
 	mustEmbedUnimplementedProjectServiceServer()
 }
@@ -3712,7 +3681,7 @@ type ProjectServiceServer interface {
 type UnimplementedProjectServiceServer struct {
 }
 
-func (UnimplementedProjectServiceServer) MachineNames(context.Context, *emptypb.Empty) (*Project_MachineNamesResponse, error) {
+func (UnimplementedProjectServiceServer) MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
 }
 func (UnimplementedProjectServiceServer) ActiveMachines(context.Context, *Project_ActiveMachinesRequest) (*Project_ActiveMachinesResponse, error) {
@@ -3728,11 +3697,11 @@ type UnsafeProjectServiceServer interface {
 }
 
 func RegisterProjectServiceServer(s grpc.ServiceRegistrar, srv ProjectServiceServer) {
-	s.RegisterService(&ProjectService_ServiceDesc, srv)
+	s.RegisterService(&_ProjectService_serviceDesc, srv)
 }
 
 func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3744,7 +3713,7 @@ func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/MachineNames",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).MachineNames(ctx, req.(*emptypb.Empty))
+		return srv.(ProjectServiceServer).MachineNames(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3767,10 +3736,7 @@ func _ProjectService_ActiveMachines_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-// ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ProjectService_ServiceDesc = grpc.ServiceDesc{
+var _ProjectService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProjectService",
 	HandlerType: (*ProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
