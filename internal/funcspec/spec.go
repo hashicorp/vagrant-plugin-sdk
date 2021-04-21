@@ -28,7 +28,6 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		filterProto,
 		argmapper.FilterType(boolType),
 		argmapper.FilterType(stringType),
-		argmapper.FilterType(stringsType),
 		argmapper.FilterType(intType),
 		argmapper.FilterType(cliOptType),
 		argmapper.FilterType(commandInfoType),
@@ -99,7 +98,6 @@ var (
 	protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
 	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
 	stringType       = reflect.TypeOf((*string)(nil)).Elem()
-	stringsType      = reflect.TypeOf((*[]string)(nil)).Elem()
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
 	commandInfoType  = reflect.TypeOf((**plugincore.CommandInfo)(nil)).Elem()

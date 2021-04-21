@@ -12,5 +12,5 @@ type CommandInfo struct {
 
 type Command interface {
 	Execute([]string) (int64, error)
-	CommandInfo() (*CommandInfo, error)
+	CommandInfo([]string) (*CommandInfo, error)
 }

@@ -55,7 +55,7 @@ type Command interface {
 	// Execute a command
 	ExecuteFunc([]string) interface{}
 	// Retruns command info
-	CommandInfoFunc() interface{}
+	CommandInfoFunc([]string) interface{}
 }
 
 type Config interface {

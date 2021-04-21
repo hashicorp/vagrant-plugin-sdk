@@ -78,9 +78,8 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.ctx, c.client)
 }
 
-func (c *commandClient) CommandInfoFunc() interface{} {
-	// TODO: set this command string
-	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: []string{}}
+func (c *commandClient) CommandInfoFunc(cmd []string) interface{} {
+	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: cmd}
 	spec, err := c.client.CommandInfoSpec(c.ctx, req)
 	if err != nil {
 		return funcErr(err)
@@ -88,8 +87,12 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		// TODO: make this take the name
-		resp, err := c.client.CommandInfo(ctx, &vagrant_plugin_sdk.Command_CommandInfoReq{CommandString: []string{}})
+		resp, err := c.client.CommandInfo(
+			ctx,
+			&vagrant_plugin_sdk.Command_CommandInfoReq{
+				CommandString: cmd,
+			},
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -98,8 +101,8 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) CommandInfo() (*core.CommandInfo, error) {
-	f := c.CommandInfoFunc()
+func (c *commandClient) CommandInfo(cmd []string) (*core.CommandInfo, error) {
+	f := c.CommandInfoFunc(cmd)
 	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (**vagrant_plugin_sdk.Command_CommandInfoResp)(nil), f)
 	if err != nil {
 		return nil, err
@@ -110,7 +113,6 @@ func (c *commandClient) CommandInfo() (*core.CommandInfo, error) {
 }
 
 func (c *commandClient) ExecuteFunc(cmd []string) interface{} {
-	// TODO:
 	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: cmd}
 	spec, err := c.client.ExecuteSpec(c.ctx, req)
 	if err != nil {
@@ -176,7 +178,7 @@ func (s *commandServer) FindCmd(
 	}
 	for _, cmd := range cmds {
 		raw, err := s.callLocalDynamicFunc(
-			cmd.CommandInfoFunc(),
+			cmd.CommandInfoFunc(cmdName),
 			nil,
 			(*core.CommandInfo)(nil),
 			argmapper.Typed(ctx),
@@ -211,7 +213,7 @@ func (s *commandServer) CommandInfoSpec(
 	if err != nil {
 		return nil, err
 	}
-	return s.generateSpec(impl.CommandInfoFunc())
+	return s.generateSpec(impl.CommandInfoFunc(req.CommandString))
 }
 
 func (s *commandServer) CommandInfo(
@@ -223,7 +225,7 @@ func (s *commandServer) CommandInfo(
 		return nil, err
 	}
 	raw, err := s.callLocalDynamicFunc(
-		impl.CommandInfoFunc(),
+		impl.CommandInfoFunc(req.CommandString),
 		nil,
 		(*core.CommandInfo)(nil),
 		argmapper.Typed(ctx),
