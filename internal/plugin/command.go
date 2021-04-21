@@ -78,11 +78,6 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.ctx, c.client)
 }
 
-func (c *commandClient) CommandFunc() interface{} {
-	//TODO
-	return nil
-}
-
 func (c *commandClient) CommandInfoFunc() interface{} {
 	// TODO: set this command string
 	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: []string{}}
@@ -114,9 +109,9 @@ func (c *commandClient) CommandInfo() (*core.CommandInfo, error) {
 	return commandInfo, err
 }
 
-func (c *commandClient) ExecuteFunc() interface{} {
+func (c *commandClient) ExecuteFunc(cmd []string) interface{} {
 	// TODO:
-	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: []string{"myplugin", "info"}}
+	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: cmd}
 	spec, err := c.client.ExecuteSpec(c.ctx, req)
 	if err != nil {
 		return funcErr(err)
@@ -127,7 +122,7 @@ func (c *commandClient) ExecuteFunc() interface{} {
 		funcspecArgs := &vagrant_plugin_sdk.FuncSpec_Args{Args: args}
 		executeArgs := &vagrant_plugin_sdk.Command_ExecuteReq{
 			Args:          funcspecArgs,
-			CommandString: []string{"myplugin", "info"},
+			CommandString: cmd,
 		}
 		resp, err := c.client.Execute(ctx, executeArgs)
 		if err != nil {
@@ -138,8 +133,8 @@ func (c *commandClient) ExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Execute(name string) (int64, error) {
-	f := c.ExecuteFunc()
+func (c *commandClient) Execute(cmd []string) (int64, error) {
+	f := c.ExecuteFunc(cmd)
 	raw, err := c.callRemoteDynamicFunc(c.ctx, c.Mappers, (*int64)(nil), f)
 	if err != nil {
 		return -1, err
@@ -256,7 +251,7 @@ func (s *commandServer) ExecuteSpec(
 	if err != nil {
 		return nil, err
 	}
-	return s.generateSpec(impl.ExecuteFunc())
+	return s.generateSpec(impl.ExecuteFunc(req.CommandString))
 }
 
 func (s *commandServer) Execute(
@@ -268,7 +263,7 @@ func (s *commandServer) Execute(
 		return nil, err
 	}
 	raw, err := s.callUncheckedLocalDynamicFunc(
-		impl.ExecuteFunc(),
+		impl.ExecuteFunc(args.CommandString),
 		args.Args.Args,
 		argmapper.Typed(ctx),
 	)

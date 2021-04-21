@@ -53,7 +53,7 @@ var TypeMap = map[Type]interface{}{
 
 type Command interface {
 	// Execute a command
-	ExecuteFunc() interface{}
+	ExecuteFunc([]string) interface{}
 	// Retruns command info
 	CommandInfoFunc() interface{}
 }
