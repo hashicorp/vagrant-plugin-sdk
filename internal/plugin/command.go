@@ -22,9 +22,9 @@ import (
 type CommandPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Command // Impl is the concrete implementation
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
+	Impl    []component.Command // Impl is the concrete implementation
+	Mappers []*argmapper.Func   // Mappers
+	Logger  hclog.Logger        // Logger
 }
 
 func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -84,14 +84,17 @@ func (c *commandClient) CommandFunc() interface{} {
 }
 
 func (c *commandClient) CommandInfoFunc() interface{} {
-	spec, err := c.client.CommandInfoSpec(c.ctx, &empty.Empty{})
+	// TODO: set this command string
+	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: []string{"myplugin"}}
+	spec, err := c.client.CommandInfoSpec(c.ctx, req)
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.CommandInfo(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		// TODO: make this take the name
+		resp, err := c.client.CommandInfo(ctx, &vagrant_plugin_sdk.Command_CommandInfoReq{CommandString: []string{"myplugin"}})
 		if err != nil {
 			return nil, err
 		}
@@ -112,14 +115,21 @@ func (c *commandClient) CommandInfo() (*core.CommandInfo, error) {
 }
 
 func (c *commandClient) ExecuteFunc() interface{} {
-	spec, err := c.client.ExecuteSpec(c.ctx, &empty.Empty{})
+	// TODO:
+	req := &vagrant_plugin_sdk.Command_SpecReq{CommandString: []string{"myplugin"}}
+	spec, err := c.client.ExecuteSpec(c.ctx, req)
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Execute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		funcspecArgs := &vagrant_plugin_sdk.FuncSpec_Args{Args: args}
+		executeArgs := &vagrant_plugin_sdk.Command_ExecuteReq{
+			Args:          funcspecArgs,
+			CommandString: []string{"myplugin"},
+		}
+		resp, err := c.client.Execute(ctx, executeArgs)
 		if err != nil {
 			return -1, err
 		}
@@ -130,7 +140,7 @@ func (c *commandClient) ExecuteFunc() interface{} {
 
 func (c *commandClient) Execute(name string) (int64, error) {
 	f := c.ExecuteFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int64)(nil), f)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, c.Mappers, (*int64)(nil), f)
 	if err != nil {
 		return -1, err
 	}
@@ -143,7 +153,7 @@ func (c *commandClient) Execute(name string) (int64, error) {
 type commandServer struct {
 	*baseServer
 
-	Impl component.Command
+	Impl []component.Command
 	vagrant_plugin_sdk.UnimplementedCommandServiceServer
 }
 
@@ -161,6 +171,11 @@ func (s *commandServer) Configure(
 	return configure(s.Impl, req)
 }
 
+// TODO
+func FindCmd(cmds []component.Command, cmdName string) component.Command {
+	return cmds[0]
+}
+
 func (s *commandServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
@@ -170,22 +185,24 @@ func (s *commandServer) Documentation(
 
 func (s *commandServer) CommandInfoSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	req *vagrant_plugin_sdk.Command_SpecReq,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.CommandInfoFunc())
+	impl := FindCmd(s.Impl, req.CommandString[len(req.CommandString)-1])
+	return s.generateSpec(impl.CommandInfoFunc())
 }
 
 func (s *commandServer) CommandInfo(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
+	req *vagrant_plugin_sdk.Command_CommandInfoReq,
 ) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
+	impl := FindCmd(s.Impl, req.CommandString[len(req.CommandString)-1])
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.CommandInfoFunc(),
-		args.Args,
+		impl.CommandInfoFunc(),
+		nil,
 		(*core.CommandInfo)(nil),
 		argmapper.Typed(ctx),
 	)
@@ -202,22 +219,24 @@ func (s *commandServer) CommandInfo(
 
 func (s *commandServer) ExecuteSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	req *vagrant_plugin_sdk.Command_SpecReq,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.ExecuteFunc())
+	impl := FindCmd(s.Impl, req.CommandString[len(req.CommandString)-1])
+	return s.generateSpec(impl.ExecuteFunc())
 }
 
 func (s *commandServer) Execute(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
+	args *vagrant_plugin_sdk.Command_ExecuteReq,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
+	impl := FindCmd(s.Impl, args.CommandString[len(args.CommandString)-1])
 	raw, err := s.callUncheckedLocalDynamicFunc(
-		s.Impl.ExecuteFunc(),
-		args.Args,
+		impl.ExecuteFunc(),
+		args.Args.Args,
 		argmapper.Typed(ctx),
 	)
 

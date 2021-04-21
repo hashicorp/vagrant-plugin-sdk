@@ -934,10 +934,10 @@ type CommandServiceClient interface {
 	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
 	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
-	ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Execute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_ExecuteResp, error)
-	CommandInfoSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	CommandInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_CommandInfoResp, error)
+	ExecuteSpec(ctx context.Context, in *Command_SpecReq, opts ...grpc.CallOption) (*FuncSpec, error)
+	Execute(ctx context.Context, in *Command_ExecuteReq, opts ...grpc.CallOption) (*Command_ExecuteResp, error)
+	CommandInfoSpec(ctx context.Context, in *Command_SpecReq, opts ...grpc.CallOption) (*FuncSpec, error)
+	CommandInfo(ctx context.Context, in *Command_CommandInfoReq, opts ...grpc.CallOption) (*Command_CommandInfoResp, error)
 }
 
 type commandServiceClient struct {
@@ -975,7 +975,7 @@ func (c *commandServiceClient) Documentation(ctx context.Context, in *empty.Empt
 	return out, nil
 }
 
-func (c *commandServiceClient) ExecuteSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *commandServiceClient) ExecuteSpec(ctx context.Context, in *Command_SpecReq, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/ExecuteSpec", in, out, opts...)
 	if err != nil {
@@ -984,7 +984,7 @@ func (c *commandServiceClient) ExecuteSpec(ctx context.Context, in *empty.Empty,
 	return out, nil
 }
 
-func (c *commandServiceClient) Execute(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_ExecuteResp, error) {
+func (c *commandServiceClient) Execute(ctx context.Context, in *Command_ExecuteReq, opts ...grpc.CallOption) (*Command_ExecuteResp, error) {
 	out := new(Command_ExecuteResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/Execute", in, out, opts...)
 	if err != nil {
@@ -993,7 +993,7 @@ func (c *commandServiceClient) Execute(ctx context.Context, in *FuncSpec_Args, o
 	return out, nil
 }
 
-func (c *commandServiceClient) CommandInfoSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *commandServiceClient) CommandInfoSpec(ctx context.Context, in *Command_SpecReq, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/CommandInfoSpec", in, out, opts...)
 	if err != nil {
@@ -1002,7 +1002,7 @@ func (c *commandServiceClient) CommandInfoSpec(ctx context.Context, in *empty.Em
 	return out, nil
 }
 
-func (c *commandServiceClient) CommandInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_CommandInfoResp, error) {
+func (c *commandServiceClient) CommandInfo(ctx context.Context, in *Command_CommandInfoReq, opts ...grpc.CallOption) (*Command_CommandInfoResp, error) {
 	out := new(Command_CommandInfoResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/CommandInfo", in, out, opts...)
 	if err != nil {
@@ -1018,10 +1018,10 @@ type CommandServiceServer interface {
 	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
 	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
 	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
-	ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error)
-	CommandInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	CommandInfo(context.Context, *FuncSpec_Args) (*Command_CommandInfoResp, error)
+	ExecuteSpec(context.Context, *Command_SpecReq) (*FuncSpec, error)
+	Execute(context.Context, *Command_ExecuteReq) (*Command_ExecuteResp, error)
+	CommandInfoSpec(context.Context, *Command_SpecReq) (*FuncSpec, error)
+	CommandInfo(context.Context, *Command_CommandInfoReq) (*Command_CommandInfoResp, error)
 	mustEmbedUnimplementedCommandServiceServer()
 }
 
@@ -1038,16 +1038,16 @@ func (UnimplementedCommandServiceServer) Configure(context.Context, *Config_Conf
 func (UnimplementedCommandServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
-func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+func (UnimplementedCommandServiceServer) ExecuteSpec(context.Context, *Command_SpecReq) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteSpec not implemented")
 }
-func (UnimplementedCommandServiceServer) Execute(context.Context, *FuncSpec_Args) (*Command_ExecuteResp, error) {
+func (UnimplementedCommandServiceServer) Execute(context.Context, *Command_ExecuteReq) (*Command_ExecuteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
 }
-func (UnimplementedCommandServiceServer) CommandInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+func (UnimplementedCommandServiceServer) CommandInfoSpec(context.Context, *Command_SpecReq) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CommandInfoSpec not implemented")
 }
-func (UnimplementedCommandServiceServer) CommandInfo(context.Context, *FuncSpec_Args) (*Command_CommandInfoResp, error) {
+func (UnimplementedCommandServiceServer) CommandInfo(context.Context, *Command_CommandInfoReq) (*Command_CommandInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CommandInfo not implemented")
 }
 func (UnimplementedCommandServiceServer) mustEmbedUnimplementedCommandServiceServer() {}
@@ -1118,7 +1118,7 @@ func _CommandService_Documentation_Handler(srv interface{}, ctx context.Context,
 }
 
 func _CommandService_ExecuteSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(Command_SpecReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1130,13 +1130,13 @@ func _CommandService_ExecuteSpec_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/ExecuteSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).ExecuteSpec(ctx, req.(*empty.Empty))
+		return srv.(CommandServiceServer).ExecuteSpec(ctx, req.(*Command_SpecReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CommandService_Execute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
+	in := new(Command_ExecuteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1148,13 +1148,13 @@ func _CommandService_Execute_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/Execute",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).Execute(ctx, req.(*FuncSpec_Args))
+		return srv.(CommandServiceServer).Execute(ctx, req.(*Command_ExecuteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CommandService_CommandInfoSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(Command_SpecReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1166,13 +1166,13 @@ func _CommandService_CommandInfoSpec_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/CommandInfoSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).CommandInfoSpec(ctx, req.(*empty.Empty))
+		return srv.(CommandServiceServer).CommandInfoSpec(ctx, req.(*Command_SpecReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CommandService_CommandInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
+	in := new(Command_CommandInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1184,7 +1184,7 @@ func _CommandService_CommandInfo_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.CommandService/CommandInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandServiceServer).CommandInfo(ctx, req.(*FuncSpec_Args))
+		return srv.(CommandServiceServer).CommandInfo(ctx, req.(*Command_CommandInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
