@@ -18,7 +18,13 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-type Machine struct {
+type TargetPlugin struct {
+	plugin.NetRPCUnsupportedPlugin
+
+	Impl core.Target
+}
+
+type Target struct {
 	c          *MachineClient
 	ResourceID string
 	ServerAddr string

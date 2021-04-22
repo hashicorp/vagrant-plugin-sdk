@@ -22,12 +22,12 @@ type MachineState struct {
 
 type Machine interface {
 	// Attributes
-	GetName() (name string, err error)
+	Name() (name string, err error)
 	SetName(value string) (err error)
-	GetID() (id string, err error)
+	ID() (id string, err error)
 	SetID(value string) (err error)
 	Box() (b Box, err error)
-	Datadir() (d *datadir.Machine, err error)
+	DataDir() (d *datadir.Target, err error)
 	LocalDataPath() (p path.Path, err error) // TODO(spox): difference from data dir?
 	Provider() (p Provider, err error)
 	VagrantfileName() (name string, err error)

@@ -3,7 +3,9 @@ package protomappers
 import (
 	"context"
 	"io"
-	"time"
+
+	//	"strconv"
+	//	"time"
 
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-hclog"
@@ -12,11 +14,11 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
-	"github.com/hashicorp/vagrant-plugin-sdk/multistep"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -28,28 +30,30 @@ var All = []interface{}{
 	JobInfoProto,
 	DatadirBasis,
 	DatadirProject,
-	DatadirMachine,
+	DatadirTarget,
 	DatadirComponent,
 	DatadirBasisProto,
 	DatadirProjectProto,
-	DatadirMachineProto,
+	DatadirTargetProto,
 	DatadirComponentProto,
 	Logger,
 	LoggerProto,
 	TerminalUI,
 	TerminalUIProto,
-	LabelSet,
-	LabelSetProto,
+	MetadataSet,
+	MetadataSetProto,
 	StateBag,
 	StateBagProto,
-	Machine,
+	//	Machine,
 	Flags,
 	FlagsProto,
 	MapToProto,
 	ProtoToMap,
-	Project,
 	CommandInfo,
 	CommandInfoProto,
+	StateBag,
+	StateBagProto,
+	//	Project,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -141,9 +145,9 @@ func DatadirProject(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Pro
 	return &datadir.Project{Dir: dir}
 }
 
-func DatadirMachine(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Machine {
+func DatadirTarget(input *vagrant_plugin_sdk.Args_DataDir_Target) *datadir.Target {
 	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
-	return &datadir.Machine{Dir: dir}
+	return &datadir.Target{Dir: dir}
 }
 
 func DatadirComponent(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Component {
@@ -169,8 +173,8 @@ func DatadirProjectProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDi
 	}
 }
 
-func DatadirMachineProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Machine {
-	return &vagrant_plugin_sdk.Args_DataDir_Machine{
+func DatadirTargetProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Target {
+	return &vagrant_plugin_sdk.Args_DataDir_Target{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
 		TempDir:  input.TempDir().String(),
@@ -178,7 +182,7 @@ func DatadirMachineProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDi
 	}
 }
 
-func DatadirComponentProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Component {
+func DatadirComponentProto(input *datadir.Component) *vagrant_plugin_sdk.Args_DataDir_Component {
 	return &vagrant_plugin_sdk.Args_DataDir_Component{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
@@ -261,113 +265,168 @@ func TerminalUIProto(
 }
 
 // Machine maps *vagrant_plugin_sdk.Args_Machine to a core.Machine
-func Machine(
-	ctx context.Context,
-	input *vagrant_plugin_sdk.Args_Machine,
-	log hclog.Logger,
-	internal *pluginargs.Internal,
-) (*plugincore.Machine, error) {
-	p := &plugincore.MachinePlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-	}
+// func Machine(
+// 	ctx context.Context,
+// 	input *vagrant_plugin_sdk.Args_Machine,
+// 	log hclog.Logger,
+// 	internal *pluginargs.Internal,
+// ) (*plugincore.MachineClient, error) {
+// 	p := &plugincore.MachinePlugin{
+// 		Mappers: internal.Mappers,
+// 		Logger:  log,
+// 	}
 
-	timeout := 5 * time.Second
-	// Create a new cancellation context so we can cancel in the case of an error
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
+// 	id, err := strconv.Atoi(input.ServerAddr)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	conn, err := internal.Broker.Dial(uint32(id))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	internal.Cleanup.Do(func() { conn.Close() })
 
-	// Connect to the local server
-	conn, err := grpc.DialContext(ctx, input.ServerAddr,
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		return nil, err
-	}
-	internal.Cleanup.Do(func() { conn.Close() })
+// 	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
-	machineClient, ok := mc.(*plugincore.MachineClient)
-	if !ok {
-		panic("failed to create machine client")
-	}
+// 	if closer, ok := client.(io.Closer); ok {
+// 		internal.Cleanup.Do(func() { closer.Close() })
+// 	}
 
-	return plugincore.NewMachine(machineClient, input.ResourceId), nil
-}
+// 	return client.(*plugincore.MachineClient).ForResource(input.ResourceId), nil
+// }
 
 // Machine maps component.Machine to a *vagrant_plugin_sdk.Args_Machine
-func MachineProto(
-	machine *plugincore.Machine,
-	log hclog.Logger,
-	internal *pluginargs.Internal,
-) (*vagrant_plugin_sdk.Args_Machine, error) {
-	return &vagrant_plugin_sdk.Args_Machine{
-		ResourceId: machine.ResourceID,
-		ServerAddr: machine.ServerAddr,
-	}, nil
-}
+// func MachineProto(
+// 	machine *plugincore.MachineClient,
+// 	log hclog.Logger,
+// 	internal *pluginargs.Internal,
+// ) (*vagrant_plugin_sdk.Args_Machine, error) {
+// 	p := &plugincore.MachinePlugin{
+// 		Impl:    machine,
+// 		Mappers: internal.Mappers,
+// 		Logger:  log}
+
+// 	id := internal.Broker.NextId()
+
+// 	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
+// 		server := plugin.DefaultGRPCServer(opts)
+// 		if err := p.GRPCServer(internal.Broker, server); err != nil {
+// 			panic(err)
+// 		}
+// 		return server
+// 	})
+
+// 	return &vagrant_plugin_sdk.Args_Machine{
+// 		ResourceId: machine.ResourceID,
+// 		ServerAddr: strconv.Itoa(int(id)),
+// 	}, nil
+// }
 
 // Project maps *vagrant_plugin_sdk.Args_Project to a core.Project
-func Project(
+// func Project(
+// 	ctx context.Context,
+// 	input *vagrant_plugin_sdk.Args_Project,
+// 	log hclog.Logger,
+// 	internal *pluginargs.Internal,
+// ) (*plugincore.Project, error) {
+// 	p := &plugincore.ProjectPlugin{
+// 		Mappers: internal.Mappers,
+// 		Logger:  log,
+// 	}
+
+// 	timeout := 5 * time.Second
+// 	// Create a new cancellation context so we can cancel in the case of an error
+// 	ctx, cancel := context.WithTimeout(ctx, timeout)
+// 	defer cancel()
+
+// 	// Connect to the local server
+// 	conn, err := grpc.DialContext(ctx, input.ServerAddr,
+// 		grpc.WithBlock(),
+// 		grpc.WithInsecure(),
+// 	)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	internal.Cleanup.Do(func() { conn.Close() })
+
+// 	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
+// 	projectClient, ok := mc.(*plugincore.ProjectClient)
+// 	if !ok {
+// 		panic("failed to create machine client")
+// 	}
+
+// 	// TODO: decode input project into a project
+// 	result := plugincore.NewProject(projectClient)
+// 	mapstructure.Decode(input, &result)
+
+// 	return result, nil
+// }
+
+func MetadataSet(input *vagrant_plugin_sdk.Args_MetadataSet) *component.MetadataSet {
+	return &component.MetadataSet{
+		Metadata: input.Metadata,
+	}
+}
+
+func MetadataSetProto(meta *component.MetadataSet) *vagrant_plugin_sdk.Args_MetadataSet {
+	return &vagrant_plugin_sdk.Args_MetadataSet{Metadata: meta.Metadata}
+}
+
+// StateBag maps StateBag proto to core.StateBag.
+func StateBag(
 	ctx context.Context,
-	input *vagrant_plugin_sdk.Args_Project,
+	input *vagrant_plugin_sdk.Args_StateBag,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) (*plugincore.Project, error) {
-	p := &plugincore.ProjectPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
+) (core.StateBag, error) {
+	// Create our plugin
+	p := &plugincore.StateBagPlugin{
+		Logger: log,
 	}
 
-	timeout := 5 * time.Second
-	// Create a new cancellation context so we can cancel in the case of an error
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	// Connect to the local server
-	conn, err := grpc.DialContext(ctx, input.ServerAddr,
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
+	conn, err := internal.Broker.Dial(input.StreamId)
 	if err != nil {
 		return nil, err
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
-	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
-	projectClient, ok := mc.(*plugincore.ProjectClient)
-	if !ok {
-		panic("failed to create machine client")
+	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	if err != nil {
+		return nil, err
 	}
 
-	// TODO: decode input project into a project
-	result := plugincore.NewProject(projectClient)
-	mapstructure.Decode(input, &result)
-
-	return result, nil
-}
-
-func LabelSet(input *vagrant_plugin_sdk.Args_LabelSet) *component.LabelSet {
-	return &component.LabelSet{
-		Labels: input.Labels,
+	if closer, ok := client.(io.Closer); ok {
+		internal.Cleanup.Do(func() { closer.Close() })
 	}
+
+	return client.(core.StateBag), nil
 }
 
-func LabelSetProto(labels *component.LabelSet) *vagrant_plugin_sdk.Args_LabelSet {
-	return &vagrant_plugin_sdk.Args_LabelSet{Labels: labels.Labels}
-}
+func StateBagProto(
+	bag core.StateBag,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) *vagrant_plugin_sdk.Args_StateBag {
+	// Create our plugin
+	p := &plugincore.StateBagPlugin{
+		Impl:   bag,
+		Logger: log,
+	}
 
-// StateBag maps StateBag proto to multistep.StateBag.
-func StateBag(input *vagrant_plugin_sdk.Args_StateBag) (*multistep.BasicStateBag, error) {
-	var result multistep.BasicStateBag
-	return &result, mapstructure.Decode(input, &result)
-}
+	id := internal.Broker.NextId()
 
-// StateBag
-func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_StateBag, error) {
-	var result vagrant_plugin_sdk.Args_StateBag
-	return &result, mapstructure.Decode(input, &result)
+	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
+		server := plugin.DefaultGRPCServer(opts)
+		if err := p.GRPCServer(internal.Broker, server); err != nil {
+			panic(err)
+		}
+		return server
+	})
+
+	return &vagrant_plugin_sdk.Args_StateBag{StreamId: id}
 }
 
 func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {

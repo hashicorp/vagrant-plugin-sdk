@@ -21,35 +21,83 @@ import "protostructure.proto";
 message Args {
   message DataDir {
     message Basis {
-      string cache_dir = 1;
-      string data_dir = 2;
-      string root_dir = 3;
+      string root_dir = 1;
+      string cache_dir = 2;
+      string data_dir = 3;
       string temp_dir = 4;
     }
 
     message Project {
-      string cache_dir = 1;
-      string data_dir = 2;
-      string root_dir = 3;
+      string root_dir = 1;
+      string cache_dir = 2;
+      string data_dir = 3;
       string temp_dir = 4;
     }
 
-    message Machine {
-      string cache_dir = 1;
-      string data_dir = 2;
-      string root_dir = 3;
+    message Target {
+      string root_dir = 1;
+      string cache_dir = 2;
+      string data_dir = 3;
       string temp_dir = 4;
     }
 
     message Component {
-      string cache_dir = 1;
-      string data_dir = 2;
-      string root_dir = 3;
+      string root_dir = 1;
+      string cache_dir = 2;
+      string data_dir = 3;
       string temp_dir = 4;
     }
   }
 
-  message MachineIndex {
+  message MetadataSet {
+    map<string, string> metadata = 1;
+  }
+
+  message TerminalUI {
+    uint32 stream_id = 1;
+  }
+
+  message Logger {
+    string name = 1;
+  }
+
+  message JobInfo {
+    bool local = 1;
+    string resource_id = 2;
+    enum ResourceType {
+      BASIS = 0;
+      PROJECT = 1;
+      TARGET = 2;
+    }
+    ResourceType resource_type = 3;
+    string id = 4;
+  }
+
+  message Basis {
+    uint32 stream_id = 1;
+  }
+
+  message Project {
+    uint32 stream_id = 1;
+  }
+
+  message Target {
+    uint32 stream_id = 1;
+  }
+
+  // TODO(spox): nix
+  message Machine {
+    uint32 stream_id = 1;
+  }
+
+  message StateBag {
+    uint32 stream_id = 1;
+  }
+}
+
+
+///////
+  message TargetIndex {
     message Entry {
       string id = 1;
       string local_data_path = 2;
@@ -59,7 +107,7 @@ message Args {
       string vagrantfile_name = 6;
       string vagrantfile_path = 7;
       string updated_at = 8; // TODO(spox): should we make this an int?
-      Options extra_data = 9;
+      map<string,string> extra_data = 9;
     }
   }
 
@@ -74,79 +122,6 @@ message Args {
     string directory = 4;
     map<string, string> metadata = 5;
     string metadata_url = 6;
-  }
-
-  message Project {
-    string cwd = 1;
-    string data_dir = 2;
-    string vagrantfile_name = 3;
-    TerminalUI ui = 4;
-    string home_path = 5;
-    string local_data_path = 6;
-    string tmp_path = 7;
-    string aliases_path = 8;
-    string boxes_path = 9;
-    string gems_path = 10;
-    string default_private_key_path = 11;
-    string server_addr = 12;
-  }
-
-  message Machine {
-    string resource_id = 1;
-    string server_addr = 2;
-  }
-
-  message Configuration {
-    message Vagrant {
-    }
-    message VM {
-    }
-    message Provider {
-    }
-
-  }
-
-  // LabelSet is a set of labels for anything that can be labelled, such
-  // as a deployment, build, etc.
-  message LabelSet {
-    map<string, string> labels = 1;
-  }
-
-  message Options {
-    LabelSet opt = 1;
-  }
-
-  message Vagrantfile {
-
-  }
-
-  // See component.JobInfo
-  message JobInfo {
-    bool local = 1;
-    string workspace = 2;
-    string id = 3;
-  }
-
-  // Logger is used to construct an logger for the plugin.
-  message Logger {
-    // name is the name of the logger
-    string name = 1;
-  }
-
-  // TerminalUI is used to construct the terminal.UI for the plugin.
-  message TerminalUI {
-    uint32 stream_id = 1;
-  }
-
-  message StateBag {
-    map<string, Value> data = 1;
-
-    message Value {
-      oneof value {
-        string text = 1;
-        google.protobuf.Any map = 2;
-      }
-    }
   }
 
   message MachineState {
@@ -195,7 +170,8 @@ message Args {
     bool basic_auth_only = 12;
     string codepage = 13;
   }
-}
+////////
+
 
 // FuncSpec describes a function and is used by the dependency-injection
 // framework to provide the function with the proper values.
@@ -444,6 +420,43 @@ message Map {
   }
 }
 
+/**
+ * Core plugin services
+ **/
+
+// Core State Bag //
+
+service StateBagService {
+  rpc Get(StateBag.GetRequest) returns (StateBag.GetResponse);
+  rpc GetOk(StateBag.GetRequest) returns (StateBag.GetOkResponse);
+  rpc Put(StateBag.PutRequest) returns (StateBag.PutResponse);
+  rpc Remove(StateBag.RemoveRequest) returns (StateBag.RemoveResponse);
+}
+
+message StateBag {
+  message GetRequest {
+    string key = 1;
+  }
+  message GetResponse {
+    string value = 1;
+  }
+  message GetOkResponse {
+    bool ok = 1;
+    string value = 2;
+  }
+  message PutRequest {
+    string key = 1;
+    string value = 2;
+  }
+  message PutResponse {}
+  message RemoveRequest{
+    string key = 1;
+  }
+  message RemoveResponse {}
+}
+
+
+
 // service CommunicatorService {
 //   rpc Match(Communicator.MatchRequest) returns (Communicator);
 // }
@@ -643,7 +656,7 @@ message Communicator {
   message ExecutionRequest {
     Args.Machine machine = 1;
     string command = 2;
-    Args.LabelSet options = 3;
+    Args.MetadataSet options = 3;
   }
 
   message ExecuteResp {
@@ -746,184 +759,196 @@ message Ref {
     string resource_id = 1;
   }
 
-  // Represents a Project (in vagrant-agogo), an Project (in vagrant-ruby)
-  message Project {
-    string project_id = 1;
+  // References a basis configuration (analogous to VAGRANT_HOME)
+  message Basis {
+    string resource_id = 1;
+    string path = 2;
+    string name = 3;
   }
 
-  // Machine references a machine.
-  message Machine {
+  // Represents a Project (in vagrant-agogo), an Environment (in vagrant-ruby)
+  message Project {
     string resource_id = 1;
+    string path = 2;
+    Ref.Basis basis = 3;
+    string name = 4;
+  }
+
+  // References a Target (in vagrant-ruby this is a Machine)
+  message Target {
+    string resource_id = 1;
+    Ref.Project project = 2;
+    string name = 3;
   }
 }
 
 /********************************************************************
 * Machine services
 ********************************************************************/
-service MachineService {
-  // Getters and Setters
-  rpc SetName(Machine.SetNameRequest) returns (Machine.SetNameResponse);
-  rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
-  rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
-  rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
-  rpc SetState(Machine.SetStateRequest) returns (Machine.SetStateResponse);
-  rpc GetState(Machine.GetStateRequest) returns (Machine.GetStateResponse);
-  rpc SetUUID(Machine.SetUUIDRequest) returns (Machine.SetUUIDResponse);
-  rpc GetUUID(Machine.GetUUIDRequest) returns (Machine.GetUUIDResponse);
+// service MachineService {
+//   // Getters and Setters
+//   rpc SetName(Machine.SetNameRequest) returns (Machine.SetNameResponse);
+//   rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
+//   rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
+//   rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
+//   rpc SetState(Machine.SetStateRequest) returns (Machine.SetStateResponse);
+//   rpc GetState(Machine.GetStateRequest) returns (Machine.GetStateResponse);
+//   rpc SetUUID(Machine.SetUUIDRequest) returns (Machine.SetUUIDResponse);
+//   rpc GetUUID(Machine.GetUUIDRequest) returns (Machine.GetUUIDResponse);
 
-  rpc Box(Machine.BoxRequest) returns (Machine.BoxResponse);
-  rpc Datadir(Machine.DatadirRequest) returns (Machine.DatadirResponse);
-  rpc LocalDataPath(Machine.LocalDataPathRequest) returns (Machine.LocalDataPathResponse);
-  rpc Provider(Machine.ProviderRequest) returns (Machine.ProviderResponse);
-  rpc VagrantfileName(Machine.VagrantfileNameRequest) returns (Machine.VagrantfileNameResponse);
-  rpc VagrantfilePath(Machine.VagrantfilePathRequest) returns (Machine.VagrantfilePathResponse);
-  rpc UpdatedAt(Machine.UpdatedAtRequest) returns (Machine.UpdatedAtResponse);
-  rpc UI(Machine.UIRequest) returns (Machine.UIResponse);
- }
-
-
-/**********************************************
- * Machine message used with machine service
- **********************************************/
-message Machine {
-  // SetName
-  message SetNameRequest {
-    Ref.Machine machine = 1;
-    string name = 2;
-  }
-
-  message SetNameResponse {}
-
-  // GetName
-  message GetNameRequest {
-    Ref.Machine machine = 1;
-  }
-
-  message GetNameResponse {
-    string name = 1;
-  }
-
-  // SetID
-  message SetIDRequest {
-    Ref.Machine machine = 1;
-    string id = 2;
-  }
-
-  message SetIDResponse {}
-
-  // GetID
-  message GetIDRequest {
-    Ref.Machine machine = 1;
-  }
-
-  message GetIDResponse {
-    string id = 1;
-  }
-
-  message SetStateRequest {
-    Ref.Machine machine = 1;
-    Args.MachineState state = 2;
-  }
-
-  message SetStateResponse {}
+//   rpc Box(Machine.BoxRequest) returns (Machine.BoxResponse);
+//   rpc Datadir(Machine.DatadirRequest) returns (Machine.DatadirResponse);
+//   rpc LocalDataPath(Machine.LocalDataPathRequest) returns (Machine.LocalDataPathResponse);
+//   rpc Provider(Machine.ProviderRequest) returns (Machine.ProviderResponse);
+//   rpc VagrantfileName(Machine.VagrantfileNameRequest) returns (Machine.VagrantfileNameResponse);
+//   rpc VagrantfilePath(Machine.VagrantfilePathRequest) returns (Machine.VagrantfilePathResponse);
+//   rpc UpdatedAt(Machine.UpdatedAtRequest) returns (Machine.UpdatedAtResponse);
+//   rpc UI(Machine.UIRequest) returns (Machine.UIResponse);
+//  }
 
 
-  message GetStateRequest {
-    Ref.Machine machine = 1;
-  }
+// /**********************************************
+//  * Machine message used with machine service
+//  **********************************************/
+// message Machine {
+//   // SetName
+//   message SetNameRequest {
+//     Ref.Machine machine = 1;
+//     string name = 2;
+//   }
 
-  message GetStateResponse {
-    Args.MachineState state = 1;
-  }
+//   message SetNameResponse {}
+
+//   // GetName
+//   message GetNameRequest {
+//     Ref.Machine machine = 1;
+//   }
+
+//   message GetNameResponse {
+//     string name = 1;
+//   }
+
+//   // SetID
+//   message SetIDRequest {
+//     Ref.Machine machine = 1;
+//     string id = 2;
+//   }
+
+//   message SetIDResponse {}
+
+//   // GetID
+//   message GetIDRequest {
+//     Ref.Machine machine = 1;
+//   }
+
+//   message GetIDResponse {
+//     string id = 1;
+//   }
+
+//   message SetStateRequest {
+//     Ref.Machine machine = 1;
+//     Args.MachineState state = 2;
+//   }
+
+//   message SetStateResponse {}
 
 
-  message GetUUIDRequest {
-    Ref.Machine machine = 1;
-  }
+//   message GetStateRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  message GetUUIDResponse {
-    string uuid = 1;
-  }
+//   message GetStateResponse {
+//     Args.MachineState state = 1;
+//   }
 
-  message SetUUIDRequest {
-    Ref.Machine machine = 1;
-    string uuid = 2;
-  }
 
-  message SetUUIDResponse {}
+//   message GetUUIDRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // Box
-  message BoxRequest {
-    Ref.Machine machine = 1;
-  }
+//   message GetUUIDResponse {
+//     string uuid = 1;
+//   }
 
-  // TODO: this should return a Ref.Box
-  message BoxResponse {
-    Args.Box box = 1;
-  }
+//   message SetUUIDRequest {
+//     Ref.Machine machine = 1;
+//     string uuid = 2;
+//   }
 
-  // Datadir
-  message DatadirRequest {
-    Ref.Machine machine = 1;
-  }
+//   message SetUUIDResponse {}
 
-  message DatadirResponse {
-    Args.DataDir.Machine datadir = 1;
-  }
+//   // Box
+//   message BoxRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // LocalDataPath
-  message LocalDataPathRequest {
-    Ref.Machine machine = 1;
-  }
+//   // TODO: this should return a Ref.Box
+//   message BoxResponse {
+//     Args.Box box = 1;
+//   }
 
-  message LocalDataPathResponse {
-    string path = 1;
-  }
+//   // Datadir
+//   message DatadirRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // Provider
-  message ProviderRequest {
-    Ref.Machine machine = 1;
-  }
+//   message DatadirResponse {
+//     Args.DataDir.Machine datadir = 1;
+//   }
 
-  message ProviderResponse {
-    string provider = 1;
-  }
+//   // LocalDataPath
+//   message LocalDataPathRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // VagrantfileName
-  message VagrantfileNameRequest {
-    Ref.Machine machine = 1;
-  }
+//   message LocalDataPathResponse {
+//     string path = 1;
+//   }
 
-  message VagrantfileNameResponse {
-    string name = 1;
-  }
+//   // Provider
+//   message ProviderRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // VagrantfilePath
-  message VagrantfilePathRequest {
-    Ref.Machine machine = 1;
-  }
+//   message ProviderResponse {
+//     string provider = 1;
+//   }
 
-  message VagrantfilePathResponse {
-    string path = 1;
-  }
+//   // VagrantfileName
+//   message VagrantfileNameRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  // UpdatedAt
-  message UpdatedAtRequest {
-    Ref.Machine machine = 1;
-  }
+//   message VagrantfileNameResponse {
+//     string name = 1;
+//   }
 
-  message UpdatedAtResponse {
-    google.protobuf.Timestamp updated_at = 1;
-  }
+//   // VagrantfilePath
+//   message VagrantfilePathRequest {
+//     Ref.Machine machine = 1;
+//   }
 
-  message UIRequest {
-    Ref.Machine machine = 1;
-  }
+//   message VagrantfilePathResponse {
+//     string path = 1;
+//   }
 
-  message UIResponse {
-    Args.TerminalUI ui = 1;
-  }
-}
+//   // UpdatedAt
+//   message UpdatedAtRequest {
+//     Ref.Machine machine = 1;
+//   }
+
+//   message UpdatedAtResponse {
+//     google.protobuf.Timestamp updated_at = 1;
+//   }
+
+//   message UIRequest {
+//     Ref.Machine machine = 1;
+//   }
+
+//   message UIResponse {
+//     Args.TerminalUI ui = 1;
+//   }
+// }
 
 /********************************************************************
 * Project services

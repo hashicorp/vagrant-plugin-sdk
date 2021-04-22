@@ -136,8 +136,8 @@ type Provisioner interface {
 type SyncedFolder interface {
 }
 
-type LabelSet struct {
-	Labels map[string]string
+type MetadataSet struct {
+	Metadata map[string]string
 }
 
 // Authenticator is responsible for authenticating different types of plugins.
