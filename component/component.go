@@ -10,6 +10,10 @@
 // framework (see internal/mapper) to call these functions.
 package component
 
+import (
+	"github.com/DavidGamba/go-getoptions/option"
+)
+
 //go:generate stringer -type=Type -linecomment
 //go:generate mockery --all
 
@@ -51,11 +55,19 @@ var TypeMap = map[Type]interface{}{
 	SyncedFolderType:  (*SyncedFolder)(nil),
 }
 
+type CommandInfo struct {
+	Name        string
+	Help        string
+	Synopsis    string
+	Flags       []*option.Option
+	Subcommands []*CommandInfo
+}
+
 type Command interface {
 	// Execute a command
 	ExecuteFunc([]string) interface{}
 	// Retruns command info
-	CommandInfoFunc([]string) interface{}
+	CommandInfoFunc() interface{}
 }
 
 type Config interface {
