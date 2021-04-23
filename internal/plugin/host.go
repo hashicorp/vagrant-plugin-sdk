@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
@@ -103,6 +104,33 @@ func (c *hostClient) Detect() (bool, error) {
 	return raw.(bool), nil
 }
 
+func (c *hostClient) HasCapability(capName string) bool {
+	resp, err := c.client.HasCapability(
+		c.ctx,
+		&vagrant_plugin_sdk.Host_Capability_NamedRequest{
+			Name: capName,
+		},
+	)
+	if err != nil {
+		return false
+	}
+	return resp.HasCapability
+}
+
+func (c *hostClient) Capability(capName string, args ...argmapper.Arg) (interface{}, error) {
+	resp, err := c.client.Capability(
+		c.ctx,
+		&vagrant_plugin_sdk.Host_Capability_NamedRequest{
+			Name: capName,
+			// TODO: Insert args here
+			// FuncArgs: args,
+		},
+	)
+
+	// TODO: do something to result here?
+	return resp.Result, err
+}
+
 // hostServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type hostServer struct {
@@ -158,6 +186,27 @@ func (s *hostServer) Detect(
 	}
 
 	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
+}
+
+func (s *hostServer) HasCapability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
+	result := s.Impl.HasCapability(args.Name)
+	return &vagrant_plugin_sdk.Host_Capability_CheckResp{HasCapability: result}, nil
+}
+
+func (s *hostServer) Capability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
+	// TODO: pass this args
+	result, err := s.Impl.Capability(args.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Host_Capability_Resp{Result: result.(*anypb.Any)}, nil
 }
 
 var (
