@@ -7,5 +7,8 @@ package core
 type Host interface {
 	// Config() interface{}
 	// Documentation() (*docs.Documentation, error)
-	Detect() (detected bool, err error)
+	Detect() (detected bool)
+	HasCapability(name string) bool
+	// TODO: This should return something
+	Capability(name string)
 }

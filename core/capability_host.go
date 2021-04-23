@@ -1,5 +1,6 @@
 package core
 
+// TODO: chain of parents for "inheritance" of capabilities
 // TODO: this map should have a bunch of argmapper functions
 type CapabilityHost struct {
 	capabilities map[string]func()
