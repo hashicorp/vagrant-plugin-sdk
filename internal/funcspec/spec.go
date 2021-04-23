@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	plugincore "github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -100,5 +100,5 @@ var (
 	stringType       = reflect.TypeOf((*string)(nil)).Elem()
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
-	commandInfoType  = reflect.TypeOf((**plugincore.CommandInfo)(nil)).Elem()
+	commandInfoType  = reflect.TypeOf((**component.CommandInfo)(nil)).Elem()
 )
