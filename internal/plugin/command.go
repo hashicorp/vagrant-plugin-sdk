@@ -109,7 +109,6 @@ func (c *commandClient) CommandInfo() (*component.CommandInfo, error) {
 		return nil, err
 	}
 
-	// commandInfo, err := protomappers.CommandInfo(raw.(*vagrant_plugin_sdk.Command_CommandInfoResp).CommandInfo)
 	return raw.(*component.CommandInfo), err
 }
 
