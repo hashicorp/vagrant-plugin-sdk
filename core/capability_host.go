@@ -39,6 +39,9 @@ func (c *CapabilityHost) Capability(name string, args ...argmapper.Arg) (interfa
 }
 
 func (c *CapabilityHost) RegisterCapability(name string, f func() interface{}) error {
+	if c.capabilities == nil {
+		c.capabilities = make(map[string]func() interface{})
+	}
 	c.capabilities[name] = f
 	return nil
 }

@@ -703,6 +703,7 @@ service HostService {
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc HasCapability(Host.Capability.NamedRequest) returns (Host.Capability.CheckResp);
   rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
+  rpc InitializeCapabilities(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 message Host {

@@ -2638,6 +2638,7 @@ type HostServiceClient interface {
 	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	HasCapability(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*Host_Capability_CheckResp, error)
 	Capability(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*Host_Capability_Resp, error)
+	InitializeCapabilities(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type hostServiceClient struct {
@@ -2711,6 +2712,15 @@ func (c *hostServiceClient) Capability(ctx context.Context, in *Host_Capability_
 	return out, nil
 }
 
+func (c *hostServiceClient) InitializeCapabilities(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/InitializeCapabilities", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HostServiceServer is the server API for HostService service.
 // All implementations must embed UnimplementedHostServiceServer
 // for forward compatibility
@@ -2722,6 +2732,7 @@ type HostServiceServer interface {
 	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	HasCapability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_CheckResp, error)
 	Capability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_Resp, error)
+	InitializeCapabilities(context.Context, *empty.Empty) (*empty.Empty, error)
 	mustEmbedUnimplementedHostServiceServer()
 }
 
@@ -2749,6 +2760,9 @@ func (UnimplementedHostServiceServer) HasCapability(context.Context, *Host_Capab
 }
 func (UnimplementedHostServiceServer) Capability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Capability not implemented")
+}
+func (UnimplementedHostServiceServer) InitializeCapabilities(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitializeCapabilities not implemented")
 }
 func (UnimplementedHostServiceServer) mustEmbedUnimplementedHostServiceServer() {}
 
@@ -2889,6 +2903,24 @@ func _HostService_Capability_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HostService_InitializeCapabilities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).InitializeCapabilities(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/InitializeCapabilities",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).InitializeCapabilities(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _HostService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.HostService",
 	HandlerType: (*HostServiceServer)(nil),
@@ -2920,6 +2952,10 @@ var _HostService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Capability",
 			Handler:    _HostService_Capability_Handler,
+		},
+		{
+			MethodName: "InitializeCapabilities",
+			Handler:    _HostService_InitializeCapabilities_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

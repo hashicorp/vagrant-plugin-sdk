@@ -13,4 +13,5 @@ type Host interface {
 	HasCapability(name string) bool
 	// TODO: This should return something
 	Capability(name string, args ...argmapper.Arg) (interface{}, error)
+	InitializeCapabilities() error
 }

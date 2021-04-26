@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
@@ -131,6 +132,11 @@ func (c *hostClient) Capability(capName string, args ...argmapper.Arg) (interfac
 	return resp.Result, err
 }
 
+func (c *hostClient) InitializeCapabilities() (err error) {
+	_, err = c.client.InitializeCapabilities(c.ctx, &empty.Empty{})
+	return
+}
+
 // hostServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type hostServer struct {
@@ -201,12 +207,24 @@ func (s *hostServer) Capability(
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
 	// TODO: pass this args
+	hasCap := s.Impl.HasCapability(args.Name)
+	if hasCap == false {
+		return nil, errors.New("Capability " + args.Name + " not found")
+	}
 	result, err := s.Impl.Capability(args.Name)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Host_Capability_Resp{Result: result.(*anypb.Any)}, nil
+}
+
+func (s *hostServer) InitializeCapabilities(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*empty.Empty, error) {
+	err := s.Impl.InitializeCapabilities()
+	return &empty.Empty{}, err
 }
 
 var (

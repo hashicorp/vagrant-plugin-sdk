@@ -113,6 +113,7 @@ type Host interface {
 	HasCapability(capName string) bool
 	// Run a capability
 	Capability(capName string, args ...argmapper.Arg) (interface{}, error)
+	InitializeCapabilities() error
 }
 
 type Provider interface {
