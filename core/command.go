@@ -1,16 +1,10 @@
 package core
 
-import "github.com/DavidGamba/go-getoptions/option"
-
-type CommandInfo struct {
-	Name        string
-	Help        string
-	Synopsis    string
-	Flags       []*option.Option
-	Subcommands []*CommandInfo
-}
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
+)
 
 type Command interface {
 	Execute([]string) (int64, error)
-	CommandInfo([]string) (*CommandInfo, error)
+	CommandInfo() (*component.CommandInfo, error)
 }

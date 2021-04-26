@@ -12,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
@@ -371,10 +370,10 @@ func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_Sta
 	return &result, mapstructure.Decode(input, &result)
 }
 
-func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*core.CommandInfo, error) {
+func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {
 	flags, err := Flags(input.Flags)
 
-	subcommands := []*core.CommandInfo{}
+	subcommands := []*component.CommandInfo{}
 	for _, cmd := range input.Subcommands {
 		subcommand, err := CommandInfo(cmd)
 		if err != nil {
@@ -383,7 +382,7 @@ func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*core.CommandIn
 		subcommands = append(subcommands, subcommand)
 	}
 
-	result := &core.CommandInfo{
+	result := &component.CommandInfo{
 		Flags:       flags,
 		Name:        input.Name,
 		Help:        input.Help,
@@ -393,7 +392,7 @@ func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*core.CommandIn
 	return result, err
 }
 
-func CommandInfoProto(input *core.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfo, error) {
+func CommandInfoProto(input *component.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfo, error) {
 	var result vagrant_plugin_sdk.Command_CommandInfo
 	err := mapstructure.Decode(input, &result)
 	if err != nil {
