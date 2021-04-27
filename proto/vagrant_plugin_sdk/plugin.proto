@@ -525,14 +525,10 @@ service CommandService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-  rpc SynopsisSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Synopsis(FuncSpec.Args) returns (Command.SynopsisResp);
-  rpc HelpSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Help(FuncSpec.Args) returns (Command.HelpResp);
-  rpc FlagsSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Flags(FuncSpec.Args) returns (Command.FlagsResp);
-  rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Execute(FuncSpec.Args) returns (Command.ExecuteResp);
+  rpc ExecuteSpec(Command.ExecuteSpecReq) returns (FuncSpec);
+  rpc Execute(Command.ExecuteReq) returns (Command.ExecuteResp);
+  rpc CommandInfoSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc CommandInfo(FuncSpec.Args) returns (Command.CommandInfoResp);
 }
 
 message Command {
@@ -549,17 +545,29 @@ message Command {
     }
   }
 
-  message HelpResp {
-    string help = 1;
+  message CommandInfo {
+    string name = 1;
+    string help = 2;
+    string synopsis = 3;
+    repeated Flag flags = 4;
+    repeated CommandInfo subcommands = 5;
   }
-  message SynopsisResp {
-    string synopsis = 1;
+
+  message CommandInfoResp {
+    CommandInfo command_info = 1;
   }
-  message FlagsResp {
-    repeated Flag flags = 1;
-  }
+
   message ExecuteResp {
     int64 exit_code = 1;
+  }
+
+  message ExecuteReq {
+    FuncSpec.Args spec = 1;
+    repeated string command_args = 2;
+  }
+
+  message ExecuteSpecReq {
+    repeated string command_args = 1;
   }
 
   message Arguments {

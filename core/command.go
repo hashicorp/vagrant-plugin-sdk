@@ -1,10 +1,10 @@
 package core
 
-import "github.com/DavidGamba/go-getoptions/option"
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
+)
 
 type Command interface {
-	Help() (string, error)
-	Synopsis() (string, error)
-	Flags() ([]*option.Option, error)
-	Execute(name string) (int64, error)
+	Execute([]string) (int64, error)
+	CommandInfo() (*component.CommandInfo, error)
 }

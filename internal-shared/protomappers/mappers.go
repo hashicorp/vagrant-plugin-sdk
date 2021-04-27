@@ -48,6 +48,8 @@ var All = []interface{}{
 	MapToProto,
 	ProtoToMap,
 	Project,
+	CommandInfo,
+	CommandInfoProto,
 }
 
 // TODO(spox): make sure these new mappers actually work
@@ -366,4 +368,45 @@ func StateBag(input *vagrant_plugin_sdk.Args_StateBag) (*multistep.BasicStateBag
 func StateBagProto(input *multistep.BasicStateBag) (*vagrant_plugin_sdk.Args_StateBag, error) {
 	var result vagrant_plugin_sdk.Args_StateBag
 	return &result, mapstructure.Decode(input, &result)
+}
+
+func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {
+	flags, err := Flags(input.Flags)
+
+	subcommands := []*component.CommandInfo{}
+	for _, cmd := range input.Subcommands {
+		subcommand, err := CommandInfo(cmd)
+		if err != nil {
+			return nil, err
+		}
+		subcommands = append(subcommands, subcommand)
+	}
+
+	result := &component.CommandInfo{
+		Flags:       flags,
+		Name:        input.Name,
+		Help:        input.Help,
+		Synopsis:    input.Synopsis,
+		Subcommands: subcommands,
+	}
+	return result, err
+}
+
+func CommandInfoProto(input *component.CommandInfo) (*vagrant_plugin_sdk.Command_CommandInfo, error) {
+	var result vagrant_plugin_sdk.Command_CommandInfo
+	err := mapstructure.Decode(input, &result)
+	if err != nil {
+		return nil, err
+	}
+	result.Flags, err = FlagsProto(input.Flags)
+	subcmds := []*vagrant_plugin_sdk.Command_CommandInfo{}
+	for _, cmd := range input.Subcommands {
+		toAdd, err := CommandInfoProto(cmd)
+		if err != nil {
+			return nil, err
+		}
+		subcmds = append(subcmds, toAdd)
+	}
+	result.Subcommands = subcmds
+	return &result, err
 }

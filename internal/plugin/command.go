@@ -3,13 +3,13 @@ package plugin
 import (
 	"context"
 
-	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
@@ -78,102 +78,54 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.ctx, c.client)
 }
 
-func (c *commandClient) CommandFunc() interface{} {
-	//TODO
-	return nil
-}
-
-func (c *commandClient) SynopsisFunc() interface{} {
-	spec, err := c.client.SynopsisSpec(c.ctx, &empty.Empty{})
+func (c *commandClient) CommandInfoFunc() interface{} {
+	spec, err := c.client.CommandInfoSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Synopsis(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return "", err
-		}
-		return resp.Synopsis, nil
-	}
-	return c.generateFunc(spec, cb)
-}
-
-func (c *commandClient) Synopsis() (string, error) {
-	f := c.SynopsisFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
-	if err != nil {
-		return "", err
-	}
-	return raw.(string), nil
-}
-
-func (c *commandClient) HelpFunc() interface{} {
-	spec, err := c.client.HelpSpec(c.ctx, &empty.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Help(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return "", err
-		}
-		return resp.Help, nil
-	}
-	return c.generateFunc(spec, cb)
-}
-
-func (c *commandClient) Help() (string, error) {
-	f := c.HelpFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*string)(nil), f)
-	if err != nil {
-		return "", err
-	}
-	return raw.(string), nil
-}
-
-func (c *commandClient) FlagsFunc() interface{} {
-	spec, err := c.client.FlagsSpec(c.ctx, &empty.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) ([]*vagrant_plugin_sdk.Command_Flag, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Flags(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		resp, err := c.client.CommandInfo(
+			ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
+		)
 		if err != nil {
 			return nil, err
 		}
-		return resp.Flags, nil
+		return resp, nil
 	}
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Flags() ([]*option.Option, error) {
-	f := c.FlagsFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*[]*vagrant_plugin_sdk.Command_Flag)(nil), f)
+func (c *commandClient) CommandInfo() (*component.CommandInfo, error) {
+	f := c.CommandInfoFunc()
+	raw, err := c.callRemoteDynamicFunc(
+		c.ctx,
+		c.Mappers,
+		(**component.CommandInfo)(nil),
+		f,
+	)
 	if err != nil {
 		return nil, err
 	}
-	flags, err := protomappers.Flags(raw.([]*vagrant_plugin_sdk.Command_Flag))
-	if err != nil {
-		return nil, err
-	}
-	return flags, nil
+
+	return raw.(*component.CommandInfo), err
 }
 
-func (c *commandClient) ExecuteFunc() interface{} {
-	spec, err := c.client.ExecuteSpec(c.ctx, &empty.Empty{})
+func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
+	spec, err := c.client.ExecuteSpec(c.ctx, &vagrant_plugin_sdk.Command_ExecuteSpecReq{
+		CommandArgs: cliArgs})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Execute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		executeArgs := &vagrant_plugin_sdk.Command_ExecuteReq{
+			Spec:        &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
+			CommandArgs: cliArgs,
+		}
+		resp, err := c.client.Execute(ctx, executeArgs)
 		if err != nil {
 			return -1, err
 		}
@@ -182,9 +134,9 @@ func (c *commandClient) ExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Execute(name string) (int64, error) {
-	f := c.ExecuteFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int64)(nil), f)
+func (c *commandClient) Execute(cliArgs []string) (int64, error) {
+	f := c.ExecuteFunc(cliArgs)
+	raw, err := c.callRemoteDynamicFunc(c.ctx, c.Mappers, (*int64)(nil), f)
 	if err != nil {
 		return -1, err
 	}
@@ -222,88 +174,24 @@ func (s *commandServer) Documentation(
 	return documentation(s.Impl)
 }
 
-func (s *commandServer) SynopsisSpec(
+func (s *commandServer) CommandInfoSpec(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
-
-	return s.generateSpec(s.Impl.SynopsisFunc())
+	return s.generateSpec(s.Impl.CommandInfoFunc())
 }
 
-func (s *commandServer) Synopsis(
+func (s *commandServer) CommandInfo(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Command_SynopsisResp, error) {
-	raw, err := s.callUncheckedLocalDynamicFunc(
-		s.Impl.SynopsisFunc(),
-		args.Args,
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	result := &vagrant_plugin_sdk.Command_SynopsisResp{
-		Synopsis: raw.(string),
-	}
-
-	return result, nil
-}
-
-func (s *commandServer) HelpSpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "command"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.HelpFunc())
-}
-
-func (s *commandServer) Help(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Command_HelpResp, error) {
-	raw, err := s.callUncheckedLocalDynamicFunc(
-		s.Impl.HelpFunc(),
-		args.Args,
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	result := &vagrant_plugin_sdk.Command_HelpResp{
-		Help: raw.(string),
-	}
-	return result, nil
-}
-
-func (s *commandServer) FlagsSpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "command"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.FlagsFunc())
-}
-
-func (s *commandServer) Flags(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Command_FlagsResp, error) {
+	req *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
 	raw, err := s.callLocalDynamicFunc(
-		s.Impl.FlagsFunc(),
-		args.Args,
-		([]*vagrant_plugin_sdk.Command_Flag)(nil),
+		s.Impl.CommandInfoFunc(),
+		req.Args,
+		(*component.CommandInfo)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -311,32 +199,29 @@ func (s *commandServer) Flags(
 		return nil, err
 	}
 
-	flags, err := protomappers.FlagsProto(raw.([]*option.Option))
-	flagResp := &vagrant_plugin_sdk.Command_FlagsResp{
-		Flags: flags,
-	}
-
-	return flagResp, nil
+	commandInfo, err := protomappers.CommandInfoProto(raw.(*component.CommandInfo))
+	return &vagrant_plugin_sdk.Command_CommandInfoResp{
+		CommandInfo: commandInfo,
+	}, nil
 }
 
 func (s *commandServer) ExecuteSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	req *vagrant_plugin_sdk.Command_ExecuteSpecReq,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
-
-	return s.generateSpec(s.Impl.ExecuteFunc())
+	return s.generateSpec(s.Impl.ExecuteFunc(req.CommandArgs))
 }
 
 func (s *commandServer) Execute(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
+	req *vagrant_plugin_sdk.Command_ExecuteReq,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
 	raw, err := s.callUncheckedLocalDynamicFunc(
-		s.Impl.ExecuteFunc(),
-		args.Args,
+		s.Impl.ExecuteFunc(req.CommandArgs),
+		req.Spec.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -355,4 +240,5 @@ var (
 	_ plugin.GRPCPlugin                       = (*CommandPlugin)(nil)
 	_ vagrant_plugin_sdk.CommandServiceServer = (*commandServer)(nil)
 	_ component.Command                       = (*commandClient)(nil)
+	_ core.Command                            = (*commandClient)(nil)
 )
