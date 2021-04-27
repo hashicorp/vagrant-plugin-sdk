@@ -31,6 +31,7 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		argmapper.FilterType(intType),
 		argmapper.FilterType(cliOptType),
 		argmapper.FilterType(commandInfoType),
+		argmapper.FilterType(interfaceType),
 	)
 	// Copy our args cause we're going to use append() and we don't
 	// want to modify our caller.
@@ -46,6 +47,7 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 
 	inputFilter := argmapper.FilterOr(
 		argmapper.FilterType(contextType),
+		argmapper.FilterType(stringType),
 		filterProto,
 	)
 
@@ -101,4 +103,5 @@ var (
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
 	commandInfoType  = reflect.TypeOf((**component.CommandInfo)(nil)).Elem()
+	interfaceType    = reflect.TypeOf((*interface{})(nil)).Elem()
 )

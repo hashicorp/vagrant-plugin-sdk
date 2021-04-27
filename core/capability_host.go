@@ -1,13 +1,11 @@
 package core
 
-import (
-	"github.com/hashicorp/go-argmapper"
-)
-
-// TODO: chain of parents for "inheritance" of capabilities
-// TODO: this map should have a bunch of argmapper functions
 type CapabilityHost struct {
-	capabilities map[string]func() interface{}
+	capabilities map[string]interface{}
+}
+
+func (c *CapabilityHost) HasCapabilityFunc() interface{} {
+	return c.HasCapability
 }
 
 func (c *CapabilityHost) HasCapability(name string) bool {
@@ -17,30 +15,16 @@ func (c *CapabilityHost) HasCapability(name string) bool {
 	return false
 }
 
-func (c *CapabilityHost) Capability(name string, args ...argmapper.Arg) (interface{}, error) {
-	f := c.capabilities[name]()
-	// TODO: append converters and loggers to args
-	// callArgs = append(args,
-	// 	argmapper.ConverterFunc(b.Mappers...),
-	// 	argmapper.Logger(b.Logger),
-	// )
-	mapF, err := argmapper.NewFunc(f)
-	if err != nil {
-		return nil, err
+func (c *CapabilityHost) CapabilityFunc(capName string) interface{} {
+	if c.HasCapability(capName) {
+		return c.capabilities[capName]
 	}
-
-	callResult := mapF.Call(args...)
-	if err := callResult.Err(); err != nil {
-		return nil, err
-	}
-
-	raw := callResult.Out(0)
-	return raw, nil
+	return nil
 }
 
-func (c *CapabilityHost) RegisterCapability(name string, f func() interface{}) error {
+func (c *CapabilityHost) RegisterCapability(name string, f interface{}) error {
 	if c.capabilities == nil {
-		c.capabilities = make(map[string]func() interface{})
+		c.capabilities = make(map[string]interface{})
 	}
 	c.capabilities[name] = f
 	return nil

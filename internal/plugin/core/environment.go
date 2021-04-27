@@ -119,6 +119,7 @@ func (e *Project) MachineNames() (names []string, err error) {
 }
 
 func (e *Project) Host() (h core.Host, err error) {
+	// TODO
 	return nil, nil
 }
 

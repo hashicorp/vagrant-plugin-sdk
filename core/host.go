@@ -1,7 +1,5 @@
 package core
 
-import "github.com/hashicorp/go-argmapper"
-
 // import (
 // 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 // )
@@ -11,7 +9,5 @@ type Host interface {
 	// Documentation() (*docs.Documentation, error)
 	Detect() (detected bool)
 	HasCapability(name string) bool
-	// TODO: This should return something
-	Capability(name string, args ...argmapper.Arg) (interface{}, error)
-	InitializeCapabilities() error
+	CapabilityFunc(name string) interface{}
 }
