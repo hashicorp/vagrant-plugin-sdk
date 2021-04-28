@@ -10,6 +10,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
+
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
@@ -160,6 +162,22 @@ func (c *hostClient) CapabilityFunc(capName string) interface{} {
 	return c.generateFunc(spec, cb)
 }
 
+func (c *hostClient) Capability(name string, args ...argmapper.Arg) (interface{}, error) {
+	f := c.CapabilityFunc(name)
+	raw, err := c.callRemoteDynamicFunc(
+		c.ctx,
+		c.Mappers,
+		(interface{})(nil),
+		f,
+		args...,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw, nil
+}
+
 type hostServer struct {
 	*baseServer
 
@@ -281,4 +299,5 @@ var (
 	_ plugin.GRPCPlugin                    = (*HostPlugin)(nil)
 	_ vagrant_plugin_sdk.HostServiceServer = (*hostServer)(nil)
 	_ component.Host                       = (*hostClient)(nil)
+	_ core.Host                            = (*hostClient)(nil)
 )
