@@ -701,6 +701,10 @@ service HostService {
 
   rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc HasCapability(Host.Capability.NamedRequest) returns (Host.Capability.CheckResp);
+  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
+  rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
 }
 
 message Host {
@@ -708,6 +712,10 @@ message Host {
     bool detected = 1;
   }
   message Capability {
+    message NamedRequest {
+      string name = 1;
+      FuncSpec.Args func_args = 2;
+    }
     message CheckResp {
       bool has_capability = 1;
     }

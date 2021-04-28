@@ -108,6 +108,10 @@ type Guest interface {
 type Host interface {
 	// Detect if machine is supported host
 	DetectFunc() interface{}
+	// Test if capability is available
+	HasCapabilityFunc() interface{}
+	// Run a capability
+	CapabilityFunc(capName string) interface{}
 }
 
 type Provider interface {

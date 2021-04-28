@@ -24,7 +24,7 @@ type Project interface {
 	// Boxes() (boxes BoxCollection, err error)
 	// Project(v Vagrantfile) (env Project, err error)
 	// Hook(name string) (err error)
-	// Host() (h Host, err error)
+	Host() (h Host, err error)
 	// Lock(name string) (err error)
 	// Unlock(name string) (err error)
 	// Push ?

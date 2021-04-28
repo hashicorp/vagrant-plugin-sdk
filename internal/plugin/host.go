@@ -8,6 +8,9 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
@@ -103,8 +106,78 @@ func (c *hostClient) Detect() (bool, error) {
 	return raw.(bool), nil
 }
 
-// hostServer is a gRPC server that the client talks to and calls a
-// real implementation of the component.
+func (c *hostClient) HasCapabilityFunc() interface{} {
+	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args, capabilityName string) (bool, error) {
+		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{
+			FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
+			Name:     capabilityName,
+		})
+		if err != nil {
+			return false, err
+		}
+
+		return resp.HasCapability, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *hostClient) HasCapability(name string) (bool, error) {
+	f := c.HasCapabilityFunc()
+	raw, err := c.callRemoteDynamicFunc(
+		c.ctx,
+		c.Mappers,
+		(*bool)(nil),
+		f,
+		argmapper.Typed(name),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
+}
+
+func (c *hostClient) CapabilityFunc(capName string) interface{} {
+	spec, err := c.client.CapabilitySpec(c.ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{Name: capName})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (*anypb.Any, error) {
+		resp, err := c.client.Capability(ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{
+			FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
+			Name:     capName,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return resp.Result, nil
+	}
+	return c.generateFunc(spec, cb)
+}
+
+func (c *hostClient) Capability(name string, args ...argmapper.Arg) (interface{}, error) {
+	f := c.CapabilityFunc(name)
+	raw, err := c.callRemoteDynamicFunc(
+		c.ctx,
+		c.Mappers,
+		(interface{})(nil),
+		f,
+		args...,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw, nil
+}
+
 type hostServer struct {
 	*baseServer
 
@@ -160,9 +233,71 @@ func (s *hostServer) Detect(
 	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
 }
 
+func (s *hostServer) HasCapabilitySpec(
+	ctx context.Context,
+	args *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.HasCapabilityFunc())
+}
+
+func (s *hostServer) HasCapability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
+	raw, err := s.callLocalDynamicFunc(
+		s.Impl.HasCapabilityFunc(),
+		args.FuncArgs.Args,
+		(*bool)(nil),
+		argmapper.Typed(ctx),
+		argmapper.Typed(args.Name),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Host_Capability_CheckResp{HasCapability: raw.(bool)}, err
+}
+
+func (s *hostServer) CapabilitySpec(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.CapabilityFunc(args.Name))
+}
+
+func (s *hostServer) Capability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
+	fn := s.Impl.CapabilityFunc(args.Name)
+	raw, err := s.callUncheckedLocalDynamicFunc(
+		fn,
+		args.FuncArgs.Args,
+		argmapper.Typed(ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	if raw != nil {
+		return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, err
+	} else {
+		return &vagrant_plugin_sdk.Host_Capability_Resp{Result: nil}, err
+	}
+}
+
 var (
 	_ plugin.Plugin                        = (*HostPlugin)(nil)
 	_ plugin.GRPCPlugin                    = (*HostPlugin)(nil)
 	_ vagrant_plugin_sdk.HostServiceServer = (*hostServer)(nil)
 	_ component.Host                       = (*hostClient)(nil)
+	_ core.Host                            = (*hostClient)(nil)
 )

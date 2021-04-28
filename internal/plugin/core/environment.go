@@ -118,6 +118,11 @@ func (e *Project) MachineNames() (names []string, err error) {
 	return
 }
 
+func (e *Project) Host() (h core.Host, err error) {
+	// TODO
+	return nil, nil
+}
+
 var (
 	_ plugin.Plugin     = (*ProjectPlugin)(nil)
 	_ plugin.GRPCPlugin = (*ProjectPlugin)(nil)
