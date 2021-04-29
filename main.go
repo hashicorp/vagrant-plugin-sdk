@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mattn/go-colorable"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/componentprotomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
@@ -27,6 +28,7 @@ func Main(opts ...Option) {
 
 	// Default our mappers
 	c.Mappers = append(c.Mappers, protomappers.All...)
+	c.Mappers = append(c.Mappers, componentprotomappers.All...)
 
 	// Build config
 	for _, opt := range opts {
