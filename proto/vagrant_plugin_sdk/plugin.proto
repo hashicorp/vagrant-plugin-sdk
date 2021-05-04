@@ -82,12 +82,27 @@ message Args {
   }
 
   message Target {
+    // Generic target
     uint32 stream_id = 1;
-  }
+    // Specialized targets
+    message Machine {
+      message Box {
+        string name = 1;
+        string provider = 2;
+        string version = 3;
+        string directory = 4;
+        map<string, string> metadata = 5;
+        string metadata_url = 6;
+      }
 
-  // TODO(spox): nix
-  message Machine {
-    uint32 stream_id = 1;
+      message State {
+        string id = 1;
+        string short_description = 2;
+        string long_description = 3;
+      }
+
+      uint32 stream_id = 1;
+    }
   }
 
   message StateBag {
@@ -115,20 +130,6 @@ message Args {
     string directory = 1;
   }
 
-  message Box {
-    string name = 1;
-    string provider = 2;
-    string version = 3;
-    string directory = 4;
-    map<string, string> metadata = 5;
-    string metadata_url = 6;
-  }
-
-  message MachineState {
-    string id = 1;
-    string short_description = 2;
-    string long_description = 3;
-  }
 
   message SSHInfo {
     string host = 1;
@@ -654,7 +655,7 @@ message Communicator {
   }
 
   message ExecutionRequest {
-    Args.Machine machine = 1;
+    Args.Target.Machine machine = 1;
     string command = 2;
     Args.MetadataSet options = 3;
   }
@@ -783,173 +784,146 @@ message Ref {
 }
 
 /********************************************************************
-* Machine services
+* Target services
 ********************************************************************/
-// service MachineService {
-//   // Getters and Setters
-//   rpc SetName(Machine.SetNameRequest) returns (Machine.SetNameResponse);
-//   rpc GetName(Machine.GetNameRequest) returns (Machine.GetNameResponse);
-//   rpc SetID(Machine.SetIDRequest) returns (Machine.SetIDResponse);
-//   rpc GetID(Machine.GetIDRequest) returns (Machine.GetIDResponse);
-//   rpc SetState(Machine.SetStateRequest) returns (Machine.SetStateResponse);
-//   rpc GetState(Machine.GetStateRequest) returns (Machine.GetStateResponse);
-//   rpc SetUUID(Machine.SetUUIDRequest) returns (Machine.SetUUIDResponse);
-//   rpc GetUUID(Machine.GetUUIDRequest) returns (Machine.GetUUIDResponse);
+service TargetService {
+  rpc Name(Target.NameRequest) returns (Target.NameResponse);
+  rpc Project(Target.ProjectRequest) returns (Target.ProjectResponse);
+  rpc Metadata(Target.MetadataRequest) returns (Target.MetadataResponse);
+  rpc DataDir(Target.DataDirRequest) returns (Target.DataDirResponse);
+  rpc State(Target.StateRequest) returns (Target.StateResponse);
+  rpc UI(Target.UIRequest) returns (Target.UIResponse);
+}
 
-//   rpc Box(Machine.BoxRequest) returns (Machine.BoxResponse);
-//   rpc Datadir(Machine.DatadirRequest) returns (Machine.DatadirResponse);
-//   rpc LocalDataPath(Machine.LocalDataPathRequest) returns (Machine.LocalDataPathResponse);
-//   rpc Provider(Machine.ProviderRequest) returns (Machine.ProviderResponse);
-//   rpc VagrantfileName(Machine.VagrantfileNameRequest) returns (Machine.VagrantfileNameResponse);
-//   rpc VagrantfilePath(Machine.VagrantfilePathRequest) returns (Machine.VagrantfilePathResponse);
-//   rpc UpdatedAt(Machine.UpdatedAtRequest) returns (Machine.UpdatedAtResponse);
-//   rpc UI(Machine.UIRequest) returns (Machine.UIResponse);
-//  }
+service TargetMachineService {
+  rpc SetName(Target.Machine.SetNameRequest) returns (Target.Machine.SetNameResponse);
+  rpc SetID(Target.Machine.SetIDRequest) returns (Target.Machine.SetIDResponse);
+  rpc GetID(Target.Machine.GetIDRequest) returns (Target.Machine.GetIDResponse);
+  rpc SetState(Target.Machine.SetStateRequest) returns (Target.Machine.SetStateResponse);
+  rpc GetState(Target.Machine.GetStateRequest) returns (Target.Machine.GetStateResponse);
+  rpc SetUUID(Target.Machine.SetUUIDRequest) returns (Target.Machine.SetUUIDResponse);
+  rpc GetUUID(Target.Machine.GetUUIDRequest) returns (Target.Machine.GetUUIDResponse);
 
+  rpc Box(Target.Machine.BoxRequest) returns (Target.Machine.BoxResponse);
+  rpc Datadir(Target.Machine.DatadirRequest) returns (Target.Machine.DatadirResponse);
+  rpc LocalDataPath(Target.Machine.LocalDataPathRequest) returns (Target.Machine.LocalDataPathResponse);
+  rpc Provider(Target.Machine.ProviderRequest) returns (Target.Machine.ProviderResponse);
+  rpc VagrantfileName(Target.Machine.VagrantfileNameRequest) returns (Target.Machine.VagrantfileNameResponse);
+  rpc VagrantfilePath(Target.Machine.VagrantfilePathRequest) returns (Target.Machine.VagrantfilePathResponse);
+  rpc UpdatedAt(Target.Machine.UpdatedAtRequest) returns (Target.Machine.UpdatedAtResponse);
+}
 
-// /**********************************************
-//  * Machine message used with machine service
-//  **********************************************/
-// message Machine {
-//   // SetName
-//   message SetNameRequest {
-//     Ref.Machine machine = 1;
-//     string name = 2;
-//   }
+message Target {
+  message NameRequest {
+    Ref.Target target = 1;
+  }
+  message NameResponse {
+    string name = 1;
+  }
+  message ProjectRequest {
+    Ref.Target target = 1;
+  }
+  message ProjectResponse {
+    Ref.Project project = 1;
+  }
+  message MetadataRequest {
+    Ref.Target target = 1;
+  }
+  message MetadataResponse {
+    Args.MetadataSet metadata = 1;
+  }
+  message DataDirRequest {
+    Ref.Target target = 1;
+  }
+  message DataDirResponse {
+    Args.DataDir.Target datadir = 1;
+  }
+  message StateRequest {
+    Ref.Target target = 1;
+  }
+  // TODO(spox): Need to define state values (move from server proto?)
+  message StateResponse {
+    string state = 1;
+  }
+  message UIRequest {}
+  message UIResponse {
+    Args.TerminalUI ui = 1;
+  }
 
-//   message SetNameResponse {}
-
-//   // GetName
-//   message GetNameRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message GetNameResponse {
-//     string name = 1;
-//   }
-
-//   // SetID
-//   message SetIDRequest {
-//     Ref.Machine machine = 1;
-//     string id = 2;
-//   }
-
-//   message SetIDResponse {}
-
-//   // GetID
-//   message GetIDRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message GetIDResponse {
-//     string id = 1;
-//   }
-
-//   message SetStateRequest {
-//     Ref.Machine machine = 1;
-//     Args.MachineState state = 2;
-//   }
-
-//   message SetStateResponse {}
-
-
-//   message GetStateRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message GetStateResponse {
-//     Args.MachineState state = 1;
-//   }
-
-
-//   message GetUUIDRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message GetUUIDResponse {
-//     string uuid = 1;
-//   }
-
-//   message SetUUIDRequest {
-//     Ref.Machine machine = 1;
-//     string uuid = 2;
-//   }
-
-//   message SetUUIDResponse {}
-
-//   // Box
-//   message BoxRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   // TODO: this should return a Ref.Box
-//   message BoxResponse {
-//     Args.Box box = 1;
-//   }
-
-//   // Datadir
-//   message DatadirRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message DatadirResponse {
-//     Args.DataDir.Machine datadir = 1;
-//   }
-
-//   // LocalDataPath
-//   message LocalDataPathRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message LocalDataPathResponse {
-//     string path = 1;
-//   }
-
-//   // Provider
-//   message ProviderRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message ProviderResponse {
-//     string provider = 1;
-//   }
-
-//   // VagrantfileName
-//   message VagrantfileNameRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message VagrantfileNameResponse {
-//     string name = 1;
-//   }
-
-//   // VagrantfilePath
-//   message VagrantfilePathRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message VagrantfilePathResponse {
-//     string path = 1;
-//   }
-
-//   // UpdatedAt
-//   message UpdatedAtRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message UpdatedAtResponse {
-//     google.protobuf.Timestamp updated_at = 1;
-//   }
-
-//   message UIRequest {
-//     Ref.Machine machine = 1;
-//   }
-
-//   message UIResponse {
-//     Args.TerminalUI ui = 1;
-//   }
-// }
-
+  /**********************************************
+   * Machine message used with machine service
+   **********************************************/
+  message Machine {
+    // SetName
+    message SetNameRequest {
+      string name = 1;
+    }
+    message SetNameResponse {}
+    // GetName
+    // SetID
+    message SetIDRequest {
+      string id = 1;
+    }
+    message SetIDResponse {}
+    // GetID
+    message GetIDRequest {}
+    message GetIDResponse {
+      string id = 1;
+    }
+    message SetStateRequest {
+      Args.Target.Machine.State state = 1;
+    }
+    message SetStateResponse {}
+    message GetStateRequest {}
+    message GetStateResponse {
+      Args.Target.Machine.State state = 1;
+    }
+    message GetUUIDRequest {}
+    message GetUUIDResponse {
+      string uuid = 1;
+    }
+    message SetUUIDRequest {
+      string uuid = 1;
+    }
+    message SetUUIDResponse {}
+    // Box
+    message BoxRequest {}
+    // TODO: this should return a Ref.Box
+    message BoxResponse {
+      Args.Target.Machine.Box box = 1;
+    }
+    // Datadir
+    message DatadirRequest {}
+    message DatadirResponse {
+      Args.DataDir.Target datadir = 1;
+    }
+    // LocalDataPath
+    message LocalDataPathRequest {}
+    message LocalDataPathResponse {
+      string path = 1;
+    }
+    // Provider
+    message ProviderRequest {}
+    message ProviderResponse {
+      string provider = 1;
+    }
+    // VagrantfileName
+    message VagrantfileNameRequest {}
+    message VagrantfileNameResponse {
+      string name = 1;
+    }
+    // VagrantfilePath
+    message VagrantfilePathRequest {}
+    message VagrantfilePathResponse {
+      string path = 1;
+    }
+    // UpdatedAt
+    message UpdatedAtRequest {}
+    message UpdatedAtResponse {
+      google.protobuf.Timestamp updated_at = 1;
+    }
+  }
+}
 /********************************************************************
 * Project services
 ********************************************************************/
