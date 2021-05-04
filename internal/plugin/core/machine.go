@@ -21,106 +21,82 @@ import (
 type TargetPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl core.Target
-}
-
-type Target struct {
-	c          *MachineClient
-	ResourceID string
-	ServerAddr string
-}
-
-// MachinePlugin is just a GRPC client for a machine
-type MachinePlugin struct {
-	plugin.NetRPCUnsupportedPlugin
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Impl    core.Machine
+	Impl   core.Target
+	Logger hclog.Logger
 }
 
 // Implements plugin.GRPCPlugin
-func (p *MachinePlugin) GRPCClient(
+func (p *TargetPlugin) GRPCClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &MachineClient{
-		client:       vagrant_plugin_sdk.NewMachineServiceClient(c),
-		ServerTarget: c.Target(),
-		Mappers:      p.Mappers,
-		Logger:       p.Logger,
-		Broker:       broker,
+	return &targetClient{
+		client: vagrant_plugin_sdk.NewTargetServiceClient(c),
+		Logger: p.Logger,
+		Broker: broker,
 	}, nil
 }
 
-func (p *MachinePlugin) GRPCServer(
-	broker *plugin.GRPCBroker,
-	s *grpc.Server,
-) error {
-	return errors.New("Server plugin not provided")
-}
-
-func NewMachine(client *MachineClient, resourceID string) *Machine {
-	return &Machine{
-		c:          client,
-		ResourceID: resourceID,
-		ServerAddr: client.ServerTarget,
-	}
+func (p *TargetPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+	vagrant_plugin_sdk.RegisterTargetServiceServer(s, &targetServer{
+		Impl:   p.Impl,
+		Logger: p.Logger,
+		Broker: broker,
+	})
+	return nil
 }
 
 // Machine implements core.Machine interface
-type MachineClient struct {
-	Broker       *plugin.GRPCBroker
-	Logger       hclog.Logger
-	Mappers      []*argmapper.Func
-	ResourceID   string // NOTE(spox): This needs to be added (resource identifier)
-	ServerTarget string
+type targetClient struct {
+	Logger hclog.Logger
+	Broker *plugin.GRPCBroker
 
-	client vagrant_plugin_sdk.MachineServiceClient
+	client vagrant_plugin_sdk.TargetServiceClient
 }
 
-func (m *Machine) Communicate() (comm core.Communicator, err error) {
+func (t *targetClient) Communicate() (comm core.Communicator, err error) {
 
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) Guest() (g core.Guest, err error) {
+func (t *targetClient) Guest() (g core.Guest, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) State() (state *core.MachineState, err error) {
+func (t *targetClient) State() (state *core.MachineState, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) IndexUUID() (id string, err error) {
+func (t *targetClient) IndexUUID() (id string, err error) {
 	// TODO
 	return "", nil
 }
 
-func (m *Machine) Inspect() (printable string, err error) {
+func (t *targetClient) Inspect() (printable string, err error) {
 	// TODO
 	return "", nil
 }
 
-func (m *Machine) Reload() (err error) {
+func (t *targetClient) Reload() (err error) {
 	// TODO
 	return nil
 }
 
-func (m *Machine) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+func (t *targetClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
 	// TODO
 	return nil, nil
 }
 
-func (m *Machine) UID() (user_id int, err error) {
+func (t *targetClient) UID() (user_id int, err error) {
 	// TODO
 	return 10, nil
 }
 
-func (m *Machine) GetName() (name string, err error) {
+func (t *targetClient) GetName() (name string, err error) {
 	r, err := m.c.client.GetName(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_GetNameRequest{
@@ -136,7 +112,7 @@ func (m *Machine) GetName() (name string, err error) {
 	return r.Name, nil
 }
 
-func (m *Machine) SetName(name string) (err error) {
+func (t *targetClient) SetName(name string) (err error) {
 	_, err = m.c.client.SetName(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_SetNameRequest{
@@ -149,7 +125,7 @@ func (m *Machine) SetName(name string) (err error) {
 	return
 }
 
-func (m *Machine) GetID() (id string, err error) {
+func (t *targetClient) GetID() (id string, err error) {
 	r, err := m.c.client.GetID(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_GetIDRequest{
@@ -165,7 +141,7 @@ func (m *Machine) GetID() (id string, err error) {
 	return
 }
 
-func (m *Machine) SetID(id string) (err error) {
+func (t *targetClient) SetID(id string) (err error) {
 	_, err = m.c.client.SetID(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_SetIDRequest{
@@ -178,7 +154,7 @@ func (m *Machine) SetID(id string) (err error) {
 	return
 }
 
-func (m *Machine) Box() (b core.Box, err error) {
+func (t *targetClient) Box() (b core.Box, err error) {
 	_, err = m.c.client.Box(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_BoxRequest{
@@ -195,7 +171,7 @@ func (m *Machine) Box() (b core.Box, err error) {
 	return
 }
 
-func (m *Machine) Datadir() (d *datadir.Machine, err error) {
+func (t *targetClient) Datadir() (d *datadir.Machine, err error) {
 	_, err = m.c.client.Datadir(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_DatadirRequest{
@@ -212,7 +188,7 @@ func (m *Machine) Datadir() (d *datadir.Machine, err error) {
 	return
 }
 
-func (m *Machine) LocalDataPath() (p path.Path, err error) {
+func (t *targetClient) LocalDataPath() (p path.Path, err error) {
 	r, err := m.c.client.LocalDataPath(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_LocalDataPathRequest{
@@ -228,7 +204,7 @@ func (m *Machine) LocalDataPath() (p path.Path, err error) {
 	return
 }
 
-func (m *Machine) Provider() (p core.Provider, err error) {
+func (t *targetClient) Provider() (p core.Provider, err error) {
 	_, err = m.c.client.Provider(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_ProviderRequest{
@@ -244,7 +220,7 @@ func (m *Machine) Provider() (p core.Provider, err error) {
 	return
 }
 
-func (m *Machine) VagrantfileName() (name string, err error) {
+func (t *targetClient) VagrantfileName() (name string, err error) {
 	r, err := m.c.client.VagrantfileName(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_VagrantfileNameRequest{
@@ -261,7 +237,7 @@ func (m *Machine) VagrantfileName() (name string, err error) {
 	return
 }
 
-func (m *Machine) VagrantfilePath() (p path.Path, err error) {
+func (t *targetClient) VagrantfilePath() (p path.Path, err error) {
 	r, err := m.c.client.VagrantfilePath(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_VagrantfilePathRequest{
@@ -279,7 +255,7 @@ func (m *Machine) VagrantfilePath() (p path.Path, err error) {
 	return
 }
 
-func (m *Machine) UpdatedAt() (t *time.Time, err error) {
+func (t *targetClient) UpdatedAt() (t *time.Time, err error) {
 	_, err = m.c.client.UpdatedAt(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_UpdatedAtRequest{
@@ -296,7 +272,7 @@ func (m *Machine) UpdatedAt() (t *time.Time, err error) {
 	return
 }
 
-func (m *Machine) UI() (ui *terminal.UI, err error) {
+func (t *targetClient) UI() (ui *terminal.UI, err error) {
 	_, err = m.c.client.UI(
 		context.Background(),
 		&vagrant_plugin_sdk.Machine_UIRequest{
@@ -313,7 +289,7 @@ func (m *Machine) UI() (ui *terminal.UI, err error) {
 	return
 }
 
-func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+func (t *targetClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
 	// TODO
 	return nil, nil
 }
