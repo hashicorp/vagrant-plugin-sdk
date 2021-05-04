@@ -1786,9 +1786,9 @@ func (*Args_Target) Descriptor() ([]byte, []int) {
 
 func (x *Args_Target) GetStreamId() uint32 {
 	if x != nil {
-		return x.StreamId
+		return x.ServerAddr
 	}
-	return 0
+	return ""
 }
 
 type Args_StateBag struct {

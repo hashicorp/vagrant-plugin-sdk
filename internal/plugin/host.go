@@ -109,7 +109,8 @@ func (c *hostClient) Detect() (bool, error) {
 func (c *hostClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
-		return funcErr(err)
+		// return funcErr(err)
+		panic(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args, capabilityName string) (bool, error) {

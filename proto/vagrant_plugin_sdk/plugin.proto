@@ -124,7 +124,7 @@ message Args {
   }
 
   message Host {
-    uint32 stream_id = 1;
+    string server_addr = 1;
   }
 }
 
