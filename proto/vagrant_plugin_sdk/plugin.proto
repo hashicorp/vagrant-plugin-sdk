@@ -1017,3 +1017,23 @@ message Project {
     string key = 1;
   }
 }
+
+/********************************************************************
+* Vagrantfile services
+********************************************************************/
+service VagrantfileService {
+  rpc GetVagrantfile(Vagrantfile.GetVagrantfileRequest) returns (Vagrantfile.GetVagrantfileResponse);
+}
+
+/*******************************************************
+ * Vagrantfile message used with Vagrantfile service
+ *******************************************************/
+message Vagrantfile {
+  message GetVagrantfileRequest {
+    Ref.Project project = 1;
+  }
+
+  message GetVagrantfileResponse {
+    Args.Vagrantfile vagrantfile = 1;
+  }
+}

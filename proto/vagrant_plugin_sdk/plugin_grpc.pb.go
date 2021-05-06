@@ -5821,3 +5821,86 @@ var _ProjectService_serviceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
+
+// VagrantfileServiceClient is the client API for VagrantfileService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type VagrantfileServiceClient interface {
+	GetVagrantfile(ctx context.Context, in *Vagrantfile_GetVagrantfileRequest, opts ...grpc.CallOption) (*Vagrantfile_GetVagrantfileResponse, error)
+}
+
+type vagrantfileServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewVagrantfileServiceClient(cc grpc.ClientConnInterface) VagrantfileServiceClient {
+	return &vagrantfileServiceClient{cc}
+}
+
+func (c *vagrantfileServiceClient) GetVagrantfile(ctx context.Context, in *Vagrantfile_GetVagrantfileRequest, opts ...grpc.CallOption) (*Vagrantfile_GetVagrantfileResponse, error) {
+	out := new(Vagrantfile_GetVagrantfileResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/GetVagrantfile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// VagrantfileServiceServer is the server API for VagrantfileService service.
+// All implementations must embed UnimplementedVagrantfileServiceServer
+// for forward compatibility
+type VagrantfileServiceServer interface {
+	GetVagrantfile(context.Context, *Vagrantfile_GetVagrantfileRequest) (*Vagrantfile_GetVagrantfileResponse, error)
+	mustEmbedUnimplementedVagrantfileServiceServer()
+}
+
+// UnimplementedVagrantfileServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedVagrantfileServiceServer struct {
+}
+
+func (UnimplementedVagrantfileServiceServer) GetVagrantfile(context.Context, *Vagrantfile_GetVagrantfileRequest) (*Vagrantfile_GetVagrantfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVagrantfile not implemented")
+}
+func (UnimplementedVagrantfileServiceServer) mustEmbedUnimplementedVagrantfileServiceServer() {}
+
+// UnsafeVagrantfileServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to VagrantfileServiceServer will
+// result in compilation errors.
+type UnsafeVagrantfileServiceServer interface {
+	mustEmbedUnimplementedVagrantfileServiceServer()
+}
+
+func RegisterVagrantfileServiceServer(s grpc.ServiceRegistrar, srv VagrantfileServiceServer) {
+	s.RegisterService(&_VagrantfileService_serviceDesc, srv)
+}
+
+func _VagrantfileService_GetVagrantfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_GetVagrantfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).GetVagrantfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/GetVagrantfile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).GetVagrantfile(ctx, req.(*Vagrantfile_GetVagrantfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _VagrantfileService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.VagrantfileService",
+	HandlerType: (*VagrantfileServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetVagrantfile",
+			Handler:    _VagrantfileService_GetVagrantfile_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
