@@ -1030,10 +1030,18 @@ service VagrantfileService {
  *******************************************************/
 message Vagrantfile {
   message GetVagrantfileRequest {
-    Ref.Project project = 1;
+    oneof component {
+      Ref.Project project = 1;
+      Ref.Box box = 2;
+      Ref.Basis basis = 3;
+    }
   }
 
+  message Vagrantfile {
+  }
+
+
   message GetVagrantfileResponse {
-    Args.Vagrantfile vagrantfile = 1;
+    Vagrantfile vagrantfile = 1;
   }
 }
