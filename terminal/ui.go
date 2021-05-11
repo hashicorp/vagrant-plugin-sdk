@@ -111,8 +111,10 @@ func Interpret(msg string, raw ...interface{}) (string, string, io.Writer) {
 		}
 	}
 
-	// Build our message
-	msg = fmt.Sprintf(msg, args...)
+	if args != nil {
+		// Build our message
+		msg = fmt.Sprintf(msg, args...)
+	}
 
 	// Build our config and set our options
 	cfg := &config{Writer: color.Output}
