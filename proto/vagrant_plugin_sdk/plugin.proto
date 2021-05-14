@@ -75,15 +75,28 @@ message Args {
 
   message Basis {
     uint32 stream_id = 1;
+    string connection = 2;
   }
 
   message Project {
     uint32 stream_id = 1;
+    string connection = 2;
   }
 
   message Target {
     // Generic target
     uint32 stream_id = 1;
+    string connection = 2;
+
+    message State {
+      enum State {
+        UNKNOWN = 0;
+        PENDING = 1;
+        CREATED = 2;
+        DESTROYED = 3;
+      }
+      State state = 1;
+    }
     // Specialized targets
     message Machine {
       message Box {
@@ -102,11 +115,18 @@ message Args {
       }
 
       uint32 stream_id = 1;
+      string connection = 2;
     }
   }
 
   message StateBag {
     uint32 stream_id = 1;
+    string connection = 2;
+  }
+
+  message Host {
+    uint32 stream_id = 1;
+    string connection = 2;
   }
 }
 
@@ -787,12 +807,14 @@ message Ref {
 * Target services
 ********************************************************************/
 service TargetService {
-  rpc Name(Target.NameRequest) returns (Target.NameResponse);
-  rpc Project(Target.ProjectRequest) returns (Target.ProjectResponse);
-  rpc Metadata(Target.MetadataRequest) returns (Target.MetadataResponse);
-  rpc DataDir(Target.DataDirRequest) returns (Target.DataDirResponse);
-  rpc State(Target.StateRequest) returns (Target.StateResponse);
-  rpc UI(Target.UIRequest) returns (Target.UIResponse);
+  rpc ResourceId(google.protobuf.Empty) returns (Target.ResourceIdResponse);
+  rpc Record(google.protobuf.Empty) returns (Target.RecordResponse);
+  rpc Name(google.protobuf.Empty) returns (Target.NameResponse);
+  rpc Project(google.protobuf.Empty) returns (Ref.Project);
+  rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
+  rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Target);
+  rpc State(google.protobuf.Empty) returns (Args.Target.State);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
 }
 
 service TargetMachineService {
@@ -814,40 +836,17 @@ service TargetMachineService {
 }
 
 message Target {
-  message NameRequest {
-    Ref.Target target = 1;
+  message ResourceIdResponse {
+    string resource_id = 1;
+  }
+  message RecordResponse{
+    google.protobuf.Any record = 1;
   }
   message NameResponse {
     string name = 1;
   }
-  message ProjectRequest {
-    Ref.Target target = 1;
-  }
   message ProjectResponse {
     Ref.Project project = 1;
-  }
-  message MetadataRequest {
-    Ref.Target target = 1;
-  }
-  message MetadataResponse {
-    Args.MetadataSet metadata = 1;
-  }
-  message DataDirRequest {
-    Ref.Target target = 1;
-  }
-  message DataDirResponse {
-    Args.DataDir.Target datadir = 1;
-  }
-  message StateRequest {
-    Ref.Target target = 1;
-  }
-  // TODO(spox): Need to define state values (move from server proto?)
-  message StateResponse {
-    string state = 1;
-  }
-  message UIRequest {}
-  message UIResponse {
-    Args.TerminalUI ui = 1;
   }
 
   /**********************************************
@@ -929,8 +928,16 @@ message Target {
 ********************************************************************/
 service ProjectService {
   rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
-  rpc ActiveMachines(Project.ActiveMachinesRequest) returns (Project.ActiveMachinesResponse);
-
+  rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
+  rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
+  rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
+  rpc VagrantfileName(google.protobuf.Empty) returns (Project.VagrantfileNameResponse);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+  rpc Home(google.protobuf.Empty) returns (Project.HomeResponse);
+  rpc LocalData(google.protobuf.Empty) returns (Project.LocalDataResponse);
+  rpc Tmp(google.protobuf.Empty) returns (Project.TmpResponse);
+  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
+  rpc Host(google.protobuf.Empty) returns (Args.Host);
 }
 
 /*******************************************************
@@ -941,16 +948,28 @@ message Project {
     string name = 1;
     string provider = 2;
   }
-
   message MachineNamesResponse {
     repeated string names = 1;
   }
-
-  message ActiveMachinesRequest {
-    Ref.Project env = 1;
-  }
-
   message ActiveMachinesResponse {
     repeated MachineAndProvider machines = 1;
+  }
+  message CwdResponse {
+    string path = 1;
+  }
+  message VagrantfileNameResponse {
+    string name = 1;
+  }
+  message HomeResponse {
+    string path = 1;
+  }
+  message LocalDataResponse {
+    string path = 1;
+  }
+  message TmpResponse {
+    string path = 1;
+  }
+  message DefaultPrivateKeyResponse {
+    string key = 1;
   }
 }
