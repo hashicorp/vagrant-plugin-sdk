@@ -7,11 +7,13 @@ import (
 )
 
 type Target interface {
-	Name() string
-	ResourceID() string
-	Project() Project
-	Metadata() map[string]string
+	Name() (string, error)
+	ResourceId() (string, error)
+	Project() (Project, error)
+	Metadata() (map[string]string, error)
 	DataDir() (datadir.Target, error)
 	State() (State, error)
-	Record() anypb.Any
+	Record() (*anypb.Any, error)
+
+	Closer
 }
