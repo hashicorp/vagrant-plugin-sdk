@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -37,4 +38,6 @@ type Project interface {
 	// Vagrantfile() (v Vagrantfile, err error)
 	// SetupHomePath() (homePath string, err error) // TODO(spox): do we need this? probably not
 	// SetupLocalDataPath(force bool) (err error)   // TODO(spox): do we need this? - probably not
+
+	Closer
 }
