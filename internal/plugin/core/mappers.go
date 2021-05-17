@@ -90,7 +90,7 @@ func ProjectProto(
 		Impl:    p,
 	}
 
-	id, err := WrapClient(pp, internal)
+	id, err := wrapClient(pp, internal)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func Project(
 		Logger:  log,
 	}
 
-	client, err := WrapConnect(ctx, p, input, internal)
+	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func TargetProto(
 		Impl:    t,
 	}
 
-	id, err := WrapClient(tp, internal)
+	id, err := wrapClient(tp, internal)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,6 @@ func TargetProto(
 	return &vagrant_plugin_sdk.Args_Target{
 		StreamId: id,
 	}, nil
-
 }
 
 func Target(
@@ -152,7 +151,7 @@ func Target(
 		Logger:  log,
 	}
 
-	client, err := WrapConnect(ctx, t, input, internal)
+	client, err := wrapConnect(ctx, t, input, internal)
 	if err != nil {
 		return nil, err
 	}
@@ -160,25 +159,22 @@ func Target(
 	return client.(plugincore.Target), nil
 }
 
-type ConnInfo interface {
-	GetConnection() string
+type connInfo interface {
 	GetStreamId() uint32
 }
 
-func WrapConnect(
+// When a core plugin is received, the proto will match the
+// ConnInfo interface which provides the information needed
+// setup a new client. Depending on the origin of the proto
+// the client will either establish a direct connection to
+// the service, or will connect via the broker.
+func wrapConnect(
 	ctx context.Context,
 	p plugin.GRPCPlugin,
-	i ConnInfo,
+	i connInfo,
 	internal *pluginargs.Internal,
 ) (interface{}, error) {
-	var err error
-	var conn *grpc.ClientConn
-
-	if srv := i.GetConnection(); srv != "" {
-		conn, err = grpc.Dial(srv) // Do we need any grpc options here?
-	} else {
-		conn, err = internal.Broker.Dial(i.GetStreamId())
-	}
+	conn, err := internal.Broker.Dial(i.GetStreamId())
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +192,9 @@ func WrapConnect(
 	return client, nil
 }
 
-func WrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, error) {
+// This takes a plugin (which generally uses a client as the plugin implementation)
+// and creates a new server for remote connections via the internal broker.
+func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, error) {
 	id := internal.Broker.NextId()
 	errChan := make(chan error, 1)
 
