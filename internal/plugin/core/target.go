@@ -2,8 +2,6 @@ package core
 
 import (
 	"context"
-	"errors"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -16,10 +14,8 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
-	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type TargetPlugin struct {
@@ -183,18 +179,18 @@ func (s *targetServer) ResourceId(
 func (s *targetServer) Project(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Ref_Project, error) {
+) (*vagrant_plugin_sdk.Args_Project, error) {
 	p, err := s.Impl.Project()
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := s.Map(p, (**vagrant_plugin_sdk.Ref_Project)(nil))
+	result, err := s.Map(p, (**vagrant_plugin_sdk.Args_Project)(nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.Ref_Project), nil
+	return result.(*vagrant_plugin_sdk.Args_Project), nil
 }
 
 func (s *targetServer) Metadata(

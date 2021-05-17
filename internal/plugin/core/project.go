@@ -2,9 +2,9 @@ package core
 
 import (
 	"context"
-	"errors"
 
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -34,6 +35,7 @@ func (p *ProjectPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &projectClient{
 		client: vagrant_plugin_sdk.NewProjectServiceClient(c),
+		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
 			Logger:  p.Logger,
@@ -62,6 +64,7 @@ func (p *ProjectPlugin) GRPCServer(
 type projectClient struct {
 	*base
 
+	ctx    context.Context
 	client vagrant_plugin_sdk.ProjectServiceClient
 }
 
@@ -73,49 +76,289 @@ type projectServer struct {
 }
 
 func (p *projectClient) CWD() (path string, err error) {
+	r, err := p.client.CWD(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
 
-	return e.Cwd, nil
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		path = result.(string)
+	}
+
+	return
 }
 
-func (p *projectClient) DataDir() (path string, err error) {
-	return e.Datadir, nil
+func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
+	r, err := p.client.DataDir(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (**datadir.Project)(nil))
+	if err == nil {
+		dir = result.(*datadir.Project)
+	}
+
+	return
 }
 
 func (p *projectClient) VagrantfileName() (name string, err error) {
-	return e.Vagrantfilename, nil
+	r, err := p.client.VagrantfileName(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		name = result.(string)
+	}
+
+	return
 }
 
 func (p *projectClient) UI() (ui terminal.UI, err error) {
+	r, err := p.client.UI(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*terminal.UI)(nil))
+	if err == nil {
+		ui = result.(terminal.UI)
+	}
+
 	return
 }
 
 func (p *projectClient) Home() (path string, err error) {
-	return e.HomePath, nil
-}
-func (p *projectClient) LocalData() (path string, err error) {
-	return e.LocalDataPath, nil
-}
-
-func (p *projectClient) Tmp() (path string, err error) {
-	return e.TmpPath, nil
-}
-
-func (p *projectClient) DefaultPrivateKey() (path string, err error) {
-	return e.DefaultPrivateKeyPath, nil
-}
-
-func (p *projectClient) MachineNames() (names []string, err error) {
-	r, err := e.c.client.MachineNames(context.Background(), &empty.Empty{})
+	r, err := p.client.Home(p.ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
-	names = r.Names
+
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		path = result.(string)
+	}
+
+	return
+}
+func (p *projectClient) LocalData() (path string, err error) {
+	r, err := p.client.LocalData(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		path = result.(string)
+	}
+
+	return
+}
+
+func (p *projectClient) Tmp() (path string, err error) {
+	r, err := p.client.Tmp(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		path = result.(string)
+	}
+
+	return
+}
+
+func (p *projectClient) DefaultPrivateKey() (path string, err error) {
+	r, err := p.client.DefaultPrivateKey(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*string)(nil))
+	if err == nil {
+		path = result.(string)
+	}
+
+	return
+}
+
+func (p *projectClient) MachineNames() (names []string, err error) {
+	r, err := p.client.MachineNames(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*[]string)(nil))
+	if err == nil {
+		names = result.([]string)
+	}
+
 	return
 }
 
 func (p *projectClient) Host() (h core.Host, err error) {
-	// TODO
-	return nil, nil
+	r, err := p.client.Host(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.Host)(nil))
+	if err == nil {
+		h = result.(core.Host)
+	}
+
+	return
+}
+
+func (p *projectServer) CWD(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_CwdResponse, error) {
+	c, err := p.Impl.CWD()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_CwdResponse{
+		Path: c,
+	}, nil
+}
+
+func (p *projectServer) DataDir(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_DataDir_Project, err error) {
+	d, err := p.Impl.DataDir()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Project)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_DataDir_Project)
+	}
+
+	return
+}
+
+func (p *projectServer) VagrantfileName(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_VagrantfileNameResponse, error) {
+	name, err := p.Impl.VagrantfileName()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_VagrantfileNameResponse{
+		Name: name,
+	}, nil
+}
+
+func (p *projectServer) UI(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
+	d, err := p.Impl.UI()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
+	}
+
+	return
+}
+
+func (p *projectServer) Home(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
+	path, err := p.Impl.Home()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_HomeResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) LocalData(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
+	path, err := p.Impl.LocalData()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Project_LocalDataResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) Tmp(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
+	path, err := p.Impl.Tmp()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Project_TmpResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) DefaultPrivateKey(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
+	key, err := p.Impl.DefaultPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse{
+		Key: key,
+	}, nil
+}
+
+func (p *projectServer) Host(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_Host, err error) {
+	d, err := p.Impl.Host()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Host)
+	}
+
+	return
+}
+
+func (p *projectServer) MachineNames(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_MachineNamesResponse, error) {
+	names, err := p.Impl.MachineNames()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_MachineNamesResponse{
+		Names: names,
+	}, nil
 }
 
 var (
