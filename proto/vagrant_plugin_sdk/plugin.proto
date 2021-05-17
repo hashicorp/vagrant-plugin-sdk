@@ -75,18 +75,15 @@ message Args {
 
   message Basis {
     uint32 stream_id = 1;
-    string connection = 2;
   }
 
   message Project {
     uint32 stream_id = 1;
-    string connection = 2;
   }
 
   message Target {
     // Generic target
     uint32 stream_id = 1;
-    string connection = 2;
 
     message State {
       enum State {
@@ -115,21 +112,17 @@ message Args {
       }
 
       uint32 stream_id = 1;
-      string connection = 2;
     }
   }
 
   message StateBag {
     uint32 stream_id = 1;
-    string connection = 2;
   }
 
   message Host {
     uint32 stream_id = 1;
-    string connection = 2;
   }
 }
-
 
 ///////
   message TargetIndex {
@@ -803,6 +796,11 @@ message Ref {
   }
 }
 
+service BasisService {
+  rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+}
+
 /********************************************************************
 * Target services
 ********************************************************************/
@@ -810,7 +808,7 @@ service TargetService {
   rpc ResourceId(google.protobuf.Empty) returns (Target.ResourceIdResponse);
   rpc Record(google.protobuf.Empty) returns (Target.RecordResponse);
   rpc Name(google.protobuf.Empty) returns (Target.NameResponse);
-  rpc Project(google.protobuf.Empty) returns (Ref.Project);
+  rpc Project(google.protobuf.Empty) returns (Args.Project);
   rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Target);
   rpc State(google.protobuf.Empty) returns (Args.Target.State);
@@ -928,7 +926,7 @@ message Target {
 ********************************************************************/
 service ProjectService {
   rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
-  rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
+  // rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
   rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
   rpc VagrantfileName(google.protobuf.Empty) returns (Project.VagrantfileNameResponse);
