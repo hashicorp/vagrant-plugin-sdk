@@ -4,9 +4,6 @@ import (
 	"context"
 	"io"
 
-	//	"strconv"
-	//	"time"
-
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -26,48 +23,41 @@ import (
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
-	JobInfo,
-	JobInfoProto,
-	DatadirBasis,
-	DatadirProject,
-	DatadirTarget,
-	DatadirComponent,
-	DatadirBasisProto,
-	DatadirProjectProto,
-	DatadirTargetProto,
-	DatadirComponentProto,
-	Logger,
-	LoggerProto,
-	TerminalUI,
-	TerminalUIProto,
-	MetadataSet,
-	MetadataSetProto,
-	StateBag,
-	StateBagProto,
-	//	Machine,
-	Flags,
-	FlagsProto,
-	MapToProto,
-	ProtoToMap,
+	Basis,
+	BasisProto,
 	CommandInfo,
 	CommandInfoProto,
+	DatadirBasis,
+	DatadirBasisProto,
+	DatadirProject,
+	DatadirProjectProto,
+	DatadirTarget,
+	DatadirTargetProto,
+	DatadirComponent,
+	DatadirComponentProto,
+	Flags,
+	FlagsProto,
+	JobInfo,
+	JobInfoProto,
+	Logger,
+	LoggerProto,
+	MapToProto,
+	Metadata,
+	MetadataProto,
+	MetadataSet,
+	MetadataSetProto,
+	Project,
+	ProjectProto,
+	ProtoToMap,
+	State,
+	StateProto,
 	StateBag,
 	StateBagProto,
-	//	Project,
+	Target,
+	TargetProto,
+	TerminalUI,
+	TerminalUIProto,
 }
-
-// TODO(spox): make sure these new mappers actually work
-// func Machine(input *vagrant_plugin_sdk.Args_Machine) (*core.Machine, error) {
-// 	var result core.Machine
-// 	return &result, mapstructure.Decode(input, &result)
-// }
-
-// func MachineProto(input *core.Machine) (*vagrant_plugin_sdk.Args_Machine, error) {
-// 	var result vagrant_plugin_sdk.Args_Machine
-// 	return &result, mapstructure.Decode(intput, &result)
-// }
-
-// TODO(spox): end of mappers to validate
 
 // Flags maps
 func Flags(input []*vagrant_plugin_sdk.Command_Flag) (opt []*option.Option, err error) {
@@ -218,23 +208,10 @@ func TerminalUI(
 		Logger:  log,
 	}
 
-	conn, err := internal.Broker.Dial(input.StreamId)
+	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
 		return nil, err
 	}
-	internal.Cleanup.Do(func() { conn.Close() })
-
-	client, err := p.GRPCClient(ctx, internal.Broker, conn)
-	if err != nil {
-		return nil, err
-	}
-
-	// Our UI should implement close since we have to stop streams and
-	// such but we gate it here in case we ever change the implementation.
-	if closer, ok := client.(io.Closer); ok {
-		internal.Cleanup.Do(func() { closer.Close() })
-	}
-
 	return client.(terminal.UI), nil
 }
 
@@ -242,7 +219,7 @@ func TerminalUIProto(
 	ui terminal.UI,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) *vagrant_plugin_sdk.Args_TerminalUI {
+) (*vagrant_plugin_sdk.Args_TerminalUI, error) {
 	// Create our plugin
 	p := &pluginterminal.UIPlugin{
 		Impl:    ui,
@@ -250,120 +227,14 @@ func TerminalUIProto(
 		Logger:  log,
 	}
 
-	id := internal.Broker.NextId()
+	id, err := wrapClient(p, internal)
+	if err != nil {
+		return nil, err
+	}
 
-	// Serve it
-	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-		server := plugin.DefaultGRPCServer(opts)
-		if err := p.GRPCServer(internal.Broker, server); err != nil {
-			panic(err)
-		}
-		return server
-	})
-
-	return &vagrant_plugin_sdk.Args_TerminalUI{StreamId: id}
+	return &vagrant_plugin_sdk.Args_TerminalUI{
+		StreamId: id}, nil
 }
-
-// Machine maps *vagrant_plugin_sdk.Args_Machine to a core.Machine
-// func Machine(
-// 	ctx context.Context,
-// 	input *vagrant_plugin_sdk.Args_Machine,
-// 	log hclog.Logger,
-// 	internal *pluginargs.Internal,
-// ) (*plugincore.MachineClient, error) {
-// 	p := &plugincore.MachinePlugin{
-// 		Mappers: internal.Mappers,
-// 		Logger:  log,
-// 	}
-
-// 	id, err := strconv.Atoi(input.ServerAddr)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	conn, err := internal.Broker.Dial(uint32(id))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	internal.Cleanup.Do(func() { conn.Close() })
-
-// 	client, err := p.GRPCClient(ctx, internal.Broker, conn)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	if closer, ok := client.(io.Closer); ok {
-// 		internal.Cleanup.Do(func() { closer.Close() })
-// 	}
-
-// 	return client.(*plugincore.MachineClient).ForResource(input.ResourceId), nil
-// }
-
-// Machine maps component.Machine to a *vagrant_plugin_sdk.Args_Machine
-// func MachineProto(
-// 	machine *plugincore.MachineClient,
-// 	log hclog.Logger,
-// 	internal *pluginargs.Internal,
-// ) (*vagrant_plugin_sdk.Args_Machine, error) {
-// 	p := &plugincore.MachinePlugin{
-// 		Impl:    machine,
-// 		Mappers: internal.Mappers,
-// 		Logger:  log}
-
-// 	id := internal.Broker.NextId()
-
-// 	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-// 		server := plugin.DefaultGRPCServer(opts)
-// 		if err := p.GRPCServer(internal.Broker, server); err != nil {
-// 			panic(err)
-// 		}
-// 		return server
-// 	})
-
-// 	return &vagrant_plugin_sdk.Args_Machine{
-// 		ResourceId: machine.ResourceID,
-// 		ServerAddr: strconv.Itoa(int(id)),
-// 	}, nil
-// }
-
-// Project maps *vagrant_plugin_sdk.Args_Project to a core.Project
-// func Project(
-// 	ctx context.Context,
-// 	input *vagrant_plugin_sdk.Args_Project,
-// 	log hclog.Logger,
-// 	internal *pluginargs.Internal,
-// ) (*plugincore.Project, error) {
-// 	p := &plugincore.ProjectPlugin{
-// 		Mappers: internal.Mappers,
-// 		Logger:  log,
-// 	}
-
-// 	timeout := 5 * time.Second
-// 	// Create a new cancellation context so we can cancel in the case of an error
-// 	ctx, cancel := context.WithTimeout(ctx, timeout)
-// 	defer cancel()
-
-// 	// Connect to the local server
-// 	conn, err := grpc.DialContext(ctx, input.ServerAddr,
-// 		grpc.WithBlock(),
-// 		grpc.WithInsecure(),
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	internal.Cleanup.Do(func() { conn.Close() })
-
-// 	mc, err := p.GRPCClient(ctx, internal.Broker, conn)
-// 	projectClient, ok := mc.(*plugincore.ProjectClient)
-// 	if !ok {
-// 		panic("failed to create machine client")
-// 	}
-
-// 	// TODO: decode input project into a project
-// 	result := plugincore.NewProject(projectClient)
-// 	mapstructure.Decode(input, &result)
-
-// 	return result, nil
-// }
 
 func MetadataSet(input *vagrant_plugin_sdk.Args_MetadataSet) *component.MetadataSet {
 	return &component.MetadataSet{
@@ -387,19 +258,9 @@ func StateBag(
 		Logger: log,
 	}
 
-	conn, err := internal.Broker.Dial(input.StreamId)
+	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
 		return nil, err
-	}
-	internal.Cleanup.Do(func() { conn.Close() })
-
-	client, err := p.GRPCClient(ctx, internal.Broker, conn)
-	if err != nil {
-		return nil, err
-	}
-
-	if closer, ok := client.(io.Closer); ok {
-		internal.Cleanup.Do(func() { closer.Close() })
 	}
 
 	return client.(core.StateBag), nil
@@ -409,24 +270,20 @@ func StateBagProto(
 	bag core.StateBag,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
-) *vagrant_plugin_sdk.Args_StateBag {
+) (*vagrant_plugin_sdk.Args_StateBag, error) {
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
 		Impl:   bag,
 		Logger: log,
 	}
 
-	id := internal.Broker.NextId()
+	id, err := wrapClient(p, internal)
+	if err != nil {
+		return nil, err
+	}
 
-	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-		server := plugin.DefaultGRPCServer(opts)
-		if err := p.GRPCServer(internal.Broker, server); err != nil {
-			panic(err)
-		}
-		return server
-	})
-
-	return &vagrant_plugin_sdk.Args_StateBag{StreamId: id}
+	return &vagrant_plugin_sdk.Args_StateBag{
+		StreamId: id}, nil
 }
 
 func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {
@@ -468,4 +325,223 @@ func CommandInfoProto(input *component.CommandInfo) (*vagrant_plugin_sdk.Command
 	}
 	result.Subcommands = subcmds
 	return &result, err
+}
+
+func StateProto(s core.State) *vagrant_plugin_sdk.Args_Target_State {
+	var state vagrant_plugin_sdk.Args_Target_State_State
+	switch s {
+	case core.CREATED:
+		state = vagrant_plugin_sdk.Args_Target_State_CREATED
+	case core.DESTROYED:
+		state = vagrant_plugin_sdk.Args_Target_State_DESTROYED
+	case core.PENDING:
+		state = vagrant_plugin_sdk.Args_Target_State_PENDING
+	default:
+		state = vagrant_plugin_sdk.Args_Target_State_UNKNOWN
+	}
+	return &vagrant_plugin_sdk.Args_Target_State{
+		State: state,
+	}
+}
+
+func State(s *vagrant_plugin_sdk.Args_Target_State) (state core.State) {
+	switch s.State {
+	case vagrant_plugin_sdk.Args_Target_State_CREATED:
+		state = core.CREATED
+	case vagrant_plugin_sdk.Args_Target_State_DESTROYED:
+		state = core.DESTROYED
+	case vagrant_plugin_sdk.Args_Target_State_PENDING:
+		state = core.PENDING
+	default:
+		state = core.UNKNOWN
+	}
+	return
+}
+
+func MetadataProto(m map[string]string) *vagrant_plugin_sdk.Args_MetadataSet {
+	return &vagrant_plugin_sdk.Args_MetadataSet{
+		Metadata: m,
+	}
+}
+
+func Metadata(m *vagrant_plugin_sdk.Args_MetadataSet) map[string]string {
+	return m.Metadata
+}
+
+func BasisProto(
+	b core.Basis,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Basis, error) {
+	bp := &plugincore.BasisPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    b,
+	}
+
+	id, err := wrapClient(bp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Basis{
+		StreamId: id,
+	}, nil
+}
+
+func Basis(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Basis,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Basis, error) {
+	b := &plugincore.BasisPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, b, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Basis), nil
+}
+
+func ProjectProto(
+	p core.Project,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Project, error) {
+	pp := &plugincore.ProjectPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    p,
+	}
+
+	id, err := wrapClient(pp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Project{
+		StreamId: id,
+	}, nil
+}
+
+func Project(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Project,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Project, error) {
+	p := &plugincore.ProjectPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Project), nil
+}
+
+func TargetProto(
+	t core.Target,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Target, error) {
+	tp := &plugincore.TargetPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    t,
+	}
+
+	id, err := wrapClient(tp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Target{
+		StreamId: id,
+	}, nil
+}
+
+func Target(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Target,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Target, error) {
+	t := &plugincore.TargetPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, t, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Target), nil
+}
+
+type connInfo interface {
+	GetStreamId() uint32
+}
+
+// When a core plugin is received, the proto will match the
+// ConnInfo interface which provides the information needed
+// setup a new client. Depending on the origin of the proto
+// the client will either establish a direct connection to
+// the service, or will connect via the broker.
+func wrapConnect(
+	ctx context.Context,
+	p plugin.GRPCPlugin,
+	i connInfo,
+	internal *pluginargs.Internal,
+) (interface{}, error) {
+	conn, err := internal.Broker.Dial(i.GetStreamId())
+	if err != nil {
+		return nil, err
+	}
+	internal.Cleanup.Do(func() { conn.Close() })
+
+	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	if err != nil {
+		return nil, err
+	}
+
+	if closer, ok := client.(io.Closer); ok {
+		internal.Cleanup.Do(func() { closer.Close() })
+	}
+
+	return client, nil
+}
+
+// This takes a plugin (which generally uses a client as the plugin implementation)
+// and creates a new server for remote connections via the internal broker.
+func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, error) {
+	id := internal.Broker.NextId()
+	errChan := make(chan error, 1)
+
+	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
+		server := plugin.DefaultGRPCServer(opts)
+		if err := p.GRPCServer(internal.Broker, server); err != nil {
+			errChan <- err
+			return nil
+		}
+		internal.Cleanup.Do(func() { server.GracefulStop() })
+		close(errChan)
+		return server
+	})
+
+	err := <-errChan
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
