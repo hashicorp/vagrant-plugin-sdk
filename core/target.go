@@ -11,7 +11,7 @@ type Target interface {
 	ResourceId() (string, error)
 	Project() (Project, error)
 	Metadata() (map[string]string, error)
-	DataDir() (datadir.Target, error)
+	DataDir() (*datadir.Target, error)
 	State() (State, error)
 	Record() (*anypb.Any, error)
 

@@ -1,14 +1,15 @@
 package core
 
 import (
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	//	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type Project interface {
 	// accessors
 	CWD() (path string, err error)
-	DataDir() (path string, err error)
+	DataDir() (dir *datadir.Project, err error)
 	VagrantfileName() (name string, err error)
 	UI() (ui terminal.UI, err error)
 	Home() (path string, err error)
