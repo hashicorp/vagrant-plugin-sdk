@@ -56,6 +56,10 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
+func (b *base) GRPCBroker() *plugin.GRPCBroker {
+	return b.Broker
+}
+
 // This is here for internal usage on plugin setup
 // to provide extra information to ruby based plugins
 func (b *baseClient) SetRequestMetadata(key, value string) {
