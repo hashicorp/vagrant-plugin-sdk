@@ -33,7 +33,7 @@ func (b *base) Close() error {
 // NOTE: The expected type must be a pointer, so an expected type
 // of `*int` means an `int` is wanted. Expected type of `**int`
 // means an `*int` is wanted, etc.
-func (b *base) Map(resultValue, expectedType interface{}) (interface{}, error) {
+func (b *base) Map(resultValue, expectedType interface{}, args ...argmapper.Arg) (interface{}, error) {
 	typPtr := reflect.TypeOf(expectedType)
 	if typPtr.Kind() != reflect.Ptr {
 		return nil, errors.New("expectedType must be nil pointer")
@@ -52,7 +52,9 @@ func (b *base) Map(resultValue, expectedType interface{}) (interface{}, error) {
 	}
 
 	cb := func(in, out *argmapper.ValueSet) error {
-		return out.FromSignature(in.SignatureValues())
+		val := in.Typed(typ).Value.Interface()
+		out.Typed(typ).Value = reflect.ValueOf(val)
+		return nil
 	}
 
 	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb)
@@ -60,17 +62,19 @@ func (b *base) Map(resultValue, expectedType interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	r := callFn.Call(
+	args = append(args,
 		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Typed(resultValue),
 		argmapper.Typed(b.internal()),
+		argmapper.Typed(b.Logger),
 		argmapper.Logger(b.Logger),
 	)
 
-	if err := r.Err(); err != nil {
+	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
 		return nil, err
 	}
 
-	return r.Out(0), nil
+	return vsOut.Typed(typ).Value.Interface(), nil
 }
 
 func (b *base) internal() *pluginargs.Internal {
