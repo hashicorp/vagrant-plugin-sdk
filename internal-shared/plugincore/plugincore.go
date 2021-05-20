@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	coreplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 )
 
@@ -39,6 +40,14 @@ var (
 
 func init() {
 	for _, f := range coreplugin.MapperFns {
+		fn, err := argmapper.NewFunc(f)
+		if err != nil {
+			panic(err)
+		}
+
+		coreMappers = append(coreMappers, fn)
+	}
+	for _, f := range protomappers.All {
 		fn, err := argmapper.NewFunc(f)
 		if err != nil {
 			panic(err)
