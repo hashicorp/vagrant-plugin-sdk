@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type TargetPlugin struct {
@@ -152,6 +153,21 @@ func (c *targetClient) Record() (record *anypb.Any, err error) {
 	return
 }
 
+func (c *targetClient) UI() (ui terminal.UI, err error) {
+	r, err := c.client.UI(c.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := c.Map(r, (*terminal.UI)(nil),
+		argmapper.Typed(c.ctx))
+	if err == nil {
+		ui = result.(terminal.UI)
+	}
+
+	return
+}
+
 func (s *targetServer) Name(
 	ctx context.Context,
 	_ *empty.Empty,
@@ -251,6 +267,24 @@ func (s *targetServer) Record(
 	record, err := s.Impl.Record()
 	if err == nil {
 		r = &vagrant_plugin_sdk.Target_RecordResponse{Record: record}
+	}
+
+	return
+}
+
+func (t *targetServer) UI(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
+	d, err := t.Impl.UI()
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
 	}
 
 	return
