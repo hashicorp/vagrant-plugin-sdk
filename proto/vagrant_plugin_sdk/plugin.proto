@@ -81,6 +81,10 @@ message Args {
     uint32 stream_id = 1;
   }
 
+  message Provider {
+    uint32 stream_id = 1;
+  }
+
   message Target {
     // Generic target
     uint32 stream_id = 1;
@@ -816,21 +820,30 @@ service TargetService {
 }
 
 service TargetMachineService {
-  rpc SetName(Target.Machine.SetNameRequest) returns (Target.Machine.SetNameResponse);
-  rpc SetID(Target.Machine.SetIDRequest) returns (Target.Machine.SetIDResponse);
-  rpc GetID(Target.Machine.GetIDRequest) returns (Target.Machine.GetIDResponse);
-  rpc SetState(Target.Machine.SetStateRequest) returns (Target.Machine.SetStateResponse);
-  rpc GetState(Target.Machine.GetStateRequest) returns (Target.Machine.GetStateResponse);
-  rpc SetUUID(Target.Machine.SetUUIDRequest) returns (Target.Machine.SetUUIDResponse);
-  rpc GetUUID(Target.Machine.GetUUIDRequest) returns (Target.Machine.GetUUIDResponse);
+  // Required so a machine can properly act as a target
+  rpc ResourceId(google.protobuf.Empty) returns (Target.ResourceIdResponse);
+  rpc Record(google.protobuf.Empty) returns (Target.RecordResponse);
+  rpc Name(google.protobuf.Empty) returns (Target.NameResponse);
+  rpc Project(google.protobuf.Empty) returns (Args.Project);
+  rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
+  rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Target);
+  rpc State(google.protobuf.Empty) returns (Args.Target.State);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
 
-  rpc Box(Target.Machine.BoxRequest) returns (Target.Machine.BoxResponse);
-  rpc Datadir(Target.Machine.DatadirRequest) returns (Target.Machine.DatadirResponse);
-  rpc LocalDataPath(Target.Machine.LocalDataPathRequest) returns (Target.Machine.LocalDataPathResponse);
-  rpc Provider(Target.Machine.ProviderRequest) returns (Target.Machine.ProviderResponse);
-  rpc VagrantfileName(Target.Machine.VagrantfileNameRequest) returns (Target.Machine.VagrantfileNameResponse);
-  rpc VagrantfilePath(Target.Machine.VagrantfilePathRequest) returns (Target.Machine.VagrantfilePathResponse);
-  rpc UpdatedAt(Target.Machine.UpdatedAtRequest) returns (Target.Machine.UpdatedAtResponse);
+  // Machine specific
+  rpc SetName(Target.Machine.SetNameRequest) returns (google.protobuf.Empty);
+  rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);
+  rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
+  rpc SetState(Target.Machine.SetStateRequest) returns (google.protobuf.Empty);
+  rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
+  rpc SetUUID(Target.Machine.SetUUIDRequest) returns (google.protobuf.Empty);
+  rpc GetUUID(google.protobuf.Empty) returns (Target.Machine.GetUUIDResponse);
+
+  rpc Box(google.protobuf.Empty) returns (Args.Target.Machine.Box);
+  rpc Provider(google.protobuf.Empty) returns (Args.Provider);
+  rpc VagrantfileName(google.protobuf.Empty) returns (Target.Machine.VagrantfileNameResponse);
+  rpc VagrantfilePath(google.protobuf.Empty) returns (Target.Machine.VagrantfilePathResponse);
+  rpc UpdatedAt(google.protobuf.Empty) returns (Target.Machine.UpdatedAtResponse);
 }
 
 message Target {
@@ -855,67 +868,33 @@ message Target {
     message SetNameRequest {
       string name = 1;
     }
-    message SetNameResponse {}
-    // GetName
-    // SetID
     message SetIDRequest {
       string id = 1;
     }
-    message SetIDResponse {}
-    // GetID
-    message GetIDRequest {}
     message GetIDResponse {
       string id = 1;
     }
     message SetStateRequest {
       Args.Target.Machine.State state = 1;
     }
-    message SetStateResponse {}
-    message GetStateRequest {}
     message GetStateResponse {
       Args.Target.Machine.State state = 1;
     }
-    message GetUUIDRequest {}
     message GetUUIDResponse {
       string uuid = 1;
     }
     message SetUUIDRequest {
       string uuid = 1;
     }
-    message SetUUIDResponse {}
-    // Box
-    message BoxRequest {}
-    // TODO: this should return a Ref.Box
-    message BoxResponse {
-      Args.Target.Machine.Box box = 1;
-    }
-    // Datadir
-    message DatadirRequest {}
-    message DatadirResponse {
-      Args.DataDir.Target datadir = 1;
-    }
-    // LocalDataPath
-    message LocalDataPathRequest {}
-    message LocalDataPathResponse {
-      string path = 1;
-    }
-    // Provider
-    message ProviderRequest {}
-    message ProviderResponse {
-      string provider = 1;
-    }
     // VagrantfileName
-    message VagrantfileNameRequest {}
     message VagrantfileNameResponse {
       string name = 1;
     }
     // VagrantfilePath
-    message VagrantfilePathRequest {}
     message VagrantfilePathResponse {
       string path = 1;
     }
     // UpdatedAt
-    message UpdatedAtRequest {}
     message UpdatedAtResponse {
       google.protobuf.Timestamp updated_at = 1;
     }
