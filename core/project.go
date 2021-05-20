@@ -1,6 +1,7 @@
 package core
 
 import (
+	"io"
 	//	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -40,5 +41,5 @@ type Project interface {
 	// SetupHomePath() (homePath string, err error) // TODO(spox): do we need this? probably not
 	// SetupLocalDataPath(force bool) (err error)   // TODO(spox): do we need this? - probably not
 
-	Closer
+	io.Closer
 }

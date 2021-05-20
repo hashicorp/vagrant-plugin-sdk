@@ -1,6 +1,8 @@
 package core
 
 import (
+	"io"
+
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
@@ -15,5 +17,5 @@ type Target interface {
 	State() (State, error)
 	Record() (*anypb.Any, error)
 
-	Closer
+	io.Closer
 }
