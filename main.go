@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
 )
 
@@ -28,8 +27,6 @@ func Main(opts ...Option) {
 
 	// Default our mappers
 	c.Mappers = append(c.Mappers, protomappers.All...)
-	// Add core mappers
-	c.Mappers = append(c.Mappers, core.MapperFns...)
 
 	// Build config
 	for _, opt := range opts {

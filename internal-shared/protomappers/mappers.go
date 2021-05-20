@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/DavidGamba/go-getoptions/option"
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
@@ -544,4 +545,14 @@ func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, err
 	}
 
 	return id, nil
+}
+
+func init() {
+	for _, fn := range All {
+		mFn, err := argmapper.NewFunc(fn)
+		if err != nil {
+			panic(err)
+		}
+		plugincore.MapperFns = append(plugincore.MapperFns, mFn)
+	}
 }

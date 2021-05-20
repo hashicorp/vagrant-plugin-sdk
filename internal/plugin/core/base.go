@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 )
 
+var MapperFns []*argmapper.Func
+
 type base struct {
 	Broker  *plugin.GRPCBroker
 	Mappers []*argmapper.Func
@@ -63,6 +65,7 @@ func (b *base) Map(resultValue, expectedType interface{}, args ...argmapper.Arg)
 	}
 
 	args = append(args,
+		argmapper.ConverterFunc(MapperFns...),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(resultValue),
 		argmapper.Typed(b.internal()),
