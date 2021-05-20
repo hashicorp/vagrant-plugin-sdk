@@ -77,13 +77,8 @@ type projectServer struct {
 
 func (p *projectClient) CWD() (path string, err error) {
 	r, err := p.client.CWD(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		path = result.(string)
+		path = r.Path
 	}
 
 	return
@@ -105,13 +100,8 @@ func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
 
 func (p *projectClient) VagrantfileName() (name string, err error) {
 	r, err := p.client.VagrantfileName(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		name = result.(string)
+		name = r.Name
 	}
 
 	return
@@ -123,7 +113,8 @@ func (p *projectClient) UI() (ui terminal.UI, err error) {
 		return
 	}
 
-	result, err := p.Map(r, (*terminal.UI)(nil))
+	result, err := p.Map(r, (*terminal.UI)(nil),
+		argmapper.Typed(p.ctx))
 	if err == nil {
 		ui = result.(terminal.UI)
 	}
@@ -133,26 +124,16 @@ func (p *projectClient) UI() (ui terminal.UI, err error) {
 
 func (p *projectClient) Home() (path string, err error) {
 	r, err := p.client.Home(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		path = result.(string)
+		path = r.Path
 	}
 
 	return
 }
 func (p *projectClient) LocalData() (path string, err error) {
 	r, err := p.client.LocalData(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		path = result.(string)
+		path = r.Path
 	}
 
 	return
@@ -160,13 +141,8 @@ func (p *projectClient) LocalData() (path string, err error) {
 
 func (p *projectClient) Tmp() (path string, err error) {
 	r, err := p.client.Tmp(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		path = result.(string)
+		path = r.Path
 	}
 
 	return
@@ -174,13 +150,8 @@ func (p *projectClient) Tmp() (path string, err error) {
 
 func (p *projectClient) DefaultPrivateKey() (path string, err error) {
 	r, err := p.client.DefaultPrivateKey(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*string)(nil))
 	if err == nil {
-		path = result.(string)
+		path = r.Key
 	}
 
 	return
@@ -188,13 +159,8 @@ func (p *projectClient) DefaultPrivateKey() (path string, err error) {
 
 func (p *projectClient) MachineNames() (names []string, err error) {
 	r, err := p.client.MachineNames(p.ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*[]string)(nil))
 	if err == nil {
-		names = result.([]string)
+		names = r.Names
 	}
 
 	return
@@ -236,7 +202,6 @@ func (p *projectServer) DataDir(
 	if err != nil {
 		return
 	}
-
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Project)(nil))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_DataDir_Project)
@@ -268,7 +233,8 @@ func (p *projectServer) UI(
 		return
 	}
 
-	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil))
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
+		argmapper.Typed(ctx))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
 	}
@@ -321,6 +287,7 @@ func (p *projectServer) DefaultPrivateKey(
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
 	key, err := p.Impl.DefaultPrivateKey()
+	p.Logger.Warn("private key on project server", "key", key)
 	if err != nil {
 		return nil, err
 	}
