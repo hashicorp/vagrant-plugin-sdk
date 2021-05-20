@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type Target interface {
@@ -16,6 +17,7 @@ type Target interface {
 	DataDir() (*datadir.Target, error)
 	State() (State, error)
 	Record() (*anypb.Any, error)
+	UI() (ui terminal.UI, err error)
 
 	io.Closer
 }
