@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -19,7 +20,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // All is the list of all mappers as raw function pointers.
@@ -56,6 +56,8 @@ var All = []interface{}{
 	StateBagProto,
 	Target,
 	TargetProto,
+	TargetMachine,
+	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
 }
@@ -487,6 +489,47 @@ func Target(
 	}
 
 	return client.(core.Target), nil
+}
+
+func TargetMachineProto(
+	m core.Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
+	mp := &plugincore.TargetMachinePlugin{
+		Mappers:    internal.Mappers,
+		Logger:     log,
+		Impl:       m,
+		TargetImpl: m,
+	}
+
+	id, err := wrapClient(mp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Target_Machine{
+		StreamId: id,
+	}, nil
+}
+
+func TargetMachine(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Target_Machine,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Machine, error) {
+	m := &plugincore.TargetMachinePlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, m, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Machine), nil
 }
 
 type connInfo interface {
