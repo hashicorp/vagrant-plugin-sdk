@@ -84,6 +84,40 @@ func (p *projectClient) CWD() (path string, err error) {
 	return
 }
 
+func (p *projectClient) Target(name string) (t core.Target, err error) {
+	r, err := p.client.Target(p.ctx, &vagrant_plugin_sdk.Project_TargetRequest{
+		Name: name,
+	})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.Target)(nil),
+		argmapper.Typed(p.ctx))
+	if err == nil {
+		t = result.(core.Target)
+	}
+	return
+}
+
+func (p *projectClient) TargetNames() (names []string, err error) {
+	r, err := p.client.TargetNames(p.ctx, &empty.Empty{})
+	if err == nil {
+		names = r.Names
+	}
+
+	return
+}
+
+func (p *projectClient) TargetIds() (ids []string, err error) {
+	r, err := p.client.TargetIds(p.ctx, &empty.Empty{})
+	if err == nil {
+		ids = r.Ids
+	}
+
+	return
+}
+
 func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
 	r, err := p.client.DataDir(p.ctx, &emptypb.Empty{})
 	if err != nil {
@@ -326,6 +360,49 @@ func (p *projectServer) MachineNames(
 	return &vagrant_plugin_sdk.Project_MachineNamesResponse{
 		Names: names,
 	}, nil
+}
+
+func (p *projectServer) Target(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Project_TargetRequest,
+) (r *vagrant_plugin_sdk.Args_Target, err error) {
+	d, err := p.Impl.Target(in.Name)
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Target)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Target)
+	}
+
+	return
+}
+
+func (p *projectServer) TargetNames(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_TargetNamesResponse, error) {
+	n, err := p.Impl.TargetNames()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_TargetNamesResponse{
+		Names: n}, nil
+}
+
+func (p *projectServer) TargetIds(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_TargetIdsResponse, error) {
+	ids, err := p.Impl.TargetIds()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_TargetIdsResponse{
+		Ids: ids}, nil
 }
 
 var (
