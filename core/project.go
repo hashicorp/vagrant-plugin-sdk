@@ -41,5 +41,9 @@ type Project interface {
 	// SetupHomePath() (homePath string, err error) // TODO(spox): do we need this? probably not
 	// SetupLocalDataPath(force bool) (err error)   // TODO(spox): do we need this? - probably not
 
+	Target(name string) (t Target, err error)
+	TargetNames() (names []string, err error)
+	TargetIds() (ids []string, err error)
+
 	io.Closer
 }
