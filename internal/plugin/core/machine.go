@@ -3,17 +3,14 @@ package core
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -61,14 +58,16 @@ func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serv
 		Broker:  broker,
 		Cleanup: &pluginargs.Cleanup{},
 	}
+
 	vagrant_plugin_sdk.RegisterTargetMachineServiceServer(s, &targetMachineServer{
 		Impl: t.Impl,
 		base: b,
-		targetServer: targetServer{
+		targetServer: &targetServer{
 			Impl: t.TargetImpl,
 			base: b,
 		},
 	})
+
 	return nil
 }
 
@@ -83,16 +82,10 @@ type targetMachineClient struct {
 
 type targetMachineServer struct {
 	*base
-	targetServer
+	*targetServer
 
 	Impl core.Machine
-	vagrant_plugin_sdk.UnimplementedTargetMachineServiceServer
-}
-
-func (t *targetMachineClient) Communicate() (comm core.Communicator, err error) {
-
-	// TODO
-	return nil, errNotImplemented
+	vagrant_plugin_sdk.UnsafeTargetMachineServiceServer
 }
 
 func (t *targetMachineClient) Guest() (g core.Guest, err error) {
@@ -143,12 +136,6 @@ func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err 
 	return nil, errNotImplemented
 }
 
-func (t *targetMachineClient) SetName(name string) (err error) {
-	_, err = t.client.SetName(t.ctx, &vagrant_plugin_sdk.Target_Machine_SetNameRequest{
-		Name: name})
-	return
-}
-
 func (t *targetMachineClient) ID() (id string, err error) {
 	r, err := t.client.GetID(t.ctx, &empty.Empty{})
 	if err == nil {
@@ -179,47 +166,17 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 	return
 }
 
-func (t *targetMachineClient) Provider() (p core.Provider, err error) {
-	return nil, errNotImplemented
-}
-
-func (t *targetMachineClient) VagrantfileName() (name string, err error) {
-	r, err := t.client.VagrantfileName(t.ctx, &empty.Empty{})
-	if err == nil {
-		name = r.Name
-	}
-
-	return
-}
-
-func (t *targetMachineClient) VagrantfilePath() (p path.Path, err error) {
-	r, err := t.client.VagrantfilePath(t.ctx, &empty.Empty{})
-	if err == nil {
-		p = path.NewPath(r.Path)
-	}
-
-	return
-}
-
-func (t *targetMachineClient) UpdatedAt() (utime *time.Time, err error) {
-	r, err := t.client.UpdatedAt(t.ctx, &empty.Empty{})
-	if err == nil {
-		ut := r.UpdatedAt.AsTime()
-		utime = &ut
-	}
-
-	return
-}
-
-func (t *targetMachineServer) SetName(
+func (t *targetMachineServer) GetID(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.Target_Machine_SetNameRequest,
-) (*empty.Empty, error) {
-	if err := t.Impl.SetName(in.Name); err != nil {
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Target_Machine_GetIDResponse, error) {
+	id, err := t.Impl.ID()
+	if err != nil {
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &vagrant_plugin_sdk.Target_Machine_GetIDResponse{
+		Id: id}, nil
 }
 
 func (t *targetMachineServer) SetID(
@@ -300,80 +257,6 @@ func (t *targetMachineServer) Box(
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_Target_Machine_Box)
 	}
-
-	return
-}
-
-func (t *targetMachineServer) Provider(
-	ctx context.Context,
-	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Args_Provider, err error) {
-	p, err := t.Impl.Provider()
-	if err != nil {
-		return
-	}
-
-	result, err := t.Map(p, (**vagrant_plugin_sdk.Args_Provider)(nil),
-		argmapper.Typed(ctx))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Provider)
-	}
-
-	return
-}
-
-func (t *targetMachineServer) VagrantfileName(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_Machine_VagrantfileNameResponse, error) {
-	n, err := t.Impl.VagrantfileName()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Target_Machine_VagrantfileNameResponse{
-		Name: n}, nil
-}
-
-func (t *targetMachineServer) VagrantfilePath(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_Machine_VagrantfilePathResponse, error) {
-	n, err := t.Impl.VagrantfilePath()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Target_Machine_VagrantfilePathResponse{
-		Path: n.String()}, nil
-}
-
-func (t *targetMachineServer) UpdatedAt(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_Machine_UpdatedAtResponse, error) {
-	u, err := t.Impl.UpdatedAt()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Target_Machine_UpdatedAtResponse{
-		UpdatedAt: timestamppb.New(*u)}, nil
-}
-
-func (s *targetMachineServer) DataDir(
-	ctx context.Context,
-	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Args_DataDir_Target, err error) {
-	d, err := s.Impl.DataDir()
-	if err != nil {
-		return
-	}
-	result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
-	if err != nil {
-		return
-	}
-	r = result.(*vagrant_plugin_sdk.Args_DataDir_Target)
 
 	return
 }
