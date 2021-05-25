@@ -1,11 +1,5 @@
 package core
 
-import (
-	"time"
-
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-)
-
 // the ssh info in vagrant core ends up dumping out
 // a bunch of options, but they are also ssh specific
 // where this would be used for other stuff too (like
@@ -22,17 +16,11 @@ type Machine interface {
 	Target
 
 	// Attributes
-	SetName(value string) (err error)
 	ID() (id string, err error)
 	SetID(value string) (err error)
 	Box() (b Box, err error)
-	Provider() (p Provider, err error)
-	VagrantfileName() (name string, err error)
-	VagrantfilePath() (p path.Path, err error)
-	UpdatedAt() (t *time.Time, err error)
 
 	// Functions
-	Communicate() (comm Communicator, err error)
 	Guest() (g Guest, err error)
 	IndexUUID() (id string, err error)
 	SetUUID(id string) (err error)
