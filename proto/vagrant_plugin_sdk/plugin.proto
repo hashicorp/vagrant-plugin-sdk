@@ -812,11 +812,17 @@ service TargetService {
   rpc ResourceId(google.protobuf.Empty) returns (Target.ResourceIdResponse);
   rpc Record(google.protobuf.Empty) returns (Target.RecordResponse);
   rpc Name(google.protobuf.Empty) returns (Target.NameResponse);
+  rpc SetName(Target.SetNameRequest) returns (google.protobuf.Empty);
   rpc Project(google.protobuf.Empty) returns (Args.Project);
   rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Target);
   rpc State(google.protobuf.Empty) returns (Args.Target.State);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+  rpc Specialize(google.protobuf.Any) returns (google.protobuf.Any);
+  rpc Provider(google.protobuf.Empty) returns (Args.Provider);
+  rpc VagrantfileName(google.protobuf.Empty) returns (Target.VagrantfileNameResponse);
+  rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
+  rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
 }
 
 service TargetMachineService {
@@ -824,26 +830,26 @@ service TargetMachineService {
   rpc ResourceId(google.protobuf.Empty) returns (Target.ResourceIdResponse);
   rpc Record(google.protobuf.Empty) returns (Target.RecordResponse);
   rpc Name(google.protobuf.Empty) returns (Target.NameResponse);
+  rpc SetName(Target.SetNameRequest) returns (google.protobuf.Empty);
   rpc Project(google.protobuf.Empty) returns (Args.Project);
   rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Target);
   rpc State(google.protobuf.Empty) returns (Args.Target.State);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+  rpc Specialize(google.protobuf.Any) returns (google.protobuf.Any);
+  rpc Provider(google.protobuf.Empty) returns (Args.Provider);
+  rpc VagrantfileName(google.protobuf.Empty) returns (Target.VagrantfileNameResponse);
+  rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
+  rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
 
   // Machine specific
-  rpc SetName(Target.Machine.SetNameRequest) returns (google.protobuf.Empty);
   rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);
   rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
   rpc SetState(Target.Machine.SetStateRequest) returns (google.protobuf.Empty);
   rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
   rpc SetUUID(Target.Machine.SetUUIDRequest) returns (google.protobuf.Empty);
   rpc GetUUID(google.protobuf.Empty) returns (Target.Machine.GetUUIDResponse);
-
   rpc Box(google.protobuf.Empty) returns (Args.Target.Machine.Box);
-  rpc Provider(google.protobuf.Empty) returns (Args.Provider);
-  rpc VagrantfileName(google.protobuf.Empty) returns (Target.Machine.VagrantfileNameResponse);
-  rpc VagrantfilePath(google.protobuf.Empty) returns (Target.Machine.VagrantfilePathResponse);
-  rpc UpdatedAt(google.protobuf.Empty) returns (Target.Machine.UpdatedAtResponse);
 }
 
 message Target {
@@ -859,15 +865,26 @@ message Target {
   message ProjectResponse {
     Ref.Project project = 1;
   }
+  message SetNameRequest {
+    string name = 1;
+  }
+  // VagrantfileName
+  message VagrantfileNameResponse {
+    string name = 1;
+  }
+  // VagrantfilePath
+  message VagrantfilePathResponse {
+    string path = 1;
+  }
+  // UpdatedAt
+  message UpdatedAtResponse {
+    google.protobuf.Timestamp updated_at = 1;
+  }
 
   /**********************************************
    * Machine message used with machine service
    **********************************************/
   message Machine {
-    // SetName
-    message SetNameRequest {
-      string name = 1;
-    }
     message SetIDRequest {
       string id = 1;
     }
@@ -885,18 +902,6 @@ message Target {
     }
     message SetUUIDRequest {
       string uuid = 1;
-    }
-    // VagrantfileName
-    message VagrantfileNameResponse {
-      string name = 1;
-    }
-    // VagrantfilePath
-    message VagrantfilePathResponse {
-      string path = 1;
-    }
-    // UpdatedAt
-    message UpdatedAtResponse {
-      google.protobuf.Timestamp updated_at = 1;
     }
   }
 }
