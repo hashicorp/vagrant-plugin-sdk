@@ -920,12 +920,24 @@ service ProjectService {
   rpc Tmp(google.protobuf.Empty) returns (Project.TmpResponse);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
+  rpc Target(Project.TargetRequest) returns (Args.Target);
+  rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
+  rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
 }
 
 /*******************************************************
  * Project message used with Project service
  *******************************************************/
 message Project {
+  message TargetRequest {
+    string name = 1;
+  }
+  message TargetNamesResponse {
+    repeated string names = 1;
+  }
+  message TargetIdsResponse {
+    repeated string ids = 1;
+  }
   message MachineAndProvider {
     string name = 1;
     string provider = 2;
