@@ -3,317 +3,266 @@ package core
 import (
 	"context"
 	"errors"
-	"time"
 
-	"google.golang.org/grpc"
-
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
-	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-type Machine struct {
-	c          *MachineClient
-	ResourceID string
-	ServerAddr string
-}
+var errNotImplemented = errors.New("not implemented")
 
-// MachinePlugin is just a GRPC client for a machine
-type MachinePlugin struct {
+type TargetMachinePlugin struct {
 	plugin.NetRPCUnsupportedPlugin
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Impl    core.Machine
+
+	Mappers    []*argmapper.Func
+	Logger     hclog.Logger
+	Impl       core.Machine
+	TargetImpl core.Target
 }
 
 // Implements plugin.GRPCPlugin
-func (p *MachinePlugin) GRPCClient(
+func (t *TargetMachinePlugin) GRPCClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &MachineClient{
-		client:       vagrant_plugin_sdk.NewMachineServiceClient(c),
-		ServerTarget: c.Target(),
-		Mappers:      p.Mappers,
-		Logger:       p.Logger,
-		Broker:       broker,
+	cl := vagrant_plugin_sdk.NewTargetMachineServiceClient(c)
+	b := &base{
+		Mappers: t.Mappers,
+		Logger:  t.Logger,
+		Broker:  broker,
+		Cleanup: &pluginargs.Cleanup{},
+	}
+	return &targetMachineClient{
+		client: cl,
+		ctx:    ctx,
+		base:   b,
+		targetClient: &targetClient{
+			client: cl,
+			ctx:    ctx,
+			base:   b,
+		},
 	}, nil
 }
 
-func (p *MachinePlugin) GRPCServer(
-	broker *plugin.GRPCBroker,
-	s *grpc.Server,
-) error {
-	return errors.New("Server plugin not provided")
-}
-
-func NewMachine(client *MachineClient, resourceID string) *Machine {
-	return &Machine{
-		c:          client,
-		ResourceID: resourceID,
-		ServerAddr: client.ServerTarget,
+func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+	b := &base{
+		Mappers: t.Mappers,
+		Logger:  t.Logger,
+		Broker:  broker,
+		Cleanup: &pluginargs.Cleanup{},
 	}
-}
 
-// Machine implements core.Machine interface
-type MachineClient struct {
-	Broker       *plugin.GRPCBroker
-	Logger       hclog.Logger
-	Mappers      []*argmapper.Func
-	ResourceID   string // NOTE(spox): This needs to be added (resource identifier)
-	ServerTarget string
+	vagrant_plugin_sdk.RegisterTargetMachineServiceServer(s, &targetMachineServer{
+		Impl: t.Impl,
+		base: b,
+		targetServer: &targetServer{
+			Impl: t.TargetImpl,
+			base: b,
+		},
+	})
 
-	client vagrant_plugin_sdk.MachineServiceClient
-}
-
-func (m *Machine) Communicate() (comm core.Communicator, err error) {
-
-	// TODO
-	return nil, nil
-}
-
-func (m *Machine) Guest() (g core.Guest, err error) {
-	// TODO
-	return nil, nil
-}
-
-func (m *Machine) State() (state *core.MachineState, err error) {
-	// TODO
-	return nil, nil
-}
-
-func (m *Machine) IndexUUID() (id string, err error) {
-	// TODO
-	return "", nil
-}
-
-func (m *Machine) Inspect() (printable string, err error) {
-	// TODO
-	return "", nil
-}
-
-func (m *Machine) Reload() (err error) {
-	// TODO
 	return nil
 }
 
-func (m *Machine) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+// Machine implements core.Machine interface
+type targetMachineClient struct {
+	*base
+	*targetClient
+
+	ctx    context.Context
+	client vagrant_plugin_sdk.TargetMachineServiceClient
+}
+
+type targetMachineServer struct {
+	*base
+	*targetServer
+
+	Impl core.Machine
+	vagrant_plugin_sdk.UnsafeTargetMachineServiceServer
+}
+
+func (t *targetMachineClient) Guest() (g core.Guest, err error) {
 	// TODO
-	return nil, nil
+	return nil, errNotImplemented
 }
 
-func (m *Machine) UID() (user_id int, err error) {
+func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
 	// TODO
-	return 10, nil
+	return nil, errNotImplemented
 }
 
-func (m *Machine) GetName() (name string, err error) {
-	r, err := m.c.client.GetName(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_GetNameRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return "", err
-	}
-
-	return r.Name, nil
+func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err error) {
+	return errNotImplemented
 }
 
-func (m *Machine) SetName(name string) (err error) {
-	_, err = m.c.client.SetName(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_SetNameRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-			Name: name,
-		},
-	)
-	return
-}
-
-func (m *Machine) GetID() (id string, err error) {
-	r, err := m.c.client.GetID(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_GetIDRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-	id = r.Id
-	return
-}
-
-func (m *Machine) SetID(id string) (err error) {
-	_, err = m.c.client.SetID(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_SetIDRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-			Id: id,
-		},
-	)
-	return
-}
-
-func (m *Machine) Box() (b core.Box, err error) {
-	_, err = m.c.client.Box(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_BoxRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-	// TODO(spox): this needs to be converted
-	//	b = r.Box
-	return
-}
-
-func (m *Machine) Datadir() (d *datadir.Machine, err error) {
-	_, err = m.c.client.Datadir(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_DatadirRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-	// TODO(spox): this needs to be converted
-	// d = r.Datadir
-	return
-}
-
-func (m *Machine) LocalDataPath() (p path.Path, err error) {
-	r, err := m.c.client.LocalDataPath(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_LocalDataPathRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-	p = path.NewPath(r.Path)
-	return
-}
-
-func (m *Machine) Provider() (p core.Provider, err error) {
-	_, err = m.c.client.Provider(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_ProviderRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-	// TODO(spox): need to extract and convert provider
-	return
-}
-
-func (m *Machine) VagrantfileName() (name string, err error) {
-	r, err := m.c.client.VagrantfileName(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_VagrantfileNameRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-
-	name = r.Name
-	return
-}
-
-func (m *Machine) VagrantfilePath() (p path.Path, err error) {
-	r, err := m.c.client.VagrantfilePath(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_VagrantfilePathRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-
-	if err != nil {
-		return
-	}
-
-	p = path.NewPath(r.Path)
-	return
-}
-
-func (m *Machine) UpdatedAt() (t *time.Time, err error) {
-	_, err = m.c.client.UpdatedAt(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_UpdatedAtRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-
-	// TODO(spox): need to figure out proto types
-	return
-}
-
-func (m *Machine) UI() (ui *terminal.UI, err error) {
-	_, err = m.c.client.UI(
-		context.Background(),
-		&vagrant_plugin_sdk.Machine_UIRequest{
-			Machine: &vagrant_plugin_sdk.Ref_Machine{
-				ResourceId: m.ResourceID,
-			},
-		},
-	)
-	if err != nil {
-		return
-	}
-
-	// TODO(spox): mapper to convert
-	return
-}
-
-func (m *Machine) SyncedFolders() (folders []core.SyncedFolder, err error) {
+func (t *targetMachineClient) IndexUUID() (id string, err error) {
 	// TODO
-	return nil, nil
+	return "", errNotImplemented
+}
+
+func (t *targetMachineClient) SetUUID(uuid string) (err error) {
+	return errNotImplemented
+}
+
+func (t *targetMachineClient) Inspect() (printable string, err error) {
+	// TODO
+	return "", errNotImplemented
+}
+
+func (t *targetMachineClient) Reload() (err error) {
+	// TODO
+	return errNotImplemented
+}
+
+func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+	// TODO
+	return nil, errNotImplemented
+}
+
+func (t *targetMachineClient) UID() (user_id int, err error) {
+	// TODO
+	return 10, errNotImplemented
+}
+
+func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
+	// TODO
+	return nil, errNotImplemented
+}
+
+func (t *targetMachineClient) ID() (id string, err error) {
+	r, err := t.client.GetID(t.ctx, &empty.Empty{})
+	if err == nil {
+		id = r.Id
+	}
+
+	return
+}
+
+func (t *targetMachineClient) SetID(id string) (err error) {
+	_, err = t.client.SetID(t.ctx, &vagrant_plugin_sdk.Target_Machine_SetIDRequest{
+		Id: id})
+	return
+}
+
+func (t *targetMachineClient) Box() (b core.Box, err error) {
+	r, err := t.client.Box(t.ctx, &empty.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(r, (*core.Box)(nil),
+		argmapper.Typed(t.ctx))
+	if err == nil {
+		b = result.(core.Box)
+	}
+
+	return
+}
+
+func (t *targetMachineServer) GetID(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Target_Machine_GetIDResponse, error) {
+	id, err := t.Impl.ID()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Target_Machine_GetIDResponse{
+		Id: id}, nil
+}
+
+func (t *targetMachineServer) SetID(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Target_Machine_SetIDRequest,
+) (*empty.Empty, error) {
+	if err := t.Impl.SetID(in.Id); err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (t *targetMachineServer) GetState(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_Target_Machine_State, err error) {
+	s, err := t.Impl.MachineState()
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(s, (**vagrant_plugin_sdk.Args_Target_Machine_State)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Target_Machine_State)
+	}
+
+	return
+}
+
+func (t *targetMachineServer) SetState(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Target_Machine_SetStateRequest,
+) (e *empty.Empty, err error) {
+	e = &empty.Empty{}
+	s, err := t.Map(in.State, (**core.MachineState)(nil))
+	if err != nil {
+		return
+	}
+	err = t.Impl.SetMachineState(s.(*core.MachineState))
+
+	return
+}
+
+func (t *targetMachineServer) SetUUID(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Target_Machine_SetUUIDRequest,
+) (*empty.Empty, error) {
+	err := t.Impl.SetUUID(in.Uuid)
+	return &empty.Empty{}, err
+}
+
+func (t *targetMachineServer) GetUUID(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Target_Machine_GetUUIDResponse, error) {
+	uuid, err := t.Impl.IndexUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Target_Machine_GetUUIDResponse{
+		Uuid: uuid}, nil
+}
+
+func (t *targetMachineServer) Box(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_Target_Machine_Box, err error) {
+	b, err := t.Impl.Box()
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(b, (**vagrant_plugin_sdk.Args_Target_Machine_Box)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Target_Machine_Box)
+	}
+
+	return
 }
 
 var (
-	_ plugin.Plugin     = (*MachinePlugin)(nil)
-	_ plugin.GRPCPlugin = (*MachinePlugin)(nil)
-	_ core.Machine      = (*Machine)(nil)
+	_ plugin.Plugin     = (*TargetMachinePlugin)(nil)
+	_ plugin.GRPCPlugin = (*TargetMachinePlugin)(nil)
+	_ core.Machine      = (*targetMachineClient)(nil)
 )

@@ -24,14 +24,14 @@ func NewProject(path string) (*Project, error) {
 	return &Project{Dir: dir}, nil
 }
 
-// App returns the Dir implementation scoped to a specific app.
-func (p *Project) Machine(name string) (*Machine, error) {
-	dir, err := NewScopedDir(p, path.NewPath("machine").Join(name).String())
+// Target returns the Dir implementation scoped to a specific target.
+func (p *Project) Target(name string) (*Target, error) {
+	dir, err := NewScopedDir(p, path.NewPath("target").Join(name).String())
 	if err != nil {
 		return nil, err
 	}
 
-	return &Machine{Dir: dir}, nil
+	return &Target{Dir: dir}, nil
 }
 
 // Assert implementation
