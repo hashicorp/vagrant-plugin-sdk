@@ -1023,6 +1023,10 @@ message Project {
 ********************************************************************/
 service VagrantfileService {
   rpc GetVagrantfile(Vagrantfile.GetVagrantfileRequest) returns (Vagrantfile.GetVagrantfileResponse);
+  rpc Target(Vagrantfile.TargetRequest) returns (Vagrantfile.TargetResponse);
+  rpc TargetConfig(Vagrantfile.TargetConfigRequest) returns (Vagrantfile.TargetConfigResponse);
+  rpc TargetNames(google.protobuf.Empty) returns (Vagrantfile.TargetNamesResponse);
+  rpc PrimaryTargetName(google.protobuf.Empty) returns (Vagrantfile.PrimaryTargetNameResponse);
 }
 
 /*******************************************************
@@ -1039,6 +1043,38 @@ message Vagrantfile {
 
   message GetVagrantfileResponse {
     Vagrantfile vagrantfile = 1;
+  }
+  
+  message TargetRequest {
+    string name = 1;
+    string provider = 2;
+    BoxCollection boxes = 3;
+    string data_path = 4;
+    Args.Project project = 5;
+  }
+
+  message TargetResponse {
+    Ref.Target target = 1;
+  }
+
+  message TargetConfigRequest {
+    string name = 1;
+    string provider = 2;
+    BoxCollection boxes = 3;
+    string data_path = 4;
+    bool validate_provider = 5;
+  }
+
+  message TargetConfigResponse {
+    MachineConfig target_config = 1;
+  }
+
+  message TargetNamesResponse {
+    repeated string name = 1;
+  }
+
+  message PrimaryTargetNameResponse {
+    string name = 1;
   }
 
   message ConfigVM {

@@ -2,21 +2,16 @@ package core
 
 import (
 	"context"
-	"errors"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
 )
-
-// Vagrantfile implements core.Vagrantfile interface
-type Vagrantfile struct {
-	c          *VagrantfileClient
-	ServerAddr string
-}
 
 // VagrantfilePlugin is just a GRPC client for a vagrantfile
 type VagrantfilePlugin struct {
@@ -32,12 +27,15 @@ func (p *VagrantfilePlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &VagrantfileClient{
-		client:       vagrant_plugin_sdk.NewVagrantfileServiceClient(c),
-		ServerTarget: c.Target(),
-		Mappers:      p.Mappers,
-		Logger:       p.Logger,
-		Broker:       broker,
+	return &vagrantfileClient{
+		client: vagrant_plugin_sdk.NewVagrantfileServiceClient(c),
+		ctx:    ctx,
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger,
+			Broker:  broker,
+			Cleanup: &pluginargs.Cleanup{},
+		},
 	}, nil
 }
 
@@ -45,46 +43,80 @@ func (p *VagrantfilePlugin) GRPCServer(
 	broker *plugin.GRPCBroker,
 	s *grpc.Server,
 ) error {
-	return errors.New("Server plugin not provided")
+	vagrant_plugin_sdk.RegisterVagrantfileServiceServer(s, &vagrantfileServer{
+		Impl: p.Impl,
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger,
+			Broker:  broker,
+			Cleanup: &pluginargs.Cleanup{},
+		},
+	})
+	return nil
 }
 
-func NewVagrantfile(client *VagrantfileClient) *Vagrantfile {
-	return &Vagrantfile{
-		c:          client,
-		ServerAddr: client.ServerTarget,
-	}
+type vagrantfileClient struct {
+	*base
+
+	ctx    context.Context
+	client vagrant_plugin_sdk.VagrantfileServiceClient
 }
 
-type VagrantfileClient struct {
-	Broker       *plugin.GRPCBroker
-	Logger       hclog.Logger
-	Mappers      []*argmapper.Func
-	ServerTarget string
-	client       vagrant_plugin_sdk.VagrantfileServiceClient
+type vagrantfileServer struct {
+	*base
+
+	Impl core.Vagrantfile
+	vagrant_plugin_sdk.UnimplementedVagrantfileServiceServer
 }
 
-func (v *Vagrantfile) Machine(name, provider string, boxes core.BoxCollection, dataPath string, project core.Project) (machine core.Machine, err error) {
+func (v *vagrantfileClient) Target(name, provider string, boxes core.BoxCollection, dataPath string, project core.Project) (machine core.Machine, err error) {
 	return
 }
 
-func (v *Vagrantfile) MachineConfig(name, provider string, boxes core.BoxCollection, dataPath string, validateProvider bool) (config core.MachineConfig, err error) {
+func (v *vagrantfileClient) TargetConfig(name, provider string, boxes core.BoxCollection, dataPath string, validateProvider bool) (config core.MachineConfig, err error) {
 	return
 }
 
-func (v *Vagrantfile) MachineNames() (names []string, err error) {
+func (v *vagrantfileClient) TargetNames() (names []string, err error) {
 	return
 }
 
-func (v *Vagrantfile) MachineNamesAndOptions() (names []string, options map[string]interface{}, err error) {
+func (v *vagrantfileClient) PrimaryTargetName() (name string, err error) {
 	return
 }
 
-func (v *Vagrantfile) PrimaryMachineName() (name string, err error) {
-	return
+// Server
+
+func (v *vagrantfileServer) Target(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Vagrantfile_TargetRequest,
+) (*vagrant_plugin_sdk.Vagrantfile_TargetResponse, error) {
+	return nil, nil
+}
+
+func (v *vagrantfileServer) TargetConfig(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Vagrantfile_TargetConfigRequest,
+) (*vagrant_plugin_sdk.Vagrantfile_TargetConfigResponse, error) {
+	return nil, nil
+}
+
+func (v *vagrantfileServer) TargetNames(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Vagrantfile_TargetNamesResponse, error) {
+	return nil, nil
+}
+
+func (v *vagrantfileServer) PrimaryTargetName(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Vagrantfile_PrimaryTargetNameResponse, error) {
+	return nil, nil
 }
 
 var (
 	_ plugin.Plugin     = (*VagrantfilePlugin)(nil)
 	_ plugin.GRPCPlugin = (*VagrantfilePlugin)(nil)
-	_ core.Vagrantfile  = (*Vagrantfile)(nil)
+	_ core.Vagrantfile  = (*vagrantfileClient)(nil)
 )

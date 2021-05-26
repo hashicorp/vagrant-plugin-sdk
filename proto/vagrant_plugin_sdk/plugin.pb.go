@@ -7904,6 +7904,352 @@ func (x *Vagrantfile_GetVagrantfileResponse) GetVagrantfile() *Vagrantfile_Vagra
 	return nil
 }
 
+type Vagrantfile_TargetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name     string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Provider string         `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	Boxes    *BoxCollection `protobuf:"bytes,3,opt,name=boxes,proto3" json:"boxes,omitempty"`
+	DataPath string         `protobuf:"bytes,4,opt,name=data_path,json=dataPath,proto3" json:"data_path,omitempty"`
+	Project  *Args_Project  `protobuf:"bytes,5,opt,name=project,proto3" json:"project,omitempty"`
+}
+
+func (x *Vagrantfile_TargetRequest) Reset() {
+	*x = Vagrantfile_TargetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[142]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_TargetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_TargetRequest) ProtoMessage() {}
+
+func (x *Vagrantfile_TargetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[142]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_TargetRequest.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_TargetRequest) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 2}
+}
+
+func (x *Vagrantfile_TargetRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetRequest) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetRequest) GetBoxes() *BoxCollection {
+	if x != nil {
+		return x.Boxes
+	}
+	return nil
+}
+
+func (x *Vagrantfile_TargetRequest) GetDataPath() string {
+	if x != nil {
+		return x.DataPath
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetRequest) GetProject() *Args_Project {
+	if x != nil {
+		return x.Project
+	}
+	return nil
+}
+
+type Vagrantfile_TargetResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Target *Ref_Target `protobuf:"bytes,1,opt,name=target,proto3" json:"target,omitempty"`
+}
+
+func (x *Vagrantfile_TargetResponse) Reset() {
+	*x = Vagrantfile_TargetResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[143]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_TargetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_TargetResponse) ProtoMessage() {}
+
+func (x *Vagrantfile_TargetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[143]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_TargetResponse.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_TargetResponse) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 3}
+}
+
+func (x *Vagrantfile_TargetResponse) GetTarget() *Ref_Target {
+	if x != nil {
+		return x.Target
+	}
+	return nil
+}
+
+type Vagrantfile_TargetConfigRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name             string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Provider         string         `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	Boxes            *BoxCollection `protobuf:"bytes,3,opt,name=boxes,proto3" json:"boxes,omitempty"`
+	DataPath         string         `protobuf:"bytes,4,opt,name=data_path,json=dataPath,proto3" json:"data_path,omitempty"`
+	ValidateProvider bool           `protobuf:"varint,5,opt,name=validate_provider,json=validateProvider,proto3" json:"validate_provider,omitempty"`
+}
+
+func (x *Vagrantfile_TargetConfigRequest) Reset() {
+	*x = Vagrantfile_TargetConfigRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[144]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_TargetConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_TargetConfigRequest) ProtoMessage() {}
+
+func (x *Vagrantfile_TargetConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[144]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_TargetConfigRequest.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_TargetConfigRequest) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 4}
+}
+
+func (x *Vagrantfile_TargetConfigRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetConfigRequest) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetConfigRequest) GetBoxes() *BoxCollection {
+	if x != nil {
+		return x.Boxes
+	}
+	return nil
+}
+
+func (x *Vagrantfile_TargetConfigRequest) GetDataPath() string {
+	if x != nil {
+		return x.DataPath
+	}
+	return ""
+}
+
+func (x *Vagrantfile_TargetConfigRequest) GetValidateProvider() bool {
+	if x != nil {
+		return x.ValidateProvider
+	}
+	return false
+}
+
+type Vagrantfile_TargetConfigResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TargetConfig *Vagrantfile_MachineConfig `protobuf:"bytes,1,opt,name=target_config,json=targetConfig,proto3" json:"target_config,omitempty"`
+}
+
+func (x *Vagrantfile_TargetConfigResponse) Reset() {
+	*x = Vagrantfile_TargetConfigResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[145]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_TargetConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_TargetConfigResponse) ProtoMessage() {}
+
+func (x *Vagrantfile_TargetConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[145]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_TargetConfigResponse.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_TargetConfigResponse) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 5}
+}
+
+func (x *Vagrantfile_TargetConfigResponse) GetTargetConfig() *Vagrantfile_MachineConfig {
+	if x != nil {
+		return x.TargetConfig
+	}
+	return nil
+}
+
+type Vagrantfile_TargetNamesResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name []string `protobuf:"bytes,1,rep,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *Vagrantfile_TargetNamesResponse) Reset() {
+	*x = Vagrantfile_TargetNamesResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[146]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_TargetNamesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_TargetNamesResponse) ProtoMessage() {}
+
+func (x *Vagrantfile_TargetNamesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[146]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_TargetNamesResponse.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_TargetNamesResponse) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 6}
+}
+
+func (x *Vagrantfile_TargetNamesResponse) GetName() []string {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+type Vagrantfile_PrimaryTargetNameResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *Vagrantfile_PrimaryTargetNameResponse) Reset() {
+	*x = Vagrantfile_PrimaryTargetNameResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[147]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Vagrantfile_PrimaryTargetNameResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Vagrantfile_PrimaryTargetNameResponse) ProtoMessage() {}
+
+func (x *Vagrantfile_PrimaryTargetNameResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[147]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Vagrantfile_PrimaryTargetNameResponse.ProtoReflect.Descriptor instead.
+func (*Vagrantfile_PrimaryTargetNameResponse) Descriptor() ([]byte, []int) {
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 7}
+}
+
+func (x *Vagrantfile_PrimaryTargetNameResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 type Vagrantfile_ConfigVM struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -7947,7 +8293,7 @@ type Vagrantfile_ConfigVM struct {
 func (x *Vagrantfile_ConfigVM) Reset() {
 	*x = Vagrantfile_ConfigVM{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[142]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[148]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7960,7 +8306,7 @@ func (x *Vagrantfile_ConfigVM) String() string {
 func (*Vagrantfile_ConfigVM) ProtoMessage() {}
 
 func (x *Vagrantfile_ConfigVM) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[142]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[148]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7973,7 +8319,7 @@ func (x *Vagrantfile_ConfigVM) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_ConfigVM.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_ConfigVM) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 2}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 8}
 }
 
 func (x *Vagrantfile_ConfigVM) GetAllowedSyncedFolderTypes() []string {
@@ -8204,7 +8550,7 @@ type Vagrantfile_ConfigSSH struct {
 func (x *Vagrantfile_ConfigSSH) Reset() {
 	*x = Vagrantfile_ConfigSSH{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[143]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[149]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8217,7 +8563,7 @@ func (x *Vagrantfile_ConfigSSH) String() string {
 func (*Vagrantfile_ConfigSSH) ProtoMessage() {}
 
 func (x *Vagrantfile_ConfigSSH) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[143]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[149]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8230,7 +8576,7 @@ func (x *Vagrantfile_ConfigSSH) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_ConfigSSH.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_ConfigSSH) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 3}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 9}
 }
 
 func (x *Vagrantfile_ConfigSSH) GetConfig() *any.Any {
@@ -8251,7 +8597,7 @@ type Vagrantfile_ConfigWinRM struct {
 func (x *Vagrantfile_ConfigWinRM) Reset() {
 	*x = Vagrantfile_ConfigWinRM{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[144]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[150]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8264,7 +8610,7 @@ func (x *Vagrantfile_ConfigWinRM) String() string {
 func (*Vagrantfile_ConfigWinRM) ProtoMessage() {}
 
 func (x *Vagrantfile_ConfigWinRM) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[144]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[150]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8277,7 +8623,7 @@ func (x *Vagrantfile_ConfigWinRM) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_ConfigWinRM.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_ConfigWinRM) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 4}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 10}
 }
 
 func (x *Vagrantfile_ConfigWinRM) GetConfig() *any.Any {
@@ -8298,7 +8644,7 @@ type Vagrantfile_ConfigWinssh struct {
 func (x *Vagrantfile_ConfigWinssh) Reset() {
 	*x = Vagrantfile_ConfigWinssh{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[145]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[151]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8311,7 +8657,7 @@ func (x *Vagrantfile_ConfigWinssh) String() string {
 func (*Vagrantfile_ConfigWinssh) ProtoMessage() {}
 
 func (x *Vagrantfile_ConfigWinssh) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[145]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[151]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8324,7 +8670,7 @@ func (x *Vagrantfile_ConfigWinssh) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_ConfigWinssh.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_ConfigWinssh) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 5}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 11}
 }
 
 func (x *Vagrantfile_ConfigWinssh) GetConfig() *any.Any {
@@ -8348,7 +8694,7 @@ type Vagrantfile_ConfigVagrant struct {
 func (x *Vagrantfile_ConfigVagrant) Reset() {
 	*x = Vagrantfile_ConfigVagrant{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[146]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[152]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8361,7 +8707,7 @@ func (x *Vagrantfile_ConfigVagrant) String() string {
 func (*Vagrantfile_ConfigVagrant) ProtoMessage() {}
 
 func (x *Vagrantfile_ConfigVagrant) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[146]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[152]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8374,7 +8720,7 @@ func (x *Vagrantfile_ConfigVagrant) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_ConfigVagrant.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_ConfigVagrant) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 6}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 12}
 }
 
 func (x *Vagrantfile_ConfigVagrant) GetHost() string {
@@ -8415,7 +8761,7 @@ type Vagrantfile_MachineConfig struct {
 func (x *Vagrantfile_MachineConfig) Reset() {
 	*x = Vagrantfile_MachineConfig{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[147]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[153]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8428,7 +8774,7 @@ func (x *Vagrantfile_MachineConfig) String() string {
 func (*Vagrantfile_MachineConfig) ProtoMessage() {}
 
 func (x *Vagrantfile_MachineConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[147]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[153]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8441,7 +8787,7 @@ func (x *Vagrantfile_MachineConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_MachineConfig.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_MachineConfig) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 7}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 13}
 }
 
 func (x *Vagrantfile_MachineConfig) GetName() string {
@@ -8504,7 +8850,7 @@ type Vagrantfile_Provisioner struct {
 func (x *Vagrantfile_Provisioner) Reset() {
 	*x = Vagrantfile_Provisioner{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[148]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[154]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8517,7 +8863,7 @@ func (x *Vagrantfile_Provisioner) String() string {
 func (*Vagrantfile_Provisioner) ProtoMessage() {}
 
 func (x *Vagrantfile_Provisioner) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[148]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[154]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8530,7 +8876,7 @@ func (x *Vagrantfile_Provisioner) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_Provisioner.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_Provisioner) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 8}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 14}
 }
 
 func (x *Vagrantfile_Provisioner) GetName() string {
@@ -8587,7 +8933,7 @@ type Vagrantfile_Provider struct {
 func (x *Vagrantfile_Provider) Reset() {
 	*x = Vagrantfile_Provider{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[149]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[155]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8600,7 +8946,7 @@ func (x *Vagrantfile_Provider) String() string {
 func (*Vagrantfile_Provider) ProtoMessage() {}
 
 func (x *Vagrantfile_Provider) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[149]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[155]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8613,7 +8959,7 @@ func (x *Vagrantfile_Provider) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_Provider.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_Provider) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 9}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 15}
 }
 
 func (x *Vagrantfile_Provider) GetType() string {
@@ -8643,7 +8989,7 @@ type Vagrantfile_Network struct {
 func (x *Vagrantfile_Network) Reset() {
 	*x = Vagrantfile_Network{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[150]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[156]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8656,7 +9002,7 @@ func (x *Vagrantfile_Network) String() string {
 func (*Vagrantfile_Network) ProtoMessage() {}
 
 func (x *Vagrantfile_Network) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[150]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[156]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8669,7 +9015,7 @@ func (x *Vagrantfile_Network) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_Network.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_Network) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 10}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 16}
 }
 
 func (x *Vagrantfile_Network) GetType() string {
@@ -8715,7 +9061,7 @@ type Vagrantfile_SyncedFolder struct {
 func (x *Vagrantfile_SyncedFolder) Reset() {
 	*x = Vagrantfile_SyncedFolder{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[151]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[157]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8728,7 +9074,7 @@ func (x *Vagrantfile_SyncedFolder) String() string {
 func (*Vagrantfile_SyncedFolder) ProtoMessage() {}
 
 func (x *Vagrantfile_SyncedFolder) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[151]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[157]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8741,7 +9087,7 @@ func (x *Vagrantfile_SyncedFolder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_SyncedFolder.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_SyncedFolder) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 11}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 17}
 }
 
 func (x *Vagrantfile_SyncedFolder) GetSource() string {
@@ -8829,7 +9175,7 @@ type Vagrantfile_Vagrantfile struct {
 func (x *Vagrantfile_Vagrantfile) Reset() {
 	*x = Vagrantfile_Vagrantfile{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[152]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[158]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -8842,7 +9188,7 @@ func (x *Vagrantfile_Vagrantfile) String() string {
 func (*Vagrantfile_Vagrantfile) ProtoMessage() {}
 
 func (x *Vagrantfile_Vagrantfile) ProtoReflect() protoreflect.Message {
-	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[152]
+	mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[158]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8855,7 +9201,7 @@ func (x *Vagrantfile_Vagrantfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vagrantfile_Vagrantfile.ProtoReflect.Descriptor instead.
 func (*Vagrantfile_Vagrantfile) Descriptor() ([]byte, []int) {
-	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 12}
+	return file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP(), []int{20, 18}
 }
 
 func (x *Vagrantfile_Vagrantfile) GetPath() string {
@@ -9612,7 +9958,7 @@ var file_vagrant_plugin_sdk_plugin_proto_rawDesc = []byte{
 	0x1a, 0x2d, 0x0a, 0x19, 0x44, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x50, 0x72, 0x69, 0x76, 0x61,
 	0x74, 0x65, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a,
 	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x22,
-	0xfc, 0x1b, 0x0a, 0x0b, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x1a,
+	0xbc, 0x21, 0x0a, 0x0b, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x1a,
 	0xd2, 0x01, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69,
 	0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x3e, 0x0a, 0x07, 0x70, 0x72, 0x6f,
 	0x6a, 0x65, 0x63, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x68, 0x61, 0x73,
@@ -9633,6 +9979,50 @@ var file_vagrant_plugin_sdk_plugin_proto_rawDesc = []byte{
 	0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67, 0x72,
 	0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66,
 	0x69, 0x6c, 0x65, 0x52, 0x0b, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65,
+	0x1a, 0xd7, 0x01, 0x0a, 0x0d, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64,
+	0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64,
+	0x65, 0x72, 0x12, 0x3a, 0x0a, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x24, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61,
+	0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x42, 0x6f, 0x78, 0x43, 0x6f, 0x6c,
+	0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x12, 0x1b,
+	0x0a, 0x09, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x70, 0x61, 0x74, 0x68, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x64, 0x61, 0x74, 0x61, 0x50, 0x61, 0x74, 0x68, 0x12, 0x3d, 0x0a, 0x07, 0x70,
+	0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x68,
+	0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74,
+	0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x41, 0x72, 0x67, 0x73, 0x2e, 0x50, 0x72, 0x6f, 0x6a, 0x65, 0x63,
+	0x74, 0x52, 0x07, 0x70, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x1a, 0x4b, 0x0a, 0x0e, 0x54, 0x61,
+	0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x06,
+	0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x68,
+	0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74,
+	0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x52, 0x65, 0x66, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x52,
+	0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x1a, 0xcb, 0x01, 0x0a, 0x13, 0x54, 0x61, 0x72, 0x67,
+	0x65, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x12,
+	0x3a, 0x0a, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x24,
+	0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61,
+	0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x42, 0x6f, 0x78, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x64,
+	0x61, 0x74, 0x61, 0x5f, 0x70, 0x61, 0x74, 0x68, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x64, 0x61, 0x74, 0x61, 0x50, 0x61, 0x74, 0x68, 0x12, 0x2b, 0x0a, 0x11, 0x76, 0x61, 0x6c, 0x69,
+	0x64, 0x61, 0x74, 0x65, 0x5f, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x10, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f,
+	0x76, 0x69, 0x64, 0x65, 0x72, 0x1a, 0x6d, 0x0a, 0x14, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x43,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x55, 0x0a,
+	0x0d, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x30, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
+	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67,
+	0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x4d, 0x61, 0x63, 0x68, 0x69, 0x6e, 0x65,
+	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x0c, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x67, 0x1a, 0x29, 0x0a, 0x13, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x4e, 0x61,
+	0x6d, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x1a,
+	0x2f, 0x0a, 0x19, 0x50, 0x72, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x4e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
 	0x1a, 0x89, 0x0d, 0x0a, 0x08, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x56, 0x4d, 0x12, 0x3d, 0x0a,
 	0x1b, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x5f, 0x73, 0x79, 0x6e, 0x63, 0x65, 0x64, 0x5f,
 	0x66, 0x6f, 0x6c, 0x64, 0x65, 0x72, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03,
@@ -10559,7 +10949,7 @@ var file_vagrant_plugin_sdk_plugin_proto_rawDesc = []byte{
 	0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61,
 	0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x50, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x2e, 0x54,
 	0x61, 0x72, 0x67, 0x65, 0x74, 0x49, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x32, 0x9c, 0x01, 0x0a, 0x12, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65,
+	0x32, 0xd6, 0x04, 0x0a, 0x12, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65,
 	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x85, 0x01, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x56,
 	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x38, 0x2e, 0x68, 0x61, 0x73,
 	0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73,
@@ -10568,12 +10958,40 @@ var file_vagrant_plugin_sdk_plugin_proto_rawDesc = []byte{
 	0x75, 0x65, 0x73, 0x74, 0x1a, 0x39, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70,
 	0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67,
 	0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x61, 0x67, 0x72,
-	0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42,
-	0x42, 0x5a, 0x40, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x61,
-	0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2f, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2d,
-	0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2f, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x5f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x5f,
-	0x73, 0x64, 0x6b, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x6d, 0x0a, 0x06, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12, 0x30, 0x2e, 0x68, 0x61, 0x73, 0x68,
+	0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64,
+	0x6b, 0x2e, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x54, 0x61,
+	0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x68, 0x61,
+	0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e,
+	0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e,
+	0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7f,
+	0x0a, 0x0c, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x36,
+	0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61,
+	0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69,
+	0x6c, 0x65, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x37, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
+	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56,
+	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65,
+	0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x5d, 0x0a, 0x0b, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x16,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x36, 0x2e, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f,
+	0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e, 0x73, 0x64, 0x6b, 0x2e, 0x56,
+	0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65,
+	0x74, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x69,
+	0x0a, 0x11, 0x50, 0x72, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x4e,
+	0x61, 0x6d, 0x65, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x3c, 0x2e, 0x68, 0x61,
+	0x73, 0x68, 0x69, 0x63, 0x6f, 0x72, 0x70, 0x2e, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2e,
+	0x73, 0x64, 0x6b, 0x2e, 0x56, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x66, 0x69, 0x6c, 0x65, 0x2e,
+	0x50, 0x72, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x4e, 0x61, 0x6d,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x42, 0x5a, 0x40, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x61, 0x73, 0x68, 0x69, 0x63, 0x6f, 0x72,
+	0x70, 0x2f, 0x76, 0x61, 0x67, 0x72, 0x61, 0x6e, 0x74, 0x2d, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e,
+	0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x76, 0x61, 0x67, 0x72, 0x61,
+	0x6e, 0x74, 0x5f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x5f, 0x73, 0x64, 0x6b, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -10589,172 +11007,178 @@ func file_vagrant_plugin_sdk_plugin_proto_rawDescGZIP() []byte {
 }
 
 var file_vagrant_plugin_sdk_plugin_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_vagrant_plugin_sdk_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 154)
+var file_vagrant_plugin_sdk_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 160)
 var file_vagrant_plugin_sdk_plugin_proto_goTypes = []interface{}{
-	(Args_JobInfo_ResourceType)(0),             // 0: hashicorp.vagrant.sdk.Args.JobInfo.ResourceType
-	(Args_Target_State_State)(0),               // 1: hashicorp.vagrant.sdk.Args.Target.State.State
-	(WinrmInfo_Transport)(0),                   // 2: hashicorp.vagrant.sdk.WinrmInfo.Transport
-	(Command_Flag_Type)(0),                     // 3: hashicorp.vagrant.sdk.Command.Flag.Type
-	(Command_Arguments_Flag_Type)(0),           // 4: hashicorp.vagrant.sdk.Command.Arguments.Flag.Type
-	(*Args)(nil),                               // 5: hashicorp.vagrant.sdk.Args
-	(*TargetIndex)(nil),                        // 6: hashicorp.vagrant.sdk.TargetIndex
-	(*BoxCollection)(nil),                      // 7: hashicorp.vagrant.sdk.BoxCollection
-	(*SSHInfo)(nil),                            // 8: hashicorp.vagrant.sdk.SSHInfo
-	(*WinrmInfo)(nil),                          // 9: hashicorp.vagrant.sdk.WinrmInfo
-	(*FuncSpec)(nil),                           // 10: hashicorp.vagrant.sdk.FuncSpec
-	(*Config)(nil),                             // 11: hashicorp.vagrant.sdk.Config
-	(*Auth)(nil),                               // 12: hashicorp.vagrant.sdk.Auth
-	(*ImplementsResp)(nil),                     // 13: hashicorp.vagrant.sdk.ImplementsResp
-	(*TerminalUI)(nil),                         // 14: hashicorp.vagrant.sdk.TerminalUI
-	(*Map)(nil),                                // 15: hashicorp.vagrant.sdk.Map
-	(*StateBag)(nil),                           // 16: hashicorp.vagrant.sdk.StateBag
-	(*Provider)(nil),                           // 17: hashicorp.vagrant.sdk.Provider
-	(*Command)(nil),                            // 18: hashicorp.vagrant.sdk.Command
-	(*Communicator)(nil),                       // 19: hashicorp.vagrant.sdk.Communicator
-	(*Guest)(nil),                              // 20: hashicorp.vagrant.sdk.Guest
-	(*Host)(nil),                               // 21: hashicorp.vagrant.sdk.Host
-	(*Ref)(nil),                                // 22: hashicorp.vagrant.sdk.Ref
-	(*Target)(nil),                             // 23: hashicorp.vagrant.sdk.Target
-	(*Project)(nil),                            // 24: hashicorp.vagrant.sdk.Project
-	(*Vagrantfile)(nil),                        // 25: hashicorp.vagrant.sdk.Vagrantfile
-	(*Args_DataDir)(nil),                       // 26: hashicorp.vagrant.sdk.Args.DataDir
-	(*Args_MetadataSet)(nil),                   // 27: hashicorp.vagrant.sdk.Args.MetadataSet
-	(*Args_TerminalUI)(nil),                    // 28: hashicorp.vagrant.sdk.Args.TerminalUI
-	(*Args_Logger)(nil),                        // 29: hashicorp.vagrant.sdk.Args.Logger
-	(*Args_JobInfo)(nil),                       // 30: hashicorp.vagrant.sdk.Args.JobInfo
-	(*Args_Basis)(nil),                         // 31: hashicorp.vagrant.sdk.Args.Basis
-	(*Args_Project)(nil),                       // 32: hashicorp.vagrant.sdk.Args.Project
-	(*Args_Provider)(nil),                      // 33: hashicorp.vagrant.sdk.Args.Provider
-	(*Args_Target)(nil),                        // 34: hashicorp.vagrant.sdk.Args.Target
-	(*Args_StateBag)(nil),                      // 35: hashicorp.vagrant.sdk.Args.StateBag
-	(*Args_Host)(nil),                          // 36: hashicorp.vagrant.sdk.Args.Host
-	(*Args_DataDir_Basis)(nil),                 // 37: hashicorp.vagrant.sdk.Args.DataDir.Basis
-	(*Args_DataDir_Project)(nil),               // 38: hashicorp.vagrant.sdk.Args.DataDir.Project
-	(*Args_DataDir_Target)(nil),                // 39: hashicorp.vagrant.sdk.Args.DataDir.Target
-	(*Args_DataDir_Component)(nil),             // 40: hashicorp.vagrant.sdk.Args.DataDir.Component
-	nil,                                        // 41: hashicorp.vagrant.sdk.Args.MetadataSet.MetadataEntry
-	(*Args_Target_State)(nil),                  // 42: hashicorp.vagrant.sdk.Args.Target.State
-	(*Args_Target_Machine)(nil),                // 43: hashicorp.vagrant.sdk.Args.Target.Machine
-	(*Args_Target_Machine_Box)(nil),            // 44: hashicorp.vagrant.sdk.Args.Target.Machine.Box
-	(*Args_Target_Machine_State)(nil),          // 45: hashicorp.vagrant.sdk.Args.Target.Machine.State
-	nil,                                        // 46: hashicorp.vagrant.sdk.Args.Target.Machine.Box.MetadataEntry
-	(*TargetIndex_Entry)(nil),                  // 47: hashicorp.vagrant.sdk.TargetIndex.Entry
-	nil,                                        // 48: hashicorp.vagrant.sdk.TargetIndex.Entry.ExtraDataEntry
-	(*FuncSpec_Value)(nil),                     // 49: hashicorp.vagrant.sdk.FuncSpec.Value
-	(*FuncSpec_Args)(nil),                      // 50: hashicorp.vagrant.sdk.FuncSpec.Args
-	(*Config_ConfigureRequest)(nil),            // 51: hashicorp.vagrant.sdk.Config.ConfigureRequest
-	(*Config_StructResp)(nil),                  // 52: hashicorp.vagrant.sdk.Config.StructResp
-	(*Config_FieldDocumentation)(nil),          // 53: hashicorp.vagrant.sdk.Config.FieldDocumentation
-	(*Config_MapperDocumentation)(nil),         // 54: hashicorp.vagrant.sdk.Config.MapperDocumentation
-	(*Config_Documentation)(nil),               // 55: hashicorp.vagrant.sdk.Config.Documentation
-	nil,                                        // 56: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
-	(*Auth_AuthResponse)(nil),                  // 57: hashicorp.vagrant.sdk.Auth.AuthResponse
-	(*TerminalUI_IsInteractiveResponse)(nil),   // 58: hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
-	(*TerminalUI_OutputRequest)(nil),           // 59: hashicorp.vagrant.sdk.TerminalUI.OutputRequest
-	(*TerminalUI_Response)(nil),                // 60: hashicorp.vagrant.sdk.TerminalUI.Response
-	(*TerminalUI_Event)(nil),                   // 61: hashicorp.vagrant.sdk.TerminalUI.Event
-	(*TerminalUI_Event_Input)(nil),             // 62: hashicorp.vagrant.sdk.TerminalUI.Event.Input
-	(*TerminalUI_Event_InputResp)(nil),         // 63: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
-	(*TerminalUI_Event_Status)(nil),            // 64: hashicorp.vagrant.sdk.TerminalUI.Event.Status
-	(*TerminalUI_Event_Line)(nil),              // 65: hashicorp.vagrant.sdk.TerminalUI.Event.Line
-	(*TerminalUI_Event_Raw)(nil),               // 66: hashicorp.vagrant.sdk.TerminalUI.Event.Raw
-	(*TerminalUI_Event_NamedValue)(nil),        // 67: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
-	(*TerminalUI_Event_NamedValues)(nil),       // 68: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
-	(*TerminalUI_Event_TableEntry)(nil),        // 69: hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
-	(*TerminalUI_Event_TableRow)(nil),          // 70: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
-	(*TerminalUI_Event_Table)(nil),             // 71: hashicorp.vagrant.sdk.TerminalUI.Event.Table
-	(*TerminalUI_Event_StepGroup)(nil),         // 72: hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
-	(*TerminalUI_Event_Step)(nil),              // 73: hashicorp.vagrant.sdk.TerminalUI.Event.Step
-	(*Map_Request)(nil),                        // 74: hashicorp.vagrant.sdk.Map.Request
-	(*Map_Response)(nil),                       // 75: hashicorp.vagrant.sdk.Map.Response
-	(*Map_ListResponse)(nil),                   // 76: hashicorp.vagrant.sdk.Map.ListResponse
-	(*StateBag_GetRequest)(nil),                // 77: hashicorp.vagrant.sdk.StateBag.GetRequest
-	(*StateBag_GetResponse)(nil),               // 78: hashicorp.vagrant.sdk.StateBag.GetResponse
-	(*StateBag_GetOkResponse)(nil),             // 79: hashicorp.vagrant.sdk.StateBag.GetOkResponse
-	(*StateBag_PutRequest)(nil),                // 80: hashicorp.vagrant.sdk.StateBag.PutRequest
-	(*StateBag_PutResponse)(nil),               // 81: hashicorp.vagrant.sdk.StateBag.PutResponse
-	(*StateBag_RemoveRequest)(nil),             // 82: hashicorp.vagrant.sdk.StateBag.RemoveRequest
-	(*StateBag_RemoveResponse)(nil),            // 83: hashicorp.vagrant.sdk.StateBag.RemoveResponse
-	(*Provider_UsableResp)(nil),                // 84: hashicorp.vagrant.sdk.Provider.UsableResp
-	(*Provider_InstalledResp)(nil),             // 85: hashicorp.vagrant.sdk.Provider.InstalledResp
-	(*Provider_ActionResp)(nil),                // 86: hashicorp.vagrant.sdk.Provider.ActionResp
-	nil,                                        // 87: hashicorp.vagrant.sdk.Provider.ActionResp.LabelsEntry
-	(*Command_Flag)(nil),                       // 88: hashicorp.vagrant.sdk.Command.Flag
-	(*Command_CommandInfo)(nil),                // 89: hashicorp.vagrant.sdk.Command.CommandInfo
-	(*Command_CommandInfoResp)(nil),            // 90: hashicorp.vagrant.sdk.Command.CommandInfoResp
-	(*Command_ExecuteResp)(nil),                // 91: hashicorp.vagrant.sdk.Command.ExecuteResp
-	(*Command_ExecuteReq)(nil),                 // 92: hashicorp.vagrant.sdk.Command.ExecuteReq
-	(*Command_ExecuteSpecReq)(nil),             // 93: hashicorp.vagrant.sdk.Command.ExecuteSpecReq
-	(*Command_Arguments)(nil),                  // 94: hashicorp.vagrant.sdk.Command.Arguments
-	(*Command_Arguments_Flag)(nil),             // 95: hashicorp.vagrant.sdk.Command.Arguments.Flag
-	(*Communicator_MatchResp)(nil),             // 96: hashicorp.vagrant.sdk.Communicator.MatchResp
-	(*Communicator_InitResp)(nil),              // 97: hashicorp.vagrant.sdk.Communicator.InitResp
-	(*Communicator_ReadyResp)(nil),             // 98: hashicorp.vagrant.sdk.Communicator.ReadyResp
-	(*Communicator_FileTransferResp)(nil),      // 99: hashicorp.vagrant.sdk.Communicator.FileTransferResp
-	(*Communicator_ExecutionRequest)(nil),      // 100: hashicorp.vagrant.sdk.Communicator.ExecutionRequest
-	(*Communicator_ExecuteResp)(nil),           // 101: hashicorp.vagrant.sdk.Communicator.ExecuteResp
-	(*Communicator_TestResp)(nil),              // 102: hashicorp.vagrant.sdk.Communicator.TestResp
-	(*Communicator_ResetResp)(nil),             // 103: hashicorp.vagrant.sdk.Communicator.ResetResp
-	(*Guest_DetectResp)(nil),                   // 104: hashicorp.vagrant.sdk.Guest.DetectResp
-	(*Guest_Capability)(nil),                   // 105: hashicorp.vagrant.sdk.Guest.Capability
-	(*Guest_Capability_NamedRequest)(nil),      // 106: hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
-	(*Guest_Capability_CheckResp)(nil),         // 107: hashicorp.vagrant.sdk.Guest.Capability.CheckResp
-	(*Guest_Capability_Resp)(nil),              // 108: hashicorp.vagrant.sdk.Guest.Capability.Resp
-	(*Host_DetectResp)(nil),                    // 109: hashicorp.vagrant.sdk.Host.DetectResp
-	(*Host_Capability)(nil),                    // 110: hashicorp.vagrant.sdk.Host.Capability
-	(*Host_Capability_NamedRequest)(nil),       // 111: hashicorp.vagrant.sdk.Host.Capability.NamedRequest
-	(*Host_Capability_CheckResp)(nil),          // 112: hashicorp.vagrant.sdk.Host.Capability.CheckResp
-	(*Host_Capability_Resp)(nil),               // 113: hashicorp.vagrant.sdk.Host.Capability.Resp
-	(*Ref_Box)(nil),                            // 114: hashicorp.vagrant.sdk.Ref.Box
-	(*Ref_Basis)(nil),                          // 115: hashicorp.vagrant.sdk.Ref.Basis
-	(*Ref_Project)(nil),                        // 116: hashicorp.vagrant.sdk.Ref.Project
-	(*Ref_Target)(nil),                         // 117: hashicorp.vagrant.sdk.Ref.Target
-	(*Target_ResourceIdResponse)(nil),          // 118: hashicorp.vagrant.sdk.Target.ResourceIdResponse
-	(*Target_RecordResponse)(nil),              // 119: hashicorp.vagrant.sdk.Target.RecordResponse
-	(*Target_NameResponse)(nil),                // 120: hashicorp.vagrant.sdk.Target.NameResponse
-	(*Target_ProjectResponse)(nil),             // 121: hashicorp.vagrant.sdk.Target.ProjectResponse
-	(*Target_SetNameRequest)(nil),              // 122: hashicorp.vagrant.sdk.Target.SetNameRequest
-	(*Target_VagrantfileNameResponse)(nil),     // 123: hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
-	(*Target_VagrantfilePathResponse)(nil),     // 124: hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
-	(*Target_UpdatedAtResponse)(nil),           // 125: hashicorp.vagrant.sdk.Target.UpdatedAtResponse
-	(*Target_Machine)(nil),                     // 126: hashicorp.vagrant.sdk.Target.Machine
-	(*Target_Machine_SetIDRequest)(nil),        // 127: hashicorp.vagrant.sdk.Target.Machine.SetIDRequest
-	(*Target_Machine_GetIDResponse)(nil),       // 128: hashicorp.vagrant.sdk.Target.Machine.GetIDResponse
-	(*Target_Machine_SetStateRequest)(nil),     // 129: hashicorp.vagrant.sdk.Target.Machine.SetStateRequest
-	(*Target_Machine_GetStateResponse)(nil),    // 130: hashicorp.vagrant.sdk.Target.Machine.GetStateResponse
-	(*Target_Machine_GetUUIDResponse)(nil),     // 131: hashicorp.vagrant.sdk.Target.Machine.GetUUIDResponse
-	(*Target_Machine_SetUUIDRequest)(nil),      // 132: hashicorp.vagrant.sdk.Target.Machine.SetUUIDRequest
-	(*Project_TargetRequest)(nil),              // 133: hashicorp.vagrant.sdk.Project.TargetRequest
-	(*Project_TargetNamesResponse)(nil),        // 134: hashicorp.vagrant.sdk.Project.TargetNamesResponse
-	(*Project_TargetIdsResponse)(nil),          // 135: hashicorp.vagrant.sdk.Project.TargetIdsResponse
-	(*Project_MachineAndProvider)(nil),         // 136: hashicorp.vagrant.sdk.Project.MachineAndProvider
-	(*Project_MachineNamesResponse)(nil),       // 137: hashicorp.vagrant.sdk.Project.MachineNamesResponse
-	(*Project_ActiveMachinesResponse)(nil),     // 138: hashicorp.vagrant.sdk.Project.ActiveMachinesResponse
-	(*Project_CwdResponse)(nil),                // 139: hashicorp.vagrant.sdk.Project.CwdResponse
-	(*Project_VagrantfileNameResponse)(nil),    // 140: hashicorp.vagrant.sdk.Project.VagrantfileNameResponse
-	(*Project_HomeResponse)(nil),               // 141: hashicorp.vagrant.sdk.Project.HomeResponse
-	(*Project_LocalDataResponse)(nil),          // 142: hashicorp.vagrant.sdk.Project.LocalDataResponse
-	(*Project_TmpResponse)(nil),                // 143: hashicorp.vagrant.sdk.Project.TmpResponse
-	(*Project_DefaultPrivateKeyResponse)(nil),  // 144: hashicorp.vagrant.sdk.Project.DefaultPrivateKeyResponse
-	(*Vagrantfile_GetVagrantfileRequest)(nil),  // 145: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest
-	(*Vagrantfile_GetVagrantfileResponse)(nil), // 146: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse
-	(*Vagrantfile_ConfigVM)(nil),               // 147: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM
-	(*Vagrantfile_ConfigSSH)(nil),              // 148: hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH
-	(*Vagrantfile_ConfigWinRM)(nil),            // 149: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM
-	(*Vagrantfile_ConfigWinssh)(nil),           // 150: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh
-	(*Vagrantfile_ConfigVagrant)(nil),          // 151: hashicorp.vagrant.sdk.Vagrantfile.ConfigVagrant
-	(*Vagrantfile_MachineConfig)(nil),          // 152: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig
-	(*Vagrantfile_Provisioner)(nil),            // 153: hashicorp.vagrant.sdk.Vagrantfile.Provisioner
-	(*Vagrantfile_Provider)(nil),               // 154: hashicorp.vagrant.sdk.Vagrantfile.Provider
-	(*Vagrantfile_Network)(nil),                // 155: hashicorp.vagrant.sdk.Vagrantfile.Network
-	(*Vagrantfile_SyncedFolder)(nil),           // 156: hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder
-	(*Vagrantfile_Vagrantfile)(nil),            // 157: hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile
-	nil,                                        // 158: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.BoxDownloadOptionsEntry
-	(*any.Any)(nil),                            // 159: google.protobuf.Any
-	(*protostructure.Struct)(nil),              // 160: protostructure.Struct
-	(*status.Status)(nil),                      // 161: google.rpc.Status
-	(*timestamp.Timestamp)(nil),                // 162: google.protobuf.Timestamp
-	(*empty.Empty)(nil),                        // 163: google.protobuf.Empty
+	(Args_JobInfo_ResourceType)(0),                // 0: hashicorp.vagrant.sdk.Args.JobInfo.ResourceType
+	(Args_Target_State_State)(0),                  // 1: hashicorp.vagrant.sdk.Args.Target.State.State
+	(WinrmInfo_Transport)(0),                      // 2: hashicorp.vagrant.sdk.WinrmInfo.Transport
+	(Command_Flag_Type)(0),                        // 3: hashicorp.vagrant.sdk.Command.Flag.Type
+	(Command_Arguments_Flag_Type)(0),              // 4: hashicorp.vagrant.sdk.Command.Arguments.Flag.Type
+	(*Args)(nil),                                  // 5: hashicorp.vagrant.sdk.Args
+	(*TargetIndex)(nil),                           // 6: hashicorp.vagrant.sdk.TargetIndex
+	(*BoxCollection)(nil),                         // 7: hashicorp.vagrant.sdk.BoxCollection
+	(*SSHInfo)(nil),                               // 8: hashicorp.vagrant.sdk.SSHInfo
+	(*WinrmInfo)(nil),                             // 9: hashicorp.vagrant.sdk.WinrmInfo
+	(*FuncSpec)(nil),                              // 10: hashicorp.vagrant.sdk.FuncSpec
+	(*Config)(nil),                                // 11: hashicorp.vagrant.sdk.Config
+	(*Auth)(nil),                                  // 12: hashicorp.vagrant.sdk.Auth
+	(*ImplementsResp)(nil),                        // 13: hashicorp.vagrant.sdk.ImplementsResp
+	(*TerminalUI)(nil),                            // 14: hashicorp.vagrant.sdk.TerminalUI
+	(*Map)(nil),                                   // 15: hashicorp.vagrant.sdk.Map
+	(*StateBag)(nil),                              // 16: hashicorp.vagrant.sdk.StateBag
+	(*Provider)(nil),                              // 17: hashicorp.vagrant.sdk.Provider
+	(*Command)(nil),                               // 18: hashicorp.vagrant.sdk.Command
+	(*Communicator)(nil),                          // 19: hashicorp.vagrant.sdk.Communicator
+	(*Guest)(nil),                                 // 20: hashicorp.vagrant.sdk.Guest
+	(*Host)(nil),                                  // 21: hashicorp.vagrant.sdk.Host
+	(*Ref)(nil),                                   // 22: hashicorp.vagrant.sdk.Ref
+	(*Target)(nil),                                // 23: hashicorp.vagrant.sdk.Target
+	(*Project)(nil),                               // 24: hashicorp.vagrant.sdk.Project
+	(*Vagrantfile)(nil),                           // 25: hashicorp.vagrant.sdk.Vagrantfile
+	(*Args_DataDir)(nil),                          // 26: hashicorp.vagrant.sdk.Args.DataDir
+	(*Args_MetadataSet)(nil),                      // 27: hashicorp.vagrant.sdk.Args.MetadataSet
+	(*Args_TerminalUI)(nil),                       // 28: hashicorp.vagrant.sdk.Args.TerminalUI
+	(*Args_Logger)(nil),                           // 29: hashicorp.vagrant.sdk.Args.Logger
+	(*Args_JobInfo)(nil),                          // 30: hashicorp.vagrant.sdk.Args.JobInfo
+	(*Args_Basis)(nil),                            // 31: hashicorp.vagrant.sdk.Args.Basis
+	(*Args_Project)(nil),                          // 32: hashicorp.vagrant.sdk.Args.Project
+	(*Args_Provider)(nil),                         // 33: hashicorp.vagrant.sdk.Args.Provider
+	(*Args_Target)(nil),                           // 34: hashicorp.vagrant.sdk.Args.Target
+	(*Args_StateBag)(nil),                         // 35: hashicorp.vagrant.sdk.Args.StateBag
+	(*Args_Host)(nil),                             // 36: hashicorp.vagrant.sdk.Args.Host
+	(*Args_DataDir_Basis)(nil),                    // 37: hashicorp.vagrant.sdk.Args.DataDir.Basis
+	(*Args_DataDir_Project)(nil),                  // 38: hashicorp.vagrant.sdk.Args.DataDir.Project
+	(*Args_DataDir_Target)(nil),                   // 39: hashicorp.vagrant.sdk.Args.DataDir.Target
+	(*Args_DataDir_Component)(nil),                // 40: hashicorp.vagrant.sdk.Args.DataDir.Component
+	nil,                                           // 41: hashicorp.vagrant.sdk.Args.MetadataSet.MetadataEntry
+	(*Args_Target_State)(nil),                     // 42: hashicorp.vagrant.sdk.Args.Target.State
+	(*Args_Target_Machine)(nil),                   // 43: hashicorp.vagrant.sdk.Args.Target.Machine
+	(*Args_Target_Machine_Box)(nil),               // 44: hashicorp.vagrant.sdk.Args.Target.Machine.Box
+	(*Args_Target_Machine_State)(nil),             // 45: hashicorp.vagrant.sdk.Args.Target.Machine.State
+	nil,                                           // 46: hashicorp.vagrant.sdk.Args.Target.Machine.Box.MetadataEntry
+	(*TargetIndex_Entry)(nil),                     // 47: hashicorp.vagrant.sdk.TargetIndex.Entry
+	nil,                                           // 48: hashicorp.vagrant.sdk.TargetIndex.Entry.ExtraDataEntry
+	(*FuncSpec_Value)(nil),                        // 49: hashicorp.vagrant.sdk.FuncSpec.Value
+	(*FuncSpec_Args)(nil),                         // 50: hashicorp.vagrant.sdk.FuncSpec.Args
+	(*Config_ConfigureRequest)(nil),               // 51: hashicorp.vagrant.sdk.Config.ConfigureRequest
+	(*Config_StructResp)(nil),                     // 52: hashicorp.vagrant.sdk.Config.StructResp
+	(*Config_FieldDocumentation)(nil),             // 53: hashicorp.vagrant.sdk.Config.FieldDocumentation
+	(*Config_MapperDocumentation)(nil),            // 54: hashicorp.vagrant.sdk.Config.MapperDocumentation
+	(*Config_Documentation)(nil),                  // 55: hashicorp.vagrant.sdk.Config.Documentation
+	nil,                                           // 56: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
+	(*Auth_AuthResponse)(nil),                     // 57: hashicorp.vagrant.sdk.Auth.AuthResponse
+	(*TerminalUI_IsInteractiveResponse)(nil),      // 58: hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
+	(*TerminalUI_OutputRequest)(nil),              // 59: hashicorp.vagrant.sdk.TerminalUI.OutputRequest
+	(*TerminalUI_Response)(nil),                   // 60: hashicorp.vagrant.sdk.TerminalUI.Response
+	(*TerminalUI_Event)(nil),                      // 61: hashicorp.vagrant.sdk.TerminalUI.Event
+	(*TerminalUI_Event_Input)(nil),                // 62: hashicorp.vagrant.sdk.TerminalUI.Event.Input
+	(*TerminalUI_Event_InputResp)(nil),            // 63: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp
+	(*TerminalUI_Event_Status)(nil),               // 64: hashicorp.vagrant.sdk.TerminalUI.Event.Status
+	(*TerminalUI_Event_Line)(nil),                 // 65: hashicorp.vagrant.sdk.TerminalUI.Event.Line
+	(*TerminalUI_Event_Raw)(nil),                  // 66: hashicorp.vagrant.sdk.TerminalUI.Event.Raw
+	(*TerminalUI_Event_NamedValue)(nil),           // 67: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
+	(*TerminalUI_Event_NamedValues)(nil),          // 68: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues
+	(*TerminalUI_Event_TableEntry)(nil),           // 69: hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
+	(*TerminalUI_Event_TableRow)(nil),             // 70: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
+	(*TerminalUI_Event_Table)(nil),                // 71: hashicorp.vagrant.sdk.TerminalUI.Event.Table
+	(*TerminalUI_Event_StepGroup)(nil),            // 72: hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
+	(*TerminalUI_Event_Step)(nil),                 // 73: hashicorp.vagrant.sdk.TerminalUI.Event.Step
+	(*Map_Request)(nil),                           // 74: hashicorp.vagrant.sdk.Map.Request
+	(*Map_Response)(nil),                          // 75: hashicorp.vagrant.sdk.Map.Response
+	(*Map_ListResponse)(nil),                      // 76: hashicorp.vagrant.sdk.Map.ListResponse
+	(*StateBag_GetRequest)(nil),                   // 77: hashicorp.vagrant.sdk.StateBag.GetRequest
+	(*StateBag_GetResponse)(nil),                  // 78: hashicorp.vagrant.sdk.StateBag.GetResponse
+	(*StateBag_GetOkResponse)(nil),                // 79: hashicorp.vagrant.sdk.StateBag.GetOkResponse
+	(*StateBag_PutRequest)(nil),                   // 80: hashicorp.vagrant.sdk.StateBag.PutRequest
+	(*StateBag_PutResponse)(nil),                  // 81: hashicorp.vagrant.sdk.StateBag.PutResponse
+	(*StateBag_RemoveRequest)(nil),                // 82: hashicorp.vagrant.sdk.StateBag.RemoveRequest
+	(*StateBag_RemoveResponse)(nil),               // 83: hashicorp.vagrant.sdk.StateBag.RemoveResponse
+	(*Provider_UsableResp)(nil),                   // 84: hashicorp.vagrant.sdk.Provider.UsableResp
+	(*Provider_InstalledResp)(nil),                // 85: hashicorp.vagrant.sdk.Provider.InstalledResp
+	(*Provider_ActionResp)(nil),                   // 86: hashicorp.vagrant.sdk.Provider.ActionResp
+	nil,                                           // 87: hashicorp.vagrant.sdk.Provider.ActionResp.LabelsEntry
+	(*Command_Flag)(nil),                          // 88: hashicorp.vagrant.sdk.Command.Flag
+	(*Command_CommandInfo)(nil),                   // 89: hashicorp.vagrant.sdk.Command.CommandInfo
+	(*Command_CommandInfoResp)(nil),               // 90: hashicorp.vagrant.sdk.Command.CommandInfoResp
+	(*Command_ExecuteResp)(nil),                   // 91: hashicorp.vagrant.sdk.Command.ExecuteResp
+	(*Command_ExecuteReq)(nil),                    // 92: hashicorp.vagrant.sdk.Command.ExecuteReq
+	(*Command_ExecuteSpecReq)(nil),                // 93: hashicorp.vagrant.sdk.Command.ExecuteSpecReq
+	(*Command_Arguments)(nil),                     // 94: hashicorp.vagrant.sdk.Command.Arguments
+	(*Command_Arguments_Flag)(nil),                // 95: hashicorp.vagrant.sdk.Command.Arguments.Flag
+	(*Communicator_MatchResp)(nil),                // 96: hashicorp.vagrant.sdk.Communicator.MatchResp
+	(*Communicator_InitResp)(nil),                 // 97: hashicorp.vagrant.sdk.Communicator.InitResp
+	(*Communicator_ReadyResp)(nil),                // 98: hashicorp.vagrant.sdk.Communicator.ReadyResp
+	(*Communicator_FileTransferResp)(nil),         // 99: hashicorp.vagrant.sdk.Communicator.FileTransferResp
+	(*Communicator_ExecutionRequest)(nil),         // 100: hashicorp.vagrant.sdk.Communicator.ExecutionRequest
+	(*Communicator_ExecuteResp)(nil),              // 101: hashicorp.vagrant.sdk.Communicator.ExecuteResp
+	(*Communicator_TestResp)(nil),                 // 102: hashicorp.vagrant.sdk.Communicator.TestResp
+	(*Communicator_ResetResp)(nil),                // 103: hashicorp.vagrant.sdk.Communicator.ResetResp
+	(*Guest_DetectResp)(nil),                      // 104: hashicorp.vagrant.sdk.Guest.DetectResp
+	(*Guest_Capability)(nil),                      // 105: hashicorp.vagrant.sdk.Guest.Capability
+	(*Guest_Capability_NamedRequest)(nil),         // 106: hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
+	(*Guest_Capability_CheckResp)(nil),            // 107: hashicorp.vagrant.sdk.Guest.Capability.CheckResp
+	(*Guest_Capability_Resp)(nil),                 // 108: hashicorp.vagrant.sdk.Guest.Capability.Resp
+	(*Host_DetectResp)(nil),                       // 109: hashicorp.vagrant.sdk.Host.DetectResp
+	(*Host_Capability)(nil),                       // 110: hashicorp.vagrant.sdk.Host.Capability
+	(*Host_Capability_NamedRequest)(nil),          // 111: hashicorp.vagrant.sdk.Host.Capability.NamedRequest
+	(*Host_Capability_CheckResp)(nil),             // 112: hashicorp.vagrant.sdk.Host.Capability.CheckResp
+	(*Host_Capability_Resp)(nil),                  // 113: hashicorp.vagrant.sdk.Host.Capability.Resp
+	(*Ref_Box)(nil),                               // 114: hashicorp.vagrant.sdk.Ref.Box
+	(*Ref_Basis)(nil),                             // 115: hashicorp.vagrant.sdk.Ref.Basis
+	(*Ref_Project)(nil),                           // 116: hashicorp.vagrant.sdk.Ref.Project
+	(*Ref_Target)(nil),                            // 117: hashicorp.vagrant.sdk.Ref.Target
+	(*Target_ResourceIdResponse)(nil),             // 118: hashicorp.vagrant.sdk.Target.ResourceIdResponse
+	(*Target_RecordResponse)(nil),                 // 119: hashicorp.vagrant.sdk.Target.RecordResponse
+	(*Target_NameResponse)(nil),                   // 120: hashicorp.vagrant.sdk.Target.NameResponse
+	(*Target_ProjectResponse)(nil),                // 121: hashicorp.vagrant.sdk.Target.ProjectResponse
+	(*Target_SetNameRequest)(nil),                 // 122: hashicorp.vagrant.sdk.Target.SetNameRequest
+	(*Target_VagrantfileNameResponse)(nil),        // 123: hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
+	(*Target_VagrantfilePathResponse)(nil),        // 124: hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
+	(*Target_UpdatedAtResponse)(nil),              // 125: hashicorp.vagrant.sdk.Target.UpdatedAtResponse
+	(*Target_Machine)(nil),                        // 126: hashicorp.vagrant.sdk.Target.Machine
+	(*Target_Machine_SetIDRequest)(nil),           // 127: hashicorp.vagrant.sdk.Target.Machine.SetIDRequest
+	(*Target_Machine_GetIDResponse)(nil),          // 128: hashicorp.vagrant.sdk.Target.Machine.GetIDResponse
+	(*Target_Machine_SetStateRequest)(nil),        // 129: hashicorp.vagrant.sdk.Target.Machine.SetStateRequest
+	(*Target_Machine_GetStateResponse)(nil),       // 130: hashicorp.vagrant.sdk.Target.Machine.GetStateResponse
+	(*Target_Machine_GetUUIDResponse)(nil),        // 131: hashicorp.vagrant.sdk.Target.Machine.GetUUIDResponse
+	(*Target_Machine_SetUUIDRequest)(nil),         // 132: hashicorp.vagrant.sdk.Target.Machine.SetUUIDRequest
+	(*Project_TargetRequest)(nil),                 // 133: hashicorp.vagrant.sdk.Project.TargetRequest
+	(*Project_TargetNamesResponse)(nil),           // 134: hashicorp.vagrant.sdk.Project.TargetNamesResponse
+	(*Project_TargetIdsResponse)(nil),             // 135: hashicorp.vagrant.sdk.Project.TargetIdsResponse
+	(*Project_MachineAndProvider)(nil),            // 136: hashicorp.vagrant.sdk.Project.MachineAndProvider
+	(*Project_MachineNamesResponse)(nil),          // 137: hashicorp.vagrant.sdk.Project.MachineNamesResponse
+	(*Project_ActiveMachinesResponse)(nil),        // 138: hashicorp.vagrant.sdk.Project.ActiveMachinesResponse
+	(*Project_CwdResponse)(nil),                   // 139: hashicorp.vagrant.sdk.Project.CwdResponse
+	(*Project_VagrantfileNameResponse)(nil),       // 140: hashicorp.vagrant.sdk.Project.VagrantfileNameResponse
+	(*Project_HomeResponse)(nil),                  // 141: hashicorp.vagrant.sdk.Project.HomeResponse
+	(*Project_LocalDataResponse)(nil),             // 142: hashicorp.vagrant.sdk.Project.LocalDataResponse
+	(*Project_TmpResponse)(nil),                   // 143: hashicorp.vagrant.sdk.Project.TmpResponse
+	(*Project_DefaultPrivateKeyResponse)(nil),     // 144: hashicorp.vagrant.sdk.Project.DefaultPrivateKeyResponse
+	(*Vagrantfile_GetVagrantfileRequest)(nil),     // 145: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest
+	(*Vagrantfile_GetVagrantfileResponse)(nil),    // 146: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse
+	(*Vagrantfile_TargetRequest)(nil),             // 147: hashicorp.vagrant.sdk.Vagrantfile.TargetRequest
+	(*Vagrantfile_TargetResponse)(nil),            // 148: hashicorp.vagrant.sdk.Vagrantfile.TargetResponse
+	(*Vagrantfile_TargetConfigRequest)(nil),       // 149: hashicorp.vagrant.sdk.Vagrantfile.TargetConfigRequest
+	(*Vagrantfile_TargetConfigResponse)(nil),      // 150: hashicorp.vagrant.sdk.Vagrantfile.TargetConfigResponse
+	(*Vagrantfile_TargetNamesResponse)(nil),       // 151: hashicorp.vagrant.sdk.Vagrantfile.TargetNamesResponse
+	(*Vagrantfile_PrimaryTargetNameResponse)(nil), // 152: hashicorp.vagrant.sdk.Vagrantfile.PrimaryTargetNameResponse
+	(*Vagrantfile_ConfigVM)(nil),                  // 153: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM
+	(*Vagrantfile_ConfigSSH)(nil),                 // 154: hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH
+	(*Vagrantfile_ConfigWinRM)(nil),               // 155: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM
+	(*Vagrantfile_ConfigWinssh)(nil),              // 156: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh
+	(*Vagrantfile_ConfigVagrant)(nil),             // 157: hashicorp.vagrant.sdk.Vagrantfile.ConfigVagrant
+	(*Vagrantfile_MachineConfig)(nil),             // 158: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig
+	(*Vagrantfile_Provisioner)(nil),               // 159: hashicorp.vagrant.sdk.Vagrantfile.Provisioner
+	(*Vagrantfile_Provider)(nil),                  // 160: hashicorp.vagrant.sdk.Vagrantfile.Provider
+	(*Vagrantfile_Network)(nil),                   // 161: hashicorp.vagrant.sdk.Vagrantfile.Network
+	(*Vagrantfile_SyncedFolder)(nil),              // 162: hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder
+	(*Vagrantfile_Vagrantfile)(nil),               // 163: hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile
+	nil,                                           // 164: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.BoxDownloadOptionsEntry
+	(*any.Any)(nil),                               // 165: google.protobuf.Any
+	(*protostructure.Struct)(nil),                 // 166: protostructure.Struct
+	(*status.Status)(nil),                         // 167: google.rpc.Status
+	(*timestamp.Timestamp)(nil),                   // 168: google.protobuf.Timestamp
+	(*empty.Empty)(nil),                           // 169: google.protobuf.Empty
 }
 var file_vagrant_plugin_sdk_plugin_proto_depIdxs = []int32{
 	2,   // 0: hashicorp.vagrant.sdk.WinrmInfo.transport:type_name -> hashicorp.vagrant.sdk.WinrmInfo.Transport
@@ -10765,9 +11189,9 @@ var file_vagrant_plugin_sdk_plugin_proto_depIdxs = []int32{
 	1,   // 5: hashicorp.vagrant.sdk.Args.Target.State.state:type_name -> hashicorp.vagrant.sdk.Args.Target.State.State
 	46,  // 6: hashicorp.vagrant.sdk.Args.Target.Machine.Box.metadata:type_name -> hashicorp.vagrant.sdk.Args.Target.Machine.Box.MetadataEntry
 	48,  // 7: hashicorp.vagrant.sdk.TargetIndex.Entry.extra_data:type_name -> hashicorp.vagrant.sdk.TargetIndex.Entry.ExtraDataEntry
-	159, // 8: hashicorp.vagrant.sdk.FuncSpec.Value.value:type_name -> google.protobuf.Any
+	165, // 8: hashicorp.vagrant.sdk.FuncSpec.Value.value:type_name -> google.protobuf.Any
 	49,  // 9: hashicorp.vagrant.sdk.FuncSpec.Args.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Value
-	160, // 10: hashicorp.vagrant.sdk.Config.StructResp.struct:type_name -> protostructure.Struct
+	166, // 10: hashicorp.vagrant.sdk.Config.StructResp.struct:type_name -> protostructure.Struct
 	56,  // 11: hashicorp.vagrant.sdk.Config.Documentation.fields:type_name -> hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry
 	54,  // 12: hashicorp.vagrant.sdk.Config.Documentation.mappers:type_name -> hashicorp.vagrant.sdk.Config.MapperDocumentation
 	53,  // 13: hashicorp.vagrant.sdk.Config.Documentation.FieldsEntry.value:type_name -> hashicorp.vagrant.sdk.Config.FieldDocumentation
@@ -10780,14 +11204,14 @@ var file_vagrant_plugin_sdk_plugin_proto_depIdxs = []int32{
 	72,  // 20: hashicorp.vagrant.sdk.TerminalUI.Event.step_group:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.StepGroup
 	73,  // 21: hashicorp.vagrant.sdk.TerminalUI.Event.step:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Step
 	62,  // 22: hashicorp.vagrant.sdk.TerminalUI.Event.input:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.Input
-	161, // 23: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp.error:type_name -> google.rpc.Status
+	167, // 23: hashicorp.vagrant.sdk.TerminalUI.Event.InputResp.error:type_name -> google.rpc.Status
 	67,  // 24: hashicorp.vagrant.sdk.TerminalUI.Event.NamedValues.values:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.NamedValue
 	69,  // 25: hashicorp.vagrant.sdk.TerminalUI.Event.TableRow.entries:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableEntry
 	70,  // 26: hashicorp.vagrant.sdk.TerminalUI.Event.Table.rows:type_name -> hashicorp.vagrant.sdk.TerminalUI.Event.TableRow
 	50,  // 27: hashicorp.vagrant.sdk.Map.Request.args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Args
-	159, // 28: hashicorp.vagrant.sdk.Map.Response.result:type_name -> google.protobuf.Any
+	165, // 28: hashicorp.vagrant.sdk.Map.Response.result:type_name -> google.protobuf.Any
 	10,  // 29: hashicorp.vagrant.sdk.Map.ListResponse.funcs:type_name -> hashicorp.vagrant.sdk.FuncSpec
-	159, // 30: hashicorp.vagrant.sdk.Provider.ActionResp.result:type_name -> google.protobuf.Any
+	165, // 30: hashicorp.vagrant.sdk.Provider.ActionResp.result:type_name -> google.protobuf.Any
 	87,  // 31: hashicorp.vagrant.sdk.Provider.ActionResp.labels:type_name -> hashicorp.vagrant.sdk.Provider.ActionResp.LabelsEntry
 	3,   // 32: hashicorp.vagrant.sdk.Command.Flag.type:type_name -> hashicorp.vagrant.sdk.Command.Flag.Type
 	88,  // 33: hashicorp.vagrant.sdk.Command.CommandInfo.flags:type_name -> hashicorp.vagrant.sdk.Command.Flag
@@ -10799,300 +11223,313 @@ var file_vagrant_plugin_sdk_plugin_proto_depIdxs = []int32{
 	43,  // 39: hashicorp.vagrant.sdk.Communicator.ExecutionRequest.machine:type_name -> hashicorp.vagrant.sdk.Args.Target.Machine
 	27,  // 40: hashicorp.vagrant.sdk.Communicator.ExecutionRequest.options:type_name -> hashicorp.vagrant.sdk.Args.MetadataSet
 	50,  // 41: hashicorp.vagrant.sdk.Guest.Capability.NamedRequest.func_args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Args
-	159, // 42: hashicorp.vagrant.sdk.Guest.Capability.Resp.result:type_name -> google.protobuf.Any
+	165, // 42: hashicorp.vagrant.sdk.Guest.Capability.Resp.result:type_name -> google.protobuf.Any
 	50,  // 43: hashicorp.vagrant.sdk.Host.Capability.NamedRequest.func_args:type_name -> hashicorp.vagrant.sdk.FuncSpec.Args
-	159, // 44: hashicorp.vagrant.sdk.Host.Capability.Resp.result:type_name -> google.protobuf.Any
+	165, // 44: hashicorp.vagrant.sdk.Host.Capability.Resp.result:type_name -> google.protobuf.Any
 	115, // 45: hashicorp.vagrant.sdk.Ref.Project.basis:type_name -> hashicorp.vagrant.sdk.Ref.Basis
 	116, // 46: hashicorp.vagrant.sdk.Ref.Target.project:type_name -> hashicorp.vagrant.sdk.Ref.Project
-	159, // 47: hashicorp.vagrant.sdk.Target.RecordResponse.record:type_name -> google.protobuf.Any
+	165, // 47: hashicorp.vagrant.sdk.Target.RecordResponse.record:type_name -> google.protobuf.Any
 	116, // 48: hashicorp.vagrant.sdk.Target.ProjectResponse.project:type_name -> hashicorp.vagrant.sdk.Ref.Project
-	162, // 49: hashicorp.vagrant.sdk.Target.UpdatedAtResponse.updated_at:type_name -> google.protobuf.Timestamp
+	168, // 49: hashicorp.vagrant.sdk.Target.UpdatedAtResponse.updated_at:type_name -> google.protobuf.Timestamp
 	45,  // 50: hashicorp.vagrant.sdk.Target.Machine.SetStateRequest.state:type_name -> hashicorp.vagrant.sdk.Args.Target.Machine.State
 	45,  // 51: hashicorp.vagrant.sdk.Target.Machine.GetStateResponse.state:type_name -> hashicorp.vagrant.sdk.Args.Target.Machine.State
 	136, // 52: hashicorp.vagrant.sdk.Project.ActiveMachinesResponse.machines:type_name -> hashicorp.vagrant.sdk.Project.MachineAndProvider
 	116, // 53: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest.project:type_name -> hashicorp.vagrant.sdk.Ref.Project
 	114, // 54: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest.box:type_name -> hashicorp.vagrant.sdk.Ref.Box
 	115, // 55: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest.basis:type_name -> hashicorp.vagrant.sdk.Ref.Basis
-	157, // 56: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse.vagrantfile:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile
-	158, // 57: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.box_download_options:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.BoxDownloadOptionsEntry
-	154, // 58: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.providers:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Provider
-	155, // 59: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.networks:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Network
-	153, // 60: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.provisioners:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Provisioner
-	156, // 61: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.synced_folders:type_name -> hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder
-	159, // 62: hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH.config:type_name -> google.protobuf.Any
-	159, // 63: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM.config:type_name -> google.protobuf.Any
-	159, // 64: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh.config:type_name -> google.protobuf.Any
-	147, // 65: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_vm:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVM
-	148, // 66: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_ssh:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH
-	149, // 67: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_winrm:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM
-	150, // 68: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_winssh:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh
-	151, // 69: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_vagrant:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVagrant
-	159, // 70: hashicorp.vagrant.sdk.Vagrantfile.Provisioner.config:type_name -> google.protobuf.Any
-	159, // 71: hashicorp.vagrant.sdk.Vagrantfile.Provider.config:type_name -> google.protobuf.Any
-	159, // 72: hashicorp.vagrant.sdk.Vagrantfile.Network.config:type_name -> google.protobuf.Any
-	159, // 73: hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder.config:type_name -> google.protobuf.Any
-	152, // 74: hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile.machine_configs:type_name -> hashicorp.vagrant.sdk.Vagrantfile.MachineConfig
-	59,  // 75: hashicorp.vagrant.sdk.TerminalUIService.Output:input_type -> hashicorp.vagrant.sdk.TerminalUI.OutputRequest
-	61,  // 76: hashicorp.vagrant.sdk.TerminalUIService.Events:input_type -> hashicorp.vagrant.sdk.TerminalUI.Event
-	163, // 77: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:input_type -> google.protobuf.Empty
-	163, // 78: hashicorp.vagrant.sdk.Mapper.ListMappers:input_type -> google.protobuf.Empty
-	74,  // 79: hashicorp.vagrant.sdk.Mapper.Map:input_type -> hashicorp.vagrant.sdk.Map.Request
-	77,  // 80: hashicorp.vagrant.sdk.StateBagService.Get:input_type -> hashicorp.vagrant.sdk.StateBag.GetRequest
-	77,  // 81: hashicorp.vagrant.sdk.StateBagService.GetOk:input_type -> hashicorp.vagrant.sdk.StateBag.GetRequest
-	80,  // 82: hashicorp.vagrant.sdk.StateBagService.Put:input_type -> hashicorp.vagrant.sdk.StateBag.PutRequest
-	82,  // 83: hashicorp.vagrant.sdk.StateBagService.Remove:input_type -> hashicorp.vagrant.sdk.StateBag.RemoveRequest
-	50,  // 84: hashicorp.vagrant.sdk.ProviderService.Usable:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 85: hashicorp.vagrant.sdk.ProviderService.UsableSpec:input_type -> google.protobuf.Empty
-	50,  // 86: hashicorp.vagrant.sdk.ProviderService.Installed:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 87: hashicorp.vagrant.sdk.ProviderService.InstalledSpec:input_type -> google.protobuf.Empty
-	50,  // 88: hashicorp.vagrant.sdk.ProviderService.Init:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 89: hashicorp.vagrant.sdk.ProviderService.InitSpec:input_type -> google.protobuf.Empty
-	50,  // 90: hashicorp.vagrant.sdk.ProviderService.ActionUp:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 91: hashicorp.vagrant.sdk.ProviderService.ActionUpSpec:input_type -> google.protobuf.Empty
-	163, // 92: hashicorp.vagrant.sdk.ProviderService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 93: hashicorp.vagrant.sdk.ProviderService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 94: hashicorp.vagrant.sdk.ProviderService.Documentation:input_type -> google.protobuf.Empty
-	163, // 95: hashicorp.vagrant.sdk.ProvisionerService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 96: hashicorp.vagrant.sdk.ProvisionerService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 97: hashicorp.vagrant.sdk.ProvisionerService.Documentation:input_type -> google.protobuf.Empty
-	163, // 98: hashicorp.vagrant.sdk.CommandService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 99: hashicorp.vagrant.sdk.CommandService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 100: hashicorp.vagrant.sdk.CommandService.Documentation:input_type -> google.protobuf.Empty
-	93,  // 101: hashicorp.vagrant.sdk.CommandService.ExecuteSpec:input_type -> hashicorp.vagrant.sdk.Command.ExecuteSpecReq
-	92,  // 102: hashicorp.vagrant.sdk.CommandService.Execute:input_type -> hashicorp.vagrant.sdk.Command.ExecuteReq
-	163, // 103: hashicorp.vagrant.sdk.CommandService.CommandInfoSpec:input_type -> google.protobuf.Empty
-	50,  // 104: hashicorp.vagrant.sdk.CommandService.CommandInfo:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 105: hashicorp.vagrant.sdk.CommunicatorService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 106: hashicorp.vagrant.sdk.CommunicatorService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 107: hashicorp.vagrant.sdk.CommunicatorService.Documentation:input_type -> google.protobuf.Empty
-	163, // 108: hashicorp.vagrant.sdk.CommunicatorService.MatchSpec:input_type -> google.protobuf.Empty
-	50,  // 109: hashicorp.vagrant.sdk.CommunicatorService.Match:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 110: hashicorp.vagrant.sdk.CommunicatorService.InitSpec:input_type -> google.protobuf.Empty
-	50,  // 111: hashicorp.vagrant.sdk.CommunicatorService.Init:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 112: hashicorp.vagrant.sdk.CommunicatorService.ReadySpec:input_type -> google.protobuf.Empty
-	50,  // 113: hashicorp.vagrant.sdk.CommunicatorService.Ready:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 114: hashicorp.vagrant.sdk.CommunicatorService.WaitForReadySpec:input_type -> google.protobuf.Empty
-	50,  // 115: hashicorp.vagrant.sdk.CommunicatorService.WaitForReady:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 116: hashicorp.vagrant.sdk.CommunicatorService.DownloadSpec:input_type -> google.protobuf.Empty
-	50,  // 117: hashicorp.vagrant.sdk.CommunicatorService.Download:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 118: hashicorp.vagrant.sdk.CommunicatorService.UploadSpec:input_type -> google.protobuf.Empty
-	50,  // 119: hashicorp.vagrant.sdk.CommunicatorService.Upload:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 120: hashicorp.vagrant.sdk.CommunicatorService.ExecuteSpec:input_type -> google.protobuf.Empty
-	50,  // 121: hashicorp.vagrant.sdk.CommunicatorService.Execute:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 122: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecuteSpec:input_type -> google.protobuf.Empty
-	50,  // 123: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecute:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 124: hashicorp.vagrant.sdk.CommunicatorService.TestSpec:input_type -> google.protobuf.Empty
-	50,  // 125: hashicorp.vagrant.sdk.CommunicatorService.Test:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 126: hashicorp.vagrant.sdk.CommunicatorService.ResetSpec:input_type -> google.protobuf.Empty
-	50,  // 127: hashicorp.vagrant.sdk.CommunicatorService.Reset:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 128: hashicorp.vagrant.sdk.ConfigService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 129: hashicorp.vagrant.sdk.ConfigService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 130: hashicorp.vagrant.sdk.ConfigService.Documentation:input_type -> google.protobuf.Empty
-	163, // 131: hashicorp.vagrant.sdk.GuestService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 132: hashicorp.vagrant.sdk.GuestService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 133: hashicorp.vagrant.sdk.GuestService.Documentation:input_type -> google.protobuf.Empty
-	50,  // 134: hashicorp.vagrant.sdk.GuestService.Detect:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 135: hashicorp.vagrant.sdk.GuestService.DetectSpec:input_type -> google.protobuf.Empty
-	106, // 136: hashicorp.vagrant.sdk.GuestService.HasCapability:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
-	106, // 137: hashicorp.vagrant.sdk.GuestService.HasCapabilitySpec:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
-	106, // 138: hashicorp.vagrant.sdk.GuestService.Capability:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
-	106, // 139: hashicorp.vagrant.sdk.GuestService.CapabilitySpec:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
-	163, // 140: hashicorp.vagrant.sdk.HostService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 141: hashicorp.vagrant.sdk.HostService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 142: hashicorp.vagrant.sdk.HostService.Documentation:input_type -> google.protobuf.Empty
-	50,  // 143: hashicorp.vagrant.sdk.HostService.Detect:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
-	163, // 144: hashicorp.vagrant.sdk.HostService.DetectSpec:input_type -> google.protobuf.Empty
-	111, // 145: hashicorp.vagrant.sdk.HostService.HasCapability:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
-	163, // 146: hashicorp.vagrant.sdk.HostService.HasCapabilitySpec:input_type -> google.protobuf.Empty
-	111, // 147: hashicorp.vagrant.sdk.HostService.Capability:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
-	111, // 148: hashicorp.vagrant.sdk.HostService.CapabilitySpec:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
-	163, // 149: hashicorp.vagrant.sdk.SyncedFolderService.ConfigStruct:input_type -> google.protobuf.Empty
-	51,  // 150: hashicorp.vagrant.sdk.SyncedFolderService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
-	163, // 151: hashicorp.vagrant.sdk.SyncedFolderService.Documentation:input_type -> google.protobuf.Empty
-	163, // 152: hashicorp.vagrant.sdk.BasisService.DataDir:input_type -> google.protobuf.Empty
-	163, // 153: hashicorp.vagrant.sdk.BasisService.UI:input_type -> google.protobuf.Empty
-	163, // 154: hashicorp.vagrant.sdk.TargetService.ResourceId:input_type -> google.protobuf.Empty
-	163, // 155: hashicorp.vagrant.sdk.TargetService.Record:input_type -> google.protobuf.Empty
-	163, // 156: hashicorp.vagrant.sdk.TargetService.Name:input_type -> google.protobuf.Empty
-	122, // 157: hashicorp.vagrant.sdk.TargetService.SetName:input_type -> hashicorp.vagrant.sdk.Target.SetNameRequest
-	163, // 158: hashicorp.vagrant.sdk.TargetService.Project:input_type -> google.protobuf.Empty
-	163, // 159: hashicorp.vagrant.sdk.TargetService.Metadata:input_type -> google.protobuf.Empty
-	163, // 160: hashicorp.vagrant.sdk.TargetService.DataDir:input_type -> google.protobuf.Empty
-	163, // 161: hashicorp.vagrant.sdk.TargetService.State:input_type -> google.protobuf.Empty
-	163, // 162: hashicorp.vagrant.sdk.TargetService.UI:input_type -> google.protobuf.Empty
-	159, // 163: hashicorp.vagrant.sdk.TargetService.Specialize:input_type -> google.protobuf.Any
-	163, // 164: hashicorp.vagrant.sdk.TargetService.Provider:input_type -> google.protobuf.Empty
-	163, // 165: hashicorp.vagrant.sdk.TargetService.VagrantfileName:input_type -> google.protobuf.Empty
-	163, // 166: hashicorp.vagrant.sdk.TargetService.VagrantfilePath:input_type -> google.protobuf.Empty
-	163, // 167: hashicorp.vagrant.sdk.TargetService.UpdatedAt:input_type -> google.protobuf.Empty
-	163, // 168: hashicorp.vagrant.sdk.TargetMachineService.ResourceId:input_type -> google.protobuf.Empty
-	163, // 169: hashicorp.vagrant.sdk.TargetMachineService.Record:input_type -> google.protobuf.Empty
-	163, // 170: hashicorp.vagrant.sdk.TargetMachineService.Name:input_type -> google.protobuf.Empty
-	122, // 171: hashicorp.vagrant.sdk.TargetMachineService.SetName:input_type -> hashicorp.vagrant.sdk.Target.SetNameRequest
-	163, // 172: hashicorp.vagrant.sdk.TargetMachineService.Project:input_type -> google.protobuf.Empty
-	163, // 173: hashicorp.vagrant.sdk.TargetMachineService.Metadata:input_type -> google.protobuf.Empty
-	163, // 174: hashicorp.vagrant.sdk.TargetMachineService.DataDir:input_type -> google.protobuf.Empty
-	163, // 175: hashicorp.vagrant.sdk.TargetMachineService.State:input_type -> google.protobuf.Empty
-	163, // 176: hashicorp.vagrant.sdk.TargetMachineService.UI:input_type -> google.protobuf.Empty
-	159, // 177: hashicorp.vagrant.sdk.TargetMachineService.Specialize:input_type -> google.protobuf.Any
-	163, // 178: hashicorp.vagrant.sdk.TargetMachineService.Provider:input_type -> google.protobuf.Empty
-	163, // 179: hashicorp.vagrant.sdk.TargetMachineService.VagrantfileName:input_type -> google.protobuf.Empty
-	163, // 180: hashicorp.vagrant.sdk.TargetMachineService.VagrantfilePath:input_type -> google.protobuf.Empty
-	163, // 181: hashicorp.vagrant.sdk.TargetMachineService.UpdatedAt:input_type -> google.protobuf.Empty
-	127, // 182: hashicorp.vagrant.sdk.TargetMachineService.SetID:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetIDRequest
-	163, // 183: hashicorp.vagrant.sdk.TargetMachineService.GetID:input_type -> google.protobuf.Empty
-	129, // 184: hashicorp.vagrant.sdk.TargetMachineService.SetState:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetStateRequest
-	163, // 185: hashicorp.vagrant.sdk.TargetMachineService.GetState:input_type -> google.protobuf.Empty
-	132, // 186: hashicorp.vagrant.sdk.TargetMachineService.SetUUID:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetUUIDRequest
-	163, // 187: hashicorp.vagrant.sdk.TargetMachineService.GetUUID:input_type -> google.protobuf.Empty
-	163, // 188: hashicorp.vagrant.sdk.TargetMachineService.Box:input_type -> google.protobuf.Empty
-	163, // 189: hashicorp.vagrant.sdk.ProjectService.MachineNames:input_type -> google.protobuf.Empty
-	163, // 190: hashicorp.vagrant.sdk.ProjectService.CWD:input_type -> google.protobuf.Empty
-	163, // 191: hashicorp.vagrant.sdk.ProjectService.DataDir:input_type -> google.protobuf.Empty
-	163, // 192: hashicorp.vagrant.sdk.ProjectService.VagrantfileName:input_type -> google.protobuf.Empty
-	163, // 193: hashicorp.vagrant.sdk.ProjectService.UI:input_type -> google.protobuf.Empty
-	163, // 194: hashicorp.vagrant.sdk.ProjectService.Home:input_type -> google.protobuf.Empty
-	163, // 195: hashicorp.vagrant.sdk.ProjectService.LocalData:input_type -> google.protobuf.Empty
-	163, // 196: hashicorp.vagrant.sdk.ProjectService.Tmp:input_type -> google.protobuf.Empty
-	163, // 197: hashicorp.vagrant.sdk.ProjectService.DefaultPrivateKey:input_type -> google.protobuf.Empty
-	163, // 198: hashicorp.vagrant.sdk.ProjectService.Host:input_type -> google.protobuf.Empty
-	133, // 199: hashicorp.vagrant.sdk.ProjectService.Target:input_type -> hashicorp.vagrant.sdk.Project.TargetRequest
-	163, // 200: hashicorp.vagrant.sdk.ProjectService.TargetNames:input_type -> google.protobuf.Empty
-	163, // 201: hashicorp.vagrant.sdk.ProjectService.TargetIds:input_type -> google.protobuf.Empty
-	145, // 202: hashicorp.vagrant.sdk.VagrantfileService.GetVagrantfile:input_type -> hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest
-	163, // 203: hashicorp.vagrant.sdk.TerminalUIService.Output:output_type -> google.protobuf.Empty
-	60,  // 204: hashicorp.vagrant.sdk.TerminalUIService.Events:output_type -> hashicorp.vagrant.sdk.TerminalUI.Response
-	58,  // 205: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:output_type -> hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
-	76,  // 206: hashicorp.vagrant.sdk.Mapper.ListMappers:output_type -> hashicorp.vagrant.sdk.Map.ListResponse
-	75,  // 207: hashicorp.vagrant.sdk.Mapper.Map:output_type -> hashicorp.vagrant.sdk.Map.Response
-	78,  // 208: hashicorp.vagrant.sdk.StateBagService.Get:output_type -> hashicorp.vagrant.sdk.StateBag.GetResponse
-	79,  // 209: hashicorp.vagrant.sdk.StateBagService.GetOk:output_type -> hashicorp.vagrant.sdk.StateBag.GetOkResponse
-	81,  // 210: hashicorp.vagrant.sdk.StateBagService.Put:output_type -> hashicorp.vagrant.sdk.StateBag.PutResponse
-	83,  // 211: hashicorp.vagrant.sdk.StateBagService.Remove:output_type -> hashicorp.vagrant.sdk.StateBag.RemoveResponse
-	84,  // 212: hashicorp.vagrant.sdk.ProviderService.Usable:output_type -> hashicorp.vagrant.sdk.Provider.UsableResp
-	10,  // 213: hashicorp.vagrant.sdk.ProviderService.UsableSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	85,  // 214: hashicorp.vagrant.sdk.ProviderService.Installed:output_type -> hashicorp.vagrant.sdk.Provider.InstalledResp
-	10,  // 215: hashicorp.vagrant.sdk.ProviderService.InstalledSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	163, // 216: hashicorp.vagrant.sdk.ProviderService.Init:output_type -> google.protobuf.Empty
-	10,  // 217: hashicorp.vagrant.sdk.ProviderService.InitSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	86,  // 218: hashicorp.vagrant.sdk.ProviderService.ActionUp:output_type -> hashicorp.vagrant.sdk.Provider.ActionResp
-	10,  // 219: hashicorp.vagrant.sdk.ProviderService.ActionUpSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	52,  // 220: hashicorp.vagrant.sdk.ProviderService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 221: hashicorp.vagrant.sdk.ProviderService.Configure:output_type -> google.protobuf.Empty
-	55,  // 222: hashicorp.vagrant.sdk.ProviderService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	52,  // 223: hashicorp.vagrant.sdk.ProvisionerService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 224: hashicorp.vagrant.sdk.ProvisionerService.Configure:output_type -> google.protobuf.Empty
-	55,  // 225: hashicorp.vagrant.sdk.ProvisionerService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	52,  // 226: hashicorp.vagrant.sdk.CommandService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 227: hashicorp.vagrant.sdk.CommandService.Configure:output_type -> google.protobuf.Empty
-	55,  // 228: hashicorp.vagrant.sdk.CommandService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	10,  // 229: hashicorp.vagrant.sdk.CommandService.ExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	91,  // 230: hashicorp.vagrant.sdk.CommandService.Execute:output_type -> hashicorp.vagrant.sdk.Command.ExecuteResp
-	10,  // 231: hashicorp.vagrant.sdk.CommandService.CommandInfoSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	90,  // 232: hashicorp.vagrant.sdk.CommandService.CommandInfo:output_type -> hashicorp.vagrant.sdk.Command.CommandInfoResp
-	52,  // 233: hashicorp.vagrant.sdk.CommunicatorService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 234: hashicorp.vagrant.sdk.CommunicatorService.Configure:output_type -> google.protobuf.Empty
-	55,  // 235: hashicorp.vagrant.sdk.CommunicatorService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	10,  // 236: hashicorp.vagrant.sdk.CommunicatorService.MatchSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	96,  // 237: hashicorp.vagrant.sdk.CommunicatorService.Match:output_type -> hashicorp.vagrant.sdk.Communicator.MatchResp
-	10,  // 238: hashicorp.vagrant.sdk.CommunicatorService.InitSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	97,  // 239: hashicorp.vagrant.sdk.CommunicatorService.Init:output_type -> hashicorp.vagrant.sdk.Communicator.InitResp
-	10,  // 240: hashicorp.vagrant.sdk.CommunicatorService.ReadySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	98,  // 241: hashicorp.vagrant.sdk.CommunicatorService.Ready:output_type -> hashicorp.vagrant.sdk.Communicator.ReadyResp
-	10,  // 242: hashicorp.vagrant.sdk.CommunicatorService.WaitForReadySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	98,  // 243: hashicorp.vagrant.sdk.CommunicatorService.WaitForReady:output_type -> hashicorp.vagrant.sdk.Communicator.ReadyResp
-	10,  // 244: hashicorp.vagrant.sdk.CommunicatorService.DownloadSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	99,  // 245: hashicorp.vagrant.sdk.CommunicatorService.Download:output_type -> hashicorp.vagrant.sdk.Communicator.FileTransferResp
-	10,  // 246: hashicorp.vagrant.sdk.CommunicatorService.UploadSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	99,  // 247: hashicorp.vagrant.sdk.CommunicatorService.Upload:output_type -> hashicorp.vagrant.sdk.Communicator.FileTransferResp
-	10,  // 248: hashicorp.vagrant.sdk.CommunicatorService.ExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	101, // 249: hashicorp.vagrant.sdk.CommunicatorService.Execute:output_type -> hashicorp.vagrant.sdk.Communicator.ExecuteResp
-	10,  // 250: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	101, // 251: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecute:output_type -> hashicorp.vagrant.sdk.Communicator.ExecuteResp
-	10,  // 252: hashicorp.vagrant.sdk.CommunicatorService.TestSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	102, // 253: hashicorp.vagrant.sdk.CommunicatorService.Test:output_type -> hashicorp.vagrant.sdk.Communicator.TestResp
-	10,  // 254: hashicorp.vagrant.sdk.CommunicatorService.ResetSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	103, // 255: hashicorp.vagrant.sdk.CommunicatorService.Reset:output_type -> hashicorp.vagrant.sdk.Communicator.ResetResp
-	52,  // 256: hashicorp.vagrant.sdk.ConfigService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 257: hashicorp.vagrant.sdk.ConfigService.Configure:output_type -> google.protobuf.Empty
-	55,  // 258: hashicorp.vagrant.sdk.ConfigService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	52,  // 259: hashicorp.vagrant.sdk.GuestService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 260: hashicorp.vagrant.sdk.GuestService.Configure:output_type -> google.protobuf.Empty
-	55,  // 261: hashicorp.vagrant.sdk.GuestService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	104, // 262: hashicorp.vagrant.sdk.GuestService.Detect:output_type -> hashicorp.vagrant.sdk.Guest.DetectResp
-	10,  // 263: hashicorp.vagrant.sdk.GuestService.DetectSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	107, // 264: hashicorp.vagrant.sdk.GuestService.HasCapability:output_type -> hashicorp.vagrant.sdk.Guest.Capability.CheckResp
-	10,  // 265: hashicorp.vagrant.sdk.GuestService.HasCapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	108, // 266: hashicorp.vagrant.sdk.GuestService.Capability:output_type -> hashicorp.vagrant.sdk.Guest.Capability.Resp
-	10,  // 267: hashicorp.vagrant.sdk.GuestService.CapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	52,  // 268: hashicorp.vagrant.sdk.HostService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 269: hashicorp.vagrant.sdk.HostService.Configure:output_type -> google.protobuf.Empty
-	55,  // 270: hashicorp.vagrant.sdk.HostService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	109, // 271: hashicorp.vagrant.sdk.HostService.Detect:output_type -> hashicorp.vagrant.sdk.Host.DetectResp
-	10,  // 272: hashicorp.vagrant.sdk.HostService.DetectSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	112, // 273: hashicorp.vagrant.sdk.HostService.HasCapability:output_type -> hashicorp.vagrant.sdk.Host.Capability.CheckResp
-	10,  // 274: hashicorp.vagrant.sdk.HostService.HasCapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	113, // 275: hashicorp.vagrant.sdk.HostService.Capability:output_type -> hashicorp.vagrant.sdk.Host.Capability.Resp
-	10,  // 276: hashicorp.vagrant.sdk.HostService.CapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
-	52,  // 277: hashicorp.vagrant.sdk.SyncedFolderService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
-	163, // 278: hashicorp.vagrant.sdk.SyncedFolderService.Configure:output_type -> google.protobuf.Empty
-	55,  // 279: hashicorp.vagrant.sdk.SyncedFolderService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
-	37,  // 280: hashicorp.vagrant.sdk.BasisService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Basis
-	28,  // 281: hashicorp.vagrant.sdk.BasisService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
-	118, // 282: hashicorp.vagrant.sdk.TargetService.ResourceId:output_type -> hashicorp.vagrant.sdk.Target.ResourceIdResponse
-	119, // 283: hashicorp.vagrant.sdk.TargetService.Record:output_type -> hashicorp.vagrant.sdk.Target.RecordResponse
-	120, // 284: hashicorp.vagrant.sdk.TargetService.Name:output_type -> hashicorp.vagrant.sdk.Target.NameResponse
-	163, // 285: hashicorp.vagrant.sdk.TargetService.SetName:output_type -> google.protobuf.Empty
-	32,  // 286: hashicorp.vagrant.sdk.TargetService.Project:output_type -> hashicorp.vagrant.sdk.Args.Project
-	27,  // 287: hashicorp.vagrant.sdk.TargetService.Metadata:output_type -> hashicorp.vagrant.sdk.Args.MetadataSet
-	39,  // 288: hashicorp.vagrant.sdk.TargetService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Target
-	42,  // 289: hashicorp.vagrant.sdk.TargetService.State:output_type -> hashicorp.vagrant.sdk.Args.Target.State
-	28,  // 290: hashicorp.vagrant.sdk.TargetService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
-	159, // 291: hashicorp.vagrant.sdk.TargetService.Specialize:output_type -> google.protobuf.Any
-	33,  // 292: hashicorp.vagrant.sdk.TargetService.Provider:output_type -> hashicorp.vagrant.sdk.Args.Provider
-	123, // 293: hashicorp.vagrant.sdk.TargetService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
-	124, // 294: hashicorp.vagrant.sdk.TargetService.VagrantfilePath:output_type -> hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
-	125, // 295: hashicorp.vagrant.sdk.TargetService.UpdatedAt:output_type -> hashicorp.vagrant.sdk.Target.UpdatedAtResponse
-	118, // 296: hashicorp.vagrant.sdk.TargetMachineService.ResourceId:output_type -> hashicorp.vagrant.sdk.Target.ResourceIdResponse
-	119, // 297: hashicorp.vagrant.sdk.TargetMachineService.Record:output_type -> hashicorp.vagrant.sdk.Target.RecordResponse
-	120, // 298: hashicorp.vagrant.sdk.TargetMachineService.Name:output_type -> hashicorp.vagrant.sdk.Target.NameResponse
-	163, // 299: hashicorp.vagrant.sdk.TargetMachineService.SetName:output_type -> google.protobuf.Empty
-	32,  // 300: hashicorp.vagrant.sdk.TargetMachineService.Project:output_type -> hashicorp.vagrant.sdk.Args.Project
-	27,  // 301: hashicorp.vagrant.sdk.TargetMachineService.Metadata:output_type -> hashicorp.vagrant.sdk.Args.MetadataSet
-	39,  // 302: hashicorp.vagrant.sdk.TargetMachineService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Target
-	42,  // 303: hashicorp.vagrant.sdk.TargetMachineService.State:output_type -> hashicorp.vagrant.sdk.Args.Target.State
-	28,  // 304: hashicorp.vagrant.sdk.TargetMachineService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
-	159, // 305: hashicorp.vagrant.sdk.TargetMachineService.Specialize:output_type -> google.protobuf.Any
-	33,  // 306: hashicorp.vagrant.sdk.TargetMachineService.Provider:output_type -> hashicorp.vagrant.sdk.Args.Provider
-	123, // 307: hashicorp.vagrant.sdk.TargetMachineService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
-	124, // 308: hashicorp.vagrant.sdk.TargetMachineService.VagrantfilePath:output_type -> hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
-	125, // 309: hashicorp.vagrant.sdk.TargetMachineService.UpdatedAt:output_type -> hashicorp.vagrant.sdk.Target.UpdatedAtResponse
-	163, // 310: hashicorp.vagrant.sdk.TargetMachineService.SetID:output_type -> google.protobuf.Empty
-	128, // 311: hashicorp.vagrant.sdk.TargetMachineService.GetID:output_type -> hashicorp.vagrant.sdk.Target.Machine.GetIDResponse
-	163, // 312: hashicorp.vagrant.sdk.TargetMachineService.SetState:output_type -> google.protobuf.Empty
-	45,  // 313: hashicorp.vagrant.sdk.TargetMachineService.GetState:output_type -> hashicorp.vagrant.sdk.Args.Target.Machine.State
-	163, // 314: hashicorp.vagrant.sdk.TargetMachineService.SetUUID:output_type -> google.protobuf.Empty
-	131, // 315: hashicorp.vagrant.sdk.TargetMachineService.GetUUID:output_type -> hashicorp.vagrant.sdk.Target.Machine.GetUUIDResponse
-	44,  // 316: hashicorp.vagrant.sdk.TargetMachineService.Box:output_type -> hashicorp.vagrant.sdk.Args.Target.Machine.Box
-	137, // 317: hashicorp.vagrant.sdk.ProjectService.MachineNames:output_type -> hashicorp.vagrant.sdk.Project.MachineNamesResponse
-	139, // 318: hashicorp.vagrant.sdk.ProjectService.CWD:output_type -> hashicorp.vagrant.sdk.Project.CwdResponse
-	38,  // 319: hashicorp.vagrant.sdk.ProjectService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Project
-	140, // 320: hashicorp.vagrant.sdk.ProjectService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Project.VagrantfileNameResponse
-	28,  // 321: hashicorp.vagrant.sdk.ProjectService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
-	141, // 322: hashicorp.vagrant.sdk.ProjectService.Home:output_type -> hashicorp.vagrant.sdk.Project.HomeResponse
-	142, // 323: hashicorp.vagrant.sdk.ProjectService.LocalData:output_type -> hashicorp.vagrant.sdk.Project.LocalDataResponse
-	143, // 324: hashicorp.vagrant.sdk.ProjectService.Tmp:output_type -> hashicorp.vagrant.sdk.Project.TmpResponse
-	144, // 325: hashicorp.vagrant.sdk.ProjectService.DefaultPrivateKey:output_type -> hashicorp.vagrant.sdk.Project.DefaultPrivateKeyResponse
-	36,  // 326: hashicorp.vagrant.sdk.ProjectService.Host:output_type -> hashicorp.vagrant.sdk.Args.Host
-	34,  // 327: hashicorp.vagrant.sdk.ProjectService.Target:output_type -> hashicorp.vagrant.sdk.Args.Target
-	134, // 328: hashicorp.vagrant.sdk.ProjectService.TargetNames:output_type -> hashicorp.vagrant.sdk.Project.TargetNamesResponse
-	135, // 329: hashicorp.vagrant.sdk.ProjectService.TargetIds:output_type -> hashicorp.vagrant.sdk.Project.TargetIdsResponse
-	146, // 330: hashicorp.vagrant.sdk.VagrantfileService.GetVagrantfile:output_type -> hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse
-	203, // [203:331] is the sub-list for method output_type
-	75,  // [75:203] is the sub-list for method input_type
-	75,  // [75:75] is the sub-list for extension type_name
-	75,  // [75:75] is the sub-list for extension extendee
-	0,   // [0:75] is the sub-list for field type_name
+	163, // 56: hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse.vagrantfile:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile
+	7,   // 57: hashicorp.vagrant.sdk.Vagrantfile.TargetRequest.boxes:type_name -> hashicorp.vagrant.sdk.BoxCollection
+	32,  // 58: hashicorp.vagrant.sdk.Vagrantfile.TargetRequest.project:type_name -> hashicorp.vagrant.sdk.Args.Project
+	117, // 59: hashicorp.vagrant.sdk.Vagrantfile.TargetResponse.target:type_name -> hashicorp.vagrant.sdk.Ref.Target
+	7,   // 60: hashicorp.vagrant.sdk.Vagrantfile.TargetConfigRequest.boxes:type_name -> hashicorp.vagrant.sdk.BoxCollection
+	158, // 61: hashicorp.vagrant.sdk.Vagrantfile.TargetConfigResponse.target_config:type_name -> hashicorp.vagrant.sdk.Vagrantfile.MachineConfig
+	164, // 62: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.box_download_options:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.BoxDownloadOptionsEntry
+	160, // 63: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.providers:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Provider
+	161, // 64: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.networks:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Network
+	159, // 65: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.provisioners:type_name -> hashicorp.vagrant.sdk.Vagrantfile.Provisioner
+	162, // 66: hashicorp.vagrant.sdk.Vagrantfile.ConfigVM.synced_folders:type_name -> hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder
+	165, // 67: hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH.config:type_name -> google.protobuf.Any
+	165, // 68: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM.config:type_name -> google.protobuf.Any
+	165, // 69: hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh.config:type_name -> google.protobuf.Any
+	153, // 70: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_vm:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVM
+	154, // 71: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_ssh:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigSSH
+	155, // 72: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_winrm:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigWinRM
+	156, // 73: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_winssh:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigWinssh
+	157, // 74: hashicorp.vagrant.sdk.Vagrantfile.MachineConfig.config_vagrant:type_name -> hashicorp.vagrant.sdk.Vagrantfile.ConfigVagrant
+	165, // 75: hashicorp.vagrant.sdk.Vagrantfile.Provisioner.config:type_name -> google.protobuf.Any
+	165, // 76: hashicorp.vagrant.sdk.Vagrantfile.Provider.config:type_name -> google.protobuf.Any
+	165, // 77: hashicorp.vagrant.sdk.Vagrantfile.Network.config:type_name -> google.protobuf.Any
+	165, // 78: hashicorp.vagrant.sdk.Vagrantfile.SyncedFolder.config:type_name -> google.protobuf.Any
+	158, // 79: hashicorp.vagrant.sdk.Vagrantfile.Vagrantfile.machine_configs:type_name -> hashicorp.vagrant.sdk.Vagrantfile.MachineConfig
+	59,  // 80: hashicorp.vagrant.sdk.TerminalUIService.Output:input_type -> hashicorp.vagrant.sdk.TerminalUI.OutputRequest
+	61,  // 81: hashicorp.vagrant.sdk.TerminalUIService.Events:input_type -> hashicorp.vagrant.sdk.TerminalUI.Event
+	169, // 82: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:input_type -> google.protobuf.Empty
+	169, // 83: hashicorp.vagrant.sdk.Mapper.ListMappers:input_type -> google.protobuf.Empty
+	74,  // 84: hashicorp.vagrant.sdk.Mapper.Map:input_type -> hashicorp.vagrant.sdk.Map.Request
+	77,  // 85: hashicorp.vagrant.sdk.StateBagService.Get:input_type -> hashicorp.vagrant.sdk.StateBag.GetRequest
+	77,  // 86: hashicorp.vagrant.sdk.StateBagService.GetOk:input_type -> hashicorp.vagrant.sdk.StateBag.GetRequest
+	80,  // 87: hashicorp.vagrant.sdk.StateBagService.Put:input_type -> hashicorp.vagrant.sdk.StateBag.PutRequest
+	82,  // 88: hashicorp.vagrant.sdk.StateBagService.Remove:input_type -> hashicorp.vagrant.sdk.StateBag.RemoveRequest
+	50,  // 89: hashicorp.vagrant.sdk.ProviderService.Usable:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 90: hashicorp.vagrant.sdk.ProviderService.UsableSpec:input_type -> google.protobuf.Empty
+	50,  // 91: hashicorp.vagrant.sdk.ProviderService.Installed:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 92: hashicorp.vagrant.sdk.ProviderService.InstalledSpec:input_type -> google.protobuf.Empty
+	50,  // 93: hashicorp.vagrant.sdk.ProviderService.Init:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 94: hashicorp.vagrant.sdk.ProviderService.InitSpec:input_type -> google.protobuf.Empty
+	50,  // 95: hashicorp.vagrant.sdk.ProviderService.ActionUp:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 96: hashicorp.vagrant.sdk.ProviderService.ActionUpSpec:input_type -> google.protobuf.Empty
+	169, // 97: hashicorp.vagrant.sdk.ProviderService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 98: hashicorp.vagrant.sdk.ProviderService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 99: hashicorp.vagrant.sdk.ProviderService.Documentation:input_type -> google.protobuf.Empty
+	169, // 100: hashicorp.vagrant.sdk.ProvisionerService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 101: hashicorp.vagrant.sdk.ProvisionerService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 102: hashicorp.vagrant.sdk.ProvisionerService.Documentation:input_type -> google.protobuf.Empty
+	169, // 103: hashicorp.vagrant.sdk.CommandService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 104: hashicorp.vagrant.sdk.CommandService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 105: hashicorp.vagrant.sdk.CommandService.Documentation:input_type -> google.protobuf.Empty
+	93,  // 106: hashicorp.vagrant.sdk.CommandService.ExecuteSpec:input_type -> hashicorp.vagrant.sdk.Command.ExecuteSpecReq
+	92,  // 107: hashicorp.vagrant.sdk.CommandService.Execute:input_type -> hashicorp.vagrant.sdk.Command.ExecuteReq
+	169, // 108: hashicorp.vagrant.sdk.CommandService.CommandInfoSpec:input_type -> google.protobuf.Empty
+	50,  // 109: hashicorp.vagrant.sdk.CommandService.CommandInfo:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 110: hashicorp.vagrant.sdk.CommunicatorService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 111: hashicorp.vagrant.sdk.CommunicatorService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 112: hashicorp.vagrant.sdk.CommunicatorService.Documentation:input_type -> google.protobuf.Empty
+	169, // 113: hashicorp.vagrant.sdk.CommunicatorService.MatchSpec:input_type -> google.protobuf.Empty
+	50,  // 114: hashicorp.vagrant.sdk.CommunicatorService.Match:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 115: hashicorp.vagrant.sdk.CommunicatorService.InitSpec:input_type -> google.protobuf.Empty
+	50,  // 116: hashicorp.vagrant.sdk.CommunicatorService.Init:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 117: hashicorp.vagrant.sdk.CommunicatorService.ReadySpec:input_type -> google.protobuf.Empty
+	50,  // 118: hashicorp.vagrant.sdk.CommunicatorService.Ready:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 119: hashicorp.vagrant.sdk.CommunicatorService.WaitForReadySpec:input_type -> google.protobuf.Empty
+	50,  // 120: hashicorp.vagrant.sdk.CommunicatorService.WaitForReady:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 121: hashicorp.vagrant.sdk.CommunicatorService.DownloadSpec:input_type -> google.protobuf.Empty
+	50,  // 122: hashicorp.vagrant.sdk.CommunicatorService.Download:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 123: hashicorp.vagrant.sdk.CommunicatorService.UploadSpec:input_type -> google.protobuf.Empty
+	50,  // 124: hashicorp.vagrant.sdk.CommunicatorService.Upload:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 125: hashicorp.vagrant.sdk.CommunicatorService.ExecuteSpec:input_type -> google.protobuf.Empty
+	50,  // 126: hashicorp.vagrant.sdk.CommunicatorService.Execute:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 127: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecuteSpec:input_type -> google.protobuf.Empty
+	50,  // 128: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecute:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 129: hashicorp.vagrant.sdk.CommunicatorService.TestSpec:input_type -> google.protobuf.Empty
+	50,  // 130: hashicorp.vagrant.sdk.CommunicatorService.Test:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 131: hashicorp.vagrant.sdk.CommunicatorService.ResetSpec:input_type -> google.protobuf.Empty
+	50,  // 132: hashicorp.vagrant.sdk.CommunicatorService.Reset:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 133: hashicorp.vagrant.sdk.ConfigService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 134: hashicorp.vagrant.sdk.ConfigService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 135: hashicorp.vagrant.sdk.ConfigService.Documentation:input_type -> google.protobuf.Empty
+	169, // 136: hashicorp.vagrant.sdk.GuestService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 137: hashicorp.vagrant.sdk.GuestService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 138: hashicorp.vagrant.sdk.GuestService.Documentation:input_type -> google.protobuf.Empty
+	50,  // 139: hashicorp.vagrant.sdk.GuestService.Detect:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 140: hashicorp.vagrant.sdk.GuestService.DetectSpec:input_type -> google.protobuf.Empty
+	106, // 141: hashicorp.vagrant.sdk.GuestService.HasCapability:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
+	106, // 142: hashicorp.vagrant.sdk.GuestService.HasCapabilitySpec:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
+	106, // 143: hashicorp.vagrant.sdk.GuestService.Capability:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
+	106, // 144: hashicorp.vagrant.sdk.GuestService.CapabilitySpec:input_type -> hashicorp.vagrant.sdk.Guest.Capability.NamedRequest
+	169, // 145: hashicorp.vagrant.sdk.HostService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 146: hashicorp.vagrant.sdk.HostService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 147: hashicorp.vagrant.sdk.HostService.Documentation:input_type -> google.protobuf.Empty
+	50,  // 148: hashicorp.vagrant.sdk.HostService.Detect:input_type -> hashicorp.vagrant.sdk.FuncSpec.Args
+	169, // 149: hashicorp.vagrant.sdk.HostService.DetectSpec:input_type -> google.protobuf.Empty
+	111, // 150: hashicorp.vagrant.sdk.HostService.HasCapability:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
+	169, // 151: hashicorp.vagrant.sdk.HostService.HasCapabilitySpec:input_type -> google.protobuf.Empty
+	111, // 152: hashicorp.vagrant.sdk.HostService.Capability:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
+	111, // 153: hashicorp.vagrant.sdk.HostService.CapabilitySpec:input_type -> hashicorp.vagrant.sdk.Host.Capability.NamedRequest
+	169, // 154: hashicorp.vagrant.sdk.SyncedFolderService.ConfigStruct:input_type -> google.protobuf.Empty
+	51,  // 155: hashicorp.vagrant.sdk.SyncedFolderService.Configure:input_type -> hashicorp.vagrant.sdk.Config.ConfigureRequest
+	169, // 156: hashicorp.vagrant.sdk.SyncedFolderService.Documentation:input_type -> google.protobuf.Empty
+	169, // 157: hashicorp.vagrant.sdk.BasisService.DataDir:input_type -> google.protobuf.Empty
+	169, // 158: hashicorp.vagrant.sdk.BasisService.UI:input_type -> google.protobuf.Empty
+	169, // 159: hashicorp.vagrant.sdk.TargetService.ResourceId:input_type -> google.protobuf.Empty
+	169, // 160: hashicorp.vagrant.sdk.TargetService.Record:input_type -> google.protobuf.Empty
+	169, // 161: hashicorp.vagrant.sdk.TargetService.Name:input_type -> google.protobuf.Empty
+	122, // 162: hashicorp.vagrant.sdk.TargetService.SetName:input_type -> hashicorp.vagrant.sdk.Target.SetNameRequest
+	169, // 163: hashicorp.vagrant.sdk.TargetService.Project:input_type -> google.protobuf.Empty
+	169, // 164: hashicorp.vagrant.sdk.TargetService.Metadata:input_type -> google.protobuf.Empty
+	169, // 165: hashicorp.vagrant.sdk.TargetService.DataDir:input_type -> google.protobuf.Empty
+	169, // 166: hashicorp.vagrant.sdk.TargetService.State:input_type -> google.protobuf.Empty
+	169, // 167: hashicorp.vagrant.sdk.TargetService.UI:input_type -> google.protobuf.Empty
+	165, // 168: hashicorp.vagrant.sdk.TargetService.Specialize:input_type -> google.protobuf.Any
+	169, // 169: hashicorp.vagrant.sdk.TargetService.Provider:input_type -> google.protobuf.Empty
+	169, // 170: hashicorp.vagrant.sdk.TargetService.VagrantfileName:input_type -> google.protobuf.Empty
+	169, // 171: hashicorp.vagrant.sdk.TargetService.VagrantfilePath:input_type -> google.protobuf.Empty
+	169, // 172: hashicorp.vagrant.sdk.TargetService.UpdatedAt:input_type -> google.protobuf.Empty
+	169, // 173: hashicorp.vagrant.sdk.TargetMachineService.ResourceId:input_type -> google.protobuf.Empty
+	169, // 174: hashicorp.vagrant.sdk.TargetMachineService.Record:input_type -> google.protobuf.Empty
+	169, // 175: hashicorp.vagrant.sdk.TargetMachineService.Name:input_type -> google.protobuf.Empty
+	122, // 176: hashicorp.vagrant.sdk.TargetMachineService.SetName:input_type -> hashicorp.vagrant.sdk.Target.SetNameRequest
+	169, // 177: hashicorp.vagrant.sdk.TargetMachineService.Project:input_type -> google.protobuf.Empty
+	169, // 178: hashicorp.vagrant.sdk.TargetMachineService.Metadata:input_type -> google.protobuf.Empty
+	169, // 179: hashicorp.vagrant.sdk.TargetMachineService.DataDir:input_type -> google.protobuf.Empty
+	169, // 180: hashicorp.vagrant.sdk.TargetMachineService.State:input_type -> google.protobuf.Empty
+	169, // 181: hashicorp.vagrant.sdk.TargetMachineService.UI:input_type -> google.protobuf.Empty
+	165, // 182: hashicorp.vagrant.sdk.TargetMachineService.Specialize:input_type -> google.protobuf.Any
+	169, // 183: hashicorp.vagrant.sdk.TargetMachineService.Provider:input_type -> google.protobuf.Empty
+	169, // 184: hashicorp.vagrant.sdk.TargetMachineService.VagrantfileName:input_type -> google.protobuf.Empty
+	169, // 185: hashicorp.vagrant.sdk.TargetMachineService.VagrantfilePath:input_type -> google.protobuf.Empty
+	169, // 186: hashicorp.vagrant.sdk.TargetMachineService.UpdatedAt:input_type -> google.protobuf.Empty
+	127, // 187: hashicorp.vagrant.sdk.TargetMachineService.SetID:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetIDRequest
+	169, // 188: hashicorp.vagrant.sdk.TargetMachineService.GetID:input_type -> google.protobuf.Empty
+	129, // 189: hashicorp.vagrant.sdk.TargetMachineService.SetState:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetStateRequest
+	169, // 190: hashicorp.vagrant.sdk.TargetMachineService.GetState:input_type -> google.protobuf.Empty
+	132, // 191: hashicorp.vagrant.sdk.TargetMachineService.SetUUID:input_type -> hashicorp.vagrant.sdk.Target.Machine.SetUUIDRequest
+	169, // 192: hashicorp.vagrant.sdk.TargetMachineService.GetUUID:input_type -> google.protobuf.Empty
+	169, // 193: hashicorp.vagrant.sdk.TargetMachineService.Box:input_type -> google.protobuf.Empty
+	169, // 194: hashicorp.vagrant.sdk.ProjectService.MachineNames:input_type -> google.protobuf.Empty
+	169, // 195: hashicorp.vagrant.sdk.ProjectService.CWD:input_type -> google.protobuf.Empty
+	169, // 196: hashicorp.vagrant.sdk.ProjectService.DataDir:input_type -> google.protobuf.Empty
+	169, // 197: hashicorp.vagrant.sdk.ProjectService.VagrantfileName:input_type -> google.protobuf.Empty
+	169, // 198: hashicorp.vagrant.sdk.ProjectService.UI:input_type -> google.protobuf.Empty
+	169, // 199: hashicorp.vagrant.sdk.ProjectService.Home:input_type -> google.protobuf.Empty
+	169, // 200: hashicorp.vagrant.sdk.ProjectService.LocalData:input_type -> google.protobuf.Empty
+	169, // 201: hashicorp.vagrant.sdk.ProjectService.Tmp:input_type -> google.protobuf.Empty
+	169, // 202: hashicorp.vagrant.sdk.ProjectService.DefaultPrivateKey:input_type -> google.protobuf.Empty
+	169, // 203: hashicorp.vagrant.sdk.ProjectService.Host:input_type -> google.protobuf.Empty
+	133, // 204: hashicorp.vagrant.sdk.ProjectService.Target:input_type -> hashicorp.vagrant.sdk.Project.TargetRequest
+	169, // 205: hashicorp.vagrant.sdk.ProjectService.TargetNames:input_type -> google.protobuf.Empty
+	169, // 206: hashicorp.vagrant.sdk.ProjectService.TargetIds:input_type -> google.protobuf.Empty
+	145, // 207: hashicorp.vagrant.sdk.VagrantfileService.GetVagrantfile:input_type -> hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileRequest
+	147, // 208: hashicorp.vagrant.sdk.VagrantfileService.Target:input_type -> hashicorp.vagrant.sdk.Vagrantfile.TargetRequest
+	149, // 209: hashicorp.vagrant.sdk.VagrantfileService.TargetConfig:input_type -> hashicorp.vagrant.sdk.Vagrantfile.TargetConfigRequest
+	169, // 210: hashicorp.vagrant.sdk.VagrantfileService.TargetNames:input_type -> google.protobuf.Empty
+	169, // 211: hashicorp.vagrant.sdk.VagrantfileService.PrimaryTargetName:input_type -> google.protobuf.Empty
+	169, // 212: hashicorp.vagrant.sdk.TerminalUIService.Output:output_type -> google.protobuf.Empty
+	60,  // 213: hashicorp.vagrant.sdk.TerminalUIService.Events:output_type -> hashicorp.vagrant.sdk.TerminalUI.Response
+	58,  // 214: hashicorp.vagrant.sdk.TerminalUIService.IsInteractive:output_type -> hashicorp.vagrant.sdk.TerminalUI.IsInteractiveResponse
+	76,  // 215: hashicorp.vagrant.sdk.Mapper.ListMappers:output_type -> hashicorp.vagrant.sdk.Map.ListResponse
+	75,  // 216: hashicorp.vagrant.sdk.Mapper.Map:output_type -> hashicorp.vagrant.sdk.Map.Response
+	78,  // 217: hashicorp.vagrant.sdk.StateBagService.Get:output_type -> hashicorp.vagrant.sdk.StateBag.GetResponse
+	79,  // 218: hashicorp.vagrant.sdk.StateBagService.GetOk:output_type -> hashicorp.vagrant.sdk.StateBag.GetOkResponse
+	81,  // 219: hashicorp.vagrant.sdk.StateBagService.Put:output_type -> hashicorp.vagrant.sdk.StateBag.PutResponse
+	83,  // 220: hashicorp.vagrant.sdk.StateBagService.Remove:output_type -> hashicorp.vagrant.sdk.StateBag.RemoveResponse
+	84,  // 221: hashicorp.vagrant.sdk.ProviderService.Usable:output_type -> hashicorp.vagrant.sdk.Provider.UsableResp
+	10,  // 222: hashicorp.vagrant.sdk.ProviderService.UsableSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	85,  // 223: hashicorp.vagrant.sdk.ProviderService.Installed:output_type -> hashicorp.vagrant.sdk.Provider.InstalledResp
+	10,  // 224: hashicorp.vagrant.sdk.ProviderService.InstalledSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	169, // 225: hashicorp.vagrant.sdk.ProviderService.Init:output_type -> google.protobuf.Empty
+	10,  // 226: hashicorp.vagrant.sdk.ProviderService.InitSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	86,  // 227: hashicorp.vagrant.sdk.ProviderService.ActionUp:output_type -> hashicorp.vagrant.sdk.Provider.ActionResp
+	10,  // 228: hashicorp.vagrant.sdk.ProviderService.ActionUpSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	52,  // 229: hashicorp.vagrant.sdk.ProviderService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 230: hashicorp.vagrant.sdk.ProviderService.Configure:output_type -> google.protobuf.Empty
+	55,  // 231: hashicorp.vagrant.sdk.ProviderService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	52,  // 232: hashicorp.vagrant.sdk.ProvisionerService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 233: hashicorp.vagrant.sdk.ProvisionerService.Configure:output_type -> google.protobuf.Empty
+	55,  // 234: hashicorp.vagrant.sdk.ProvisionerService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	52,  // 235: hashicorp.vagrant.sdk.CommandService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 236: hashicorp.vagrant.sdk.CommandService.Configure:output_type -> google.protobuf.Empty
+	55,  // 237: hashicorp.vagrant.sdk.CommandService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	10,  // 238: hashicorp.vagrant.sdk.CommandService.ExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	91,  // 239: hashicorp.vagrant.sdk.CommandService.Execute:output_type -> hashicorp.vagrant.sdk.Command.ExecuteResp
+	10,  // 240: hashicorp.vagrant.sdk.CommandService.CommandInfoSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	90,  // 241: hashicorp.vagrant.sdk.CommandService.CommandInfo:output_type -> hashicorp.vagrant.sdk.Command.CommandInfoResp
+	52,  // 242: hashicorp.vagrant.sdk.CommunicatorService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 243: hashicorp.vagrant.sdk.CommunicatorService.Configure:output_type -> google.protobuf.Empty
+	55,  // 244: hashicorp.vagrant.sdk.CommunicatorService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	10,  // 245: hashicorp.vagrant.sdk.CommunicatorService.MatchSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	96,  // 246: hashicorp.vagrant.sdk.CommunicatorService.Match:output_type -> hashicorp.vagrant.sdk.Communicator.MatchResp
+	10,  // 247: hashicorp.vagrant.sdk.CommunicatorService.InitSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	97,  // 248: hashicorp.vagrant.sdk.CommunicatorService.Init:output_type -> hashicorp.vagrant.sdk.Communicator.InitResp
+	10,  // 249: hashicorp.vagrant.sdk.CommunicatorService.ReadySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	98,  // 250: hashicorp.vagrant.sdk.CommunicatorService.Ready:output_type -> hashicorp.vagrant.sdk.Communicator.ReadyResp
+	10,  // 251: hashicorp.vagrant.sdk.CommunicatorService.WaitForReadySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	98,  // 252: hashicorp.vagrant.sdk.CommunicatorService.WaitForReady:output_type -> hashicorp.vagrant.sdk.Communicator.ReadyResp
+	10,  // 253: hashicorp.vagrant.sdk.CommunicatorService.DownloadSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	99,  // 254: hashicorp.vagrant.sdk.CommunicatorService.Download:output_type -> hashicorp.vagrant.sdk.Communicator.FileTransferResp
+	10,  // 255: hashicorp.vagrant.sdk.CommunicatorService.UploadSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	99,  // 256: hashicorp.vagrant.sdk.CommunicatorService.Upload:output_type -> hashicorp.vagrant.sdk.Communicator.FileTransferResp
+	10,  // 257: hashicorp.vagrant.sdk.CommunicatorService.ExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	101, // 258: hashicorp.vagrant.sdk.CommunicatorService.Execute:output_type -> hashicorp.vagrant.sdk.Communicator.ExecuteResp
+	10,  // 259: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecuteSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	101, // 260: hashicorp.vagrant.sdk.CommunicatorService.PrivilegedExecute:output_type -> hashicorp.vagrant.sdk.Communicator.ExecuteResp
+	10,  // 261: hashicorp.vagrant.sdk.CommunicatorService.TestSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	102, // 262: hashicorp.vagrant.sdk.CommunicatorService.Test:output_type -> hashicorp.vagrant.sdk.Communicator.TestResp
+	10,  // 263: hashicorp.vagrant.sdk.CommunicatorService.ResetSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	103, // 264: hashicorp.vagrant.sdk.CommunicatorService.Reset:output_type -> hashicorp.vagrant.sdk.Communicator.ResetResp
+	52,  // 265: hashicorp.vagrant.sdk.ConfigService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 266: hashicorp.vagrant.sdk.ConfigService.Configure:output_type -> google.protobuf.Empty
+	55,  // 267: hashicorp.vagrant.sdk.ConfigService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	52,  // 268: hashicorp.vagrant.sdk.GuestService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 269: hashicorp.vagrant.sdk.GuestService.Configure:output_type -> google.protobuf.Empty
+	55,  // 270: hashicorp.vagrant.sdk.GuestService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	104, // 271: hashicorp.vagrant.sdk.GuestService.Detect:output_type -> hashicorp.vagrant.sdk.Guest.DetectResp
+	10,  // 272: hashicorp.vagrant.sdk.GuestService.DetectSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	107, // 273: hashicorp.vagrant.sdk.GuestService.HasCapability:output_type -> hashicorp.vagrant.sdk.Guest.Capability.CheckResp
+	10,  // 274: hashicorp.vagrant.sdk.GuestService.HasCapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	108, // 275: hashicorp.vagrant.sdk.GuestService.Capability:output_type -> hashicorp.vagrant.sdk.Guest.Capability.Resp
+	10,  // 276: hashicorp.vagrant.sdk.GuestService.CapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	52,  // 277: hashicorp.vagrant.sdk.HostService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 278: hashicorp.vagrant.sdk.HostService.Configure:output_type -> google.protobuf.Empty
+	55,  // 279: hashicorp.vagrant.sdk.HostService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	109, // 280: hashicorp.vagrant.sdk.HostService.Detect:output_type -> hashicorp.vagrant.sdk.Host.DetectResp
+	10,  // 281: hashicorp.vagrant.sdk.HostService.DetectSpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	112, // 282: hashicorp.vagrant.sdk.HostService.HasCapability:output_type -> hashicorp.vagrant.sdk.Host.Capability.CheckResp
+	10,  // 283: hashicorp.vagrant.sdk.HostService.HasCapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	113, // 284: hashicorp.vagrant.sdk.HostService.Capability:output_type -> hashicorp.vagrant.sdk.Host.Capability.Resp
+	10,  // 285: hashicorp.vagrant.sdk.HostService.CapabilitySpec:output_type -> hashicorp.vagrant.sdk.FuncSpec
+	52,  // 286: hashicorp.vagrant.sdk.SyncedFolderService.ConfigStruct:output_type -> hashicorp.vagrant.sdk.Config.StructResp
+	169, // 287: hashicorp.vagrant.sdk.SyncedFolderService.Configure:output_type -> google.protobuf.Empty
+	55,  // 288: hashicorp.vagrant.sdk.SyncedFolderService.Documentation:output_type -> hashicorp.vagrant.sdk.Config.Documentation
+	37,  // 289: hashicorp.vagrant.sdk.BasisService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Basis
+	28,  // 290: hashicorp.vagrant.sdk.BasisService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
+	118, // 291: hashicorp.vagrant.sdk.TargetService.ResourceId:output_type -> hashicorp.vagrant.sdk.Target.ResourceIdResponse
+	119, // 292: hashicorp.vagrant.sdk.TargetService.Record:output_type -> hashicorp.vagrant.sdk.Target.RecordResponse
+	120, // 293: hashicorp.vagrant.sdk.TargetService.Name:output_type -> hashicorp.vagrant.sdk.Target.NameResponse
+	169, // 294: hashicorp.vagrant.sdk.TargetService.SetName:output_type -> google.protobuf.Empty
+	32,  // 295: hashicorp.vagrant.sdk.TargetService.Project:output_type -> hashicorp.vagrant.sdk.Args.Project
+	27,  // 296: hashicorp.vagrant.sdk.TargetService.Metadata:output_type -> hashicorp.vagrant.sdk.Args.MetadataSet
+	39,  // 297: hashicorp.vagrant.sdk.TargetService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Target
+	42,  // 298: hashicorp.vagrant.sdk.TargetService.State:output_type -> hashicorp.vagrant.sdk.Args.Target.State
+	28,  // 299: hashicorp.vagrant.sdk.TargetService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
+	165, // 300: hashicorp.vagrant.sdk.TargetService.Specialize:output_type -> google.protobuf.Any
+	33,  // 301: hashicorp.vagrant.sdk.TargetService.Provider:output_type -> hashicorp.vagrant.sdk.Args.Provider
+	123, // 302: hashicorp.vagrant.sdk.TargetService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
+	124, // 303: hashicorp.vagrant.sdk.TargetService.VagrantfilePath:output_type -> hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
+	125, // 304: hashicorp.vagrant.sdk.TargetService.UpdatedAt:output_type -> hashicorp.vagrant.sdk.Target.UpdatedAtResponse
+	118, // 305: hashicorp.vagrant.sdk.TargetMachineService.ResourceId:output_type -> hashicorp.vagrant.sdk.Target.ResourceIdResponse
+	119, // 306: hashicorp.vagrant.sdk.TargetMachineService.Record:output_type -> hashicorp.vagrant.sdk.Target.RecordResponse
+	120, // 307: hashicorp.vagrant.sdk.TargetMachineService.Name:output_type -> hashicorp.vagrant.sdk.Target.NameResponse
+	169, // 308: hashicorp.vagrant.sdk.TargetMachineService.SetName:output_type -> google.protobuf.Empty
+	32,  // 309: hashicorp.vagrant.sdk.TargetMachineService.Project:output_type -> hashicorp.vagrant.sdk.Args.Project
+	27,  // 310: hashicorp.vagrant.sdk.TargetMachineService.Metadata:output_type -> hashicorp.vagrant.sdk.Args.MetadataSet
+	39,  // 311: hashicorp.vagrant.sdk.TargetMachineService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Target
+	42,  // 312: hashicorp.vagrant.sdk.TargetMachineService.State:output_type -> hashicorp.vagrant.sdk.Args.Target.State
+	28,  // 313: hashicorp.vagrant.sdk.TargetMachineService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
+	165, // 314: hashicorp.vagrant.sdk.TargetMachineService.Specialize:output_type -> google.protobuf.Any
+	33,  // 315: hashicorp.vagrant.sdk.TargetMachineService.Provider:output_type -> hashicorp.vagrant.sdk.Args.Provider
+	123, // 316: hashicorp.vagrant.sdk.TargetMachineService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Target.VagrantfileNameResponse
+	124, // 317: hashicorp.vagrant.sdk.TargetMachineService.VagrantfilePath:output_type -> hashicorp.vagrant.sdk.Target.VagrantfilePathResponse
+	125, // 318: hashicorp.vagrant.sdk.TargetMachineService.UpdatedAt:output_type -> hashicorp.vagrant.sdk.Target.UpdatedAtResponse
+	169, // 319: hashicorp.vagrant.sdk.TargetMachineService.SetID:output_type -> google.protobuf.Empty
+	128, // 320: hashicorp.vagrant.sdk.TargetMachineService.GetID:output_type -> hashicorp.vagrant.sdk.Target.Machine.GetIDResponse
+	169, // 321: hashicorp.vagrant.sdk.TargetMachineService.SetState:output_type -> google.protobuf.Empty
+	45,  // 322: hashicorp.vagrant.sdk.TargetMachineService.GetState:output_type -> hashicorp.vagrant.sdk.Args.Target.Machine.State
+	169, // 323: hashicorp.vagrant.sdk.TargetMachineService.SetUUID:output_type -> google.protobuf.Empty
+	131, // 324: hashicorp.vagrant.sdk.TargetMachineService.GetUUID:output_type -> hashicorp.vagrant.sdk.Target.Machine.GetUUIDResponse
+	44,  // 325: hashicorp.vagrant.sdk.TargetMachineService.Box:output_type -> hashicorp.vagrant.sdk.Args.Target.Machine.Box
+	137, // 326: hashicorp.vagrant.sdk.ProjectService.MachineNames:output_type -> hashicorp.vagrant.sdk.Project.MachineNamesResponse
+	139, // 327: hashicorp.vagrant.sdk.ProjectService.CWD:output_type -> hashicorp.vagrant.sdk.Project.CwdResponse
+	38,  // 328: hashicorp.vagrant.sdk.ProjectService.DataDir:output_type -> hashicorp.vagrant.sdk.Args.DataDir.Project
+	140, // 329: hashicorp.vagrant.sdk.ProjectService.VagrantfileName:output_type -> hashicorp.vagrant.sdk.Project.VagrantfileNameResponse
+	28,  // 330: hashicorp.vagrant.sdk.ProjectService.UI:output_type -> hashicorp.vagrant.sdk.Args.TerminalUI
+	141, // 331: hashicorp.vagrant.sdk.ProjectService.Home:output_type -> hashicorp.vagrant.sdk.Project.HomeResponse
+	142, // 332: hashicorp.vagrant.sdk.ProjectService.LocalData:output_type -> hashicorp.vagrant.sdk.Project.LocalDataResponse
+	143, // 333: hashicorp.vagrant.sdk.ProjectService.Tmp:output_type -> hashicorp.vagrant.sdk.Project.TmpResponse
+	144, // 334: hashicorp.vagrant.sdk.ProjectService.DefaultPrivateKey:output_type -> hashicorp.vagrant.sdk.Project.DefaultPrivateKeyResponse
+	36,  // 335: hashicorp.vagrant.sdk.ProjectService.Host:output_type -> hashicorp.vagrant.sdk.Args.Host
+	34,  // 336: hashicorp.vagrant.sdk.ProjectService.Target:output_type -> hashicorp.vagrant.sdk.Args.Target
+	134, // 337: hashicorp.vagrant.sdk.ProjectService.TargetNames:output_type -> hashicorp.vagrant.sdk.Project.TargetNamesResponse
+	135, // 338: hashicorp.vagrant.sdk.ProjectService.TargetIds:output_type -> hashicorp.vagrant.sdk.Project.TargetIdsResponse
+	146, // 339: hashicorp.vagrant.sdk.VagrantfileService.GetVagrantfile:output_type -> hashicorp.vagrant.sdk.Vagrantfile.GetVagrantfileResponse
+	148, // 340: hashicorp.vagrant.sdk.VagrantfileService.Target:output_type -> hashicorp.vagrant.sdk.Vagrantfile.TargetResponse
+	150, // 341: hashicorp.vagrant.sdk.VagrantfileService.TargetConfig:output_type -> hashicorp.vagrant.sdk.Vagrantfile.TargetConfigResponse
+	151, // 342: hashicorp.vagrant.sdk.VagrantfileService.TargetNames:output_type -> hashicorp.vagrant.sdk.Vagrantfile.TargetNamesResponse
+	152, // 343: hashicorp.vagrant.sdk.VagrantfileService.PrimaryTargetName:output_type -> hashicorp.vagrant.sdk.Vagrantfile.PrimaryTargetNameResponse
+	212, // [212:344] is the sub-list for method output_type
+	80,  // [80:212] is the sub-list for method input_type
+	80,  // [80:80] is the sub-list for extension type_name
+	80,  // [80:80] is the sub-list for extension extendee
+	0,   // [0:80] is the sub-list for field type_name
 }
 
 func init() { file_vagrant_plugin_sdk_plugin_proto_init() }
@@ -12746,7 +13183,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[142].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_ConfigVM); i {
+			switch v := v.(*Vagrantfile_TargetRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12758,7 +13195,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[143].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_ConfigSSH); i {
+			switch v := v.(*Vagrantfile_TargetResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12770,7 +13207,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[144].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_ConfigWinRM); i {
+			switch v := v.(*Vagrantfile_TargetConfigRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12782,7 +13219,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[145].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_ConfigWinssh); i {
+			switch v := v.(*Vagrantfile_TargetConfigResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12794,7 +13231,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[146].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_ConfigVagrant); i {
+			switch v := v.(*Vagrantfile_TargetNamesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12806,7 +13243,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[147].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_MachineConfig); i {
+			switch v := v.(*Vagrantfile_PrimaryTargetNameResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12818,7 +13255,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[148].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_Provisioner); i {
+			switch v := v.(*Vagrantfile_ConfigVM); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12830,7 +13267,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[149].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_Provider); i {
+			switch v := v.(*Vagrantfile_ConfigSSH); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12842,7 +13279,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[150].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_Network); i {
+			switch v := v.(*Vagrantfile_ConfigWinRM); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12854,7 +13291,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[151].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vagrantfile_SyncedFolder); i {
+			switch v := v.(*Vagrantfile_ConfigWinssh); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -12866,6 +13303,78 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			}
 		}
 		file_vagrant_plugin_sdk_plugin_proto_msgTypes[152].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_ConfigVagrant); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[153].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_MachineConfig); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[154].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_Provisioner); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[155].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_Provider); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[156].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_Network); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[157].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Vagrantfile_SyncedFolder); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vagrant_plugin_sdk_plugin_proto_msgTypes[158].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Vagrantfile_Vagrantfile); i {
 			case 0:
 				return &v.state
@@ -12906,7 +13415,7 @@ func file_vagrant_plugin_sdk_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_vagrant_plugin_sdk_plugin_proto_rawDesc,
 			NumEnums:      5,
-			NumMessages:   154,
+			NumMessages:   160,
 			NumExtensions: 0,
 			NumServices:   16,
 		},
