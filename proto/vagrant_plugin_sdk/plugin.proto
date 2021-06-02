@@ -1133,6 +1133,11 @@ message Vagrantfile {
     repeated string sensitive = 3;
   }
 
+  message GeneralConfig {
+    string type = 1;
+    google.protobuf.Any config = 2;
+  }
+
   // TODO: Review what needs to be sent here
   message MachineConfig {
     string name = 1;
@@ -1141,6 +1146,9 @@ message Vagrantfile {
     ConfigWinRM config_winrm = 4;
     ConfigWinssh config_winssh = 5;
     ConfigVagrant config_vagrant = 6;
+    // Maybe config_ssh, config_winrm, config_ssh can be 
+    // defined as plugin_configs
+    repeated GeneralConfig plugin_configs = 7;
   }
 
   message Provisioner {
