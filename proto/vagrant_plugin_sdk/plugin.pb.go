@@ -1755,7 +1755,7 @@ type Args_Target struct {
 func (x *Args_Target) Reset() {
 	*x = Args_Target{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[29]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1786,9 +1786,9 @@ func (*Args_Target) Descriptor() ([]byte, []int) {
 
 func (x *Args_Target) GetStreamId() uint32 {
 	if x != nil {
-		return x.ServerAddr
+		return x.StreamId
 	}
-	return ""
+	return 0
 }
 
 type Args_StateBag struct {
@@ -1802,7 +1802,7 @@ type Args_StateBag struct {
 func (x *Args_StateBag) Reset() {
 	*x = Args_StateBag{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[30]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1849,7 +1849,7 @@ type Args_Host struct {
 func (x *Args_Host) Reset() {
 	*x = Args_Host{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[31]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4533,7 +4533,7 @@ type Provider_UsableResp struct {
 func (x *Provider_UsableResp) Reset() {
 	*x = Provider_UsableResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[79]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[78]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4580,7 +4580,7 @@ type Provider_InstalledResp struct {
 func (x *Provider_InstalledResp) Reset() {
 	*x = Provider_InstalledResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[80]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[79]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4630,7 +4630,7 @@ type Provider_ActionResp struct {
 func (x *Provider_ActionResp) Reset() {
 	*x = Provider_ActionResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[81]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[80]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4781,7 +4781,7 @@ type Command_CommandInfo struct {
 func (x *Command_CommandInfo) Reset() {
 	*x = Command_CommandInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[84]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[83]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4856,7 +4856,7 @@ type Command_CommandInfoResp struct {
 func (x *Command_CommandInfoResp) Reset() {
 	*x = Command_CommandInfoResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[85]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[84]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4903,7 +4903,7 @@ type Command_ExecuteResp struct {
 func (x *Command_ExecuteResp) Reset() {
 	*x = Command_ExecuteResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[86]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[85]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -4951,7 +4951,7 @@ type Command_ExecuteReq struct {
 func (x *Command_ExecuteReq) Reset() {
 	*x = Command_ExecuteReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[87]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[86]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5005,7 +5005,7 @@ type Command_ExecuteSpecReq struct {
 func (x *Command_ExecuteSpecReq) Reset() {
 	*x = Command_ExecuteSpecReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[88]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[87]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5053,7 +5053,7 @@ type Command_Arguments struct {
 func (x *Command_Arguments) Reset() {
 	*x = Command_Arguments{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[89]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[88]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5112,7 +5112,7 @@ type Command_Arguments_Flag struct {
 func (x *Command_Arguments_Flag) Reset() {
 	*x = Command_Arguments_Flag{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[90]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[89]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5248,7 +5248,7 @@ type Communicator_InitResp struct {
 func (x *Communicator_InitResp) Reset() {
 	*x = Communicator_InitResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[92]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[91]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5288,7 +5288,7 @@ type Communicator_ReadyResp struct {
 func (x *Communicator_ReadyResp) Reset() {
 	*x = Communicator_ReadyResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[93]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[92]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5333,7 +5333,7 @@ type Communicator_FileTransferResp struct {
 func (x *Communicator_FileTransferResp) Reset() {
 	*x = Communicator_FileTransferResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[94]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[93]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5375,7 +5375,7 @@ type Communicator_ExecutionRequest struct {
 func (x *Communicator_ExecutionRequest) Reset() {
 	*x = Communicator_ExecutionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[95]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[94]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5436,7 +5436,7 @@ type Communicator_ExecuteResp struct {
 func (x *Communicator_ExecuteResp) Reset() {
 	*x = Communicator_ExecuteResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[96]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[95]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5483,7 +5483,7 @@ type Communicator_TestResp struct {
 func (x *Communicator_TestResp) Reset() {
 	*x = Communicator_TestResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[97]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[96]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5528,7 +5528,7 @@ type Communicator_ResetResp struct {
 func (x *Communicator_ResetResp) Reset() {
 	*x = Communicator_ResetResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[98]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[97]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5568,7 +5568,7 @@ type Guest_DetectResp struct {
 func (x *Guest_DetectResp) Reset() {
 	*x = Guest_DetectResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[99]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[98]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5613,7 +5613,7 @@ type Guest_Capability struct {
 func (x *Guest_Capability) Reset() {
 	*x = Guest_Capability{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[100]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[99]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5654,7 +5654,7 @@ type Guest_Capability_NamedRequest struct {
 func (x *Guest_Capability_NamedRequest) Reset() {
 	*x = Guest_Capability_NamedRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[101]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[100]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5708,7 +5708,7 @@ type Guest_Capability_CheckResp struct {
 func (x *Guest_Capability_CheckResp) Reset() {
 	*x = Guest_Capability_CheckResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[102]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[101]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5755,7 +5755,7 @@ type Guest_Capability_Resp struct {
 func (x *Guest_Capability_Resp) Reset() {
 	*x = Guest_Capability_Resp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[103]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[102]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5802,7 +5802,7 @@ type Host_DetectResp struct {
 func (x *Host_DetectResp) Reset() {
 	*x = Host_DetectResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[104]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[103]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5847,7 +5847,7 @@ type Host_Capability struct {
 func (x *Host_Capability) Reset() {
 	*x = Host_Capability{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[105]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[104]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5888,7 +5888,7 @@ type Host_Capability_NamedRequest struct {
 func (x *Host_Capability_NamedRequest) Reset() {
 	*x = Host_Capability_NamedRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[106]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[105]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5942,7 +5942,7 @@ type Host_Capability_CheckResp struct {
 func (x *Host_Capability_CheckResp) Reset() {
 	*x = Host_Capability_CheckResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[107]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[106]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -5989,7 +5989,7 @@ type Host_Capability_Resp struct {
 func (x *Host_Capability_Resp) Reset() {
 	*x = Host_Capability_Resp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[108]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[107]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6037,7 +6037,7 @@ type Ref_Box struct {
 func (x *Ref_Box) Reset() {
 	*x = Ref_Box{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[109]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[108]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6087,7 +6087,7 @@ type Ref_Basis struct {
 func (x *Ref_Basis) Reset() {
 	*x = Ref_Basis{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[110]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[109]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6152,7 +6152,7 @@ type Ref_Project struct {
 func (x *Ref_Project) Reset() {
 	*x = Ref_Project{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[111]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[110]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6223,7 +6223,7 @@ type Ref_Target struct {
 func (x *Ref_Target) Reset() {
 	*x = Ref_Target{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[112]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[111]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6284,7 +6284,7 @@ type Target_ResourceIdResponse struct {
 func (x *Target_ResourceIdResponse) Reset() {
 	*x = Target_ResourceIdResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[113]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[112]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6331,7 +6331,7 @@ type Target_RecordResponse struct {
 func (x *Target_RecordResponse) Reset() {
 	*x = Target_RecordResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[114]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[113]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6378,7 +6378,7 @@ type Target_NameResponse struct {
 func (x *Target_NameResponse) Reset() {
 	*x = Target_NameResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[115]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[114]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6425,7 +6425,7 @@ type Target_ProjectResponse struct {
 func (x *Target_ProjectResponse) Reset() {
 	*x = Target_ProjectResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[116]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[115]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6472,7 +6472,7 @@ type Target_SetNameRequest struct {
 func (x *Target_SetNameRequest) Reset() {
 	*x = Target_SetNameRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[117]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[116]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6520,7 +6520,7 @@ type Target_VagrantfileNameResponse struct {
 func (x *Target_VagrantfileNameResponse) Reset() {
 	*x = Target_VagrantfileNameResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[118]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[117]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6568,7 +6568,7 @@ type Target_VagrantfilePathResponse struct {
 func (x *Target_VagrantfilePathResponse) Reset() {
 	*x = Target_VagrantfilePathResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[119]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[118]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6616,7 +6616,7 @@ type Target_UpdatedAtResponse struct {
 func (x *Target_UpdatedAtResponse) Reset() {
 	*x = Target_UpdatedAtResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[120]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[119]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6664,7 +6664,7 @@ type Target_Machine struct {
 func (x *Target_Machine) Reset() {
 	*x = Target_Machine{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[121]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[120]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6704,7 +6704,7 @@ type Target_Machine_SetIDRequest struct {
 func (x *Target_Machine_SetIDRequest) Reset() {
 	*x = Target_Machine_SetIDRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[122]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[121]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6751,7 +6751,7 @@ type Target_Machine_GetIDResponse struct {
 func (x *Target_Machine_GetIDResponse) Reset() {
 	*x = Target_Machine_GetIDResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[123]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[122]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6798,7 +6798,7 @@ type Target_Machine_SetStateRequest struct {
 func (x *Target_Machine_SetStateRequest) Reset() {
 	*x = Target_Machine_SetStateRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[124]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[123]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6845,7 +6845,7 @@ type Target_Machine_GetStateResponse struct {
 func (x *Target_Machine_GetStateResponse) Reset() {
 	*x = Target_Machine_GetStateResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[125]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[124]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6892,7 +6892,7 @@ type Target_Machine_GetUUIDResponse struct {
 func (x *Target_Machine_GetUUIDResponse) Reset() {
 	*x = Target_Machine_GetUUIDResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[126]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[125]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6939,7 +6939,7 @@ type Target_Machine_SetUUIDRequest struct {
 func (x *Target_Machine_SetUUIDRequest) Reset() {
 	*x = Target_Machine_SetUUIDRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[127]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[126]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6986,7 +6986,7 @@ type Project_TargetRequest struct {
 func (x *Project_TargetRequest) Reset() {
 	*x = Project_TargetRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[128]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[127]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7033,7 +7033,7 @@ type Project_TargetNamesResponse struct {
 func (x *Project_TargetNamesResponse) Reset() {
 	*x = Project_TargetNamesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[129]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[128]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7080,7 +7080,7 @@ type Project_TargetIdsResponse struct {
 func (x *Project_TargetIdsResponse) Reset() {
 	*x = Project_TargetIdsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[130]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[129]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7128,7 +7128,7 @@ type Project_MachineAndProvider struct {
 func (x *Project_MachineAndProvider) Reset() {
 	*x = Project_MachineAndProvider{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[131]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[130]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7182,7 +7182,7 @@ type Project_MachineNamesResponse struct {
 func (x *Project_MachineNamesResponse) Reset() {
 	*x = Project_MachineNamesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[132]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[131]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7229,7 +7229,7 @@ type Project_ActiveMachinesResponse struct {
 func (x *Project_ActiveMachinesResponse) Reset() {
 	*x = Project_ActiveMachinesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[133]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[132]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7276,7 +7276,7 @@ type Project_CwdResponse struct {
 func (x *Project_CwdResponse) Reset() {
 	*x = Project_CwdResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[134]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[133]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7323,7 +7323,7 @@ type Project_VagrantfileNameResponse struct {
 func (x *Project_VagrantfileNameResponse) Reset() {
 	*x = Project_VagrantfileNameResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[135]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[134]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7370,7 +7370,7 @@ type Project_HomeResponse struct {
 func (x *Project_HomeResponse) Reset() {
 	*x = Project_HomeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[136]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[135]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7417,7 +7417,7 @@ type Project_LocalDataResponse struct {
 func (x *Project_LocalDataResponse) Reset() {
 	*x = Project_LocalDataResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[137]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[136]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7464,7 +7464,7 @@ type Project_TmpResponse struct {
 func (x *Project_TmpResponse) Reset() {
 	*x = Project_TmpResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[138]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[137]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7511,7 +7511,7 @@ type Project_DefaultPrivateKeyResponse struct {
 func (x *Project_DefaultPrivateKeyResponse) Reset() {
 	*x = Project_DefaultPrivateKeyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[139]
+		mi := &file_vagrant_plugin_sdk_plugin_proto_msgTypes[138]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
