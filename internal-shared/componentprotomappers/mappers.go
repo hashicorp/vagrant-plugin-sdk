@@ -2,10 +2,9 @@ package componentprotomappers
 
 import (
 	"context"
-	"time"
+	"io"
 
 	"github.com/hashicorp/go-hclog"
-	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	plugininternal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
@@ -29,21 +28,20 @@ func Host(
 		Logger:  log,
 	}
 
-	timeout := 5 * time.Second
-	// Create a new cancellation context so we can cancel in the case of an error
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	// Connect to the local server
-	conn, err := grpc.DialContext(ctx, input.ServerAddr,
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
+	conn, err := internal.Broker.Dial(input.GetStreamId())
 	if err != nil {
 		return nil, err
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
 	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	if err != nil {
+		return nil, err
+	}
+
+	if closer, ok := client.(io.Closer); ok {
+		internal.Cleanup.Do(func() { closer.Close() })
+	}
+
 	return client.(core.Host), nil
 }
