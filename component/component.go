@@ -12,6 +12,7 @@ package component
 
 import (
 	"github.com/DavidGamba/go-getoptions/option"
+	"github.com/hashicorp/go-argmapper"
 )
 
 //go:generate stringer -type=Type -linecomment
@@ -109,7 +110,7 @@ type Host interface {
 	// Detect if machine is supported host
 	DetectFunc() interface{}
 	// Test if capability is available
-	HasCapabilityFunc() interface{}
+	HasCapabilityFunc() *argmapper.Func
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
 }

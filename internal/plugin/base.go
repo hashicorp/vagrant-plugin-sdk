@@ -132,6 +132,95 @@ func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interf
 	)
 }
 
+func (b *baseServer) callDynamicFunc(
+	ctx context.Context,
+	mappers []*argmapper.Func,
+	result interface{}, // expected result type
+	f interface{}, // function
+	args funcspec.Args,
+	callArgs ...argmapper.Arg,
+) (interface{}, error) {
+	// We allow f to be a *mapper.Func because our plugin system creates
+	// a func directly due to special argument types.
+	// TODO: test
+	rawFunc, ok := f.(*argmapper.Func)
+	if !ok {
+		var err error
+		rawFunc, err = argmapper.NewFunc(f, argmapper.Logger(b.Logger))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Make sure we have access to our context and logger and default args
+	callArgs = append(callArgs,
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.ConverterFunc(mappers...),
+		argmapper.Typed(
+			ctx,
+			b.Logger,
+		),
+
+		// argmapper.Named("labels", &component.LabelSet{Labels: c.labels}),
+	)
+	// Decode our *any.Any values.
+	for _, arg := range args {
+		anyVal := arg.Value
+
+		name, err := ptypes.AnyMessageName(anyVal)
+		if err != nil {
+			return nil, err
+		}
+
+		typ := proto.MessageType(name)
+		if typ == nil {
+			return nil, fmt.Errorf("cannot decode type: %s", name)
+		}
+
+		// Allocate the message type. If it is a pointer we want to
+		// allocate the actual structure and not the pointer to the structure.
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+		v := reflect.New(typ)
+		v.Elem().Set(reflect.Zero(typ))
+
+		// Unmarshal directly into our newly allocated structure.
+		if err := ptypes.UnmarshalAny(anyVal, v.Interface().(proto.Message)); err != nil {
+			return nil, err
+		}
+
+		callArgs = append(callArgs,
+			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
+		)
+	}
+
+	// Build the chain and call it
+	callResult := rawFunc.Call(callArgs...)
+	if err := callResult.Err(); err != nil {
+		return nil, err
+	}
+	raw := callResult.Out(0)
+
+	// If we don't have an expected result type, then just return as-is.
+	// Otherwise, we need to verify the result type matches properly.
+	if result == nil {
+		return raw, nil
+	}
+
+	// Verify
+	interfaceType := reflect.TypeOf(result).Elem()
+	rawType := reflect.TypeOf(raw)
+	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
+		return nil, status.Errorf(codes.FailedPrecondition,
+			"operation expected result type %s, got %s",
+			interfaceType.String(),
+			rawType.String())
+	}
+
+	return raw, nil
+}
+
 func (b *baseServer) callUncheckedLocalDynamicFunc(
 	f interface{},
 	args funcspec.Args,
@@ -228,10 +317,26 @@ func (b *baseServer) callBoolLocalDynamicFunc(
 	return raw.(bool), nil
 }
 
-func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
-	return funcspec.Spec(fn, append(args,
+func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
+	f, err := funcspec.ArgSpec(fn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
 	)
+	if err != nil {
+		return f, err
+	}
+	return f, err
+}
+
+func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
+	f, err := funcspec.Spec(fn, append(args,
+		argmapper.Logger(b.Logger),
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Typed(b.internal()))...,
+	)
+	if err != nil {
+		return f, err
+	}
+	return f, err
 }
