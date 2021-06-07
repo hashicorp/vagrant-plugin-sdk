@@ -144,10 +144,14 @@ func (c *hostClient) HasCapability(name string) bool {
 	return raw.(bool)
 }
 
-func (c *hostClient) CapabilityFunc(capName string) interface{} {
+func (c *hostClient) CapabilityFunc(capName string) *argmapper.Func {
 	spec, err := c.client.CapabilitySpec(c.ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{Name: capName})
 	if err != nil {
-		return funcErr(err)
+		errFunc := func(context.Context) (interface{}, error) {
+			return nil, err
+		}
+		f, _ := argmapper.NewFunc(errFunc)
+		return f
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*anypb.Any, error) {
@@ -161,7 +165,7 @@ func (c *hostClient) CapabilityFunc(capName string) interface{} {
 
 		return resp.Result, nil
 	}
-	return c.generateFunc(spec, cb)
+	return c.generateFunc(spec, cb).(*argmapper.Func)
 }
 
 func (c *hostClient) Capability(name string, args ...argmapper.Arg) (interface{}, error) {
@@ -247,11 +251,6 @@ func (s *hostServer) HasCapabilitySpec(
 	return s.generateArgSpec(f)
 }
 
-// ctx context.Context,
-// 	mappers []*argmapper.Func,
-// 	result interface{}, // expected result type
-// 	f interface{}, // function
-// 	args ...argmapper.Arg,
 func (s *hostServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
@@ -282,7 +281,7 @@ func (s *hostServer) CapabilitySpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.CapabilityFunc(args.Name))
+	return s.generateArgSpec(s.Impl.CapabilityFunc(args.Name))
 }
 
 func (s *hostServer) Capability(
@@ -290,7 +289,10 @@ func (s *hostServer) Capability(
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
 	fn := s.Impl.CapabilityFunc(args.Name)
-	raw, err := s.callUncheckedLocalDynamicFunc(
+	raw, err := s.callDynamicFunc(
+		ctx,
+		s.Mappers,
+		(*error)(nil),
 		fn,
 		args.FuncArgs.Args,
 		argmapper.Typed(ctx),

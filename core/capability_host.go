@@ -29,9 +29,10 @@ func (c *CapabilityHost) HasCapability(name string) bool {
 	return false
 }
 
-func (c *CapabilityHost) CapabilityFunc(capName string) interface{} {
+func (c *CapabilityHost) CapabilityFunc(capName string) *argmapper.Func {
 	if c.HasCapability(capName) {
-		return c.capabilities[capName]
+		f, _ := argmapper.NewFunc(c.capabilities[capName])
+		return f
 	}
 	return nil
 }
@@ -39,12 +40,12 @@ func (c *CapabilityHost) CapabilityFunc(capName string) interface{} {
 func (c *CapabilityHost) Capability(capName string, args ...argmapper.Arg) (interface{}, error) {
 	f := c.CapabilityFunc(capName)
 
-	mapF, err := argmapper.NewFunc(f)
-	if err != nil {
-		return nil, err
-	}
+	// mapF, err := argmapper.NewFunc(f)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	callResult := mapF.Call(args...)
+	callResult := f.Call(args...)
 	if err := callResult.Err(); err != nil {
 		return nil, err
 	}
