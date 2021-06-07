@@ -124,6 +124,7 @@ message Args {
   }
 
   message Host {
+    //string target_address = 1;
     uint32 stream_id = 1;
   }
 }

@@ -96,17 +96,17 @@ func (c *hostClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *hostClient) Detect() (bool, error) {
+func (c *hostClient) Detect() bool {
 	f := c.DetectFunc()
 	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
 	if err != nil {
-		return false, err
+		return false
 	}
 
-	return raw.(bool), nil
+	return raw.(bool)
 }
 
-func (c *hostClient) HasCapabilityFunc() interface{} {
+func (c *hostClient) HasCapabilityFunc() *argmapper.Func {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		// return funcErr(err)
@@ -124,10 +124,11 @@ func (c *hostClient) HasCapabilityFunc() interface{} {
 
 		return resp.HasCapability, nil
 	}
-	return c.generateFunc(spec, cb)
+	f := c.generateFunc(spec, cb).(*argmapper.Func)
+	return f
 }
 
-func (c *hostClient) HasCapability(name string) (bool, error) {
+func (c *hostClient) HasCapability(name string) bool {
 	f := c.HasCapabilityFunc()
 	raw, err := c.callRemoteDynamicFunc(
 		c.ctx,
@@ -137,10 +138,10 @@ func (c *hostClient) HasCapability(name string) (bool, error) {
 		argmapper.Typed(name),
 	)
 	if err != nil {
-		return false, err
+		return false
 	}
 
-	return raw.(bool), nil
+	return raw.(bool)
 }
 
 func (c *hostClient) CapabilityFunc(capName string) interface{} {
@@ -242,17 +243,27 @@ func (s *hostServer) HasCapabilitySpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.HasCapabilityFunc())
+	f := s.Impl.HasCapabilityFunc()
+	return s.generateArgSpec(f)
 }
 
+// ctx context.Context,
+// 	mappers []*argmapper.Func,
+// 	result interface{}, // expected result type
+// 	f interface{}, // function
+// 	args ...argmapper.Arg,
 func (s *hostServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.HasCapabilityFunc(),
-		args.FuncArgs.Args,
+	f := s.Impl.HasCapabilityFunc()
+
+	raw, err := s.callDynamicFunc(
+		ctx,
+		s.Mappers,
 		(*bool)(nil),
+		f,
+		args.FuncArgs.Args,
 		argmapper.Typed(ctx),
 		argmapper.Typed(args.Name),
 	)

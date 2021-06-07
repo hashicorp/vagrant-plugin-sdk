@@ -8,7 +8,7 @@ import "github.com/hashicorp/go-argmapper"
 type Host interface {
 	// Config() interface{}
 	// Documentation() (*docs.Documentation, error)
-	Detect() (bool, error)
-	HasCapability(name string) (bool, error)
+	Detect() bool
+	HasCapability(name string) bool
 	Capability(name string, args ...argmapper.Arg) (interface{}, error)
 }
