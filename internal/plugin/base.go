@@ -209,14 +209,14 @@ func (b *baseServer) callDynamicFunc(
 	}
 
 	// Verify
-	interfaceType := reflect.TypeOf(result).Elem()
-	rawType := reflect.TypeOf(raw)
-	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"operation expected result type %s, got %s",
-			interfaceType.String(),
-			rawType.String())
-	}
+	// interfaceType := reflect.TypeOf(result).Elem()
+	// rawType := reflect.TypeOf(raw)
+	// if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
+	// 	return nil, status.Errorf(codes.FailedPrecondition,
+	// 		"operation expected result type %s, got %s",
+	// 		interfaceType.String(),
+	// 		rawType.String())
+	// }
 
 	return raw, nil
 }

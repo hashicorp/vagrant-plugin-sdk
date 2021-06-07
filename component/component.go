@@ -112,7 +112,7 @@ type Host interface {
 	// Test if capability is available
 	HasCapabilityFunc() *argmapper.Func
 	// Run a capability
-	CapabilityFunc(capName string) interface{}
+	CapabilityFunc(capName string) *argmapper.Func
 }
 
 type Provider interface {
