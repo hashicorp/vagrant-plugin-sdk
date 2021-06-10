@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/component"
 )
 
@@ -53,6 +54,22 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			panic(err)
 		}
 	}
+
+	var mappers []*argmapper.Func
+	for _, raw := range protomappers.All {
+		// If the mapper is already a argmapper.Func, then we let that through as-is
+		m, ok := raw.(*argmapper.Func)
+		if !ok {
+			var err error
+			m, err = argmapper.NewFunc(raw)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		mappers = append(mappers, m)
+	}
+	c.Mappers = append(c.Mappers, mappers...)
 
 	// Set the mappers
 	if err := setFieldValue(result, c.Mappers); err != nil {
