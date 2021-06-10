@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/component"
 )
 
 // Handshake is a common handshake that is shared by plugin and host.
@@ -38,7 +39,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"communicator": &CommunicatorPlugin{},
 			"config":       &ConfigPlugin{},
 			"guest":        &GuestPlugin{},
-			"host":         &HostPlugin{},
+			"host":         &component.HostPlugin{},
 			"mapper":       &MapperPlugin{},
 			"provider":     &ProviderPlugin{},
 			"provisioner":  &ProvisionerPlugin{},

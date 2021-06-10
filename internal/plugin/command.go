@@ -212,7 +212,8 @@ func (s *commandServer) ExecuteSpec(
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
-	return s.generateSpec(s.Impl.ExecuteFunc(req.CommandArgs))
+	sp := s.Impl.ExecuteFunc(req.CommandArgs)
+	return s.generateSpec(sp)
 }
 
 func (s *commandServer) Execute(
