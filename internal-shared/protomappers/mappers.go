@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/component"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -64,6 +65,46 @@ var All = []interface{}{
 	MachineStateProto,
 	Box,
 	BoxProto,
+	Host,
+	HostProto,
+}
+
+func HostProto(
+	input component.Host,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Host, error) {
+	p := &plugincomponent.HostPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    input,
+	}
+
+	id, err := wrapClient(p, internal)
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Args_Host{
+		StreamId: id,
+	}, nil
+}
+
+func Host(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Host,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Host, error) {
+	p := &plugincomponent.HostPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Host), nil
 }
 
 // Flags maps

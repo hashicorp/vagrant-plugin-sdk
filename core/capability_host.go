@@ -1,8 +1,6 @@
 package core
 
 import (
-	"context"
-
 	"github.com/hashicorp/go-argmapper"
 )
 
@@ -10,16 +8,8 @@ type CapabilityHost struct {
 	capabilities map[string]interface{}
 }
 
-func (c *CapabilityHost) HasCapabilityFunc() *argmapper.Func {
-	f, err := argmapper.NewFunc(c.HasCapability)
-	if err != nil {
-		errFunc := func(context.Context) (interface{}, error) {
-			return nil, err
-		}
-		f, _ := argmapper.NewFunc(errFunc)
-		return f
-	}
-	return f
+func (c *CapabilityHost) HasCapabilityFunc() interface{} {
+	return c.HasCapability
 }
 
 func (c *CapabilityHost) HasCapability(name string) bool {
@@ -29,9 +19,9 @@ func (c *CapabilityHost) HasCapability(name string) bool {
 	return false
 }
 
-func (c *CapabilityHost) CapabilityFunc(capName string) *argmapper.Func {
+func (c *CapabilityHost) CapabilityFunc(capName string) interface{} {
 	if c.HasCapability(capName) {
-		f, _ := argmapper.NewFunc(c.capabilities[capName])
+		f, _ := c.capabilities[capName]
 		return f
 	}
 	return nil
@@ -40,12 +30,12 @@ func (c *CapabilityHost) CapabilityFunc(capName string) *argmapper.Func {
 func (c *CapabilityHost) Capability(capName string, args ...argmapper.Arg) (interface{}, error) {
 	f := c.CapabilityFunc(capName)
 
-	// mapF, err := argmapper.NewFunc(f)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	mapF, err := argmapper.NewFunc(f)
+	if err != nil {
+		return nil, err
+	}
 
-	callResult := f.Call(args...)
+	callResult := mapF.Call(args...)
 	if err := callResult.Err(); err != nil {
 		return nil, err
 	}

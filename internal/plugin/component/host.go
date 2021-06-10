@@ -1,8 +1,9 @@
-package plugin
+package component
 
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -67,16 +68,16 @@ type hostClient struct {
 	client vagrant_plugin_sdk.HostServiceClient
 }
 
-func (c *hostClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+func (c *hostClient) Config() (v interface{}, err error) {
+	return
 }
 
-func (c *hostClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+func (c *hostClient) ConfigSet(v interface{}) (err error) {
+	return
 }
 
-func (c *hostClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+func (c *hostClient) Documentation() (d *docs.Documentation, err error) {
+	return
 }
 
 func (c *hostClient) DetectFunc() interface{} {
@@ -106,11 +107,12 @@ func (c *hostClient) Detect() bool {
 	return raw.(bool)
 }
 
-func (c *hostClient) HasCapabilityFunc() *argmapper.Func {
+func (c *hostClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
-		// return funcErr(err)
+		// TODO: stay calm, don't panic
 		panic(err)
+		// return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args, capabilityName string) (bool, error) {
@@ -124,7 +126,7 @@ func (c *hostClient) HasCapabilityFunc() *argmapper.Func {
 
 		return resp.HasCapability, nil
 	}
-	f := c.generateFunc(spec, cb).(*argmapper.Func)
+	f := c.generateFunc(spec, cb)
 	return f
 }
 
@@ -144,28 +146,27 @@ func (c *hostClient) HasCapability(name string) bool {
 	return raw.(bool)
 }
 
-func (c *hostClient) CapabilityFunc(capName string) *argmapper.Func {
+func (c *hostClient) CapabilityFunc(capName string) interface{} {
 	spec, err := c.client.CapabilitySpec(c.ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{Name: capName})
 	if err != nil {
-		errFunc := func(context.Context) (interface{}, error) {
-			return nil, err
-		}
-		f, _ := argmapper.NewFunc(errFunc)
-		return f
+		// TODO: stay calm, don't panic
+		panic(err)
+		// return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*anypb.Any, error) {
-		resp, err := c.client.Capability(ctx, &vagrant_plugin_sdk.Host_Capability_NamedRequest{
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		capArgs := &vagrant_plugin_sdk.Host_Capability_NamedRequest{
 			FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 			Name:     capName,
-		})
+		}
+		resp, err := c.client.Capability(ctx, capArgs)
 		if err != nil {
 			return nil, err
 		}
-
 		return resp.Result, nil
 	}
-	return c.generateFunc(spec, cb).(*argmapper.Func)
+	return c.generateFunc(spec, cb)
 }
 
 func (c *hostClient) Capability(name string, args ...argmapper.Arg) (interface{}, error) {
@@ -194,22 +195,22 @@ type hostServer struct {
 func (s *hostServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
+) (c *vagrant_plugin_sdk.Config_StructResp, err error) {
+	return
 }
 
 func (s *hostServer) Configure(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*empty.Empty, error) {
-	return configure(s.Impl, req)
+) (e *empty.Empty, err error) {
+	return
 }
 
 func (s *hostServer) Documentation(
 	ctx context.Context,
 	empty *empty.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
+) (c *vagrant_plugin_sdk.Config_Documentation, err error) {
+	return
 }
 
 func (s *hostServer) DetectSpec(
@@ -248,7 +249,7 @@ func (s *hostServer) HasCapabilitySpec(
 	}
 
 	f := s.Impl.HasCapabilityFunc()
-	return s.generateArgSpec(f)
+	return s.generateSpec(f)
 }
 
 func (s *hostServer) HasCapability(
@@ -257,14 +258,20 @@ func (s *hostServer) HasCapability(
 ) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
 	f := s.Impl.HasCapabilityFunc()
 
-	raw, err := s.callDynamicFunc(
-		ctx,
-		s.Mappers,
-		(*bool)(nil),
+	// raw, err := s.callDynamicFunc(
+	// 	ctx,
+	// 	s.Mappers,
+	// 	(*bool)(nil),
+	// 	f,
+	// 	args.FuncArgs.Args,
+	// 	argmapper.Typed(ctx),
+	// 	argmapper.Typed(args.Name),
+	// )
+
+	raw, err := s.callUncheckedLocalDynamicFunc(
 		f,
 		args.FuncArgs.Args,
 		argmapper.Typed(ctx),
-		argmapper.Typed(args.Name),
 	)
 
 	if err != nil {
@@ -281,7 +288,8 @@ func (s *hostServer) CapabilitySpec(
 		return nil, err
 	}
 
-	return s.generateArgSpec(s.Impl.CapabilityFunc(args.Name))
+	spec := s.Impl.CapabilityFunc(args.Name)
+	return s.generateSpec(spec)
 }
 
 func (s *hostServer) Capability(
@@ -289,10 +297,7 @@ func (s *hostServer) Capability(
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
 	fn := s.Impl.CapabilityFunc(args.Name)
-	raw, err := s.callDynamicFunc(
-		ctx,
-		s.Mappers,
-		(*error)(nil),
+	raw, err := s.callUncheckedLocalDynamicFunc(
 		fn,
 		args.FuncArgs.Args,
 		argmapper.Typed(ctx),
