@@ -110,6 +110,7 @@ type Host interface {
 	DetectFunc() interface{}
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
+	HasCapability(capName string) bool
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
 }
