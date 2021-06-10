@@ -248,7 +248,7 @@ func (s *hostServer) HasCapabilitySpec(
 		return nil, err
 	}
 
-	f := s.Impl.HasCapabilityFunc()
+	f := s.Impl.HasCapability
 	return s.generateSpec(f)
 }
 
@@ -256,22 +256,13 @@ func (s *hostServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
-	f := s.Impl.HasCapabilityFunc()
-
-	// raw, err := s.callDynamicFunc(
-	// 	ctx,
-	// 	s.Mappers,
-	// 	(*bool)(nil),
-	// 	f,
-	// 	args.FuncArgs.Args,
-	// 	argmapper.Typed(ctx),
-	// 	argmapper.Typed(args.Name),
-	// )
+	f := s.Impl.HasCapability
 
 	raw, err := s.callUncheckedLocalDynamicFunc(
 		f,
 		args.FuncArgs.Args,
 		argmapper.Typed(ctx),
+		argmapper.Typed(args.Name),
 	)
 
 	if err != nil {
