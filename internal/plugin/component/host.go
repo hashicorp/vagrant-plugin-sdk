@@ -279,28 +279,49 @@ func (s *hostServer) CapabilitySpec(
 		return nil, err
 	}
 
+	_, ok := s.Impl.(*hostClient)
+	if ok {
+		spec := s.Impl.CapabilityFunc(args.Name)
+		g, e := s.generateArgSpec(spec.(*argmapper.Func))
+		return g, e
+	}
 	spec := s.Impl.CapabilityFunc(args.Name)
-	return s.generateSpec(spec)
+	g, e := s.generateSpec(spec)
+	return g, e
 }
 
 func (s *hostServer) Capability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
-	fn := s.Impl.CapabilityFunc(args.Name)
-	raw, err := s.callUncheckedLocalDynamicFunc(
-		fn,
-		args.FuncArgs.Args,
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-	if raw != nil {
-		return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, err
+	_, ok := s.Impl.(*hostClient)
+	if ok {
+		fn := s.Impl.CapabilityFunc(args.Name)
+		raw, err := s.callUncheckedLocalDynamicArgmapperFunc(
+			fn.(*argmapper.Func),
+			args.FuncArgs.Args,
+			argmapper.Typed(ctx),
+			argmapper.Typed(args.Name),
+		)
+		if err != nil {
+			return nil, err
+		}
+		if raw != nil {
+			return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, nil
+		} else {
+			return &vagrant_plugin_sdk.Host_Capability_Resp{Result: nil}, nil
+		}
 	} else {
-		return &vagrant_plugin_sdk.Host_Capability_Resp{Result: nil}, err
+		fn := s.Impl.CapabilityFunc(args.Name)
+		raw, err := s.callUncheckedLocalDynamicFunc(fn, args.FuncArgs.Args, argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		if raw != nil {
+			return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, nil
+		} else {
+			return &vagrant_plugin_sdk.Host_Capability_Resp{Result: nil}, nil
+		}
 	}
 }
 

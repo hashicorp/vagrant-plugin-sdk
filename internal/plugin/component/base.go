@@ -291,6 +291,61 @@ func (b *baseServer) callUncheckedLocalDynamicFunc(
 	return raw, nil
 }
 
+func (b *baseServer) callUncheckedLocalDynamicArgmapperFunc(
+	f *argmapper.Func,
+	args funcspec.Args,
+	callArgs ...argmapper.Arg,
+) (interface{}, error) {
+	internal := b.internal()
+	defer internal.Cleanup.Close()
+
+	callArgs = append(callArgs,
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Logger(b.Logger),
+		argmapper.Typed(internal),
+	)
+
+	// Decode our *any.Any values.
+	for _, arg := range args {
+		anyVal := arg.Value
+
+		name, err := ptypes.AnyMessageName(anyVal)
+		if err != nil {
+			return nil, err
+		}
+
+		typ := proto.MessageType(name)
+		if typ == nil {
+			return nil, fmt.Errorf("cannot decode type: %s", name)
+		}
+
+		// Allocate the message type. If it is a pointer we want to
+		// allocate the actual structure and not the pointer to the structure.
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+		v := reflect.New(typ)
+		v.Elem().Set(reflect.Zero(typ))
+
+		// Unmarshal directly into our newly allocated structure.
+		if err := ptypes.UnmarshalAny(anyVal, v.Interface().(proto.Message)); err != nil {
+			return nil, err
+		}
+
+		callArgs = append(callArgs,
+			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
+		)
+	}
+
+	callResult := f.Call(callArgs...)
+	if err := callResult.Err(); err != nil {
+		return nil, err
+	}
+
+	raw := callResult.Out(0)
+	return raw, nil
+}
+
 func (b *baseServer) callLocalDynamicFunc(
 	f interface{},
 	args funcspec.Args,
@@ -329,6 +384,18 @@ func (b *baseServer) callBoolLocalDynamicFunc(
 
 func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
 	f, err := funcspec.Spec(fn, append(args,
+		argmapper.Logger(b.Logger),
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Typed(b.internal()))...,
+	)
+	if err != nil {
+		return f, err
+	}
+	return f, err
+}
+
+func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
+	f, err := funcspec.ArgSpec(fn, append(args,
 		argmapper.Logger(b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
