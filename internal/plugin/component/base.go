@@ -104,6 +104,7 @@ func (b *baseClient) callRemoteDynamicFunc(
 		argmapper.Typed(
 			ctx,
 			b.Logger,
+			b.internal(),
 		),
 
 		// argmapper.Named("labels", &component.LabelSet{Labels: c.labels}),
@@ -228,6 +229,62 @@ func (b *baseServer) callDynamicFunc(
 	// 		rawType.String())
 	// }
 
+	return raw, nil
+}
+
+func (b *baseServer) callUncheckedLocalDynamicFunc2(
+	f interface{},
+	args funcspec.Args,
+	callArgs ...argmapper.Arg,
+) (interface{}, error) {
+	callArgs = append(callArgs,
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Logger(b.Logger),
+	)
+
+	// Decode our *any.Any values.
+	for _, arg := range args {
+		anyVal := arg.Value
+
+		name, err := ptypes.AnyMessageName(anyVal)
+		if err != nil {
+			return nil, err
+		}
+
+		typ := proto.MessageType(name)
+		if typ == nil {
+			return nil, fmt.Errorf("cannot decode type: %s", name)
+		}
+
+		// Allocate the message type. If it is a pointer we want to
+		// allocate the actual structure and not the pointer to the structure.
+		if typ.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
+		v := reflect.New(typ)
+		v.Elem().Set(reflect.Zero(typ))
+
+		// Unmarshal directly into our newly allocated structure.
+		if err := ptypes.UnmarshalAny(anyVal, v.Interface().(proto.Message)); err != nil {
+			return nil, err
+		}
+
+		callArgs = append(callArgs,
+			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
+		)
+	}
+
+	mapF, err := argmapper.NewFunc(f)
+	if err != nil {
+		return nil, err
+	}
+
+	callResult := mapF.Call(callArgs...)
+	if err := callResult.Err(); err != nil {
+		return nil, err
+	}
+
+	raw := callResult.Out(0)
 	return raw, nil
 }
 
