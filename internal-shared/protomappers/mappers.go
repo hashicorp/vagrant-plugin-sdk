@@ -256,6 +256,8 @@ func TerminalUI(
 	if err != nil {
 		return nil, err
 	}
+	client.(terminal.UI).Output("\ntransforming arg to terminal")
+
 	return client.(terminal.UI), nil
 }
 
@@ -270,8 +272,11 @@ func TerminalUIProto(
 		Mappers: internal.Mappers,
 		Logger:  log,
 	}
+	ui.Output("\ntransforming terminal to arg")
 
 	id, err := wrapClient(p, internal)
+	ui.Output("terminal id is ", id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -618,7 +623,9 @@ func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, err
 			errChan <- err
 			return nil
 		}
-		internal.Cleanup.Do(func() { server.GracefulStop() })
+		internal.Cleanup.Do(func() {
+			server.GracefulStop()
+		})
 		close(errChan)
 		return server
 	})
