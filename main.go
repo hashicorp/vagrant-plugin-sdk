@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
 )
 
@@ -65,7 +66,7 @@ func Main(opts ...Option) {
 		m, ok := raw.(*argmapper.Func)
 		if !ok {
 			var err error
-			m, err = argmapper.NewFunc(raw, argmapper.Logger(log))
+			m, err = argmapper.NewFunc(raw, argmapper.Logger(plugincomponent.ArgmapperLogger))
 			if err != nil {
 				panic(err)
 			}

@@ -11,8 +11,8 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
 )
@@ -136,6 +136,7 @@ func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
 
 func (c *commandClient) Execute(cliArgs []string) (int64, error) {
 	f := c.ExecuteFunc(cliArgs)
+
 	raw, err := c.callRemoteDynamicFunc(c.ctx, c.Mappers, (*int64)(nil), f)
 	if err != nil {
 		return -1, err
@@ -191,7 +192,7 @@ func (s *commandServer) CommandInfo(
 	raw, err := s.callLocalDynamicFunc(
 		s.Impl.CommandInfoFunc(),
 		req.Args,
-		(*component.CommandInfo)(nil),
+		(**component.CommandInfo)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -199,9 +200,25 @@ func (s *commandServer) CommandInfo(
 		return nil, err
 	}
 
-	commandInfo, err := protomappers.CommandInfoProto(raw.(*component.CommandInfo))
+	target, err := argmapper.NewFunc(
+		func(
+			v *vagrant_plugin_sdk.Command_CommandInfo,
+		) *vagrant_plugin_sdk.Command_CommandInfo {
+			return v
+		})
+	if err != nil {
+		return nil, err
+	}
+	result := target.Call(
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Typed(raw),
+		argmapper.ConverterFunc(s.Mappers...))
+	if result.Err() != nil {
+		return nil, result.Err()
+	}
+
 	return &vagrant_plugin_sdk.Command_CommandInfoResp{
-		CommandInfo: commandInfo,
+		CommandInfo: result.Out(0).(*vagrant_plugin_sdk.Command_CommandInfo),
 	}, nil
 }
 
@@ -212,8 +229,7 @@ func (s *commandServer) ExecuteSpec(
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
-	sp := s.Impl.ExecuteFunc(req.CommandArgs)
-	return s.generateSpec(sp)
+	return s.generateSpec(s.Impl.ExecuteFunc(req.CommandArgs))
 }
 
 func (s *commandServer) Execute(

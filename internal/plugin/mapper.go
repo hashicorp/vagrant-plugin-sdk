@@ -14,9 +14,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
-
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -84,10 +83,10 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 		}
 
 		// Build our funcspec function
-		f := funcspec.Func(specCopy, cb, argmapper.Logger(c.logger))
+		f := funcspec.Func(specCopy, cb) //, argmapper.Logger(c.logger))
 
 		// Accumulate our functions
-		funcs = append(funcs, f)
+		funcs = append(funcs, f.Func)
 	}
 
 	return funcs, nil
@@ -111,13 +110,13 @@ func (s *mapperServer) ListMappers(
 		fn := m.Func()
 
 		// Skip our built-in protomappers
-		if _, ok := protomapperAllMap[reflect.ValueOf(fn).Type()]; ok {
+		if _, ok := ProtomapperAllMap[reflect.ValueOf(fn).Type()]; ok {
 			continue
 		}
 
 		spec, err := funcspec.Spec(fn,
 			argmapper.ConverterFunc(s.Mappers...),
-			argmapper.Logger(s.Logger))
+			argmapper.Logger(plugincomponent.ArgmapperLogger))
 		if err != nil {
 			s.Logger.Warn(
 				"error converting mapper, will not notify plugin host",
@@ -174,13 +173,7 @@ var (
 	_ plugin.GRPCPlugin               = (*MapperPlugin)(nil)
 	_ vagrant_plugin_sdk.MapperServer = (*mapperServer)(nil)
 
-	// protomapperAllMap is a set of all the protomapper mappers so
+	// ProtomapperAllMap is a set of all the protomapper mappers so
 	// that we can easily filter them in ListMappers.
-	protomapperAllMap = map[reflect.Type]struct{}{}
+	ProtomapperAllMap = map[reflect.Type]struct{}{}
 )
-
-func init() {
-	for _, f := range protomappers.All {
-		protomapperAllMap[reflect.TypeOf(f)] = struct{}{}
-	}
-}

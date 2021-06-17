@@ -7,8 +7,6 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/component"
 )
 
 // Handshake is a common handshake that is shared by plugin and host.
@@ -19,6 +17,7 @@ var Handshake = plugin.HandshakeConfig{
 	MagicCookieKey:   "VAGRANT_PLUGIN",
 	MagicCookieValue: "1cf2a7e8cbbd6cec9ec78b952860dc65a7a9eae433b815bea3257bff2257b3a7",
 }
+var MapperFns []*argmapper.Func
 
 // Plugins returns the list of available plugins and initializes them with
 // the given components. This will panic if an invalid component is given.
@@ -40,7 +39,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"communicator": &CommunicatorPlugin{},
 			"config":       &ConfigPlugin{},
 			"guest":        &GuestPlugin{},
-			"host":         &component.HostPlugin{},
+			"host":         &HostPlugin{},
 			"mapper":       &MapperPlugin{},
 			"provider":     &ProviderPlugin{},
 			"provisioner":  &ProvisionerPlugin{},
@@ -55,21 +54,22 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		}
 	}
 
-	var mappers []*argmapper.Func
-	for _, raw := range protomappers.All {
-		// If the mapper is already a argmapper.Func, then we let that through as-is
-		m, ok := raw.(*argmapper.Func)
-		if !ok {
-			var err error
-			m, err = argmapper.NewFunc(raw)
-			if err != nil {
-				panic(err)
-			}
-		}
+	// var mappers []*argmapper.Func
+	// for _, raw := range MapperFns {
+	// 	// If the mapper is already a argmapper.Func, then we let that through as-is
+	// 	m, ok := raw.(*argmapper.Func)
+	// 	if !ok {
+	// 		var err error
+	// 		m, err = argmapper.NewFunc(raw)
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 	}
 
-		mappers = append(mappers, m)
-	}
-	c.Mappers = append(c.Mappers, mappers...)
+	// 	mappers = append(mappers, m)
+	// }
+	c.Mappers = append(c.Mappers, MapperFns...)
+	//c.Mappers = append(c.Mappers, mappers...)
 
 	// Set the mappers
 	if err := setFieldValue(result, c.Mappers); err != nil {

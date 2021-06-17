@@ -13,6 +13,7 @@ package component
 import (
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-argmapper"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 //go:generate stringer -type=Type -linecomment
@@ -101,7 +102,7 @@ type Guest interface {
 	// Detect if machine is supported guest
 	DetectFunc() interface{}
 	// Test if capability is available
-	HasCapabilityFunc(capName string) interface{}
+	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
 }
@@ -111,10 +112,8 @@ type Host interface {
 	DetectFunc() interface{}
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
-	HasCapability(capName string) bool
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
-	Capability(string, ...argmapper.Arg) (interface{}, error)
 }
 
 type Provider interface {
@@ -181,4 +180,13 @@ type AuthResult struct {
 	// help text or some other information, but it didn't authenticate. However,
 	// this is not an error.
 	Authenticated bool
+}
+
+type NamedCapability struct {
+	Capability string
+}
+
+type SpicyFunc struct {
+	Func *argmapper.Func
+	Spec *vagrant_plugin_sdk.FuncSpec
 }

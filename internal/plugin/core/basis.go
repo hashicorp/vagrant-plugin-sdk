@@ -75,7 +75,7 @@ func (p *basisClient) UI() (ui terminal.UI, err error) {
 		return
 	}
 
-	result, err := p.Map(r, (*terminal.UI)(nil))
+	result, err := p.Map(r, (*terminal.UI)(nil), argmapper.Typed(p.ctx))
 	if err == nil {
 		ui = result.(terminal.UI)
 	}
@@ -97,6 +97,20 @@ func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
 	return
 }
 
+func (p *basisClient) Host() (h core.Host, err error) {
+	r, err := p.client.Host(p.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.Host)(nil), argmapper.Typed(p.ctx))
+	if err == nil {
+		h = result.(core.Host)
+	}
+
+	return
+}
+
 func (p *basisServer) DataDir(
 	ctx context.Context,
 	_ *empty.Empty,
@@ -109,6 +123,42 @@ func (p *basisServer) DataDir(
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Basis)(nil))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_DataDir_Basis)
+	}
+
+	return
+}
+
+func (p *basisServer) Host(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_Host, err error) {
+	d, err := p.Impl.Host()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Host)
+	}
+
+	return
+}
+
+func (t *basisServer) UI(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
+	d, err := t.Impl.UI()
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
 	}
 
 	return

@@ -127,6 +127,10 @@ message Args {
     //string target_address = 1;
     uint32 stream_id = 1;
   }
+
+  message NamedCapability {
+    string Capability = 1;
+  }
 }
 
 ///////
@@ -733,7 +737,7 @@ service HostService {
 
   rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc HasCapability(Host.Capability.NamedRequest) returns (Host.Capability.CheckResp);
+  rpc HasCapability(FuncSpec.Args) returns (Host.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
   rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
@@ -804,6 +808,7 @@ message Ref {
 service BasisService {
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+  rpc Host(google.protobuf.Empty) returns (Args.Host);
 }
 
 /********************************************************************

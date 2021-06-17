@@ -3,6 +3,7 @@ package protomappers
 import (
 	"context"
 	"io"
+	"reflect"
 
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-argmapper"
@@ -15,7 +16,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/component"
+	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -39,6 +40,8 @@ var All = []interface{}{
 	DatadirComponentProto,
 	Flags,
 	FlagsProto,
+	Host,
+	HostProto,
 	JobInfo,
 	JobInfoProto,
 	Logger,
@@ -48,6 +51,8 @@ var All = []interface{}{
 	MetadataProto,
 	MetadataSet,
 	MetadataSetProto,
+	NamedCapability,
+	NamedCapabilityProto,
 	Project,
 	ProjectProto,
 	ProtoToMap,
@@ -69,6 +74,22 @@ var All = []interface{}{
 	HostProto,
 }
 
+func NamedCapability(
+	input *vagrant_plugin_sdk.Args_NamedCapability,
+) *component.NamedCapability {
+	return &component.NamedCapability{
+		Capability: input.Capability,
+	}
+}
+
+func NamedCapabilityProto(
+	input *component.NamedCapability,
+) *vagrant_plugin_sdk.Args_NamedCapability {
+	return &vagrant_plugin_sdk.Args_NamedCapability{
+		Capability: input.Capability,
+	}
+}
+
 func HostProto(
 	input component.Host,
 	log hclog.Logger,
@@ -78,10 +99,13 @@ func HostProto(
 		Mappers: internal.Mappers,
 		Logger:  log,
 		Impl:    input,
+		Wrapped: true,
 	}
 
+	internal.Logger.Trace("wrapping host plugin", "host", input)
 	id, err := wrapClient(p, internal)
 	if err != nil {
+		internal.Logger.Warn("failed to wrap host plugin", "host", input, "error", err)
 		return nil, err
 	}
 	return &vagrant_plugin_sdk.Args_Host{
@@ -98,9 +122,12 @@ func Host(
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
+	internal.Logger.Trace("connecting to wrapped host plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
+		internal.Logger.Warn("failed to connect to wrapped host plugin", "connection-info", input, "error", err)
 		return nil, err
 	}
 
@@ -276,12 +303,15 @@ func TerminalUI(
 		Logger:  log,
 	}
 
+	internal.Logger.Trace("connecting to wrapped ui", "stream_id", input.StreamId)
 	client, err := wrapConnect(ctx, p, input, internal)
+
 	if err != nil {
+		internal.Logger.Warn("failed to connect to wrapped ui", "steam_id", input.StreamId, "error", err)
 		return nil, err
 	}
-	client.(terminal.UI).Output("\ntransforming arg to terminal")
 
+	internal.Logger.Trace("connected to wrapped ui", "ui", client, "stream_id", input.StreamId)
 	return client.(terminal.UI), nil
 }
 
@@ -296,15 +326,16 @@ func TerminalUIProto(
 		Mappers: internal.Mappers,
 		Logger:  log,
 	}
-	ui.Output("\ntransforming terminal to arg")
 
+	internal.Logger.Trace("wrapping ui", "ui", ui)
 	id, err := wrapClient(p, internal)
-	ui.Output("terminal id is ", id)
 
 	if err != nil {
+		internal.Logger.Trace("failed to wrap ui", "ui", ui, "error", err)
 		return nil, err
 	}
 
+	internal.Logger.Trace("wrapped ui", "ui", ui, "stream_id", id)
 	return &vagrant_plugin_sdk.Args_TerminalUI{
 		StreamId: id}, nil
 }
@@ -617,20 +648,29 @@ func wrapConnect(
 	i connInfo,
 	internal *pluginargs.Internal,
 ) (interface{}, error) {
+	internal.Logger.Trace("connecting to wrapped plugin", "plugin", p, "stream_id", i.GetStreamId(), "broker", internal.Broker)
 	conn, err := internal.Broker.Dial(i.GetStreamId())
 	if err != nil {
+		internal.Logger.Warn("failed to connect to wrapped plugin", "plugin", p, "stream_id",
+			i.GetStreamId(), "broker", internal.Broker, "error", err)
 		return nil, err
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
+	internal.Logger.Trace("creating client for wrapped plugin", "plugin", p, "stream_id", i.GetStreamId(), "broker", internal.Broker)
 	client, err := p.GRPCClient(ctx, internal.Broker, conn)
 	if err != nil {
+		internal.Logger.Warn("failed to create client for wrapped plugin", "plugin", p,
+			"stream_id", i.GetStreamId(), "broker", internal.Broker, "error", err)
 		return nil, err
 	}
 
 	if closer, ok := client.(io.Closer); ok {
 		internal.Cleanup.Do(func() { closer.Close() })
 	}
+
+	internal.Logger.Trace("new client built for wrapped plugin", "plugin", p,
+		"client", client, "stream_id", i.GetStreamId(), "broker", internal.Broker)
 
 	return client, nil
 }
@@ -641,6 +681,8 @@ func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, err
 	id := internal.Broker.NextId()
 	errChan := make(chan error, 1)
 
+	internal.Logger.Trace("starting listener for wrapped plugin",
+		"broker", internal.Broker, "plugin", p, "stream_id", id)
 	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
 		server := plugin.DefaultGRPCServer(opts)
 		if err := p.GRPCServer(internal.Broker, server); err != nil {
@@ -648,6 +690,8 @@ func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, err
 			return nil
 		}
 		internal.Cleanup.Do(func() {
+			internal.Logger.Trace("shutting down listener for wrapped plugin",
+				"broker", internal.Broker, "plugin", p, "stream_id", id)
 			server.GracefulStop()
 		})
 		close(errChan)
@@ -656,6 +700,8 @@ func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, err
 
 	err := <-errChan
 	if err != nil {
+		internal.Logger.Warn("failed to setup listener for wrapped plugin",
+			"broker", internal.Broker, "plugin", p, "stream_id", id, "error", err)
 		return 0, err
 	}
 
@@ -669,5 +715,7 @@ func init() {
 			panic(err)
 		}
 		plugincore.MapperFns = append(plugincore.MapperFns, mFn)
+		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
+		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
 }

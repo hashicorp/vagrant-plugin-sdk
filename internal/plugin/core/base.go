@@ -70,7 +70,7 @@ func (b *base) Map(resultValue, expectedType interface{}, args ...argmapper.Arg)
 		argmapper.Typed(resultValue),
 		argmapper.Typed(b.internal()),
 		argmapper.Typed(b.Logger),
-		argmapper.Logger(b.Logger),
+		argmapper.Logger(dynamicLogger),
 	)
 
 	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
@@ -85,5 +85,11 @@ func (b *base) internal() *pluginargs.Internal {
 		Broker:  b.Broker,
 		Mappers: b.Mappers,
 		Cleanup: b.Cleanup,
+		Logger:  b.Logger,
 	}
 }
+
+var dynamicLogger hclog.Logger = hclog.New(&hclog.LoggerOptions{
+	Name:  "vagrant.plugin.core.dynamic-function",
+	Level: hclog.Error,
+})

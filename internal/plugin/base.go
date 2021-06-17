@@ -15,8 +15,10 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -53,6 +55,7 @@ func (b *base) internal() *pluginargs.Internal {
 		Broker:  b.Broker,
 		Mappers: b.Mappers,
 		Cleanup: &pluginargs.Cleanup{},
+		Logger:  b.Logger,
 	}
 }
 
@@ -75,13 +78,16 @@ func (b *baseClient) callRemoteDynamicFunc(
 	f interface{}, // function
 	args ...argmapper.Arg,
 ) (interface{}, error) {
-	// We allow f to be a *mapper.Func because our plugin system creates
-	// a func directly due to special argument types.
-	// TODO: test
-	rawFunc, ok := f.(*argmapper.Func)
-	if !ok {
+	var rawFunc *argmapper.Func
+
+	if sf, ok := f.(*component.SpicyFunc); ok {
+		rawFunc = sf.Func
+	} else if af, ok := f.(*argmapper.Func); ok {
+		rawFunc = af
+	} else {
 		var err error
-		rawFunc, err = argmapper.NewFunc(f, argmapper.Logger(b.Logger))
+		rawFunc, err = argmapper.NewFunc(f)
+
 		if err != nil {
 			return nil, err
 		}
@@ -89,6 +95,7 @@ func (b *baseClient) callRemoteDynamicFunc(
 
 	// Make sure we have access to our context and logger and default args
 	args = append(args,
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.ConverterFunc(mappers...),
 		argmapper.Typed(
@@ -98,6 +105,8 @@ func (b *baseClient) callRemoteDynamicFunc(
 
 		// argmapper.Named("labels", &component.LabelSet{Labels: c.labels}),
 	)
+
+	b.Logger.Debug("calling remote dynamic function", "name", rawFunc.Name())
 
 	// Build the chain and call it
 	callResult := rawFunc.Call(args...)
@@ -127,7 +136,7 @@ func (b *baseClient) callRemoteDynamicFunc(
 
 func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
-		argmapper.Logger(b.Logger),
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
 		argmapper.Typed(b.internal()))...,
 	)
 }
@@ -146,7 +155,7 @@ func (b *baseServer) callDynamicFunc(
 	rawFunc, ok := f.(*argmapper.Func)
 	if !ok {
 		var err error
-		rawFunc, err = argmapper.NewFunc(f, argmapper.Logger(b.Logger))
+		rawFunc, err = argmapper.NewFunc(f, argmapper.Logger(plugincomponent.ArgmapperLogger))
 		if err != nil {
 			return nil, err
 		}
@@ -231,7 +240,7 @@ func (b *baseServer) callUncheckedLocalDynamicFunc(
 
 	callArgs = append(callArgs,
 		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Logger(b.Logger),
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
 		argmapper.Typed(internal),
 	)
 
@@ -267,10 +276,18 @@ func (b *baseServer) callUncheckedLocalDynamicFunc(
 		)
 	}
 
-	mapF, err := argmapper.NewFunc(f)
-	if err != nil {
-		return nil, err
+	var mapF *argmapper.Func
+	if fn, ok := f.(*component.SpicyFunc); ok {
+		mapF = fn.Func
+	} else {
+		var err error
+		mapF, err = argmapper.NewFunc(f)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	b.Logger.Debug("calling local dynamic function", "name", mapF.Name())
 
 	callResult := mapF.Call(callArgs...)
 	if err := callResult.Err(); err != nil {
@@ -319,7 +336,7 @@ func (b *baseServer) callBoolLocalDynamicFunc(
 
 func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
 	f, err := funcspec.ArgSpec(fn, append(args,
-		argmapper.Logger(b.Logger),
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
 	)
@@ -330,8 +347,11 @@ func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) 
 }
 
 func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if f, ok := fn.(*component.SpicyFunc); ok {
+		return f.Spec, nil
+	}
 	f, err := funcspec.Spec(fn, append(args,
-		argmapper.Logger(b.Logger),
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
 	)

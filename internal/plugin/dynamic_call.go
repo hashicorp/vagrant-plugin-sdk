@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 )
 
 // callDynamicFunc calls a dynamic (mapper-based) function with the
@@ -52,6 +53,7 @@ func callDynamicFunc2(
 		)
 	}
 
+	callArgs = append(callArgs, argmapper.Logger(plugincomponent.ArgmapperLogger))
 	mapF, err := argmapper.NewFunc(f)
 	if err != nil {
 		return nil, err
