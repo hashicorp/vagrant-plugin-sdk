@@ -60,6 +60,7 @@ var All = []interface{}{
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
+	MachineState,
 }
 
 // Flags maps
@@ -114,6 +115,11 @@ func MapToProto(input map[string]interface{}) (*structpb.Struct, error) {
 
 func ProtoToMap(input *structpb.Struct) (map[string]interface{}, error) {
 	return input.AsMap(), nil
+}
+
+func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.MachineState, error) {
+	var result core.MachineState
+	return &result, mapstructure.Decode(input, &result)
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
