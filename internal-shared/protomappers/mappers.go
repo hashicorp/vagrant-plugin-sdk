@@ -61,6 +61,7 @@ var All = []interface{}{
 	TerminalUI,
 	TerminalUIProto,
 	MachineState,
+	MachineStateProto,
 }
 
 // Flags maps
@@ -119,6 +120,11 @@ func ProtoToMap(input *structpb.Struct) (map[string]interface{}, error) {
 
 func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.MachineState, error) {
 	var result core.MachineState
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Target_Machine_State, error) {
+	var result vagrant_plugin_sdk.Args_Target_Machine_State
 	return &result, mapstructure.Decode(input, &result)
 }
 

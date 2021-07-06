@@ -95,7 +95,7 @@ func (t *targetMachineClient) Guest() (g core.Guest, err error) {
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
 	// TODO
-	return nil, nil
+	return &core.MachineState{ID: "UNKNOWN"}, nil
 }
 
 func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err error) {
