@@ -62,6 +62,8 @@ var All = []interface{}{
 	TerminalUIProto,
 	MachineState,
 	MachineStateProto,
+	Box,
+	BoxProto,
 }
 
 // Flags maps
@@ -125,6 +127,16 @@ func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.Ma
 
 func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Target_Machine_State, error) {
 	var result vagrant_plugin_sdk.Args_Target_Machine_State
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func Box(input *vagrant_plugin_sdk.Args_Target_Machine_Box) (*core.Box, error) {
+	var result core.Box
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func BoxProto(input *core.Box) (*vagrant_plugin_sdk.Args_Target_Machine_Box, error) {
+	var result vagrant_plugin_sdk.Args_Target_Machine_Box
 	return &result, mapstructure.Decode(input, &result)
 }
 
