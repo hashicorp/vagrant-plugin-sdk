@@ -190,7 +190,7 @@ func DatadirProjectProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDi
 	}
 }
 
-func DatadirTargetProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Target {
+func DatadirTargetProto(input *datadir.Target) *vagrant_plugin_sdk.Args_DataDir_Target {
 	return &vagrant_plugin_sdk.Args_DataDir_Target{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
