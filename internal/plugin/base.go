@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 	"fmt"
+	"net"
 	"reflect"
 
 	"github.com/hashicorp/go-argmapper"
@@ -40,7 +41,8 @@ type base struct {
 type baseClient struct {
 	*base
 
-	ctx context.Context
+	ctx    context.Context
+	target net.Addr
 }
 
 type baseServer struct {
@@ -59,8 +61,16 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
-func (b *base) GRPCBroker() *plugin.GRPCBroker {
+func (b *baseClient) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
+}
+
+func (b *baseClient) SetTarget(t net.Addr) {
+	b.target = t
+}
+
+func (b *baseClient) Target() net.Addr {
+	return b.target
 }
 
 // This is here for internal usage on plugin setup
@@ -71,69 +81,6 @@ func (b *baseClient) SetRequestMetadata(key, value string) {
 		"key", key, "value", value, "context", b.ctx)
 }
 
-func (b *baseClient) callRemoteDynamicFunc(
-	ctx context.Context,
-	mappers []*argmapper.Func,
-	result interface{}, // expected result type
-	f interface{}, // function
-	args ...argmapper.Arg,
-) (interface{}, error) {
-	var rawFunc *argmapper.Func
-
-	if sf, ok := f.(*component.SpicyFunc); ok {
-		rawFunc = sf.Func
-	} else if af, ok := f.(*argmapper.Func); ok {
-		rawFunc = af
-	} else {
-		var err error
-		rawFunc, err = argmapper.NewFunc(f)
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Make sure we have access to our context and logger and default args
-	args = append(args,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
-		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.ConverterFunc(mappers...),
-		argmapper.Typed(
-			ctx,
-			b.Logger,
-		),
-
-		// argmapper.Named("labels", &component.LabelSet{Labels: c.labels}),
-	)
-
-	b.Logger.Debug("calling remote dynamic function", "name", rawFunc.Name())
-
-	// Build the chain and call it
-	callResult := rawFunc.Call(args...)
-	if err := callResult.Err(); err != nil {
-		return nil, err
-	}
-	raw := callResult.Out(0)
-
-	// If we don't have an expected result type, then just return as-is.
-	// Otherwise, we need to verify the result type matches properly.
-	if result == nil {
-		return raw, nil
-	}
-
-	// Verify
-	interfaceType := reflect.TypeOf(result).Elem()
-	rawType := reflect.TypeOf(raw)
-	if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"operation expected result type %s, got %s",
-			interfaceType.String(),
-			rawType.String())
-	}
-
-	return raw, nil
-}
-
 func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
 		argmapper.Logger(plugincomponent.ArgmapperLogger),
@@ -141,109 +88,31 @@ func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interf
 	)
 }
 
-func (b *baseServer) callDynamicFunc(
-	ctx context.Context,
-	mappers []*argmapper.Func,
-	result interface{}, // expected result type
-	f interface{}, // function
-	args funcspec.Args,
-	callArgs ...argmapper.Arg,
+func (b *baseClient) callDynamicFunc(
+	f interface{}, // function to call
+	expectedType interface{}, // expected return type
+	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
-	// We allow f to be a *mapper.Func because our plugin system creates
-	// a func directly due to special argument types.
-	// TODO: test
-	rawFunc, ok := f.(*argmapper.Func)
-	if !ok {
-		var err error
-		rawFunc, err = argmapper.NewFunc(f, argmapper.Logger(plugincomponent.ArgmapperLogger))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Make sure we have access to our context and logger and default args
+	internal := b.internal()
+	defer internal.Cleanup.Close()
 	callArgs = append(callArgs,
-		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.ConverterFunc(mappers...),
-		argmapper.Typed(
-			ctx,
-			b.Logger,
-		),
-
-		// argmapper.Named("labels", &component.LabelSet{Labels: c.labels}),
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Typed(internal),
+		argmapper.Typed(b.Logger),
 	)
-	// Decode our *any.Any values.
-	for _, arg := range args {
-		anyVal := arg.Value
 
-		name, err := ptypes.AnyMessageName(anyVal)
-		if err != nil {
-			return nil, err
-		}
-
-		typ := proto.MessageType(name)
-		if typ == nil {
-			return nil, fmt.Errorf("cannot decode type: %s", name)
-		}
-
-		// Allocate the message type. If it is a pointer we want to
-		// allocate the actual structure and not the pointer to the structure.
-		if typ.Kind() == reflect.Ptr {
-			typ = typ.Elem()
-		}
-		v := reflect.New(typ)
-		v.Elem().Set(reflect.Zero(typ))
-
-		// Unmarshal directly into our newly allocated structure.
-		if err := ptypes.UnmarshalAny(anyVal, v.Interface().(proto.Message)); err != nil {
-			return nil, err
-		}
-
-		callArgs = append(callArgs,
-			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
-		)
-	}
-
-	// Build the chain and call it
-	callResult := rawFunc.Call(callArgs...)
-	if err := callResult.Err(); err != nil {
-		return nil, err
-	}
-	raw := callResult.Out(0)
-
-	// If we don't have an expected result type, then just return as-is.
-	// Otherwise, we need to verify the result type matches properly.
-	if result == nil {
-		return raw, nil
-	}
-
-	// Verify
-	// interfaceType := reflect.TypeOf(result).Elem()
-	// rawType := reflect.TypeOf(raw)
-	// if (interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType)) || rawType != interfaceType {
-	// 	return nil, status.Errorf(codes.FailedPrecondition,
-	// 		"operation expected result type %s, got %s",
-	// 		interfaceType.String(),
-	// 		rawType.String())
-	// }
-
-	return raw, nil
+	return callDynamicFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
-func (b *baseServer) callUncheckedLocalDynamicFunc(
-	f interface{},
-	args funcspec.Args,
-	callArgs ...argmapper.Arg,
+func (b *baseServer) callDynamicFunc(
+	f interface{}, // function to call
+	expectedType interface{}, // expected return type
+	args funcspec.Args, // funspec defined arguments
+	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
 	internal := b.internal()
 	defer internal.Cleanup.Close()
 
-	callArgs = append(callArgs,
-		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
-		argmapper.Typed(internal),
-	)
-
 	// Decode our *any.Any values.
 	for _, arg := range args {
 		anyVal := arg.Value
@@ -275,63 +144,13 @@ func (b *baseServer) callUncheckedLocalDynamicFunc(
 			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
 		)
 	}
+	callArgs = append(callArgs,
+		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Typed(internal),
+		argmapper.Typed(b.Logger),
+	)
 
-	var mapF *argmapper.Func
-	if fn, ok := f.(*component.SpicyFunc); ok {
-		mapF = fn.Func
-	} else {
-		var err error
-		mapF, err = argmapper.NewFunc(f)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	b.Logger.Debug("calling local dynamic function", "name", mapF.Name())
-
-	callResult := mapF.Call(callArgs...)
-	if err := callResult.Err(); err != nil {
-		return nil, err
-	}
-
-	raw := callResult.Out(0)
-	return raw, nil
-}
-
-func (b *baseServer) callLocalDynamicFunc(
-	f interface{},
-	args funcspec.Args,
-	result interface{}, // expected result type
-	callArgs ...argmapper.Arg,
-) (interface{}, error) {
-	raw, err := b.callUncheckedLocalDynamicFunc(f, args, callArgs...)
-	if err != nil {
-		return nil, err
-	}
-
-	// Verify
-	interfaceType := reflect.TypeOf(result).Elem()
-	rawType := reflect.TypeOf(raw)
-	if interfaceType.Kind() == reflect.Interface && !rawType.Implements(interfaceType) {
-		return nil, status.Errorf(codes.FailedPrecondition,
-			"operation expected result type %s, got %s",
-			interfaceType.String(),
-			rawType.String())
-	}
-	return raw, nil
-}
-
-func (b *baseServer) callBoolLocalDynamicFunc(
-	f interface{},
-	args funcspec.Args,
-	callArgs ...argmapper.Arg,
-) (bool, error) {
-	raw, err := b.callUncheckedLocalDynamicFunc(f, args, callArgs...)
-	if err != nil {
-		return false, err
-	}
-
-	return raw.(bool), nil
+	return callDynamicFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
 func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
