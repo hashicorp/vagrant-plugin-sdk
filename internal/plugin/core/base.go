@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"net"
 	"reflect"
 
 	"github.com/hashicorp/go-argmapper"
@@ -18,6 +19,8 @@ type base struct {
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
 	Cleanup *pluginargs.Cleanup
+
+	target net.Addr
 }
 
 func (b *base) GRPCBroker() *plugin.GRPCBroker {
@@ -78,6 +81,14 @@ func (b *base) Map(resultValue, expectedType interface{}, args ...argmapper.Arg)
 	}
 
 	return vsOut.Typed(typ).Value.Interface(), nil
+}
+
+func (b *base) SetTarget(t net.Addr) {
+	b.target = t
+}
+
+func (b *base) Target() net.Addr {
+	return b.target
 }
 
 func (b *base) internal() *pluginargs.Internal {
