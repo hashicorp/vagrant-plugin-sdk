@@ -9,9 +9,97 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/hashicorp/go-argmapper"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 )
+
+func Map(resultValue, expectedType interface{}, args ...argmapper.Arg) (interface{}, error) {
+	typPtr := reflect.TypeOf(expectedType)
+	if typPtr.Kind() != reflect.Ptr {
+		return nil, fmt.Errorf("expectedType must be nil pointer")
+	}
+	typ := typPtr.Elem()
+
+	vIn := argmapper.Value{Type: typ}
+	vOut := argmapper.Value{Type: typ}
+	vsIn, err := argmapper.NewValueSet([]argmapper.Value{vIn})
+	if err != nil {
+		return nil, err
+	}
+	vsOut, err := argmapper.NewValueSet([]argmapper.Value{vOut})
+	if err != nil {
+		return nil, err
+	}
+
+	cb := func(in, out *argmapper.ValueSet) error {
+		val := in.Typed(typ).Value.Interface()
+		out.Typed(typ).Value = reflect.ValueOf(val)
+		return nil
+	}
+
+	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb)
+	if err != nil {
+		return nil, err
+	}
+
+	args = append(args, argmapper.Typed(resultValue))
+
+	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
+		return nil, err
+	}
+
+	return vsOut.Typed(typ).Value.Interface(), nil
+}
+
+func callDynamicFunc(
+	f interface{}, // function
+	expectedType interface{}, // expected result type
+	mappers []*argmapper.Func,
+	args ...argmapper.Arg,
+) (interface{}, error) {
+	var rawFunc *argmapper.Func
+
+	if sf, ok := f.(*component.SpicyFunc); ok {
+		rawFunc = sf.Func
+	} else if af, ok := f.(*argmapper.Func); ok {
+		rawFunc = af
+	} else {
+		var err error
+		rawFunc, err = argmapper.NewFunc(f,
+			argmapper.Logger(plugincomponent.ArgmapperLogger),
+		)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Make sure we have access to our context and logger and default args
+	args = append(args, argmapper.ConverterFunc(mappers...))
+
+	// Build the chain and call it
+	callResult := rawFunc.Call(args...)
+	if err := callResult.Err(); err != nil {
+		return nil, err
+	}
+	raw := callResult.Out(0)
+
+	// If a false value is passed as the expectedType, then
+	// no validation is performed and we just return the value
+	// that we got
+	typPtr := reflect.TypeOf(expectedType)
+	if typPtr.Kind() == reflect.Bool && expectedType.(bool) == false {
+		return raw, nil
+	}
+
+	final, err := Map(raw, expectedType, args...)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to convert %T to %T (%s)", raw, expectedType, err.Error())
+	}
+
+	return final, nil
+}
 
 // callDynamicFunc calls a dynamic (mapper-based) function with the
 // given input arguments. This is a helper that is expected to be used
@@ -53,7 +141,8 @@ func callDynamicFunc2(
 		)
 	}
 
-	callArgs = append(callArgs, argmapper.Logger(plugincomponent.ArgmapperLogger))
+	callArgs = append(callArgs,
+		argmapper.Logger(plugincomponent.ArgmapperLogger))
 	mapF, err := argmapper.NewFunc(f)
 	if err != nil {
 		return nil, err
