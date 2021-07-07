@@ -55,6 +55,8 @@ message Args {
 
   message TerminalUI {
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message Logger {
@@ -75,19 +77,27 @@ message Args {
 
   message Basis {
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message Project {
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message Provider {
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message Target {
     // Generic target
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
 
     message State {
       enum State {
@@ -116,16 +126,21 @@ message Args {
       }
 
       uint32 stream_id = 1;
+      string network = 2;
+      string target = 3;
     }
   }
 
   message StateBag {
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message Host {
-    //string target_address = 1;
     uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message NamedCapability {
