@@ -95,11 +95,11 @@ func (t *targetMachineClient) Guest() (g core.Guest, err error) {
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
 	// TODO
-	return nil, errNotImplemented
+	return &core.MachineState{ID: "UNKNOWN"}, nil
 }
 
 func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err error) {
-	return errNotImplemented
+	return nil
 }
 
 func (t *targetMachineClient) IndexUUID() (id string, err error) {

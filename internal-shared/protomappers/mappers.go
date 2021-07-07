@@ -60,6 +60,10 @@ var All = []interface{}{
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
+	MachineState,
+	MachineStateProto,
+	Box,
+	BoxProto,
 }
 
 // Flags maps
@@ -116,6 +120,26 @@ func ProtoToMap(input *structpb.Struct) (map[string]interface{}, error) {
 	return input.AsMap(), nil
 }
 
+func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.MachineState, error) {
+	var result core.MachineState
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Target_Machine_State, error) {
+	var result vagrant_plugin_sdk.Args_Target_Machine_State
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func Box(input *vagrant_plugin_sdk.Args_Target_Machine_Box) (*core.Box, error) {
+	var result core.Box
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func BoxProto(input *core.Box) (*vagrant_plugin_sdk.Args_Target_Machine_Box, error) {
+	var result vagrant_plugin_sdk.Args_Target_Machine_Box
+	return &result, mapstructure.Decode(input, &result)
+}
+
 // JobInfo maps Args.JobInfo to component.JobInfo.
 func JobInfo(input *vagrant_plugin_sdk.Args_JobInfo) (*component.JobInfo, error) {
 	var result component.JobInfo
@@ -166,7 +190,7 @@ func DatadirProjectProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDi
 	}
 }
 
-func DatadirTargetProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Target {
+func DatadirTargetProto(input *datadir.Target) *vagrant_plugin_sdk.Args_DataDir_Target {
 	return &vagrant_plugin_sdk.Args_DataDir_Target{
 		CacheDir: input.CacheDir().String(),
 		DataDir:  input.DataDir().String(),
