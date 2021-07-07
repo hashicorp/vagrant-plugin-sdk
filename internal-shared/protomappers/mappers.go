@@ -2,8 +2,11 @@ package protomappers
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net"
 	"reflect"
+	"time"
 
 	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-argmapper"
@@ -11,11 +14,13 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
 	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
 	pluginterminal "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/terminal"
@@ -99,16 +104,17 @@ func HostProto(
 		Mappers: internal.Mappers,
 		Logger:  log,
 		Impl:    input,
-		Wrapped: true,
 	}
 
 	internal.Logger.Trace("wrapping host plugin", "host", input)
-	id, err := wrapClient(p, internal)
+	id, ep, err := wrapClient(input, p, internal)
 	if err != nil {
 		internal.Logger.Warn("failed to wrap host plugin", "host", input, "error", err)
 		return nil, err
 	}
 	return &vagrant_plugin_sdk.Args_Host{
+		Network:  ep.Network(),
+		Target:   ep.String(),
 		StreamId: id,
 	}, nil
 }
@@ -122,7 +128,6 @@ func Host(
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
-		Wrapped: true,
 	}
 	internal.Logger.Trace("connecting to wrapped host plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -328,16 +333,18 @@ func TerminalUIProto(
 	}
 
 	internal.Logger.Trace("wrapping ui", "ui", ui)
-	id, err := wrapClient(p, internal)
+	id, ep, err := wrapClient(ui, p, internal)
 
 	if err != nil {
 		internal.Logger.Trace("failed to wrap ui", "ui", ui, "error", err)
 		return nil, err
 	}
 
-	internal.Logger.Trace("wrapped ui", "ui", ui, "stream_id", id)
+	internal.Logger.Trace("wrapped ui", "ui", ui, "stream_id", id, "endpoint", ep)
 	return &vagrant_plugin_sdk.Args_TerminalUI{
-		StreamId: id}, nil
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String()}, nil
 }
 
 func MetadataSet(input *vagrant_plugin_sdk.Args_MetadataSet) *component.MetadataSet {
@@ -381,13 +388,15 @@ func StateBagProto(
 		Logger: log,
 	}
 
-	id, err := wrapClient(p, internal)
+	id, ep, err := wrapClient(bag, p, internal)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Args_StateBag{
-		StreamId: id}, nil
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String()}, nil
 }
 
 func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {
@@ -483,13 +492,15 @@ func BasisProto(
 		Impl:    b,
 	}
 
-	id, err := wrapClient(bp, internal)
+	id, ep, err := wrapClient(b, bp, internal)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Args_Basis{
 		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
 	}, nil
 }
 
@@ -523,13 +534,15 @@ func ProjectProto(
 		Impl:    p,
 	}
 
-	id, err := wrapClient(pp, internal)
+	id, ep, err := wrapClient(p, pp, internal)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Args_Project{
 		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
 	}, nil
 }
 
@@ -563,13 +576,15 @@ func TargetProto(
 		Impl:    t,
 	}
 
-	id, err := wrapClient(tp, internal)
+	id, endpoint, err := wrapClient(t, tp, internal)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Args_Target{
 		StreamId: id,
+		Network:  endpoint.Network(),
+		Target:   endpoint.String(),
 	}, nil
 }
 
@@ -604,13 +619,15 @@ func TargetMachineProto(
 		TargetImpl: m,
 	}
 
-	id, err := wrapClient(mp, internal)
+	id, ep, err := wrapClient(m, mp, internal)
 	if err != nil {
 		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Args_Target_Machine{
 		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
 	}, nil
 }
 
@@ -635,6 +652,13 @@ func TargetMachine(
 
 type connInfo interface {
 	GetStreamId() uint32
+	GetNetwork() string
+	GetTarget() string
+}
+
+type hasTarget interface {
+	SetTarget(net.Addr)
+	Target() net.Addr
 }
 
 // When a core plugin is received, the proto will match the
@@ -648,20 +672,62 @@ func wrapConnect(
 	i connInfo,
 	internal *pluginargs.Internal,
 ) (interface{}, error) {
-	internal.Logger.Trace("connecting to wrapped plugin", "plugin", p, "stream_id", i.GetStreamId(), "broker", internal.Broker)
-	conn, err := internal.Broker.Dial(i.GetStreamId())
+	internal.Logger.Trace("connecting to wrapped plugin",
+		"plugin", hclog.Fmt("%T", p),
+		"connection", i,
+		"broker", hclog.Fmt("%p", internal.Broker))
+
+	var err error
+	var conn *grpc.ClientConn
+	var addr net.Addr
+	if target := i.GetTarget(); target != "" {
+		switch i.GetNetwork() {
+		case "tcp":
+			addr, err = net.ResolveTCPAddr("tcp", target)
+		case "unix":
+			addr, err = net.ResolveUnixAddr("unix", target)
+		default:
+			return nil, fmt.Errorf(
+				"Unknown target address type: %s", i.GetNetwork())
+		}
+
+		internal.Logger.Trace("connecting to wrapped plugin via direct target",
+			"plugin", hclog.Fmt("%T", p),
+			"target", target)
+
+		// TODO(spox): grab dial options from pluginclient config
+		conn, err = grpc.Dial("unused", grpc.WithDialer(
+			func(_ string, _ time.Duration) (net.Conn, error) {
+				return net.Dial(i.GetNetwork(), target)
+			}), grpc.WithInsecure(),
+		)
+	} else {
+		internal.Logger.Trace("connecting to wrapped plugin via broker",
+			"plugin", hclog.Fmt("%T", p),
+			"stream_id", i.GetStreamId(),
+			"broker", hclog.Fmt("%p", internal.Broker))
+
+		conn, err = internal.Broker.Dial(i.GetStreamId())
+	}
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped plugin", "plugin", p, "stream_id",
-			i.GetStreamId(), "broker", internal.Broker, "error", err)
+		internal.Logger.Warn("failed to connect to wrapped plugin",
+			"plugin", hclog.Fmt("%T", p),
+			"connection", i,
+			"broker", hclog.Fmt("%p", internal.Broker),
+			"error", err)
+
 		return nil, err
 	}
 	internal.Cleanup.Do(func() { conn.Close() })
 
-	internal.Logger.Trace("creating client for wrapped plugin", "plugin", p, "stream_id", i.GetStreamId(), "broker", internal.Broker)
 	client, err := p.GRPCClient(ctx, internal.Broker, conn)
 	if err != nil {
-		internal.Logger.Warn("failed to create client for wrapped plugin", "plugin", p,
-			"stream_id", i.GetStreamId(), "broker", internal.Broker, "error", err)
+		internal.Logger.Warn("failed to create client for wrapped plugin",
+			"plugin", hclog.Fmt("%T", p),
+			"connection", i,
+			"broker", hclog.Fmt("%p", internal.Broker),
+			"error", err)
+
 		return nil, err
 	}
 
@@ -669,43 +735,99 @@ func wrapConnect(
 		internal.Cleanup.Do(func() { closer.Close() })
 	}
 
-	internal.Logger.Trace("new client built for wrapped plugin", "plugin", p,
-		"client", client, "stream_id", i.GetStreamId(), "broker", internal.Broker)
+	internal.Logger.Trace("new client built for wrapped plugin",
+		"plugin", hclog.Fmt("%T", p),
+		"client", client,
+		"connection", i,
+		"broker", hclog.Fmt("%p", internal.Broker))
+
+	if addr != nil {
+		if ec, ok := client.(hasTarget); ok {
+			internal.Logger.Trace("setting direct target on new client",
+				"plugin", hclog.Fmt("%T", p),
+				"target", addr)
+
+			ec.SetTarget(addr)
+		} else {
+			internal.Logger.Trace("client does not support direct targets for wrapped plugins",
+				"plugin", hclog.Fmt("%T", p),
+				"client", hclog.Fmt("%T", client))
+		}
+	}
 
 	return client, nil
 }
 
 // This takes a plugin (which generally uses a client as the plugin implementation)
 // and creates a new server for remote connections via the internal broker.
-func wrapClient(p plugin.GRPCPlugin, internal *pluginargs.Internal) (uint32, error) {
-	id := internal.Broker.NextId()
-	errChan := make(chan error, 1)
+func wrapClient(
+	impl interface{},
+	p plugin.GRPCPlugin,
+	internal *pluginargs.Internal,
+) (id uint32, target net.Addr, err error) {
+	// If an existing target exists for the implementation, use
+	// that value for where to connect
+	if iep, ok := impl.(hasTarget); ok {
+		if target = iep.Target(); target != nil {
+			internal.Logger.Trace("using preset wrapped plugin target",
+				"plugin", hclog.Fmt("%T", p),
+				"target", target)
 
-	internal.Logger.Trace("starting listener for wrapped plugin",
-		"broker", internal.Broker, "plugin", p, "stream_id", id)
-	go internal.Broker.AcceptAndServe(id, func(opts []grpc.ServerOption) *grpc.Server {
-		server := plugin.DefaultGRPCServer(opts)
-		if err := p.GRPCServer(internal.Broker, server); err != nil {
-			errChan <- err
-			return nil
+			return
 		}
-		internal.Cleanup.Do(func() {
-			internal.Logger.Trace("shutting down listener for wrapped plugin",
-				"broker", internal.Broker, "plugin", p, "stream_id", id)
-			server.GracefulStop()
-		})
-		close(errChan)
-		return server
-	})
-
-	err := <-errChan
-	if err != nil {
-		internal.Logger.Warn("failed to setup listener for wrapped plugin",
-			"broker", internal.Broker, "plugin", p, "stream_id", id, "error", err)
-		return 0, err
+	} else {
+		internal.Logger.Warn("implementation does not support direct targets for wrapped plugins",
+			"plugin", hclog.Fmt("%T", p))
 	}
 
-	return id, nil
+	// Fetch the next available steam ID from the broker
+	id = internal.Broker.NextId()
+
+	// Since we want to register the target endpoint directly for
+	// access off the configured broker, we need to get the listener
+	// and setup the server directly instead of letting the plugin
+	// library handle it for us
+	l, nerr := internal.Broker.Accept(id)
+	if nerr != nil {
+		return
+	}
+	target = l.Addr()
+
+	// Grab the shared plugin configuration so the expected
+	// server configuration can be applied
+	config := pluginclient.ClientConfig(internal.Logger)
+	sopts := []grpc.ServerOption{}
+	if config.TLSConfig != nil {
+		sopts = append(sopts, grpc.Creds(credentials.NewTLS(config.TLSConfig)))
+	}
+
+	internal.Logger.Trace("starting listener for wrapped plugin",
+		"broker", hclog.Fmt("%p", internal.Broker),
+		"plugin", hclog.Fmt("%T", p),
+		"stream_id", id,
+		"target", target)
+
+	server := plugin.DefaultGRPCServer(sopts)
+	if err = p.GRPCServer(internal.Broker, server); err != nil {
+		return
+	}
+
+	// Register a shutdown of this wrapped plugin server in our
+	// cleanup so we don't leave it hanging around when closed
+	internal.Cleanup.Do(func() {
+		internal.Logger.Trace("shutting down listener for wrapped plugin",
+			"broker", hclog.Fmt("%p", internal.Broker),
+			"plugin", hclog.Fmt("%T", p),
+			"stream_id", id,
+			"target", target)
+
+		server.GracefulStop()
+	})
+
+	// Start serving
+	go server.Serve(l)
+
+	return
 }
 
 func init() {
