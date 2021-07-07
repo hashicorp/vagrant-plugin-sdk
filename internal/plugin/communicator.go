@@ -105,8 +105,11 @@ func (c *communicatorClient) MatchFunc() interface{} {
 func (c *communicatorClient) Match(machine core.Machine) (bool, error) {
 	f := c.MatchFunc()
 	// Call the function and include our local machine argument
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
-		argmapper.Typed(machine))
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
+	)
+
 	if err != nil {
 		return false, err
 	}
@@ -131,8 +134,10 @@ func (c *communicatorClient) InitFunc() interface{} {
 
 func (c *communicatorClient) Init(machine core.Machine) error {
 	f := c.InitFunc()
-	_, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
-		argmapper.Typed(machine))
+	_, err := c.callDynamicFunc(f, false,
+		argmapper.Typed(machine),
+		argmapper.Typed(c.ctx),
+	)
 	return err
 }
 
@@ -155,8 +160,10 @@ func (c *communicatorClient) ReadyFunc() interface{} {
 
 func (c *communicatorClient) Ready(machine core.Machine) (bool, error) {
 	f := c.ReadyFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
-		argmapper.Typed(machine))
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(machine),
+		argmapper.Typed(c.ctx),
+	)
 	if err != nil {
 		return false, err
 	}
@@ -183,9 +190,11 @@ func (c *communicatorClient) WaitForReadyFunc() interface{} {
 
 func (c *communicatorClient) WaitForReady(machine core.Machine, wait int) (bool, error) {
 	f := c.WaitForReadyFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(machine),
-		argmapper.Typed(wait))
+		argmapper.Typed(wait),
+		argmapper.Typed(c.ctx),
+	)
 
 	if err != nil {
 		return false, err
@@ -210,10 +219,11 @@ func (c *communicatorClient) DownloadFunc() interface{} {
 
 func (c *communicatorClient) Download(machine core.Machine, source, destination string) error {
 	f := c.DownloadFunc()
-	_, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
+	_, err := c.callDynamicFunc(f, false,
 		argmapper.Typed(machine),
 		argmapper.Named("source", source),
 		argmapper.Named("destination", destination),
+		argmapper.Typed(c.ctx),
 	)
 	return err
 }
@@ -234,10 +244,11 @@ func (c *communicatorClient) UploadFunc() interface{} {
 
 func (c *communicatorClient) Upload(machine core.Machine, source, destination string) error {
 	f := c.DownloadFunc()
-	_, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
+	_, err := c.callDynamicFunc(f, false,
 		argmapper.Typed(machine),
 		argmapper.Named("source", source),
 		argmapper.Named("destination", destination),
+		argmapper.Typed(c.ctx),
 	)
 	return err
 }
@@ -261,11 +272,12 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 
 func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
 	f := c.ExecuteFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int32)(nil), f,
+	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
 		argmapper.Typed(opts),
 		argmapper.Typed(cmd),
 		argmapper.Named("command", cmd),
+		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
 		return -1, err
@@ -293,11 +305,12 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 
 func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
 	f := c.PrivilegedExecuteFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int32)(nil), f,
+	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
 		argmapper.Typed(opts),
 		argmapper.Typed(cmd),
 		argmapper.Named("command", cmd),
+		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
 		return -1, err
@@ -325,11 +338,12 @@ func (c *communicatorClient) TestFunc() interface{} {
 
 func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
 	f := c.TestFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*int32)(nil), f,
+	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
 		argmapper.Typed(opts),
 		argmapper.Typed(cmd),
 		argmapper.Named("command", cmd),
+		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
 		return false, err
@@ -357,8 +371,9 @@ func (c *communicatorClient) ResetFunc() interface{} {
 
 func (c *communicatorClient) Reset(machine core.Machine) (err error) {
 	f := c.ResetFunc()
-	_, err = c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f,
+	_, err = c.callDynamicFunc(f, false,
 		argmapper.Typed(machine),
+		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
 		return err
@@ -412,7 +427,7 @@ func (s *communicatorServer) Match(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_MatchResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.MatchFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.MatchFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
@@ -437,7 +452,7 @@ func (s *communicatorServer) Init(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_InitResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.InitFunc(), args.Args,
+	_, err := s.callDynamicFunc(s.Impl.InitFunc(), false, args.Args,
 		argmapper.Typed(ctx),
 	)
 	return &vagrant_plugin_sdk.Communicator_InitResp{}, err
@@ -458,7 +473,7 @@ func (s *communicatorServer) Ready(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ReadyResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.ReadyFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.ReadyFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -484,7 +499,7 @@ func (s *communicatorServer) WaitForReady(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ReadyResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.WaitForReadyFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.WaitForReadyFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -509,7 +524,7 @@ func (s *communicatorServer) Download(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.DownloadFunc(), args.Args, (interface{})(nil),
+	_, err := s.callDynamicFunc(s.Impl.DownloadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -534,7 +549,7 @@ func (s *communicatorServer) Upload(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.UploadFunc(), args.Args, (interface{})(nil),
+	_, err := s.callDynamicFunc(s.Impl.UploadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -559,7 +574,7 @@ func (s *communicatorServer) Execute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.ExecuteFunc(), args.Args, (*int32)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.ExecuteFunc(), (*int32)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -584,7 +599,7 @@ func (s *communicatorServer) PrivilegedExecute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.PrivilegedExecuteFunc(), args.Args, (*int32)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.PrivilegedExecuteFunc(), (*int32)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -609,7 +624,7 @@ func (s *communicatorServer) Test(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_TestResp, error) {
-	raw, err := s.callLocalDynamicFunc(s.Impl.TestFunc(), args.Args, (*bool)(nil),
+	raw, err := s.callDynamicFunc(s.Impl.TestFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
@@ -634,7 +649,7 @@ func (s *communicatorServer) Reset(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ResetResp, error) {
-	_, err := s.callLocalDynamicFunc(s.Impl.ResetFunc(), args.Args, (interface{})(nil),
+	_, err := s.callDynamicFunc(s.Impl.ResetFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
