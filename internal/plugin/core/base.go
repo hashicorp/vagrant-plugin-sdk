@@ -1,14 +1,13 @@
 package core
 
 import (
-	"errors"
 	"net"
-	"reflect"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 )
 
@@ -38,55 +37,29 @@ func (b *base) Close() error {
 // NOTE: The expected type must be a pointer, so an expected type
 // of `*int` means an `int` is wanted. Expected type of `**int`
 // means an `*int` is wanted, etc.
-func (b *base) Map(resultValue, expectedType interface{}, args ...argmapper.Arg) (interface{}, error) {
-	typPtr := reflect.TypeOf(expectedType)
-	if typPtr.Kind() != reflect.Ptr {
-		return nil, errors.New("expectedType must be nil pointer")
-	}
-	typ := typPtr.Elem()
-
-	vIn := argmapper.Value{Type: typ}
-	vOut := argmapper.Value{Type: typ}
-	vsIn, err := argmapper.NewValueSet([]argmapper.Value{vIn})
-	if err != nil {
-		return nil, err
-	}
-	vsOut, err := argmapper.NewValueSet([]argmapper.Value{vOut})
-	if err != nil {
-		return nil, err
-	}
-
-	cb := func(in, out *argmapper.ValueSet) error {
-		val := in.Typed(typ).Value.Interface()
-		out.Typed(typ).Value = reflect.ValueOf(val)
-		return nil
-	}
-
-	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb)
-	if err != nil {
-		return nil, err
-	}
-
+func (b *base) Map(
+	resultValue, // value to be converted
+	expectedType interface{}, // nil pointer of desired type
+	args ...argmapper.Arg, // list of argmapper arguments
+) (interface{}, error) {
 	args = append(args,
 		argmapper.ConverterFunc(MapperFns...),
 		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Typed(resultValue),
 		argmapper.Typed(b.internal()),
 		argmapper.Typed(b.Logger),
-		argmapper.Logger(dynamicLogger),
 	)
 
-	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
-		return nil, err
-	}
-
-	return vsOut.Typed(typ).Value.Interface(), nil
+	return dynamic.Map(resultValue, expectedType, args...)
 }
 
+// Sets a direct target which can be connected
+// to when passing this client over proto.
 func (b *base) SetTarget(t net.Addr) {
 	b.target = t
 }
 
+// Provides the direct target being used
+// by this client.
 func (b *base) Target() net.Addr {
 	return b.target
 }
@@ -99,8 +72,3 @@ func (b *base) internal() *pluginargs.Internal {
 		Logger:  b.Logger,
 	}
 }
-
-var dynamicLogger hclog.Logger = hclog.New(&hclog.LoggerOptions{
-	Name:  "vagrant.plugin.core.dynamic-function",
-	Level: hclog.Error,
-})

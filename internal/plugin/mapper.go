@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -30,8 +30,13 @@ type MapperPlugin struct {
 
 func (p *MapperPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterMapperServer(s, &mapperServer{
-		Mappers: p.Mappers,
-		Logger:  p.Logger,
+		baseServer: &baseServer{
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	})
 	return nil
 }
@@ -43,20 +48,28 @@ func (p *MapperPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &MapperClient{
 		client: vagrant_plugin_sdk.NewMapperClient(c),
-		logger: p.Logger,
+		baseClient: &baseClient{
+			ctx: ctx,
+			base: &base{
+				Mappers: p.Mappers,
+				Logger:  p.Logger,
+				Broker:  broker,
+			},
+		},
 	}, nil
 }
 
 // MapperClient is an implementation of component.Mapper over gRPC.
 type MapperClient struct {
+	*baseClient
+
 	client vagrant_plugin_sdk.MapperClient
-	logger hclog.Logger
 }
 
 // Mappers returns the list of mappers that are supported by this plugin.
 func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 	// Get our list of mapper FuncSpecs
-	resp, err := c.client.ListMappers(context.Background(), &empty.Empty{})
+	resp, err := c.client.ListMappers(c.ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +96,8 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 		}
 
 		// Build our funcspec function
-		f := funcspec.Func(specCopy, cb) //, argmapper.Logger(c.logger))
+		f := funcspec.Func(specCopy, cb,
+			argmapper.Logger(dynamic.Logger))
 
 		// Accumulate our functions
 		funcs = append(funcs, f.Func)
@@ -94,8 +108,7 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 
 // mapperServer is a gRPC server that implements the Mapper service.
 type mapperServer struct {
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
+	*baseServer
 
 	vagrant_plugin_sdk.UnimplementedMapperServer
 }
@@ -114,9 +127,7 @@ func (s *mapperServer) ListMappers(
 			continue
 		}
 
-		spec, err := funcspec.Spec(fn,
-			argmapper.ConverterFunc(s.Mappers...),
-			argmapper.Logger(plugincomponent.ArgmapperLogger))
+		spec, err := s.generateSpec(fn)
 		if err != nil {
 			s.Logger.Warn(
 				"error converting mapper, will not notify plugin host",
@@ -158,14 +169,13 @@ func (s *mapperServer) Map(
 	).Interface()
 
 	// Call it!
-	result, _, err := callDynamicFuncAny2(f, args.Args.Args,
+	result, err := s.callDynamicFunc(f, false, args.Args.Args,
 		argmapper.Typed(ctx),
-		argmapper.ConverterFunc(s.Mappers...),
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Map_Response{Result: result}, nil
+	return &vagrant_plugin_sdk.Map_Response{Result: result.(*any.Any)}, nil
 }
 
 var (

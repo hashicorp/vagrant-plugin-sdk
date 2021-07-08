@@ -1,4 +1,4 @@
-package plugincomponent
+package dynamic
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
-var ArgmapperLogger hclog.Logger = hclog.New(&hclog.LoggerOptions{
+var Logger hclog.Logger = hclog.New(&hclog.LoggerOptions{
 	Name:   "vagrant.plugin.argmapper",
 	Level:  hclog.Error,
 	Output: os.Stderr,

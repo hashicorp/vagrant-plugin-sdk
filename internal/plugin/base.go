@@ -17,9 +17,9 @@ import (
 	"github.com/golang/protobuf/ptypes"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/plugincomponent"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -61,14 +61,19 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
+// Used internally to extract broker
 func (b *baseClient) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
 }
 
+// Sets a direct target which can be connected
+// to when passing this client over proto.
 func (b *baseClient) SetTarget(t net.Addr) {
 	b.target = t
 }
 
+// Provides the direct target being used
+// by this client.
 func (b *baseClient) Target() net.Addr {
 	return b.target
 }
@@ -81,32 +86,57 @@ func (b *baseClient) SetRequestMetadata(key, value string) {
 		"key", key, "value", value, "context", b.ctx)
 }
 
-func (b *baseClient) generateFunc(spec *vagrant_plugin_sdk.FuncSpec, cbFn interface{}, args ...argmapper.Arg) interface{} {
+// Generate a function from a provided spec
+func (b *baseClient) generateFunc(
+	spec *vagrant_plugin_sdk.FuncSpec, // spec for the function
+	cbFn interface{}, // callback function
+	args ...argmapper.Arg, // any extra argmapper args
+) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(b.internal()))...,
 	)
 }
 
+// Calls the function provided and converts the
+// result to an expected type. If no type conversion
+// is required, a `false` value for the expectedType
+// will return the raw interface return value. Automatically
+// provided args include hclog.Logger and pluginargs.Internal
+// typed arguments, registered mappers, and a custom logger
+// for argmapper.
+//
+// NOTE: Provide a `false` value for expectedType if no
+// type conversion is required.
 func (b *baseClient) callDynamicFunc(
 	f interface{}, // function to call
-	expectedType interface{}, // expected return type
+	expectedType interface{}, // nil pointer of expected return type
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
 	internal := b.internal()
 	defer internal.Cleanup.Close()
 	callArgs = append(callArgs,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
 	)
 
-	return callDynamicFunc(f, expectedType, b.Mappers, callArgs...)
+	return dynamic.CallFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
+// Calls the function provided and converts the
+// result to an expected type. If no type conversion
+// is required, a `false` value for the expectedType
+// will return the raw interface return value. Automatically
+// provided args include hclog.Logger and pluginargs.Internal
+// typed arguments, registered mappers, and a custom logger
+// for argmapper.
+//
+// NOTE: Provide a `false` value for expectedType if no
+// type conversion is required.
 func (b *baseServer) callDynamicFunc(
 	f interface{}, // function to call
-	expectedType interface{}, // expected return type
+	expectedType interface{}, // nil pointer of expected return type
 	args funcspec.Args, // funspec defined arguments
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
@@ -145,24 +175,12 @@ func (b *baseServer) callDynamicFunc(
 		)
 	}
 	callArgs = append(callArgs,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
 	)
 
-	return callDynamicFunc(f, expectedType, b.Mappers, callArgs...)
-}
-
-func (b *baseServer) generateArgSpec(fn *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
-	f, err := funcspec.ArgSpec(fn, append(args,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
-		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Typed(b.internal()))...,
-	)
-	if err != nil {
-		return f, err
-	}
-	return f, err
+	return dynamic.CallFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
 func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
@@ -170,7 +188,7 @@ func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagra
 		return f.Spec, nil
 	}
 	f, err := funcspec.Spec(fn, append(args,
-		argmapper.Logger(plugincomponent.ArgmapperLogger),
+		argmapper.Logger(dynamic.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
 	)
