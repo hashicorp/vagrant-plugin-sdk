@@ -499,6 +499,7 @@ func (s *communicatorServer) WaitForReady(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ReadyResp, error) {
+
 	raw, err := s.callDynamicFunc(s.Impl.WaitForReadyFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx))
 

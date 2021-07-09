@@ -216,10 +216,6 @@ func (s *hostServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
 	raw, err := s.callDynamicFunc(s.Impl.HasCapabilityFunc(), (*bool)(nil),
 		args.Args, argmapper.Typed(ctx))
 
@@ -246,10 +242,6 @@ func (s *hostServer) Capability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
 	_, err := s.callDynamicFunc(s.Impl.CapabilityFunc(args.Name), false,
 		args.FuncArgs.Args, argmapper.Typed(ctx))
 
@@ -275,10 +267,6 @@ func (s *hostServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Host_DetectResp, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
 	raw, err := s.callDynamicFunc(s.Impl.DetectFunc(), (*bool)(nil),
 		args.Args, argmapper.Typed(ctx))
 

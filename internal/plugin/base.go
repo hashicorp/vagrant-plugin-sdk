@@ -16,8 +16,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -183,8 +182,12 @@ func (b *baseServer) callDynamicFunc(
 	return dynamic.CallFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
-func (b *baseServer) generateSpec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if f, ok := fn.(*component.SpicyFunc); ok {
+// Generate a funcspec based on the provided function
+func (b *baseServer) generateSpec(
+	fn interface{}, // function to generate funcspec
+	args ...argmapper.Arg, // optional argmapper args
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if f, ok := fn.(*dynamic.SpecAndFunc); ok {
 		return f.Spec, nil
 	}
 	f, err := funcspec.Spec(fn, append(args,

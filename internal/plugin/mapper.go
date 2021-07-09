@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )

@@ -178,6 +178,7 @@ func (s *commandServer) CommandInfoSpec(
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
+
 	return s.generateSpec(s.Impl.CommandInfoFunc())
 }
 

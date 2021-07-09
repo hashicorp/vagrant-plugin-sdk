@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 )
 
