@@ -12,8 +12,6 @@ package component
 
 import (
 	"github.com/DavidGamba/go-getoptions/option"
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 //go:generate stringer -type=Type -linecomment
@@ -184,9 +182,4 @@ type AuthResult struct {
 
 type NamedCapability struct {
 	Capability string
-}
-
-type SpicyFunc struct {
-	Func *argmapper.Func
-	Spec *vagrant_plugin_sdk.FuncSpec
 }
