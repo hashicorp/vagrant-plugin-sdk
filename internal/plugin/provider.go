@@ -98,7 +98,9 @@ func (c *providerClient) UsableFunc() interface{} {
 
 func (c *providerClient) Usable() (bool, error) {
 	f := c.UsableFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.ctx),
+	)
 	if err != nil {
 		return false, err
 	}
@@ -124,8 +126,9 @@ func (c *providerClient) InitFunc() interface{} {
 
 func (c *providerClient) Init(machine core.Machine) (bool, error) {
 	f := c.InitFunc()
-	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (*bool)(nil), f,
+	_, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(machine),
+		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
 		return false, err
@@ -152,7 +155,9 @@ func (c *providerClient) InstalledFunc() interface{} {
 
 func (c *providerClient) Installed() (bool, error) {
 	f := c.InstalledFunc()
-	raw, err := c.callRemoteDynamicFunc(c.ctx, nil, (*bool)(nil), f)
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.ctx),
+	)
 	if err != nil {
 		return false, err
 	}
@@ -178,7 +183,9 @@ func (c *providerClient) ActionUpFunc() interface{} {
 
 func (c *providerClient) ActionUp() error {
 	f := c.ActionUpFunc()
-	_, err := c.callRemoteDynamicFunc(context.Background(), nil, (interface{})(nil), f)
+	_, err := c.callDynamicFunc(f, false,
+		argmapper.Typed(c.ctx),
+	)
 	if err != nil {
 		return err
 	}
@@ -231,15 +238,15 @@ func (s *providerServer) Usable(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Provider_UsableResp, error) {
-	raw, err := s.callBoolLocalDynamicFunc(
-		s.Impl.UsableFunc(), args.Args, argmapper.Typed(ctx),
-	)
+	raw, err := s.callDynamicFunc(s.Impl.UsableFunc(), (*bool)(nil),
+		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Provider_UsableResp{IsUsable: raw}, nil
+	return &vagrant_plugin_sdk.Provider_UsableResp{
+		IsUsable: raw.(bool)}, nil
 }
 
 func (s *providerServer) InstalledSpec(
@@ -257,15 +264,15 @@ func (s *providerServer) Installed(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Provider_InstalledResp, error) {
-	raw, err := s.callBoolLocalDynamicFunc(
-		s.Impl.InstalledFunc(), args.Args, argmapper.Typed(ctx),
-	)
+	raw, err := s.callDynamicFunc(s.Impl.InstalledFunc(), (*bool)(nil),
+		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Provider_InstalledResp{IsInstalled: raw}, nil
+	return &vagrant_plugin_sdk.Provider_InstalledResp{
+		IsInstalled: raw.(bool)}, nil
 }
 
 func (s *providerServer) ActionUpSpec(
@@ -283,12 +290,8 @@ func (s *providerServer) ActionUp(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Provider_ActionResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.ActionUpFunc(),
-		args.Args,
-		(*proto.Message)(nil),
-		argmapper.Typed(ctx),
-	)
+	raw, err := s.callDynamicFunc(s.Impl.ActionUpFunc(), (*proto.Message)(nil),
+		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
@@ -320,9 +323,8 @@ func (s *providerServer) Init(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*empty.Empty, error) {
-	_, err := s.callBoolLocalDynamicFunc(
-		s.Impl.InitFunc(), args.Args, argmapper.Typed(ctx),
-	)
+	_, err := s.callDynamicFunc(s.Impl.InitFunc(), false,
+		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err

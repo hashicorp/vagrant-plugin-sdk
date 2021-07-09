@@ -340,7 +340,8 @@ func (p *projectServer) Host(
 		return
 	}
 
-	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil))
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
+		argmapper.Typed(ctx))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_Host)
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/hashicorp/go-argmapper"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -14,7 +15,7 @@ import (
 // to invoke this function. The callback can have an argument type of Args
 // in order to get access to the required dynamic proto.Any types of the
 // FuncSpec.
-func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg) *argmapper.Func {
+func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg) *dynamic.SpecAndFunc {
 	// Build a Func around our callback so that we can inspect the
 	// input/output sets since we want to merge with that.
 	cbFunc, err := argmapper.NewFunc(cb)
@@ -137,7 +138,10 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 		panic(err)
 	}
 
-	return result
+	return &dynamic.SpecAndFunc{
+		Func: result,
+		Spec: s,
+	}
 }
 
 var (

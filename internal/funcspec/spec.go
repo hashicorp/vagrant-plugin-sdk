@@ -14,6 +14,30 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
+func ArgSpec(f *argmapper.Func, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, error) {
+	// Grab the input set of the function and build up our funcspec
+	result := vagrant_plugin_sdk.FuncSpec{Name: f.Name()}
+	for _, v := range f.Input().Values() {
+		if reflect.Zero(v.Type).Interface() == nil {
+			continue
+		}
+		result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
+			Name: v.Name,
+			Type: v.Subtype,
+		})
+	}
+
+	// Grab the output set and store that
+	for _, v := range f.Output().Values() {
+		result.Result = append(result.Result, &vagrant_plugin_sdk.FuncSpec_Value{
+			Name: v.Name,
+			Type: typeToMessage(v.Type),
+		})
+	}
+
+	return &result, nil
+}
+
 // Spec takes a function pointer and generates a FuncSpec from it. The
 // function must only take arguments that are proto.Message implementations
 // or have a chain of converters that directly convert to a proto.Message.

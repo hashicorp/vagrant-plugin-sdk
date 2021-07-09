@@ -168,26 +168,27 @@ func (s *authenticatorServer) Auth(
 ) (*vagrant_plugin_sdk.Auth_AuthResponse, error) {
 	internal := s.internal()
 	defer internal.Cleanup.Close()
+	return nil, nil
 
-	raw, err := callDynamicFunc2(s.Impl.(component.Authenticator).AuthFunc(), args.Args,
-		argmapper.ConverterFunc(s.Mappers...),
-		argmapper.Typed(internal),
-		argmapper.Typed(ctx),
-	)
-	if err != nil {
-		return nil, err
-	}
+	// raw, err := callDynamicFunc2(s.Impl.(component.Authenticator).AuthFunc(), args.Args,
+	// 	argmapper.ConverterFunc(s.Mappers...),
+	// 	argmapper.Typed(internal),
+	// 	argmapper.Typed(ctx),
+	// )
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	result, ok := raw.(*component.AuthResult)
-	if !ok {
-		return &vagrant_plugin_sdk.Auth_AuthResponse{
-			Authenticated: false,
-		}, nil
-	}
+	// result, ok := raw.(*component.AuthResult)
+	// if !ok {
+	// 	return &vagrant_plugin_sdk.Auth_AuthResponse{
+	// 		Authenticated: false,
+	// 	}, nil
+	// }
 
-	return &vagrant_plugin_sdk.Auth_AuthResponse{
-		Authenticated: result.Authenticated,
-	}, nil
+	// return &vagrant_plugin_sdk.Auth_AuthResponse{
+	// 	Authenticated: result.Authenticated,
+	// }, nil
 }
 
 func (s *authenticatorServer) ValidateAuthSpec(
@@ -208,16 +209,18 @@ func (s *authenticatorServer) ValidateAuth(
 	internal := s.internal()
 	defer internal.Cleanup.Close()
 
-	_, err := callDynamicFunc2(s.Impl.(component.Authenticator).ValidateAuthFunc(), args.Args,
-		argmapper.ConverterFunc(s.Mappers...),
-		argmapper.Typed(internal),
-		argmapper.Typed(ctx),
-	)
-	if err != nil {
-		return nil, err
-	}
+	return nil, nil
 
-	return &empty.Empty{}, nil
+	// _, err := callDynamicFunc2(s.Impl.(component.Authenticator).ValidateAuthFunc(), args.Args,
+	// 	argmapper.ConverterFunc(s.Mappers...),
+	// 	argmapper.Typed(internal),
+	// 	argmapper.Typed(ctx),
+	// )
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &empty.Empty{}, nil
 }
 
 var (

@@ -3,6 +3,7 @@ package pluginargs
 
 import (
 	"github.com/hashicorp/go-argmapper"
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 )
 
@@ -13,6 +14,7 @@ type Internal struct {
 	Broker  *plugin.GRPCBroker
 	Mappers []*argmapper.Func
 	Cleanup *Cleanup
+	Logger  hclog.Logger
 }
 
 // Cleanup can be used to register cleanup functions.

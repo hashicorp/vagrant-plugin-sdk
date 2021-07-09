@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mattn/go-colorable"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
@@ -65,7 +66,7 @@ func Main(opts ...Option) {
 		m, ok := raw.(*argmapper.Func)
 		if !ok {
 			var err error
-			m, err = argmapper.NewFunc(raw, argmapper.Logger(log))
+			m, err = argmapper.NewFunc(raw, argmapper.Logger(dynamic.Logger))
 			if err != nil {
 				panic(err)
 			}

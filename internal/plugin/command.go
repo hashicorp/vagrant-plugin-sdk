@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
@@ -99,12 +98,8 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 
 func (c *commandClient) CommandInfo() (*component.CommandInfo, error) {
 	f := c.CommandInfoFunc()
-	raw, err := c.callRemoteDynamicFunc(
-		c.ctx,
-		c.Mappers,
-		(**component.CommandInfo)(nil),
-		f,
-	)
+	raw, err := c.callDynamicFunc(f, (**component.CommandInfo)(nil),
+		argmapper.Typed(c.ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +131,9 @@ func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
 
 func (c *commandClient) Execute(cliArgs []string) (int64, error) {
 	f := c.ExecuteFunc(cliArgs)
-	raw, err := c.callRemoteDynamicFunc(c.ctx, c.Mappers, (*int64)(nil), f)
+
+	raw, err := c.callDynamicFunc(f, (*int64)(nil),
+		argmapper.Typed(c.ctx))
 	if err != nil {
 		return -1, err
 	}
@@ -181,6 +178,7 @@ func (s *commandServer) CommandInfoSpec(
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
+
 	return s.generateSpec(s.Impl.CommandInfoFunc())
 }
 
@@ -188,10 +186,9 @@ func (s *commandServer) CommandInfo(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
-	raw, err := s.callLocalDynamicFunc(
-		s.Impl.CommandInfoFunc(),
+	raw, err := s.callDynamicFunc(s.Impl.CommandInfoFunc(),
+		(**vagrant_plugin_sdk.Command_CommandInfo)(nil),
 		req.Args,
-		(*component.CommandInfo)(nil),
 		argmapper.Typed(ctx),
 	)
 
@@ -199,9 +196,8 @@ func (s *commandServer) CommandInfo(
 		return nil, err
 	}
 
-	commandInfo, err := protomappers.CommandInfoProto(raw.(*component.CommandInfo))
 	return &vagrant_plugin_sdk.Command_CommandInfoResp{
-		CommandInfo: commandInfo,
+		CommandInfo: raw.(*vagrant_plugin_sdk.Command_CommandInfo),
 	}, nil
 }
 
@@ -219,8 +215,8 @@ func (s *commandServer) Execute(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Command_ExecuteReq,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
-	raw, err := s.callUncheckedLocalDynamicFunc(
-		s.Impl.ExecuteFunc(req.CommandArgs),
+	raw, err := s.callDynamicFunc(s.Impl.ExecuteFunc(req.CommandArgs),
+		(*int64)(nil),
 		req.Spec.Args,
 		argmapper.Typed(ctx),
 	)

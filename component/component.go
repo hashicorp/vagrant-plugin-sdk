@@ -100,7 +100,7 @@ type Guest interface {
 	// Detect if machine is supported guest
 	DetectFunc() interface{}
 	// Test if capability is available
-	HasCapabilityFunc(capName string) interface{}
+	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
 }
@@ -178,4 +178,8 @@ type AuthResult struct {
 	// help text or some other information, but it didn't authenticate. However,
 	// this is not an error.
 	Authenticated bool
+}
+
+type NamedCapability struct {
+	Capability string
 }

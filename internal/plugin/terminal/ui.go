@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"sync"
 
@@ -28,6 +29,16 @@ type UIPlugin struct {
 	Impl    terminal.UI       // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+
+	target net.Addr
+}
+
+func (b *UIPlugin) SetTarget(t net.Addr) {
+	b.target = t
+}
+
+func (b *UIPlugin) Target() net.Addr {
+	return b.target
 }
 
 func (p *UIPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
