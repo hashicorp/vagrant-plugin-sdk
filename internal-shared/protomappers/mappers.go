@@ -35,6 +35,7 @@ var All = []interface{}{
 	BasisProto,
 	CommandInfo,
 	CommandInfoProto,
+	CommandInfoFromResponse,
 	DatadirBasis,
 	DatadirBasisProto,
 	DatadirProject,
@@ -397,6 +398,12 @@ func StateBagProto(
 		StreamId: id,
 		Network:  ep.Network(),
 		Target:   ep.String()}, nil
+}
+
+func CommandInfoFromResponse(
+	input *vagrant_plugin_sdk.Command_CommandInfoResp,
+) *vagrant_plugin_sdk.Command_CommandInfo {
+	return input.CommandInfo
 }
 
 func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.CommandInfo, error) {
@@ -777,7 +784,9 @@ func wrapClient(
 		}
 	} else {
 		internal.Logger.Warn("implementation does not support direct targets for wrapped plugins",
-			"plugin", hclog.Fmt("%T", p))
+			"plugin", hclog.Fmt("%T", p),
+			"implementation", hclog.Fmt("%T", impl),
+		)
 	}
 
 	// Fetch the next available steam ID from the broker
