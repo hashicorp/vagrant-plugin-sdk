@@ -33,6 +33,10 @@ import (
 var All = []interface{}{
 	Basis,
 	BasisProto,
+	Box,
+	BoxProto,
+	Host,
+	HostProto,
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
@@ -52,6 +56,8 @@ var All = []interface{}{
 	JobInfoProto,
 	Logger,
 	LoggerProto,
+	MachineState,
+	MachineStateProto,
 	MapToProto,
 	Metadata,
 	MetadataProto,
@@ -72,12 +78,6 @@ var All = []interface{}{
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
-	MachineState,
-	MachineStateProto,
-	Box,
-	BoxProto,
-	Host,
-	HostProto,
 }
 
 func NamedCapability(
