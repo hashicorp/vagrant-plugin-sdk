@@ -3,11 +3,20 @@ package dynamic
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/hashicorp/go-argmapper"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
+
+// Wraps an argmapper Func with a FuncSpec
+// definition to allow easy reuse with
+// wrapped clients
+type SpecAndFunc struct {
+	Func *argmapper.Func
+	Spec *vagrant_plugin_sdk.FuncSpec
+}
 
 // Convert a value to an expected type. Converter functions should be
 // included in the args list. It is important to note that the expectedType
@@ -67,7 +76,7 @@ func CallFunc(
 ) (interface{}, error) {
 	var rawFunc *argmapper.Func
 
-	if sf, ok := f.(*component.SpicyFunc); ok {
+	if sf, ok := f.(*SpecAndFunc); ok {
 		rawFunc = sf.Func
 	} else if af, ok := f.(*argmapper.Func); ok {
 		rawFunc = af
@@ -82,7 +91,6 @@ func CallFunc(
 		}
 	}
 
-	// Make sure we have access to our context and logger and default args
 	args = append(args, argmapper.ConverterFunc(mappers...))
 
 	// Build the chain and call it
@@ -102,7 +110,10 @@ func CallFunc(
 
 	final, err := Map(raw, expectedType, args...)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to convert %T to %T (%s)", raw, expectedType, err.Error())
+		return nil, fmt.Errorf("Failed to convert %T to %T (%s)",
+			raw,
+			strings.TrimPrefix(fmt.Sprintf("%T", expectedType), "*"), // remove leading * so we display actual expected type
+			err.Error())
 	}
 
 	return final, nil
