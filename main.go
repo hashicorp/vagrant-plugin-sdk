@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mattn/go-colorable"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/dynamic"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
 )
