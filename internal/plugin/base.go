@@ -60,6 +60,10 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
+func (b *baseClient) Close() error {
+	return nil
+}
+
 // Used internally to extract broker
 func (b *baseClient) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker

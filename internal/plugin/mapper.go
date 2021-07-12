@@ -75,7 +75,7 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 	}
 
 	// For each FuncSpec we turn that into a real mapper.Func which calls back
-	// into our clien to make an RPC call to generate the proper type.
+	// into our client to make an RPC call to generate the proper type.
 	var funcs []*argmapper.Func
 	for _, spec := range resp.Funcs {
 		specCopy := spec
