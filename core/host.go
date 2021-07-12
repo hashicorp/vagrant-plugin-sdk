@@ -1,8 +1,8 @@
 package core
 
-// import (
-// 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-// )
+import (
+	"io"
+)
 
 type Host interface {
 	// Config() interface{}
@@ -10,4 +10,6 @@ type Host interface {
 	Detect() (bool, error)
 	HasCapability(name string) (bool, error)
 	Capability(name string, args ...interface{}) (interface{}, error)
+
+	io.Closer
 }
