@@ -54,23 +54,6 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		}
 	}
 
-	// var mappers []*argmapper.Func
-	// for _, raw := range MapperFns {
-	// 	// If the mapper is already a argmapper.Func, then we let that through as-is
-	// 	m, ok := raw.(*argmapper.Func)
-	// 	if !ok {
-	// 		var err error
-	// 		m, err = argmapper.NewFunc(raw)
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 	}
-
-	// 	mappers = append(mappers, m)
-	// }
-	c.Mappers = append(c.Mappers, MapperFns...)
-	//c.Mappers = append(c.Mappers, mappers...)
-
 	// Set the mappers
 	if err := setFieldValue(result, c.Mappers); err != nil {
 		panic(err)
