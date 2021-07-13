@@ -22,7 +22,7 @@ type Machine interface {
 
 	// Functions
 	Guest() (g Guest, err error)
-	IndexUUID() (id string, err error)
+	GetUUID() (id string, err error)
 	SetUUID(id string) (err error)
 	Inspect() (printable string, err error)
 	Reload() (err error)

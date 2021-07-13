@@ -134,7 +134,7 @@ func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err err
 	return
 }
 
-func (t *targetMachineClient) IndexUUID() (id string, err error) {
+func (t *targetMachineClient) GetUUID() (id string, err error) {
 	uuid, err := t.client.GetUUID(t.ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -298,7 +298,7 @@ func (t *targetMachineServer) GetUUID(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.Target_Machine_GetUUIDResponse, error) {
-	uuid, err := t.Impl.IndexUUID()
+	uuid, err := t.Impl.GetUUID()
 	if err != nil {
 		return nil, err
 	}
