@@ -143,6 +143,12 @@ message Args {
     string target = 3;
   }
 
+  message Guest {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message Communicator {
     uint32 stream_id = 1;
     string network = 2;
@@ -888,6 +894,7 @@ service TargetMachineService {
   rpc SetUUID(Target.Machine.SetUUIDRequest) returns (google.protobuf.Empty);
   rpc GetUUID(google.protobuf.Empty) returns (Target.Machine.GetUUIDResponse);
   rpc Box(google.protobuf.Empty) returns (Args.Target.Machine.Box);
+  rpc Guest(google.protobuf.Empty) returns (Args.Guest);
 }
 
 message Target {

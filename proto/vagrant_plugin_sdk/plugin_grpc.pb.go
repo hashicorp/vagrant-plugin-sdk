@@ -4089,6 +4089,7 @@ type TargetMachineServiceClient interface {
 	SetUUID(ctx context.Context, in *Target_Machine_SetUUIDRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetUUID(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_GetUUIDResponse, error)
 	Box(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Target_Machine_Box, error)
+	Guest(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Guest, error)
 }
 
 type targetMachineServiceClient struct {
@@ -4297,6 +4298,15 @@ func (c *targetMachineServiceClient) Box(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) Guest(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Guest, error) {
+	out := new(Args_Guest)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Guest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetMachineServiceServer is the server API for TargetMachineService service.
 // All implementations should embed UnimplementedTargetMachineServiceServer
 // for forward compatibility
@@ -4325,6 +4335,7 @@ type TargetMachineServiceServer interface {
 	SetUUID(context.Context, *Target_Machine_SetUUIDRequest) (*empty.Empty, error)
 	GetUUID(context.Context, *empty.Empty) (*Target_Machine_GetUUIDResponse, error)
 	Box(context.Context, *empty.Empty) (*Args_Target_Machine_Box, error)
+	Guest(context.Context, *empty.Empty) (*Args_Guest, error)
 }
 
 // UnimplementedTargetMachineServiceServer should be embedded to have forward compatible implementations.
@@ -4396,6 +4407,9 @@ func (UnimplementedTargetMachineServiceServer) GetUUID(context.Context, *empty.E
 }
 func (UnimplementedTargetMachineServiceServer) Box(context.Context, *empty.Empty) (*Args_Target_Machine_Box, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Box not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) Guest(context.Context, *empty.Empty) (*Args_Guest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Guest not implemented")
 }
 
 // UnsafeTargetMachineServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4805,6 +4819,24 @@ func _TargetMachineService_Box_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_Guest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).Guest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Guest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).Guest(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetMachineService",
 	HandlerType: (*TargetMachineServiceServer)(nil),
@@ -4896,6 +4928,10 @@ var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Box",
 			Handler:    _TargetMachineService_Box_Handler,
+		},
+		{
+			MethodName: "Guest",
+			Handler:    _TargetMachineService_Guest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

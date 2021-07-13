@@ -90,8 +90,18 @@ type targetMachineServer struct {
 }
 
 func (t *targetMachineClient) Guest() (g core.Guest, err error) {
-	// TODO: needs guest component and communicator components to be available
-	return nil, errNotImplemented
+	guestResp, err := t.client.Guest(t.ctx, &empty.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(guestResp, (*core.Guest)(nil),
+		argmapper.Typed(t.ctx))
+	if err == nil {
+		g = result.(core.Guest)
+	}
+
+	return
 }
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
@@ -100,7 +110,7 @@ func (t *targetMachineClient) MachineState() (state *core.MachineState, err erro
 		return
 	}
 
-	result, err := t.Map(r, (*core.MachineState)(nil),
+	result, err := t.Map(r, (**core.MachineState)(nil),
 		argmapper.Typed(t.ctx))
 	if err == nil {
 		state = result.(*core.MachineState)
@@ -201,6 +211,24 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 }
 
 // Machine Server
+
+func (t *targetMachineServer) Guest(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_Guest, err error) {
+	guest, err := t.Impl.Guest()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := t.Map(guest, (**vagrant_plugin_sdk.Args_Guest)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Guest)
+	}
+
+	return
+}
 
 func (t *targetMachineServer) GetID(
 	ctx context.Context,

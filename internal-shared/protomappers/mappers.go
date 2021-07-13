@@ -37,6 +37,8 @@ var All = []interface{}{
 	BoxProto,
 	Host,
 	HostProto,
+	Guest,
+	GuestProto,
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
@@ -52,8 +54,6 @@ var All = []interface{}{
 	DatadirComponentProto,
 	Flags,
 	FlagsProto,
-	Host,
-	HostProto,
 	JobInfo,
 	JobInfoProto,
 	Logger,
@@ -150,6 +150,50 @@ func Host(
 	}
 
 	return client.(core.Host), nil
+}
+
+func GuestProto(
+	input component.Guest,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Guest, error) {
+	p := &plugincomponent.GuestPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    input,
+	}
+
+	internal.Logger.Trace("wrapping host plugin", "guest", input)
+	id, ep, err := wrapClient(input, p, internal)
+	if err != nil {
+		internal.Logger.Warn("failed to wrap host plugin", "guest", input, "error", err)
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Args_Guest{
+		Network:  ep.Network(),
+		Target:   ep.String(),
+		StreamId: id,
+	}, nil
+}
+
+func Guest(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Guest,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Guest, error) {
+	p := &plugincomponent.GuestPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		internal.Logger.Warn("failed to connect to wrapped guest plugin", "connection-info", input, "error", err)
+		return nil, err
+	}
+
+	return client.(core.Guest), nil
 }
 
 // Flags maps
