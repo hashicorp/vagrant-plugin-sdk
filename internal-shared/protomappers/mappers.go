@@ -40,6 +40,8 @@ var All = []interface{}{
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
+	Communicator,
+	CommunicatorProto,
 	DatadirBasis,
 	DatadirBasisProto,
 	DatadirProject,
@@ -538,6 +540,48 @@ func Basis(
 	}
 
 	return client.(core.Basis), nil
+}
+
+func CommunicatorProto(
+	c component.Communicator,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Communicator, error) {
+	cp := &plugincomponent.CommunicatorPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    c,
+	}
+
+	id, ep, err := wrapClient(c, cp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Communicator{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
+	}, nil
+}
+
+func Communicator(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Communicator,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Communicator, error) {
+	p := &plugincomponent.CommunicatorPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Communicator), nil
 }
 
 func ProjectProto(

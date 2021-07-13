@@ -79,24 +79,29 @@ type targetServer struct {
 	//vagrant_plugin_sdk.UnimplementedTargetServiceServer
 }
 
-func (t *targetClient) Communicate() (comm core.Communicator, err error) {
-
-	// TODO:
-	return nil, errNotImplemented
+func (c *targetClient) Communicate() (comm core.Communicator, err error) {
+	commArg, err := c.client.Communicate(c.ctx, &empty.Empty{})
+	result, err := c.Map(commArg, (*core.Communicator)(nil))
+	if err != nil {
+		return
+	}
+	comm = result.(core.Communicator)
+	return
 }
 
-func (t *targetClient) SetName(name string) (err error) {
-	_, err = t.client.SetName(t.ctx, &vagrant_plugin_sdk.Target_SetNameRequest{
+func (c *targetClient) SetName(name string) (err error) {
+	_, err = c.client.SetName(c.ctx, &vagrant_plugin_sdk.Target_SetNameRequest{
 		Name: name})
 	return
 }
 
-func (t *targetClient) Provider() (p core.Provider, err error) {
+func (c *targetClient) Provider() (p core.Provider, err error) {
+	// TODO
 	return nil, errNotImplemented
 }
 
-func (t *targetClient) VagrantfileName() (name string, err error) {
-	r, err := t.client.VagrantfileName(t.ctx, &empty.Empty{})
+func (c *targetClient) VagrantfileName() (name string, err error) {
+	r, err := c.client.VagrantfileName(c.ctx, &empty.Empty{})
 	if err == nil {
 		name = r.Name
 	}
@@ -104,8 +109,8 @@ func (t *targetClient) VagrantfileName() (name string, err error) {
 	return
 }
 
-func (t *targetClient) VagrantfilePath() (p path.Path, err error) {
-	r, err := t.client.VagrantfilePath(t.ctx, &empty.Empty{})
+func (c *targetClient) VagrantfilePath() (p path.Path, err error) {
+	r, err := c.client.VagrantfilePath(c.ctx, &empty.Empty{})
 	if err == nil {
 		p = path.NewPath(r.Path)
 	}
@@ -113,8 +118,8 @@ func (t *targetClient) VagrantfilePath() (p path.Path, err error) {
 	return
 }
 
-func (t *targetClient) UpdatedAt() (utime *time.Time, err error) {
-	r, err := t.client.UpdatedAt(t.ctx, &empty.Empty{})
+func (c *targetClient) UpdatedAt() (utime *time.Time, err error) {
+	r, err := c.client.UpdatedAt(c.ctx, &empty.Empty{})
 	if err == nil {
 		ut := r.UpdatedAt.AsTime()
 		utime = &ut
@@ -240,6 +245,23 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 }
 
 // Target Server
+
+func (s *targetServer) Communicate(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Args_Communicator, error) {
+	c, err := s.Impl.Communicate()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := s.Map(c, (**vagrant_plugin_sdk.Args_Communicator)(nil))
+	if err != nil {
+		return nil, err
+	}
+
+	return result.(*vagrant_plugin_sdk.Args_Communicator), nil
+}
 
 func (s *targetServer) Name(
 	ctx context.Context,

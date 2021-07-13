@@ -143,6 +143,12 @@ message Args {
     string target = 3;
   }
 
+  message Communicator {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message NamedCapability {
     string Capability = 1;
   }
@@ -853,6 +859,7 @@ service TargetService {
   rpc VagrantfileName(google.protobuf.Empty) returns (Target.VagrantfileNameResponse);
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
+  rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
 }
 
 service TargetMachineService {
@@ -871,7 +878,8 @@ service TargetMachineService {
   rpc VagrantfileName(google.protobuf.Empty) returns (Target.VagrantfileNameResponse);
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
-
+  rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
+  
   // Machine specific
   rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);
   rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
