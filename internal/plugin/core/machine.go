@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"errors"
+	"reflect"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
@@ -89,31 +90,64 @@ type targetMachineServer struct {
 }
 
 func (t *targetMachineClient) Guest() (g core.Guest, err error) {
-	// TODO
+	// TODO: needs guest component and communicator components to be available
 	return nil, errNotImplemented
 }
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
-	// TODO
-	return &core.MachineState{ID: "UNKNOWN"}, nil
+	r, err := t.client.GetState(t.ctx, &empty.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := t.Map(r, (*core.MachineState)(nil),
+		argmapper.Typed(t.ctx))
+	if err == nil {
+		state = result.(*core.MachineState)
+	}
+
+	return
 }
 
 func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err error) {
-	return nil
+	stateArg, err := t.Map(
+		state,
+		(*vagrant_plugin_sdk.Args_Target_Machine_State)(nil),
+		argmapper.Typed(t.ctx),
+	)
+	_, err = t.client.SetState(
+		t.ctx,
+		&vagrant_plugin_sdk.Target_Machine_SetStateRequest{
+			State: stateArg.(*vagrant_plugin_sdk.Args_Target_Machine_State),
+		},
+	)
+	return
 }
 
 func (t *targetMachineClient) IndexUUID() (id string, err error) {
-	// TODO
-	return "", errNotImplemented
+	uuid, err := t.client.GetUUID(t.ctx, &empty.Empty{})
+	if err != nil {
+		return
+	}
+	id = uuid.Uuid
+	return
 }
 
 func (t *targetMachineClient) SetUUID(uuid string) (err error) {
-	return errNotImplemented
+	_, err = t.client.SetUUID(
+		t.ctx,
+		&vagrant_plugin_sdk.Target_Machine_SetUUIDRequest{
+			Uuid: uuid,
+		},
+	)
+	return
 }
 
 func (t *targetMachineClient) Inspect() (printable string, err error) {
-	// TODO
-	return "", errNotImplemented
+	name, err := t.Name()
+	provider, err := t.Provider()
+	printable = "#<" + reflect.TypeOf(t).String() + ": " + name + " (" + reflect.TypeOf(provider).String() + ")>"
+	return
 }
 
 func (t *targetMachineClient) Reload() (err error) {
@@ -165,6 +199,8 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 
 	return
 }
+
+// Machine Server
 
 func (t *targetMachineServer) GetID(
 	ctx context.Context,

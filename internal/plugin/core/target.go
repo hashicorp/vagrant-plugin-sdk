@@ -81,7 +81,7 @@ type targetServer struct {
 
 func (t *targetClient) Communicate() (comm core.Communicator, err error) {
 
-	// TODO
+	// TODO:
 	return nil, errNotImplemented
 }
 
@@ -238,6 +238,8 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 
 	return
 }
+
+// Target Server
 
 func (s *targetServer) Name(
 	ctx context.Context,
