@@ -66,7 +66,8 @@ func Main(opts ...Option) {
 		m, ok := raw.(*argmapper.Func)
 		if !ok {
 			var err error
-			m, err = argmapper.NewFunc(raw, argmapper.Logger(dynamic.Logger))
+			m, err = argmapper.NewFunc(raw,
+				argmapper.Logger(dynamic.Logger))
 			if err != nil {
 				panic(err)
 			}
