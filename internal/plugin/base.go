@@ -96,7 +96,6 @@ func (b *baseClient) generateFunc(
 	args ...argmapper.Arg, // any extra argmapper args
 ) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
-		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(b.internal()))...,
 	)
 }
@@ -119,7 +118,6 @@ func (b *baseClient) callDynamicFunc(
 	internal := b.internal()
 	defer internal.Cleanup.Close()
 	callArgs = append(callArgs,
-		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
 	)
@@ -178,7 +176,6 @@ func (b *baseServer) callDynamicFunc(
 		)
 	}
 	callArgs = append(callArgs,
-		argmapper.Logger(dynamic.Logger),
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
 	)
@@ -195,7 +192,6 @@ func (b *baseServer) generateSpec(
 		return f.Spec, nil
 	}
 	f, err := funcspec.Spec(fn, append(args,
-		argmapper.Logger(dynamic.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.internal()))...,
 	)
