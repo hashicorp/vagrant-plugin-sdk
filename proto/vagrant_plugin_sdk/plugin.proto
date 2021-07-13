@@ -609,7 +609,7 @@ message Command {
   }
 
   message ExecuteResp {
-    int64 exit_code = 1;
+    int32 exit_code = 1;
   }
 
   message ExecuteReq {
