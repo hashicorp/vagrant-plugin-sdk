@@ -18,7 +18,8 @@ import (
 func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg) *dynamic.SpecAndFunc {
 	// Build a Func around our callback so that we can inspect the
 	// input/output sets since we want to merge with that.
-	cbFunc, err := argmapper.NewFunc(cb)
+	cbFunc, err := argmapper.NewFunc(cb,
+		argmapper.Logger(dynamic.Logger))
 	if err != nil {
 		panic(err)
 	}

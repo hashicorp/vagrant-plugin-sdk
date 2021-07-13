@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -96,8 +95,7 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 		}
 
 		// Build our funcspec function
-		f := funcspec.Func(specCopy, cb,
-			argmapper.Logger(dynamic.Logger))
+		f := funcspec.Func(specCopy, cb)
 
 		// Accumulate our functions
 		funcs = append(funcs, f.Func)

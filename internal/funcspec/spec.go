@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -64,7 +65,8 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 	}, args...)
 
 	// Build our function
-	f, err := argmapper.NewFunc(fn)
+	f, err := argmapper.NewFunc(fn,
+		argmapper.Logger(dynamic.Logger))
 	if err != nil {
 		return nil, err
 	}
