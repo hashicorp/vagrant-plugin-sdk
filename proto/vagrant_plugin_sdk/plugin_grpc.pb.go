@@ -4090,6 +4090,10 @@ type TargetMachineServiceClient interface {
 	GetUUID(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_GetUUIDResponse, error)
 	Box(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Target_Machine_Box, error)
 	Guest(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Guest, error)
+	Reload(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
+	ConnectionInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_ConnectionInfoResponse, error)
+	UID(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_UIDResponse, error)
+	SyncedFolders(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_SyncedFoldersResponse, error)
 }
 
 type targetMachineServiceClient struct {
@@ -4307,6 +4311,42 @@ func (c *targetMachineServiceClient) Guest(ctx context.Context, in *empty.Empty,
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) Reload(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Reload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *targetMachineServiceClient) ConnectionInfo(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_ConnectionInfoResponse, error) {
+	out := new(Target_Machine_ConnectionInfoResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/ConnectionInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *targetMachineServiceClient) UID(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_UIDResponse, error) {
+	out := new(Target_Machine_UIDResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/UID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *targetMachineServiceClient) SyncedFolders(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_SyncedFoldersResponse, error) {
+	out := new(Target_Machine_SyncedFoldersResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/SyncedFolders", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetMachineServiceServer is the server API for TargetMachineService service.
 // All implementations should embed UnimplementedTargetMachineServiceServer
 // for forward compatibility
@@ -4336,6 +4376,10 @@ type TargetMachineServiceServer interface {
 	GetUUID(context.Context, *empty.Empty) (*Target_Machine_GetUUIDResponse, error)
 	Box(context.Context, *empty.Empty) (*Args_Target_Machine_Box, error)
 	Guest(context.Context, *empty.Empty) (*Args_Guest, error)
+	Reload(context.Context, *empty.Empty) (*empty.Empty, error)
+	ConnectionInfo(context.Context, *empty.Empty) (*Target_Machine_ConnectionInfoResponse, error)
+	UID(context.Context, *empty.Empty) (*Target_Machine_UIDResponse, error)
+	SyncedFolders(context.Context, *empty.Empty) (*Target_Machine_SyncedFoldersResponse, error)
 }
 
 // UnimplementedTargetMachineServiceServer should be embedded to have forward compatible implementations.
@@ -4410,6 +4454,18 @@ func (UnimplementedTargetMachineServiceServer) Box(context.Context, *empty.Empty
 }
 func (UnimplementedTargetMachineServiceServer) Guest(context.Context, *empty.Empty) (*Args_Guest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Guest not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) Reload(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reload not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) ConnectionInfo(context.Context, *empty.Empty) (*Target_Machine_ConnectionInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConnectionInfo not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) UID(context.Context, *empty.Empty) (*Target_Machine_UIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UID not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) SyncedFolders(context.Context, *empty.Empty) (*Target_Machine_SyncedFoldersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncedFolders not implemented")
 }
 
 // UnsafeTargetMachineServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4837,6 +4893,78 @@ func _TargetMachineService_Guest_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_Reload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).Reload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Reload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).Reload(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TargetMachineService_ConnectionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).ConnectionInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/ConnectionInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).ConnectionInfo(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TargetMachineService_UID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).UID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/UID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).UID(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TargetMachineService_SyncedFolders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).SyncedFolders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/SyncedFolders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).SyncedFolders(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetMachineService",
 	HandlerType: (*TargetMachineServiceServer)(nil),
@@ -4932,6 +5060,22 @@ var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Guest",
 			Handler:    _TargetMachineService_Guest_Handler,
+		},
+		{
+			MethodName: "Reload",
+			Handler:    _TargetMachineService_Reload_Handler,
+		},
+		{
+			MethodName: "ConnectionInfo",
+			Handler:    _TargetMachineService_ConnectionInfo_Handler,
+		},
+		{
+			MethodName: "UID",
+			Handler:    _TargetMachineService_UID_Handler,
+		},
+		{
+			MethodName: "SyncedFolders",
+			Handler:    _TargetMachineService_SyncedFolders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

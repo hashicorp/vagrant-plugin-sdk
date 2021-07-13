@@ -155,6 +155,12 @@ message Args {
     string target = 3;
   }
 
+  message SyncedFolder {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message NamedCapability {
     string Capability = 1;
   }
@@ -895,6 +901,10 @@ service TargetMachineService {
   rpc GetUUID(google.protobuf.Empty) returns (Target.Machine.GetUUIDResponse);
   rpc Box(google.protobuf.Empty) returns (Args.Target.Machine.Box);
   rpc Guest(google.protobuf.Empty) returns (Args.Guest);
+  rpc Reload(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ConnectionInfo(google.protobuf.Empty) returns(Target.Machine.ConnectionInfoResponse);
+  rpc UID(google.protobuf.Empty) returns(Target.Machine.UIDResponse);
+  rpc SyncedFolders(google.protobuf.Empty) returns (Target.Machine.SyncedFoldersResponse);
 }
 
 message Target {
@@ -947,6 +957,15 @@ message Target {
     }
     message SetUUIDRequest {
       string uuid = 1;
+    }
+    message ConnectionInfoResponse {
+      google.protobuf.Any connection_info = 1;
+    }
+    message UIDResponse{
+      int32 user_id = 1;
+    }
+    message SyncedFoldersResponse {
+      repeated Args.SyncedFolder synced_folders = 1;
     }
   }
 }

@@ -212,6 +212,34 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 
 // Machine Server
 
+func (t *targetMachineServer) ConnectionInfo(
+	ctx context.Context,
+	_ *empty.Empty,
+) (resp *vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse, err error) {
+	return
+}
+
+func (t *targetMachineServer) Reload(
+	ctx context.Context,
+	_ *empty.Empty,
+) (e *empty.Empty, err error) {
+	return
+}
+
+func (t *targetMachineServer) SyncedFolders(
+	ctx context.Context,
+	_ *empty.Empty,
+) (resp *vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse, err error) {
+	return
+}
+
+func (t *targetMachineServer) UID(
+	ctx context.Context,
+	_ *empty.Empty,
+) (resp *vagrant_plugin_sdk.Target_Machine_UIDResponse, err error) {
+	return
+}
+
 func (t *targetMachineServer) Guest(
 	ctx context.Context,
 	_ *empty.Empty,
