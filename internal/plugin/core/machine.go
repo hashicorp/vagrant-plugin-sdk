@@ -171,7 +171,7 @@ func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err e
 	return info, mapstructure.Decode(connResp, &info)
 }
 
-func (t *targetMachineClient) UID() (id int32, err error) {
+func (t *targetMachineClient) UID() (id string, err error) {
 	uidResp, err := t.client.UID(t.ctx, &empty.Empty{})
 	id = uidResp.UserId
 	return

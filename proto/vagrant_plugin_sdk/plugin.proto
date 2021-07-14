@@ -962,7 +962,7 @@ message Target {
       map<string, google.protobuf.Any> connection_info = 1;
     }
     message UIDResponse{
-      int32 user_id = 1;
+      string user_id = 1;
     }
     message SyncedFoldersResponse {
       repeated Args.SyncedFolder synced_folders = 1;
