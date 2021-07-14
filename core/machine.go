@@ -18,7 +18,7 @@ type Machine interface {
 	// Attributes
 	ID() (id string, err error)
 	SetID(value string) (err error)
-	Box() (b Box, err error)
+	Box() (b *Box, err error)
 
 	// Functions
 	Guest() (g Guest, err error)

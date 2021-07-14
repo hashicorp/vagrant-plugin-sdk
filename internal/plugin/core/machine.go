@@ -206,7 +206,7 @@ func (t *targetMachineClient) SetID(id string) (err error) {
 	return
 }
 
-func (t *targetMachineClient) Box() (b core.Box, err error) {
+func (t *targetMachineClient) Box() (b *core.Box, err error) {
 	r, err := t.client.Box(t.ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -215,7 +215,7 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 	result, err := t.Map(r, (*core.Box)(nil),
 		argmapper.Typed(t.ctx))
 	if err == nil {
-		b = result.(core.Box)
+		b = result.(*core.Box)
 	}
 
 	return
