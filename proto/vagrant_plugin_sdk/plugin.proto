@@ -959,7 +959,7 @@ message Target {
       string uuid = 1;
     }
     message ConnectionInfoResponse {
-      google.protobuf.Any connection_info = 1;
+      map<string, google.protobuf.Any> connection_info = 1;
     }
     message UIDResponse{
       int32 user_id = 1;

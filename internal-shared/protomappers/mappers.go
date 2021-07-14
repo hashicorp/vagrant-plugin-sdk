@@ -672,6 +672,48 @@ func Project(
 	return client.(core.Project), nil
 }
 
+func SyncedFolderProto(
+	s component.SyncedFolder,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
+	sp := &plugincomponent.SyncedFolderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    s,
+	}
+
+	id, endpoint, err := wrapClient(s, sp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_SyncedFolder{
+		StreamId: id,
+		Network:  endpoint.Network(),
+		Target:   endpoint.String(),
+	}, nil
+}
+
+func SyncedFolder(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.SyncedFolder, error) {
+	s := &plugincomponent.SyncedFolderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, s, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.SyncedFolder), nil
+}
+
 func ProviderProto(
 	t component.Provider,
 	log hclog.Logger,

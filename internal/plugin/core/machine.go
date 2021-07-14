@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -161,23 +162,33 @@ func (t *targetMachineClient) Inspect() (printable string, err error) {
 }
 
 func (t *targetMachineClient) Reload() (err error) {
-	// TODO
-	return errNotImplemented
+	_, err = t.client.Reload(t.ctx, &empty.Empty{})
+	return
 }
 
 func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
-	// TODO
-	return nil, errNotImplemented
+	connResp, err := t.client.ConnectionInfo(t.ctx, &empty.Empty{})
+	return info, mapstructure.Decode(connResp, &info)
 }
 
-func (t *targetMachineClient) UID() (user_id int, err error) {
-	// TODO
-	return 10, errNotImplemented
+func (t *targetMachineClient) UID() (id int32, err error) {
+	uidResp, err := t.client.UID(t.ctx, &empty.Empty{})
+	id = uidResp.UserId
+	return
 }
 
 func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
-	// TODO
-	return nil, errNotImplemented
+	sfResp, err := t.client.SyncedFolders(t.ctx, &empty.Empty{})
+	folders = []core.SyncedFolder{}
+	for _, folder := range sfResp.SyncedFolders {
+		f, err := t.Map(folder, (core.SyncedFolder)(nil), argmapper.Typed(t.ctx))
+		if err != nil {
+			return nil, err
+		}
+		folders = append(folders, f)
+	}
+
+	return
 }
 
 func (t *targetMachineClient) ID() (id string, err error) {
@@ -216,6 +227,17 @@ func (t *targetMachineServer) ConnectionInfo(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse, err error) {
+	connInfo, err := t.Impl.ConnectionInfo()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := t.Map(connInfo, (**vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		resp = result.(*vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse)
+	}
+
 	return
 }
 
@@ -223,13 +245,30 @@ func (t *targetMachineServer) Reload(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (e *empty.Empty, err error) {
-	return
+	return &empty.Empty{}, t.Impl.Reload()
 }
 
 func (t *targetMachineServer) SyncedFolders(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse, err error) {
+	syncedFolders, err := t.Impl.SyncedFolders()
+	if err != nil {
+		return nil, err
+	}
+
+	sf := []*vagrant_plugin_sdk.Args_SyncedFolder{}
+	for _, folder := range syncedFolders {
+		f, err := t.Map(folder, (**vagrant_plugin_sdk.Args_SyncedFolder)(nil), argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		sf = append(sf, f.(*vagrant_plugin_sdk.Args_SyncedFolder))
+	}
+	resp = &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse{
+		SyncedFolders: sf,
+	}
+
 	return
 }
 
@@ -237,6 +276,15 @@ func (t *targetMachineServer) UID(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_UIDResponse, err error) {
+	uid, err := t.Impl.UID()
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &vagrant_plugin_sdk.Target_Machine_UIDResponse{
+		UserId: uid,
+	}
+
 	return
 }
 

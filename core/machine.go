@@ -29,6 +29,6 @@ type Machine interface {
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	MachineState() (state *MachineState, err error)
 	SetMachineState(state *MachineState) (err error)
-	UID() (userId int, err error)
+	UID() (userId int32, err error)
 	SyncedFolders() (folders []SyncedFolder, err error)
 }
