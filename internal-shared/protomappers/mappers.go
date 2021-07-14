@@ -70,6 +70,8 @@ var All = []interface{}{
 	Project,
 	ProjectProto,
 	ProtoToMap,
+	Provider,
+	ProviderProto,
 	State,
 	StateProto,
 	StateBag,
@@ -668,6 +670,48 @@ func Project(
 	}
 
 	return client.(core.Project), nil
+}
+
+func ProviderProto(
+	t component.Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Provider, error) {
+	tp := &plugincomponent.ProviderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    t,
+	}
+
+	id, endpoint, err := wrapClient(t, tp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Provider{
+		StreamId: id,
+		Network:  endpoint.Network(),
+		Target:   endpoint.String(),
+	}, nil
+}
+
+func Provider(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Provider, error) {
+	t := &plugincomponent.ProviderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, t, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Provider), nil
 }
 
 func TargetProto(

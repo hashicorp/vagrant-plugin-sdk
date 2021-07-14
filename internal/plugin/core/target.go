@@ -96,8 +96,16 @@ func (c *targetClient) SetName(name string) (err error) {
 }
 
 func (c *targetClient) Provider() (p core.Provider, err error) {
-	// TODO
-	return nil, errNotImplemented
+	pr, err := c.client.Provider(c.ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+	result, err := c.Map(pr, (*core.Provider)(nil))
+	if err != nil {
+		return
+	}
+	p = result.(core.Provider)
+	return
 }
 
 func (c *targetClient) VagrantfileName() (name string, err error) {
