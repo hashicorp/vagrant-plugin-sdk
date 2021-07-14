@@ -114,7 +114,7 @@ func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (int64, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
 		executeArgs := &vagrant_plugin_sdk.Command_ExecuteReq{
 			Spec:        &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -129,16 +129,16 @@ func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *commandClient) Execute(cliArgs []string) (int64, error) {
+func (c *commandClient) Execute(cliArgs []string) (int32, error) {
 	f := c.ExecuteFunc(cliArgs)
 
-	raw, err := c.callDynamicFunc(f, (*int64)(nil),
+	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(c.ctx))
 	if err != nil {
 		return -1, err
 	}
 
-	return raw.(int64), nil
+	return raw.(int32), nil
 }
 
 // commandServer is a gRPC server that the client talks to and calls a
@@ -216,7 +216,7 @@ func (s *commandServer) Execute(
 	req *vagrant_plugin_sdk.Command_ExecuteReq,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
 	raw, err := s.callDynamicFunc(s.Impl.ExecuteFunc(req.CommandArgs),
-		(*int64)(nil),
+		(*int32)(nil),
 		req.Spec.Args,
 		argmapper.Typed(ctx),
 	)
@@ -226,7 +226,7 @@ func (s *commandServer) Execute(
 	}
 
 	result := &vagrant_plugin_sdk.Command_ExecuteResp{
-		ExitCode: raw.(int64),
+		ExitCode: raw.(int32),
 	}
 	return result, nil
 }
