@@ -216,7 +216,8 @@ func (c *targetClient) Record() (record *anypb.Any, err error) {
 	return
 }
 
-func (c *targetClient) Specialize(kind interface{}) (specialized core.Machine, err error) {
+func (c *targetClient) Specialize(kind interface{}) (specialized interface{}, err error) {
+	// TODO: specialize type based on the `kind` requested
 	a, err := anypb.New(&empty.Empty{})
 	if err != nil {
 		return
