@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
+//go:generate mockery --all
+
 type Basis interface {
 	DataDir() (dir *datadir.Basis, err error)
 	UI() (ui terminal.UI, err error)
