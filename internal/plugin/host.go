@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -83,6 +84,7 @@ func (c *hostClient) DetectFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Detect(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -105,6 +107,36 @@ func (c *hostClient) Detect() (bool, error) {
 	return raw.(bool), nil
 }
 
+func (c *hostClient) ParentsFunc() interface{} {
+	spec, err := c.client.ParentsSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Parents, nil
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *hostClient) Parents() ([]string, error) {
+	f := c.ParentsFunc()
+	raw, err := c.callDynamicFunc(f, (*[]string)(nil),
+		argmapper.Typed(c.ctx),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.([]string), nil
+}
+
 func (c *hostClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
@@ -113,6 +145,7 @@ func (c *hostClient) HasCapabilityFunc() interface{} {
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 
 		if err != nil {
@@ -145,6 +178,7 @@ func (c *hostClient) CapabilityFunc(name string) interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.Capability(ctx,
 			&vagrant_plugin_sdk.Host_Capability_NamedRequest{
 				FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -260,6 +294,10 @@ func (s *hostServer) DetectSpec(
 		return nil, err
 	}
 
+	if err := isImplemented(s.Impl, "host"); err != nil {
+		return nil, err
+	}
+
 	return s.generateSpec(s.Impl.DetectFunc())
 }
 
@@ -276,6 +314,32 @@ func (s *hostServer) Detect(
 
 	return &vagrant_plugin_sdk.Host_DetectResp{
 		Detected: raw.(bool)}, nil
+}
+
+func (s *hostServer) ParentsSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.ParentsFunc())
+}
+
+func (s *hostServer) Parents(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Host_ParentsResp, error) {
+	raw, err := s.callDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Host_ParentsResp{
+		Parents: raw.([]string)}, nil
 }
 
 var (
