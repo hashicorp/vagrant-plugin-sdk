@@ -56,12 +56,15 @@ func (p *HostPlugin) GRPCClient(
 				Broker:  broker,
 			},
 		},
+		capabilityClient: &capabilityClient{
+			client: vagrant_plugin_sdk.NewHostServiceClient(c),
+		},
 	}, nil
 }
 
 type hostClient struct {
 	*baseClient
-
+	*capabilityClient
 	client vagrant_plugin_sdk.HostServiceClient
 }
 

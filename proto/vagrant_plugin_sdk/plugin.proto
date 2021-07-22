@@ -741,30 +741,12 @@ service GuestService {
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 
-  rpc Detect(FuncSpec.Args) returns (Guest.DetectResp);
+  rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc HasCapability(Guest.Capability.NamedRequest) returns (Guest.Capability.CheckResp);
-  rpc HasCapabilitySpec(Guest.Capability.NamedRequest) returns (FuncSpec);
-  rpc Capability(Guest.Capability.NamedRequest) returns (Guest.Capability.Resp);
-  rpc CapabilitySpec(Guest.Capability.NamedRequest) returns (FuncSpec);
-}
-
-message Guest {
-  message DetectResp {
-    bool detected = 1;
-  }
-  message Capability {
-    message NamedRequest {
-      string name = 1;
-      FuncSpec.Args func_args = 2;
-    }
-    message CheckResp {
-      bool has_capability = 1;
-    }
-    message Resp {
-      google.protobuf.Any result = 1;
-    }
-  }
+  rpc HasCapability(FuncSpec.Args) returns (Host.Capability.CheckResp);
+  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
+  rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
 }
 
 service HostService {

@@ -11,7 +11,6 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -45,7 +44,8 @@ func (p *GuestPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &guestClient{
+	return &hostClient{
+		client: vagrant_plugin_sdk.NewGuestServiceClient(c),
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
@@ -54,13 +54,16 @@ func (p *GuestPlugin) GRPCClient(
 				Broker:  broker,
 			},
 		},
+		capabilityClient: &capabilityClient{
+			client: vagrant_plugin_sdk.NewGuestServiceClient(c),
+		},
 	}, nil
 }
 
 // guestClient is an implementation of component.Guest over gRPC.
 type guestClient struct {
 	*baseClient
-
+	*capabilityClient
 	client vagrant_plugin_sdk.GuestServiceClient
 }
 
@@ -92,10 +95,9 @@ func (c *guestClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *guestClient) Detect(machine core.Machine) (bool, error) {
+func (c *guestClient) Detect() (bool, error) {
 	f := c.DetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(machine),
 		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
@@ -103,72 +105,6 @@ func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 	}
 
 	return raw.(bool), nil
-}
-
-func (c *guestClient) HasCapabilityFunc() interface{} {
-	spec, err := c.client.HasCapabilitySpec(c.ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: "FIXME"})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: "FIXME", FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args}})
-		if err != nil {
-			return false, err
-		}
-		return resp.HasCapability, nil
-	}
-	return c.generateFunc(spec, cb)
-}
-
-func (c *guestClient) HasCapability(machine core.Machine, capName string) (bool, error) {
-	f := c.HasCapabilityFunc()
-	raw, err := c.callDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(machine),
-		argmapper.Typed(capName),
-		argmapper.Named("capabilityName", capName),
-		argmapper.Typed(c.ctx),
-	)
-	if err != nil {
-		return false, err
-	}
-
-	return raw.(bool), nil
-}
-
-func (c *guestClient) CapabilityFunc(capName string) interface{} {
-	spec, err := c.client.CapabilitySpec(c.ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		resp, err := c.client.Capability(ctx, &vagrant_plugin_sdk.Guest_Capability_NamedRequest{Name: capName, FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args}})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Result, nil
-	}
-	return c.generateFunc(spec, cb)
-}
-
-// TODO(spox): need to determine what we want to do here with regards to cap results
-func (c *guestClient) Capability(machine core.Machine, capName string, args ...interface{}) (interface{}, error) {
-	f := c.CapabilityFunc(capName)
-	margs := []argmapper.Arg{
-		argmapper.Typed(machine),
-		argmapper.Typed(c.ctx),
-	}
-	for _, a := range args {
-		margs = append(margs, argmapper.Typed(a))
-	}
-	raw, err := c.callDynamicFunc(f, false, margs...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return raw, nil
 }
 
 // guestServer is a gRPC server that the client talks to and calls a
@@ -215,7 +151,7 @@ func (s *guestServer) DetectSpec(
 func (s *guestServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Guest_DetectResp, error) {
+) (*vagrant_plugin_sdk.Host_DetectResp, error) {
 	raw, err := s.callDynamicFunc(s.Impl.DetectFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
@@ -224,12 +160,12 @@ func (s *guestServer) Detect(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Guest_DetectResp{Detected: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
 }
 
 func (s *guestServer) HasCapabilitySpec(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
@@ -240,10 +176,12 @@ func (s *guestServer) HasCapabilitySpec(
 
 func (s *guestServer) HasCapability(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.Guest_Capability_CheckResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.HasCapabilityFunc(), (*bool)(nil),
-		args.FuncArgs.Args,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
+	raw, err := s.callDynamicFunc(
+		s.Impl.HasCapabilityFunc(),
+		(*bool)(nil),
+		args.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -251,12 +189,14 @@ func (s *guestServer) HasCapability(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Guest_Capability_CheckResp{HasCapability: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Host_Capability_CheckResp{
+		HasCapability: raw.(bool),
+	}, nil
 }
 
 func (s *guestServer) CapabilitySpec(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
@@ -267,9 +207,12 @@ func (s *guestServer) CapabilitySpec(
 
 func (s *guestServer) Capability(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.Guest_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.Guest_Capability_Resp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.CapabilityFunc(args.Name), false, args.FuncArgs.Args,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
+	raw, err := s.callDynamicFunc(
+		s.Impl.CapabilityFunc(args.Name),
+		false,
+		args.FuncArgs.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -277,7 +220,7 @@ func (s *guestServer) Capability(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Guest_Capability_Resp{Result: raw.(*anypb.Any)}, nil
+	return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, nil
 }
 
 var (
