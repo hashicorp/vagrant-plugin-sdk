@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 )
 
 // Handshake is a common handshake that is shared by plugin and host.
@@ -47,8 +49,17 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		},
 	}
 
+	t := []component.Type{}
+
 	// Set the various field values
 	for _, c := range c.Components {
+		for typ, ptr := range component.TypeMap {
+			pTyp := reflect.TypeOf(ptr)
+			cTyp := reflect.TypeOf(c)
+			if cTyp.Implements(pTyp.Elem()) {
+				t = append(t, typ)
+			}
+		}
 		if err := setFieldValue(result, c); err != nil {
 			panic(err)
 		}
@@ -62,6 +73,10 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 	if err := setFieldValue(result, c.Logger); err != nil {
 		panic(err)
 	}
+
+	// Set plugin info
+	result[1]["plugininfo"] = &PluginInfoPlugin{
+		Impl: &pluginInfo{types: t}}
 
 	return result
 }

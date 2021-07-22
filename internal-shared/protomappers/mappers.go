@@ -107,10 +107,15 @@ func HostProto(
 		Impl:    input,
 	}
 
-	internal.Logger.Trace("wrapping host plugin", "host", input)
+	internal.Logger.Trace("wrapping host plugin",
+		"host", input)
+
 	id, ep, err := wrapClient(input, p, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to wrap host plugin", "host", input, "error", err)
+		internal.Logger.Warn("failed to wrap host plugin",
+			"host", input,
+			"error", err)
+
 		return nil, err
 	}
 	return &vagrant_plugin_sdk.Args_Host{
@@ -130,10 +135,15 @@ func Host(
 		Mappers: internal.Mappers,
 		Logger:  log,
 	}
-	internal.Logger.Trace("connecting to wrapped host plugin", "connection-info", input)
+	internal.Logger.Trace("connecting to wrapped host plugin",
+		"connection-info", input)
+
 	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped host plugin", "connection-info", input, "error", err)
+		internal.Logger.Warn("failed to connect to wrapped host plugin",
+			"connection-info", input,
+			"error", err)
+
 		return nil, err
 	}
 

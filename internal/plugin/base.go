@@ -86,7 +86,7 @@ func (b *baseClient) Target() net.Addr {
 func (b *baseClient) SetRequestMetadata(key, value string) {
 	b.ctx = metadata.AppendToOutgoingContext(b.ctx, key, value)
 	b.Logger.Trace("new metadata has been set for outgoing requests",
-		"key", key, "value", value, "context", b.ctx)
+		"key", key, "value", value)
 }
 
 // Generate a function from a provided spec

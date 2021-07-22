@@ -57,7 +57,7 @@ func Map(
 
 	args = append(args,
 		argmapper.Typed(resultValue),
-		argmapper.Logger(Logger))
+		argmapper.Logger(Logger.Named("map")))
 
 	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
 		return nil, err
@@ -84,9 +84,7 @@ func CallFunc(
 		rawFunc = af
 	} else {
 		var err error
-		rawFunc, err = argmapper.NewFunc(f,
-			argmapper.Logger(Logger),
-		)
+		rawFunc, err = argmapper.NewFunc(f)
 
 		if err != nil {
 			return nil, err
@@ -95,7 +93,7 @@ func CallFunc(
 
 	args = append(args,
 		argmapper.ConverterFunc(mappers...),
-		argmapper.Logger(Logger))
+		argmapper.Logger(Logger.Named("call")))
 
 	// Build the chain and call it
 	callResult := rawFunc.Call(args...)

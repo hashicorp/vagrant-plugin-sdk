@@ -36,6 +36,7 @@ const (
 	LogViewerType                 // LogViewer
 	MapperType                    // Mapper
 	ConfigType                    // Config
+	PluginInfoType                // PluginInfo
 	maxType
 )
 
@@ -50,9 +51,14 @@ var TypeMap = map[Type]interface{}{
 	HostType:          (*Host)(nil),
 	LogPlatformType:   (*LogPlatform)(nil),
 	LogViewerType:     (*LogViewer)(nil),
+	PluginInfoType:    (*PluginInfo)(nil),
 	ProviderType:      (*Provider)(nil),
 	ProvisionerType:   (*Provisioner)(nil),
 	SyncedFolderType:  (*SyncedFolder)(nil),
+}
+
+type PluginInfo interface {
+	ComponentTypes() []Type
 }
 
 type CommandInfo struct {
@@ -108,6 +114,8 @@ type Guest interface {
 type Host interface {
 	// Detect if machine is supported host
 	DetectFunc() interface{}
+	// List of parent host names
+	ParentsFunc() interface{}
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
 	// Run a capability
