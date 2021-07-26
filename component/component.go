@@ -27,7 +27,7 @@ const (
 	HostType                      // Host
 	ProviderType                  // Provider
 	ProvisionerType               // Provisioner
-	SyncedFolderType              // Synced Folder
+	SyncedFolderType              // SyncedFolder
 	AuthenticatorType             // Authenticator
 	LogPlatformType               // LogPlatform
 	LogViewerType                 // LogViewer
@@ -56,6 +56,7 @@ var TypeMap = map[Type]interface{}{
 
 type PluginInfo interface {
 	ComponentTypes() []Type
+	Name() string
 }
 
 type CommandInfo struct {
