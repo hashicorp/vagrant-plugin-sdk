@@ -15,8 +15,15 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/stdio"
 )
 
+// Proto generation
 //go:generate sh -c "protoc -I`go list -m -f \"{{.Dir}}\" github.com/mitchellh/protostructure` -I./3rdparty/proto/api-common-protos -Iproto --go-grpc_opt=module=github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk --go-grpc_out=require_unimplemented_servers=false:proto/vagrant_plugin_sdk/ --go_opt=module=github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk --go_out=proto/vagrant_plugin_sdk/ proto/vagrant_plugin_sdk/*.proto"
 //go:generate sh -c "grpc_tools_ruby_protoc -I`go list -m -f \"{{.Dir}}\" github.com/mitchellh/protostructure` -I./3rdparty/proto/api-common-protos -Iproto --grpc_out=ruby-proto/ --ruby_out=ruby-proto/ ./proto/vagrant_plugin_sdk/*.proto protostructure.proto"
+
+// Mock generation
+//go:generate mockery --all --dir ./component --output ./component/mocks
+
+// String generation
+//go:generate stringer -type=Type -linecomment ./component
 
 // Main is the primary entrypoint for plugins serving components. This
 // function never returns; it blocks until the program is exited. This should
