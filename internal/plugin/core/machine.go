@@ -181,7 +181,7 @@ func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err 
 	sfResp, err := t.client.SyncedFolders(t.ctx, &empty.Empty{})
 	folders = []core.SyncedFolder{}
 	for _, folder := range sfResp.SyncedFolders {
-		f, err := t.Map(folder, (core.SyncedFolder)(nil), argmapper.Typed(t.ctx))
+		f, err := t.Map(folder, (*core.SyncedFolder)(nil), argmapper.Typed(t.ctx))
 		if err != nil {
 			return nil, err
 		}
