@@ -28,7 +28,7 @@ type Target interface {
 	Communicate() (comm Communicator, err error)
 
 	Record() (*anypb.Any, error)
-	Specialize(kind interface{}) (specialized Machine, err error) // TODO(spox): mapping needs to be fixed so return is interface{}
+	Specialize(kind interface{}) (specialized interface{}, err error)
 
 	io.Closer
 }

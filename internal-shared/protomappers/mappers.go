@@ -37,9 +37,13 @@ var All = []interface{}{
 	BoxProto,
 	Host,
 	HostProto,
+	Guest,
+	GuestProto,
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
+	Communicator,
+	CommunicatorProto,
 	DatadirBasis,
 	DatadirBasisProto,
 	DatadirProject,
@@ -50,8 +54,6 @@ var All = []interface{}{
 	DatadirComponentProto,
 	Flags,
 	FlagsProto,
-	Host,
-	HostProto,
 	JobInfo,
 	JobInfoProto,
 	Logger,
@@ -68,6 +70,8 @@ var All = []interface{}{
 	Project,
 	ProjectProto,
 	ProtoToMap,
+	Provider,
+	ProviderProto,
 	State,
 	StateProto,
 	StateBag,
@@ -148,6 +152,50 @@ func Host(
 	}
 
 	return client.(core.Host), nil
+}
+
+func GuestProto(
+	input component.Guest,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Guest, error) {
+	p := &plugincomponent.GuestPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    input,
+	}
+
+	internal.Logger.Trace("wrapping host plugin", "guest", input)
+	id, ep, err := wrapClient(input, p, internal)
+	if err != nil {
+		internal.Logger.Warn("failed to wrap host plugin", "guest", input, "error", err)
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Args_Guest{
+		Network:  ep.Network(),
+		Target:   ep.String(),
+		StreamId: id,
+	}, nil
+}
+
+func Guest(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Guest,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Guest, error) {
+	p := &plugincomponent.GuestPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		internal.Logger.Warn("failed to connect to wrapped guest plugin", "connection-info", input, "error", err)
+		return nil, err
+	}
+
+	return client.(core.Guest), nil
 }
 
 // Flags maps
@@ -540,6 +588,48 @@ func Basis(
 	return client.(core.Basis), nil
 }
 
+func CommunicatorProto(
+	c component.Communicator,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Communicator, error) {
+	cp := &plugincomponent.CommunicatorPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    c,
+	}
+
+	id, ep, err := wrapClient(c, cp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Communicator{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
+	}, nil
+}
+
+func Communicator(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Communicator,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Communicator, error) {
+	p := &plugincomponent.CommunicatorPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Communicator), nil
+}
+
 func ProjectProto(
 	p core.Project,
 	log hclog.Logger,
@@ -580,6 +670,90 @@ func Project(
 	}
 
 	return client.(core.Project), nil
+}
+
+func SyncedFolderProto(
+	s component.SyncedFolder,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
+	sp := &plugincomponent.SyncedFolderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    s,
+	}
+
+	id, endpoint, err := wrapClient(s, sp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_SyncedFolder{
+		StreamId: id,
+		Network:  endpoint.Network(),
+		Target:   endpoint.String(),
+	}, nil
+}
+
+func SyncedFolder(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.SyncedFolder, error) {
+	s := &plugincomponent.SyncedFolderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, s, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.SyncedFolder), nil
+}
+
+func ProviderProto(
+	t component.Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Provider, error) {
+	tp := &plugincomponent.ProviderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    t,
+	}
+
+	id, endpoint, err := wrapClient(t, tp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Provider{
+		StreamId: id,
+		Network:  endpoint.Network(),
+		Target:   endpoint.String(),
+	}, nil
+}
+
+func Provider(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Provider,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Provider, error) {
+	t := &plugincomponent.ProviderPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, t, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Provider), nil
 }
 
 func TargetProto(

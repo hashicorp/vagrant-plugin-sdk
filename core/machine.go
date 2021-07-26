@@ -18,17 +18,17 @@ type Machine interface {
 	// Attributes
 	ID() (id string, err error)
 	SetID(value string) (err error)
-	Box() (b Box, err error)
+	Box() (b *Box, err error)
 
 	// Functions
 	Guest() (g Guest, err error)
-	IndexUUID() (id string, err error)
+	GetUUID() (id string, err error)
 	SetUUID(id string) (err error)
 	Inspect() (printable string, err error)
 	Reload() (err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	MachineState() (state *MachineState, err error)
 	SetMachineState(state *MachineState) (err error)
-	UID() (userId int, err error)
+	UID() (userId string, err error)
 	SyncedFolders() (folders []SyncedFolder, err error)
 }
