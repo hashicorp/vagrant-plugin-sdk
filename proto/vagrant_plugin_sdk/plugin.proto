@@ -505,11 +505,15 @@ message StateBag {
 
 service PluginInfoService {
   rpc ComponentTypes(google.protobuf.Empty) returns (PluginInfo.ComponentList);
+  rpc Name(google.protobuf.Empty) returns (PluginInfo.Name);
 }
 
 message PluginInfo {
   message ComponentList {
     repeated uint32 component = 1;
+  }
+  message Name {
+    string name = 1;
   }
 }
 
