@@ -15,10 +15,15 @@ import (
 
 type pluginInfo struct {
 	types []component.Type
+	name  string
 }
 
 func (p *pluginInfo) ComponentTypes() []component.Type {
 	return p.types
+}
+
+func (p *pluginInfo) Name() string {
+	return p.name
 }
 
 type PluginInfoPlugin struct {
@@ -89,6 +94,17 @@ func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 	return
 }
 
+func (c *pluginInfoClient) Name() string {
+	resp, err := c.client.Name(c.ctx, &empty.Empty{})
+	if err != nil {
+		c.Logger.Error("unexpected error when requesting component name",
+			"error", err)
+
+		return ""
+	}
+	return resp.Name
+}
+
 func (s *pluginInfoServer) ComponentTypes(
 	ctx context.Context,
 	_ *empty.Empty,
@@ -99,5 +115,14 @@ func (s *pluginInfoServer) ComponentTypes(
 	}
 	return &vagrant_plugin_sdk.PluginInfo_ComponentList{
 		Component: list,
+	}, nil
+}
+
+func (s *pluginInfoServer) Name(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
+	return &vagrant_plugin_sdk.PluginInfo_Name{
+		Name: s.Impl.Name(),
 	}, nil
 }
