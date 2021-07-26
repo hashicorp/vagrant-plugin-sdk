@@ -25,9 +25,9 @@ func _() {
 	_ = x[maxType-14]
 }
 
-const _Type_name = "InvalidCommandCommunicatorGuestHostProviderProvisionerSynced FolderAuthenticatorLogPlatformLogViewerMapperConfigPluginInfomaxType"
+const _Type_name = "InvalidCommandCommunicatorGuestHostProviderProvisionerSyncedFolderAuthenticatorLogPlatformLogViewerMapperConfigPluginInfomaxType"
 
-var _Type_index = [...]uint8{0, 7, 14, 26, 31, 35, 43, 54, 67, 80, 91, 100, 106, 112, 122, 129}
+var _Type_index = [...]uint8{0, 7, 14, 26, 31, 35, 43, 54, 66, 79, 90, 99, 105, 111, 121, 128}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {
