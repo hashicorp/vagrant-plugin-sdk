@@ -1114,18 +1114,6 @@ message Vagrantfile {
     repeated SyncedFolder synced_folders = 33;
   }
 
-  message ConfigSSH {
-    google.protobuf.Any config = 1;
-  }
-
-  message ConfigWinRM {
-    google.protobuf.Any config = 1;
-  }
-
-  message ConfigWinssh {
-    google.protobuf.Any config = 1;
-  }
-  
   message ConfigVagrant {
     string host = 1;
     // TODO: plugins can be a string, a hash or array
@@ -1142,13 +1130,8 @@ message Vagrantfile {
   message MachineConfig {
     string name = 1;
     ConfigVM config_vm = 2;
-    ConfigSSH config_ssh = 3;
-    ConfigWinRM config_winrm = 4;
-    ConfigWinssh config_winssh = 5;
-    ConfigVagrant config_vagrant = 6;
-    // Maybe config_ssh, config_winrm, config_ssh can be 
-    // defined as plugin_configs
-    repeated GeneralConfig plugin_configs = 7;
+    ConfigVagrant config_vagrant = 3;
+    repeated GeneralConfig plugin_configs = 4;
   }
 
   message Provisioner {
