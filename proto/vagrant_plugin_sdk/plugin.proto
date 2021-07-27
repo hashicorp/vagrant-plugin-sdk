@@ -736,37 +736,39 @@ service ConfigService {
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
 
-service GuestService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
-  rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
-  rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc HasCapability(FuncSpec.Args) returns (Host.Capability.CheckResp);
-  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
-  rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
-  rpc Parents(FuncSpec.Args) returns (Host.ParentsResp);
-  rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
-}
-
 service HostService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 
-  rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
-  rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
-  rpc Detect(FuncSpec.Args) returns (Host.DetectResp);
+  rpc Detect(FuncSpec.Args) returns (Platform.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc HasCapability(FuncSpec.Args) returns (Host.Capability.CheckResp);
+
+  rpc Capability(Platform.Capability.NamedRequest) returns (Platform.Capability.Resp);
+  rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
+  rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Parents(FuncSpec.Args) returns (Host.ParentsResp);
+  rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
   rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
 }
 
-message Host {
+service GuestService {
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+
+  rpc Detect(FuncSpec.Args) returns (Platform.DetectResp);
+  rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
+
+  rpc Capability(Platform.Capability.NamedRequest) returns (Platform.Capability.Resp);
+  rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
+  rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
+  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
+  rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+}
+
+message Platform {
   message DetectResp {
     bool detected = 1;
   }

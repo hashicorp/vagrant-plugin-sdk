@@ -9,6 +9,7 @@ import (
 type Guest interface {
 	Config() interface{}
 	Documentation() (*docs.Documentation, error)
+	Parents() ([]string, error)
 	Detect() (bool, error)
 	HasCapability(name string) (bool, error)
 	Capability(name string, args ...interface{}) (interface{}, error)

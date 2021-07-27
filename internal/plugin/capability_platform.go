@@ -12,18 +12,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-type capabilityHost interface {
-	HasCapability(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error)
+type capabilityPlatform interface {
+	HasCapability(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	Capability(ctx context.Context, in *vagrant_plugin_sdk.Host_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Host_Capability_Resp, error)
-	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Host_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	Parents(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Host_ParentsResp, error)
+	Capability(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_Resp, error)
+	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
+	Parents(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_ParentsResp, error)
 	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 }
 
 type capabilityClient struct {
 	*baseClient
-	client capabilityHost
+	client capabilityPlatform
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -60,14 +60,14 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	spec, err := c.client.CapabilitySpec(c.ctx,
-		&vagrant_plugin_sdk.Host_Capability_NamedRequest{Name: name})
+		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
 		resp, err := c.client.Capability(ctx,
-			&vagrant_plugin_sdk.Host_Capability_NamedRequest{
+			&vagrant_plugin_sdk.Platform_Capability_NamedRequest{
 				FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 				Name:     name,
 			},
@@ -126,14 +126,15 @@ func (c *capabilityClient) Parents() ([]string, error) {
 
 type capabilityServer struct {
 	*baseServer
-	CapabilityImpl component.CapabilityHost
+	CapabilityImpl component.CapabilityPlatform
+	typ            string
 }
 
 func (s *capabilityServer) HasCapabilitySpec(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
+	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
 	}
 
@@ -143,7 +144,7 @@ func (s *capabilityServer) HasCapabilitySpec(
 func (s *capabilityServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
+) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error) {
 	raw, err := s.callDynamicFunc(s.CapabilityImpl.HasCapabilityFunc(), (*bool)(nil),
 		args.Args, argmapper.Typed(ctx))
 
@@ -151,15 +152,15 @@ func (s *capabilityServer) HasCapability(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Host_Capability_CheckResp{
+	return &vagrant_plugin_sdk.Platform_Capability_CheckResp{
 		HasCapability: raw.(bool)}, nil
 }
 
 func (s *capabilityServer) CapabilitySpec(
 	ctx context.Context,
-	req *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+	req *vagrant_plugin_sdk.Platform_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
+	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
 	}
 
@@ -168,8 +169,8 @@ func (s *capabilityServer) CapabilitySpec(
 
 func (s *capabilityServer) Capability(
 	ctx context.Context,
-	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
+	args *vagrant_plugin_sdk.Platform_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Platform_Capability_Resp, error) {
 	_, err := s.callDynamicFunc(s.CapabilityImpl.CapabilityFunc(args.Name), false,
 		args.FuncArgs.Args, argmapper.Typed(ctx))
 
@@ -177,14 +178,14 @@ func (s *capabilityServer) Capability(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Host_Capability_Resp{}, nil
+	return &vagrant_plugin_sdk.Platform_Capability_Resp{}, nil
 }
 
 func (s *capabilityServer) ParentsSpec(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
+	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
 	}
 
@@ -194,7 +195,7 @@ func (s *capabilityServer) ParentsSpec(
 func (s *capabilityServer) Parents(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_ParentsResp, error) {
+) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
 	raw, err := s.callDynamicFunc(s.CapabilityImpl.ParentsFunc(), (*[]string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
@@ -202,6 +203,10 @@ func (s *capabilityServer) Parents(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Host_ParentsResp{
+	return &vagrant_plugin_sdk.Platform_ParentsResp{
 		Parents: raw.([]string)}, nil
 }
+
+var (
+	_ component.CapabilityPlatform = (*capabilityClient)(nil)
+)

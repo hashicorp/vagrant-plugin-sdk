@@ -39,6 +39,7 @@ func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 		capabilityServer: &capabilityServer{
 			baseServer:     bs,
 			CapabilityImpl: p.Impl,
+			typ:            "guest",
 		},
 	})
 	return nil
@@ -57,11 +58,12 @@ func (p *GuestPlugin) GRPCClient(
 			Broker:  broker,
 		},
 	}
+	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
 	return &hostClient{
-		client:     vagrant_plugin_sdk.NewGuestServiceClient(c),
+		client:     client,
 		baseClient: bc,
 		capabilityClient: &capabilityClient{
-			client:     vagrant_plugin_sdk.NewGuestServiceClient(c),
+			client:     client,
 			baseClient: bc,
 		},
 	}, nil
@@ -158,7 +160,7 @@ func (s *guestServer) DetectSpec(
 func (s *guestServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_DetectResp, error) {
+) (*vagrant_plugin_sdk.Platform_DetectResp, error) {
 	raw, err := s.callDynamicFunc(s.Impl.DetectFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
@@ -167,7 +169,7 @@ func (s *guestServer) Detect(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
+	return &vagrant_plugin_sdk.Platform_DetectResp{Detected: raw.(bool)}, nil
 }
 
 var (

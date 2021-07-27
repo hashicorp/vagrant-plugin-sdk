@@ -99,7 +99,7 @@ type Communicator interface {
 	ResetFunc() interface{}
 }
 
-type CapabilityHost interface {
+type CapabilityPlatform interface {
 	// List of parent host names
 	ParentsFunc() interface{}
 	// Test if capability is available
@@ -109,7 +109,7 @@ type CapabilityHost interface {
 }
 
 type Guest interface {
-	// Detect if guest machine is supported guest
+	// Detect if machine is supported guest
 	DetectFunc() interface{}
 	// List of parent host names
 	ParentsFunc() interface{}
@@ -120,7 +120,7 @@ type Guest interface {
 }
 
 type Host interface {
-	// Detect if host machine is supported host
+	// Detect if machine is supported host
 	DetectFunc() interface{}
 	// List of parent host names
 	ParentsFunc() interface{}
