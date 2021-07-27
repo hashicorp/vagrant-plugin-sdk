@@ -2526,6 +2526,8 @@ type GuestServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Capability(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*Host_Capability_Resp, error)
 	CapabilitySpec(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
+	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_ParentsResp, error)
+	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 }
 
 type guestServiceClient struct {
@@ -2617,6 +2619,24 @@ func (c *guestServiceClient) CapabilitySpec(ctx context.Context, in *Host_Capabi
 	return out, nil
 }
 
+func (c *guestServiceClient) Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_ParentsResp, error) {
+	out := new(Host_ParentsResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Parents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ParentsSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GuestServiceServer is the server API for GuestService service.
 // All implementations should embed UnimplementedGuestServiceServer
 // for forward compatibility
@@ -2630,6 +2650,8 @@ type GuestServiceServer interface {
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Capability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_Resp, error)
 	CapabilitySpec(context.Context, *Host_Capability_NamedRequest) (*FuncSpec, error)
+	Parents(context.Context, *FuncSpec_Args) (*Host_ParentsResp, error)
+	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 }
 
 // UnimplementedGuestServiceServer should be embedded to have forward compatible implementations.
@@ -2662,6 +2684,12 @@ func (UnimplementedGuestServiceServer) Capability(context.Context, *Host_Capabil
 }
 func (UnimplementedGuestServiceServer) CapabilitySpec(context.Context, *Host_Capability_NamedRequest) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CapabilitySpec not implemented")
+}
+func (UnimplementedGuestServiceServer) Parents(context.Context, *FuncSpec_Args) (*Host_ParentsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Parents not implemented")
+}
+func (UnimplementedGuestServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
 }
 
 // UnsafeGuestServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -2837,6 +2865,42 @@ func _GuestService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GuestService_Parents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Parents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Parents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Parents(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).ParentsSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ParentsSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _GuestService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.GuestService",
 	HandlerType: (*GuestServiceServer)(nil),
@@ -2876,6 +2940,14 @@ var _GuestService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CapabilitySpec",
 			Handler:    _GuestService_CapabilitySpec_Handler,
+		},
+		{
+			MethodName: "Parents",
+			Handler:    _GuestService_Parents_Handler,
+		},
+		{
+			MethodName: "ParentsSpec",
+			Handler:    _GuestService_ParentsSpec_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

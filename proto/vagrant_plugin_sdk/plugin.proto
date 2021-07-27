@@ -747,6 +747,8 @@ service GuestService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Capability(Host.Capability.NamedRequest) returns (Host.Capability.Resp);
   rpc CapabilitySpec(Host.Capability.NamedRequest) returns (FuncSpec);
+  rpc Parents(FuncSpec.Args) returns (Host.ParentsResp);
+  rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
 }
 
 service HostService {
