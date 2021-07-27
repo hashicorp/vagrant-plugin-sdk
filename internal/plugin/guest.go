@@ -44,18 +44,20 @@ func (p *GuestPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	return &hostClient{
-		client: vagrant_plugin_sdk.NewGuestServiceClient(c),
-		baseClient: &baseClient{
-			ctx: context.Background(),
-			base: &base{
-				Mappers: p.Mappers,
-				Logger:  p.Logger,
-				Broker:  broker,
-			},
+	bc := &baseClient{
+		ctx: context.Background(),
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger,
+			Broker:  broker,
 		},
+	}
+	return &hostClient{
+		client:     vagrant_plugin_sdk.NewGuestServiceClient(c),
+		baseClient: bc,
 		capabilityClient: &capabilityClient{
-			client: vagrant_plugin_sdk.NewGuestServiceClient(c),
+			client:     vagrant_plugin_sdk.NewGuestServiceClient(c),
+			baseClient: bc,
 		},
 	}, nil
 }
