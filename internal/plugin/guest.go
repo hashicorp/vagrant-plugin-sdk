@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
@@ -27,13 +26,19 @@ type GuestPlugin struct {
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
-		baseServer: &baseServer{
-			base: &base{
-				Mappers: p.Mappers,
-				Logger:  p.Logger,
-				Broker:  broker,
-			},
+	bs := &baseServer{
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger,
+			Broker:  broker,
+		},
+	}
+	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &hostServer{
+		Impl:       p.Impl,
+		baseServer: bs,
+		capabilityServer: &capabilityServer{
+			baseServer:     bs,
+			CapabilityImpl: p.Impl,
 		},
 	})
 	return nil
@@ -113,9 +118,9 @@ func (c *guestClient) Detect() (bool, error) {
 // real implementation of the component.
 type guestServer struct {
 	*baseServer
+	*capabilityServer
 
 	Impl component.Guest
-	vagrant_plugin_sdk.UnimplementedGuestServiceServer
 }
 
 func (s *guestServer) ConfigStruct(
@@ -163,66 +168,6 @@ func (s *guestServer) Detect(
 	}
 
 	return &vagrant_plugin_sdk.Host_DetectResp{Detected: raw.(bool)}, nil
-}
-
-func (s *guestServer) HasCapabilitySpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "guest"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.HasCapabilityFunc())
-}
-
-func (s *guestServer) HasCapability(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
-	raw, err := s.callDynamicFunc(
-		s.Impl.HasCapabilityFunc(),
-		(*bool)(nil),
-		args.Args,
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Host_Capability_CheckResp{
-		HasCapability: raw.(bool),
-	}, nil
-}
-
-func (s *guestServer) CapabilitySpec(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "guest"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.CapabilityFunc(args.Name))
-}
-
-func (s *guestServer) Capability(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
-	raw, err := s.callDynamicFunc(
-		s.Impl.CapabilityFunc(args.Name),
-		false,
-		args.FuncArgs.Args,
-		argmapper.Typed(ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Host_Capability_Resp{Result: raw.(*anypb.Any)}, nil
 }
 
 var (

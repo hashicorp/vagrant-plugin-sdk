@@ -28,14 +28,19 @@ type HostPlugin struct {
 }
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+	bs := &baseServer{
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger,
+			Broker:  broker,
+		},
+	}
 	vagrant_plugin_sdk.RegisterHostServiceServer(s, &hostServer{
-		Impl: p.Impl,
-		baseServer: &baseServer{
-			base: &base{
-				Mappers: p.Mappers,
-				Logger:  p.Logger,
-				Broker:  broker,
-			},
+		Impl:       p.Impl,
+		baseServer: bs,
+		capabilityServer: &capabilityServer{
+			baseServer:     bs,
+			CapabilityImpl: p.Impl,
 		},
 	})
 	return nil
@@ -114,9 +119,9 @@ func (c *hostClient) Detect() (bool, error) {
 
 type hostServer struct {
 	*baseServer
+	*capabilityServer
 
 	Impl component.Host
-	vagrant_plugin_sdk.UnimplementedHostServiceServer
 }
 
 func (s *hostServer) ConfigStruct(
@@ -138,57 +143,6 @@ func (s *hostServer) Documentation(
 	empty *empty.Empty,
 ) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
-}
-
-func (s *hostServer) HasCapabilitySpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.HasCapabilityFunc())
-}
-
-func (s *hostServer) HasCapability(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.HasCapabilityFunc(), (*bool)(nil),
-		args.Args, argmapper.Typed(ctx))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Host_Capability_CheckResp{
-		HasCapability: raw.(bool)}, nil
-}
-
-func (s *hostServer) CapabilitySpec(
-	ctx context.Context,
-	req *vagrant_plugin_sdk.Host_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.CapabilityFunc(req.Name))
-}
-
-func (s *hostServer) Capability(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
-) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
-	_, err := s.callDynamicFunc(s.Impl.CapabilityFunc(args.Name), false,
-		args.FuncArgs.Args, argmapper.Typed(ctx))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Host_Capability_Resp{}, nil
 }
 
 func (s *hostServer) DetectSpec(
@@ -219,32 +173,6 @@ func (s *hostServer) Detect(
 
 	return &vagrant_plugin_sdk.Host_DetectResp{
 		Detected: raw.(bool)}, nil
-}
-
-func (s *hostServer) ParentsSpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "host"); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.Impl.ParentsFunc())
-}
-
-func (s *hostServer) Parents(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Host_ParentsResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
-		args.Args, argmapper.Typed(ctx))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Host_ParentsResp{
-		Parents: raw.([]string)}, nil
 }
 
 var (

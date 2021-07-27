@@ -123,3 +123,85 @@ func (c *capabilityClient) Parents() ([]string, error) {
 
 	return raw.([]string), nil
 }
+
+type capabilityServer struct {
+	*baseServer
+	CapabilityImpl component.CapabilityHost
+}
+
+func (s *capabilityServer) HasCapabilitySpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.CapabilityImpl.HasCapabilityFunc())
+}
+
+func (s *capabilityServer) HasCapability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Host_Capability_CheckResp, error) {
+	raw, err := s.callDynamicFunc(s.CapabilityImpl.HasCapabilityFunc(), (*bool)(nil),
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Host_Capability_CheckResp{
+		HasCapability: raw.(bool)}, nil
+}
+
+func (s *capabilityServer) CapabilitySpec(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.CapabilityImpl.CapabilityFunc(req.Name))
+}
+
+func (s *capabilityServer) Capability(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.Host_Capability_NamedRequest,
+) (*vagrant_plugin_sdk.Host_Capability_Resp, error) {
+	_, err := s.callDynamicFunc(s.CapabilityImpl.CapabilityFunc(args.Name), false,
+		args.FuncArgs.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Host_Capability_Resp{}, nil
+}
+
+func (s *capabilityServer) ParentsSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "host"); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.CapabilityImpl.ParentsFunc())
+}
+
+func (s *capabilityServer) Parents(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Host_ParentsResp, error) {
+	raw, err := s.callDynamicFunc(s.CapabilityImpl.ParentsFunc(), (*[]string)(nil),
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Host_ParentsResp{
+		Parents: raw.([]string)}, nil
+}
