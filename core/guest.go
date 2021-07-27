@@ -9,7 +9,10 @@ import (
 type Guest interface {
 	Config() interface{}
 	Documentation() (*docs.Documentation, error)
-	Detect(machine Machine) (detected bool, err error)
+	Parents() ([]string, error)
+	Detect() (bool, error)
+	HasCapability(name string) (bool, error)
+	Capability(name string, args ...interface{}) (interface{}, error)
 
 	io.Closer
 }

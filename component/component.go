@@ -99,9 +99,20 @@ type Communicator interface {
 	ResetFunc() interface{}
 }
 
+type CapabilityPlatform interface {
+	// List of parent host names
+	ParentsFunc() interface{}
+	// Test if capability is available
+	HasCapabilityFunc() interface{}
+	// Run a capability
+	CapabilityFunc(capName string) interface{}
+}
+
 type Guest interface {
 	// Detect if machine is supported guest
 	DetectFunc() interface{}
+	// List of parent host names
+	ParentsFunc() interface{}
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
 	// Run a capability
