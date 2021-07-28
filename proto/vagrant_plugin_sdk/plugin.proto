@@ -161,6 +161,12 @@ message Args {
     string target = 3;
   }
 
+  message MachineIndex {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message NamedCapability {
     string Capability = 1;
   }
@@ -960,6 +966,7 @@ message Target {
 ********************************************************************/
 service ProjectService {
   rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
+  rpc MachineIndex(google.protobuf.Empty) returns (Args.MachineIndex);
   // rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
   rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
@@ -991,6 +998,9 @@ message Project {
   message MachineAndProvider {
     string name = 1;
     string provider = 2;
+  }
+  message MachineIndexResponse {
+    Args.MachineIndex machineIndex = 1;
   }
   message MachineNamesResponse {
     repeated string names = 1;
