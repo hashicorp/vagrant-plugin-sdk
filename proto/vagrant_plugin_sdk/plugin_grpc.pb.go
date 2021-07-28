@@ -2513,6 +2513,447 @@ var _ConfigService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
 
+// HostServiceClient is the client API for HostService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type HostServiceClient interface {
+	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error)
+	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error)
+	CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
+	HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error)
+	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
+	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+}
+
+type hostServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewHostServiceClient(cc grpc.ClientConnInterface) HostServiceClient {
+	return &hostServiceClient{cc}
+}
+
+func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error) {
+	out := new(Platform_DetectResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Detect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/DetectSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error) {
+	out := new(Platform_Capability_Resp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Capability", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/CapabilitySpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error) {
+	out := new(Platform_Capability_CheckResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/HasCapability", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/HasCapabilitySpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error) {
+	out := new(Platform_ParentsResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Parents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ParentsSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// HostServiceServer is the server API for HostService service.
+// All implementations should embed UnimplementedHostServiceServer
+// for forward compatibility
+type HostServiceServer interface {
+	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
+	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
+	Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error)
+	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error)
+	CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error)
+	HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error)
+	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
+	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+}
+
+// UnimplementedHostServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedHostServiceServer struct {
+}
+
+func (UnimplementedHostServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
+}
+func (UnimplementedHostServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
+}
+func (UnimplementedHostServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
+}
+func (UnimplementedHostServiceServer) Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
+}
+func (UnimplementedHostServiceServer) DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetectSpec not implemented")
+}
+func (UnimplementedHostServiceServer) Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Capability not implemented")
+}
+func (UnimplementedHostServiceServer) CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CapabilitySpec not implemented")
+}
+func (UnimplementedHostServiceServer) HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasCapability not implemented")
+}
+func (UnimplementedHostServiceServer) HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasCapabilitySpec not implemented")
+}
+func (UnimplementedHostServiceServer) Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Parents not implemented")
+}
+func (UnimplementedHostServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
+}
+
+// UnsafeHostServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to HostServiceServer will
+// result in compilation errors.
+type UnsafeHostServiceServer interface {
+	mustEmbedUnimplementedHostServiceServer()
+}
+
+func RegisterHostServiceServer(s grpc.ServiceRegistrar, srv HostServiceServer) {
+	s.RegisterService(&_HostService_serviceDesc, srv)
+}
+
+func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Documentation(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Detect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Detect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Detect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Detect(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).DetectSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/DetectSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).DetectSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Capability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Platform_Capability_NamedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Capability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Capability",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Capability(ctx, req.(*Platform_Capability_NamedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Platform_Capability_NamedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).CapabilitySpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/CapabilitySpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).CapabilitySpec(ctx, req.(*Platform_Capability_NamedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_HasCapability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).HasCapability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/HasCapability",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).HasCapability(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_HasCapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).HasCapabilitySpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/HasCapabilitySpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).HasCapabilitySpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Parents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Parents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Parents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Parents(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).ParentsSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/ParentsSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _HostService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.HostService",
+	HandlerType: (*HostServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _HostService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _HostService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _HostService_Documentation_Handler,
+		},
+		{
+			MethodName: "Detect",
+			Handler:    _HostService_Detect_Handler,
+		},
+		{
+			MethodName: "DetectSpec",
+			Handler:    _HostService_DetectSpec_Handler,
+		},
+		{
+			MethodName: "Capability",
+			Handler:    _HostService_Capability_Handler,
+		},
+		{
+			MethodName: "CapabilitySpec",
+			Handler:    _HostService_CapabilitySpec_Handler,
+		},
+		{
+			MethodName: "HasCapability",
+			Handler:    _HostService_HasCapability_Handler,
+		},
+		{
+			MethodName: "HasCapabilitySpec",
+			Handler:    _HostService_HasCapabilitySpec_Handler,
+		},
+		{
+			MethodName: "Parents",
+			Handler:    _HostService_Parents_Handler,
+		},
+		{
+			MethodName: "ParentsSpec",
+			Handler:    _HostService_ParentsSpec_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
+
 // GuestServiceClient is the client API for GuestService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
@@ -2520,12 +2961,14 @@ type GuestServiceClient interface {
 	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
 	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
-	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Guest_DetectResp, error)
+	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error)
 	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	HasCapability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_CheckResp, error)
-	HasCapabilitySpec(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
-	Capability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_Resp, error)
-	CapabilitySpec(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
+	Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error)
+	CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
+	HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error)
+	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
+	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 }
 
 type guestServiceClient struct {
@@ -2563,8 +3006,8 @@ func (c *guestServiceClient) Documentation(ctx context.Context, in *empty.Empty,
 	return out, nil
 }
 
-func (c *guestServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Guest_DetectResp, error) {
-	out := new(Guest_DetectResp)
+func (c *guestServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error) {
+	out := new(Platform_DetectResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Detect", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2581,8 +3024,26 @@ func (c *guestServiceClient) DetectSpec(ctx context.Context, in *empty.Empty, op
 	return out, nil
 }
 
-func (c *guestServiceClient) HasCapability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_CheckResp, error) {
-	out := new(Guest_Capability_CheckResp)
+func (c *guestServiceClient) Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error) {
+	out := new(Platform_Capability_Resp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Capability", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/CapabilitySpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error) {
+	out := new(Platform_Capability_CheckResp)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/HasCapability", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -2590,7 +3051,7 @@ func (c *guestServiceClient) HasCapability(ctx context.Context, in *Guest_Capabi
 	return out, nil
 }
 
-func (c *guestServiceClient) HasCapabilitySpec(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *guestServiceClient) HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/HasCapabilitySpec", in, out, opts...)
 	if err != nil {
@@ -2599,18 +3060,18 @@ func (c *guestServiceClient) HasCapabilitySpec(ctx context.Context, in *Guest_Ca
 	return out, nil
 }
 
-func (c *guestServiceClient) Capability(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*Guest_Capability_Resp, error) {
-	out := new(Guest_Capability_Resp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Capability", in, out, opts...)
+func (c *guestServiceClient) Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error) {
+	out := new(Platform_ParentsResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Parents", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *guestServiceClient) CapabilitySpec(ctx context.Context, in *Guest_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *guestServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/CapabilitySpec", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ParentsSpec", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2624,12 +3085,14 @@ type GuestServiceServer interface {
 	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
 	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
 	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
-	Detect(context.Context, *FuncSpec_Args) (*Guest_DetectResp, error)
+	Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error)
 	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	HasCapability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_CheckResp, error)
-	HasCapabilitySpec(context.Context, *Guest_Capability_NamedRequest) (*FuncSpec, error)
-	Capability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_Resp, error)
-	CapabilitySpec(context.Context, *Guest_Capability_NamedRequest) (*FuncSpec, error)
+	Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error)
+	CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error)
+	HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error)
+	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
+	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 }
 
 // UnimplementedGuestServiceServer should be embedded to have forward compatible implementations.
@@ -2645,23 +3108,29 @@ func (UnimplementedGuestServiceServer) Configure(context.Context, *Config_Config
 func (UnimplementedGuestServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
-func (UnimplementedGuestServiceServer) Detect(context.Context, *FuncSpec_Args) (*Guest_DetectResp, error) {
+func (UnimplementedGuestServiceServer) Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
 }
 func (UnimplementedGuestServiceServer) DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetectSpec not implemented")
 }
-func (UnimplementedGuestServiceServer) HasCapability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_CheckResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasCapability not implemented")
-}
-func (UnimplementedGuestServiceServer) HasCapabilitySpec(context.Context, *Guest_Capability_NamedRequest) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasCapabilitySpec not implemented")
-}
-func (UnimplementedGuestServiceServer) Capability(context.Context, *Guest_Capability_NamedRequest) (*Guest_Capability_Resp, error) {
+func (UnimplementedGuestServiceServer) Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Capability not implemented")
 }
-func (UnimplementedGuestServiceServer) CapabilitySpec(context.Context, *Guest_Capability_NamedRequest) (*FuncSpec, error) {
+func (UnimplementedGuestServiceServer) CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CapabilitySpec not implemented")
+}
+func (UnimplementedGuestServiceServer) HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasCapability not implemented")
+}
+func (UnimplementedGuestServiceServer) HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasCapabilitySpec not implemented")
+}
+func (UnimplementedGuestServiceServer) Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Parents not implemented")
+}
+func (UnimplementedGuestServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
 }
 
 // UnsafeGuestServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -2765,44 +3234,8 @@ func _GuestService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GuestService_HasCapability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Guest_Capability_NamedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GuestServiceServer).HasCapability(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/HasCapability",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).HasCapability(ctx, req.(*Guest_Capability_NamedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GuestService_HasCapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Guest_Capability_NamedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GuestServiceServer).HasCapabilitySpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/HasCapabilitySpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).HasCapabilitySpec(ctx, req.(*Guest_Capability_NamedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _GuestService_Capability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Guest_Capability_NamedRequest)
+	in := new(Platform_Capability_NamedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2814,13 +3247,13 @@ func _GuestService_Capability_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Capability",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).Capability(ctx, req.(*Guest_Capability_NamedRequest))
+		return srv.(GuestServiceServer).Capability(ctx, req.(*Platform_Capability_NamedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _GuestService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Guest_Capability_NamedRequest)
+	in := new(Platform_Capability_NamedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2832,7 +3265,79 @@ func _GuestService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/CapabilitySpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).CapabilitySpec(ctx, req.(*Guest_Capability_NamedRequest))
+		return srv.(GuestServiceServer).CapabilitySpec(ctx, req.(*Platform_Capability_NamedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_HasCapability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).HasCapability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/HasCapability",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).HasCapability(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_HasCapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).HasCapabilitySpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/HasCapabilitySpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).HasCapabilitySpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_Parents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Parents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Parents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Parents(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).ParentsSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ParentsSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2862,6 +3367,14 @@ var _GuestService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _GuestService_DetectSpec_Handler,
 		},
 		{
+			MethodName: "Capability",
+			Handler:    _GuestService_Capability_Handler,
+		},
+		{
+			MethodName: "CapabilitySpec",
+			Handler:    _GuestService_CapabilitySpec_Handler,
+		},
+		{
 			MethodName: "HasCapability",
 			Handler:    _GuestService_HasCapability_Handler,
 		},
@@ -2870,453 +3383,12 @@ var _GuestService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _GuestService_HasCapabilitySpec_Handler,
 		},
 		{
-			MethodName: "Capability",
-			Handler:    _GuestService_Capability_Handler,
-		},
-		{
-			MethodName: "CapabilitySpec",
-			Handler:    _GuestService_CapabilitySpec_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "vagrant_plugin_sdk/plugin.proto",
-}
-
-// HostServiceClient is the client API for HostService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type HostServiceClient interface {
-	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
-	Capability(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*Host_Capability_Resp, error)
-	CapabilitySpec(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
-	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_DetectResp, error)
-	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_Capability_CheckResp, error)
-	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_ParentsResp, error)
-	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-}
-
-type hostServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewHostServiceClient(cc grpc.ClientConnInterface) HostServiceClient {
-	return &hostServiceClient{cc}
-}
-
-func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
-	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ConfigStruct", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Configure", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
-	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Documentation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Capability(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*Host_Capability_Resp, error) {
-	out := new(Host_Capability_Resp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Capability", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) CapabilitySpec(ctx context.Context, in *Host_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/CapabilitySpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_DetectResp, error) {
-	out := new(Host_DetectResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Detect", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/DetectSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_Capability_CheckResp, error) {
-	out := new(Host_Capability_CheckResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/HasCapability", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/HasCapabilitySpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Host_ParentsResp, error) {
-	out := new(Host_ParentsResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Parents", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ParentsSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// HostServiceServer is the server API for HostService service.
-// All implementations should embed UnimplementedHostServiceServer
-// for forward compatibility
-type HostServiceServer interface {
-	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
-	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
-	Capability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_Resp, error)
-	CapabilitySpec(context.Context, *Host_Capability_NamedRequest) (*FuncSpec, error)
-	Detect(context.Context, *FuncSpec_Args) (*Host_DetectResp, error)
-	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	HasCapability(context.Context, *FuncSpec_Args) (*Host_Capability_CheckResp, error)
-	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	Parents(context.Context, *FuncSpec_Args) (*Host_ParentsResp, error)
-	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-}
-
-// UnimplementedHostServiceServer should be embedded to have forward compatible implementations.
-type UnimplementedHostServiceServer struct {
-}
-
-func (UnimplementedHostServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
-}
-func (UnimplementedHostServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
-}
-func (UnimplementedHostServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
-}
-func (UnimplementedHostServiceServer) Capability(context.Context, *Host_Capability_NamedRequest) (*Host_Capability_Resp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Capability not implemented")
-}
-func (UnimplementedHostServiceServer) CapabilitySpec(context.Context, *Host_Capability_NamedRequest) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CapabilitySpec not implemented")
-}
-func (UnimplementedHostServiceServer) Detect(context.Context, *FuncSpec_Args) (*Host_DetectResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
-}
-func (UnimplementedHostServiceServer) DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DetectSpec not implemented")
-}
-func (UnimplementedHostServiceServer) HasCapability(context.Context, *FuncSpec_Args) (*Host_Capability_CheckResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasCapability not implemented")
-}
-func (UnimplementedHostServiceServer) HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HasCapabilitySpec not implemented")
-}
-func (UnimplementedHostServiceServer) Parents(context.Context, *FuncSpec_Args) (*Host_ParentsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Parents not implemented")
-}
-func (UnimplementedHostServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
-}
-
-// UnsafeHostServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to HostServiceServer will
-// result in compilation errors.
-type UnsafeHostServiceServer interface {
-	mustEmbedUnimplementedHostServiceServer()
-}
-
-func RegisterHostServiceServer(s grpc.ServiceRegistrar, srv HostServiceServer) {
-	s.RegisterService(&_HostService_serviceDesc, srv)
-}
-
-func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).ConfigStruct(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/ConfigStruct",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Config_ConfigureRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Configure(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Configure",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Documentation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Documentation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Documentation(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Capability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Host_Capability_NamedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Capability(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Capability",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Capability(ctx, req.(*Host_Capability_NamedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_CapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Host_Capability_NamedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).CapabilitySpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/CapabilitySpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).CapabilitySpec(ctx, req.(*Host_Capability_NamedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Detect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Detect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Detect",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Detect(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_DetectSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).DetectSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/DetectSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).DetectSpec(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_HasCapability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).HasCapability(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/HasCapability",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).HasCapability(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_HasCapabilitySpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).HasCapabilitySpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/HasCapabilitySpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).HasCapabilitySpec(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Parents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Parents(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Parents",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Parents(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).ParentsSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/ParentsSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _HostService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "hashicorp.vagrant.sdk.HostService",
-	HandlerType: (*HostServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ConfigStruct",
-			Handler:    _HostService_ConfigStruct_Handler,
-		},
-		{
-			MethodName: "Configure",
-			Handler:    _HostService_Configure_Handler,
-		},
-		{
-			MethodName: "Documentation",
-			Handler:    _HostService_Documentation_Handler,
-		},
-		{
-			MethodName: "Capability",
-			Handler:    _HostService_Capability_Handler,
-		},
-		{
-			MethodName: "CapabilitySpec",
-			Handler:    _HostService_CapabilitySpec_Handler,
-		},
-		{
-			MethodName: "Detect",
-			Handler:    _HostService_Detect_Handler,
-		},
-		{
-			MethodName: "DetectSpec",
-			Handler:    _HostService_DetectSpec_Handler,
-		},
-		{
-			MethodName: "HasCapability",
-			Handler:    _HostService_HasCapability_Handler,
-		},
-		{
-			MethodName: "HasCapabilitySpec",
-			Handler:    _HostService_HasCapabilitySpec_Handler,
-		},
-		{
 			MethodName: "Parents",
-			Handler:    _HostService_Parents_Handler,
+			Handler:    _GuestService_Parents_Handler,
 		},
 		{
 			MethodName: "ParentsSpec",
-			Handler:    _HostService_ParentsSpec_Handler,
+			Handler:    _GuestService_ParentsSpec_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
