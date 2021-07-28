@@ -5312,7 +5312,7 @@ var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectServiceClient interface {
 	MachineNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error)
-	MachineIndex(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_MachineIndex, error)
+	TargetIndex(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
 	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
 	CWD(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	DataDir(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
@@ -5345,9 +5345,9 @@ func (c *projectServiceClient) MachineNames(ctx context.Context, in *empty.Empty
 	return out, nil
 }
 
-func (c *projectServiceClient) MachineIndex(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_MachineIndex, error) {
-	out := new(Args_MachineIndex)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/MachineIndex", in, out, opts...)
+func (c *projectServiceClient) TargetIndex(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error) {
+	out := new(Args_TargetIndex)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetIndex", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -5467,7 +5467,7 @@ func (c *projectServiceClient) TargetIds(ctx context.Context, in *empty.Empty, o
 // for forward compatibility
 type ProjectServiceServer interface {
 	MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error)
-	MachineIndex(context.Context, *empty.Empty) (*Args_MachineIndex, error)
+	TargetIndex(context.Context, *empty.Empty) (*Args_TargetIndex, error)
 	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
 	CWD(context.Context, *empty.Empty) (*Project_CwdResponse, error)
 	DataDir(context.Context, *empty.Empty) (*Args_DataDir_Project, error)
@@ -5490,8 +5490,8 @@ type UnimplementedProjectServiceServer struct {
 func (UnimplementedProjectServiceServer) MachineNames(context.Context, *empty.Empty) (*Project_MachineNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
 }
-func (UnimplementedProjectServiceServer) MachineIndex(context.Context, *empty.Empty) (*Args_MachineIndex, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MachineIndex not implemented")
+func (UnimplementedProjectServiceServer) TargetIndex(context.Context, *empty.Empty) (*Args_TargetIndex, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
 }
 func (UnimplementedProjectServiceServer) CWD(context.Context, *empty.Empty) (*Project_CwdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
@@ -5559,20 +5559,20 @@ func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_MachineIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProjectService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProjectServiceServer).MachineIndex(ctx, in)
+		return srv.(ProjectServiceServer).TargetIndex(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/MachineIndex",
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetIndex",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).MachineIndex(ctx, req.(*empty.Empty))
+		return srv.(ProjectServiceServer).TargetIndex(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5802,8 +5802,8 @@ var _ProjectService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ProjectService_MachineNames_Handler,
 		},
 		{
-			MethodName: "MachineIndex",
-			Handler:    _ProjectService_MachineIndex_Handler,
+			MethodName: "TargetIndex",
+			Handler:    _ProjectService_TargetIndex_Handler,
 		},
 		{
 			MethodName: "CWD",

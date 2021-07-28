@@ -200,16 +200,16 @@ func (p *projectClient) MachineNames() (names []string, err error) {
 	return
 }
 
-func (p *projectClient) MachineIndex() (index core.MachineIndex, err error) {
-	r, err := p.client.MachineIndex(p.ctx, &emptypb.Empty{})
+func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
+	r, err := p.client.TargetIndex(p.ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
-	result, err := p.Map(r, (*core.MachineIndex)(nil),
+	result, err := p.Map(r, (*core.TargetIndex)(nil),
 		argmapper.Typed(p.ctx))
 	if err == nil {
-		index = result.(core.MachineIndex)
+		index = result.(core.TargetIndex)
 	}
 	return
 }
@@ -377,19 +377,19 @@ func (p *projectServer) MachineNames(
 	}, nil
 }
 
-func (p *projectServer) MachineIndex(
+func (p *projectServer) TargetIndex(
 	ctx context.Context,
 	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Args_MachineIndex, err error) {
-	idx, err := p.Impl.MachineIndex()
+) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
+	idx, err := p.Impl.TargetIndex()
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := p.Map(idx, (**vagrant_plugin_sdk.Args_MachineIndex)(nil),
+	result, err := p.Map(idx, (**vagrant_plugin_sdk.Args_TargetIndex)(nil),
 		argmapper.Typed(ctx))
 	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_MachineIndex)
+		r = result.(*vagrant_plugin_sdk.Args_TargetIndex)
 	}
 	return
 }
