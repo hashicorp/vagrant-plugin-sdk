@@ -1,9 +1,9 @@
 package datadir
 
 import (
-	"io/ioutil"
 	"os"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/require"
 )
@@ -12,11 +12,14 @@ import (
 func TestDir(t testing.T) (Dir, func()) {
 	t.Helper()
 
-	td, err := ioutil.TempDir("", "datadir-test")
+	dir, err := newDir("datadir-test")
 	require.NoError(t, err)
 
-	dir, err := newRootDir(td)
-	require.NoError(t, err)
-
-	return dir, func() { os.RemoveAll(td) }
+	return dir, func() {
+		dirs := []path.Path{dir.CacheDir(), dir.ConfigDir(),
+			dir.DataDir(), dir.TempDir()}
+		for _, d := range dirs {
+			os.RemoveAll(d.String())
+		}
+	}
 }

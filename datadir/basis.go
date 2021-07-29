@@ -8,8 +8,8 @@ type Basis struct {
 	Dir
 }
 
-func NewBasis(path string) (*Basis, error) {
-	dir, err := newRootDir(path)
+func NewBasis(ident string) (*Basis, error) {
+	dir, err := newDir(ident)
 	if err != nil {
 		return nil, err
 	}
@@ -18,8 +18,8 @@ func NewBasis(path string) (*Basis, error) {
 }
 
 // Project returns the Dir implementation scoped to a specific project.
-func (p *Basis) Project(name string) (*Project, error) {
-	dir, err := NewScopedDir(p, path.NewPath("target").Join(name).String())
+func (p *Basis) Project(ident string) (*Project, error) {
+	dir, err := NewScopedDir(p, path.NewPath("project").Join(ident).String())
 	if err != nil {
 		return nil, err
 	}
