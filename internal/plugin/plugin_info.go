@@ -109,6 +109,10 @@ func (s *pluginInfoServer) ComponentTypes(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_ComponentList, error) {
+	if err := isImplemented(s, "plugin info"); err != nil {
+		return nil, err
+	}
+
 	list := []uint32{}
 	for _, t := range s.Impl.ComponentTypes() {
 		list = append(list, uint32(t))
@@ -122,6 +126,10 @@ func (s *pluginInfoServer) Name(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
+	if err := isImplemented(s, "plugin info"); err != nil {
+		return nil, err
+	}
+
 	return &vagrant_plugin_sdk.PluginInfo_Name{
 		Name: s.Impl.Name(),
 	}, nil
