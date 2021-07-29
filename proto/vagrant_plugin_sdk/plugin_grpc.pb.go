@@ -5821,3 +5821,228 @@ var _ProjectService_serviceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
+
+// VagrantfileServiceClient is the client API for VagrantfileService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type VagrantfileServiceClient interface {
+	GetVagrantfile(ctx context.Context, in *Vagrantfile_GetVagrantfileRequest, opts ...grpc.CallOption) (*Vagrantfile_GetVagrantfileResponse, error)
+	Target(ctx context.Context, in *Vagrantfile_TargetRequest, opts ...grpc.CallOption) (*Vagrantfile_TargetResponse, error)
+	TargetConfig(ctx context.Context, in *Vagrantfile_TargetConfigRequest, opts ...grpc.CallOption) (*Vagrantfile_TargetConfigResponse, error)
+	TargetNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Vagrantfile_TargetNamesResponse, error)
+	PrimaryTargetName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Vagrantfile_PrimaryTargetNameResponse, error)
+}
+
+type vagrantfileServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewVagrantfileServiceClient(cc grpc.ClientConnInterface) VagrantfileServiceClient {
+	return &vagrantfileServiceClient{cc}
+}
+
+func (c *vagrantfileServiceClient) GetVagrantfile(ctx context.Context, in *Vagrantfile_GetVagrantfileRequest, opts ...grpc.CallOption) (*Vagrantfile_GetVagrantfileResponse, error) {
+	out := new(Vagrantfile_GetVagrantfileResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/GetVagrantfile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vagrantfileServiceClient) Target(ctx context.Context, in *Vagrantfile_TargetRequest, opts ...grpc.CallOption) (*Vagrantfile_TargetResponse, error) {
+	out := new(Vagrantfile_TargetResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/Target", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vagrantfileServiceClient) TargetConfig(ctx context.Context, in *Vagrantfile_TargetConfigRequest, opts ...grpc.CallOption) (*Vagrantfile_TargetConfigResponse, error) {
+	out := new(Vagrantfile_TargetConfigResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/TargetConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vagrantfileServiceClient) TargetNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Vagrantfile_TargetNamesResponse, error) {
+	out := new(Vagrantfile_TargetNamesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/TargetNames", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vagrantfileServiceClient) PrimaryTargetName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Vagrantfile_PrimaryTargetNameResponse, error) {
+	out := new(Vagrantfile_PrimaryTargetNameResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/PrimaryTargetName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// VagrantfileServiceServer is the server API for VagrantfileService service.
+// All implementations should embed UnimplementedVagrantfileServiceServer
+// for forward compatibility
+type VagrantfileServiceServer interface {
+	GetVagrantfile(context.Context, *Vagrantfile_GetVagrantfileRequest) (*Vagrantfile_GetVagrantfileResponse, error)
+	Target(context.Context, *Vagrantfile_TargetRequest) (*Vagrantfile_TargetResponse, error)
+	TargetConfig(context.Context, *Vagrantfile_TargetConfigRequest) (*Vagrantfile_TargetConfigResponse, error)
+	TargetNames(context.Context, *empty.Empty) (*Vagrantfile_TargetNamesResponse, error)
+	PrimaryTargetName(context.Context, *empty.Empty) (*Vagrantfile_PrimaryTargetNameResponse, error)
+}
+
+// UnimplementedVagrantfileServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedVagrantfileServiceServer struct {
+}
+
+func (UnimplementedVagrantfileServiceServer) GetVagrantfile(context.Context, *Vagrantfile_GetVagrantfileRequest) (*Vagrantfile_GetVagrantfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVagrantfile not implemented")
+}
+func (UnimplementedVagrantfileServiceServer) Target(context.Context, *Vagrantfile_TargetRequest) (*Vagrantfile_TargetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Target not implemented")
+}
+func (UnimplementedVagrantfileServiceServer) TargetConfig(context.Context, *Vagrantfile_TargetConfigRequest) (*Vagrantfile_TargetConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetConfig not implemented")
+}
+func (UnimplementedVagrantfileServiceServer) TargetNames(context.Context, *empty.Empty) (*Vagrantfile_TargetNamesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetNames not implemented")
+}
+func (UnimplementedVagrantfileServiceServer) PrimaryTargetName(context.Context, *empty.Empty) (*Vagrantfile_PrimaryTargetNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PrimaryTargetName not implemented")
+}
+
+// UnsafeVagrantfileServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to VagrantfileServiceServer will
+// result in compilation errors.
+type UnsafeVagrantfileServiceServer interface {
+	mustEmbedUnimplementedVagrantfileServiceServer()
+}
+
+func RegisterVagrantfileServiceServer(s grpc.ServiceRegistrar, srv VagrantfileServiceServer) {
+	s.RegisterService(&_VagrantfileService_serviceDesc, srv)
+}
+
+func _VagrantfileService_GetVagrantfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_GetVagrantfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).GetVagrantfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/GetVagrantfile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).GetVagrantfile(ctx, req.(*Vagrantfile_GetVagrantfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VagrantfileService_Target_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_TargetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).Target(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/Target",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).Target(ctx, req.(*Vagrantfile_TargetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VagrantfileService_TargetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_TargetConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).TargetConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/TargetConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).TargetConfig(ctx, req.(*Vagrantfile_TargetConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VagrantfileService_TargetNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).TargetNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/TargetNames",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).TargetNames(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VagrantfileService_PrimaryTargetName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).PrimaryTargetName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/PrimaryTargetName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).PrimaryTargetName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _VagrantfileService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.VagrantfileService",
+	HandlerType: (*VagrantfileServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetVagrantfile",
+			Handler:    _VagrantfileService_GetVagrantfile_Handler,
+		},
+		{
+			MethodName: "Target",
+			Handler:    _VagrantfileService_Target_Handler,
+		},
+		{
+			MethodName: "TargetConfig",
+			Handler:    _VagrantfileService_TargetConfig_Handler,
+		},
+		{
+			MethodName: "TargetNames",
+			Handler:    _VagrantfileService_TargetNames_Handler,
+		},
+		{
+			MethodName: "PrimaryTargetName",
+			Handler:    _VagrantfileService_PrimaryTargetName_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
