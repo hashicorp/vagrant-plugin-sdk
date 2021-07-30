@@ -173,20 +173,6 @@ message Args {
 }
 
 ///////
-  message TargetIndex {
-    message Entry {
-      string id = 1;
-      string local_data_path = 2;
-      string name = 3;
-      string provider = 4;
-      string state = 5;
-      string vagrantfile_name = 6;
-      string vagrantfile_path = 7;
-      string updated_at = 8; // TODO(spox): should we make this an int?
-      map<string,string> extra_data = 9;
-    }
-  }
-
   message BoxCollection {
     string directory = 1;
   }
@@ -864,6 +850,7 @@ service TargetService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
+  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
 }
 
 service TargetMachineService {
@@ -883,7 +870,8 @@ service TargetMachineService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
-  
+  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
+
   // Machine specific
   rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);
   rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
@@ -998,9 +986,6 @@ message Project {
   message MachineAndProvider {
     string name = 1;
     string provider = 2;
-  }
-  message TargetIndexResponse {
-    Args.TargetIndex TargetIndex = 1;
   }
   message MachineNamesResponse {
     repeated string names = 1;
@@ -1188,5 +1173,33 @@ message Vagrantfile {
     string raw = 2;
     string current_version = 3;
     repeated MachineConfig machine_configs = 4;
+  }
+}
+
+/********************************************************************
+* TargetIndex services
+********************************************************************/
+service TargetIndexService {
+  rpc Delete(Args.Target) returns (google.protobuf.Empty);
+  rpc Get(TargetIndex.GetRequest) returns (Args.Target);
+  rpc Includes(TargetIndex.IncludesRequest) returns (TargetIndex.IncludesResponse);
+  rpc Set(Args.Target) returns (Args.Target);
+  rpc Recover(Args.Target) returns (Args.Target);
+}
+
+/*******************************************************
+ * TargetIndex message used with TargetIndex service
+ *******************************************************/
+message TargetIndex {
+  message GetRequest {
+    string uuid = 1;
+  }
+     
+  message IncludesRequest {
+    string uuid = 1;  
+  }
+
+  message IncludesResponse {
+    bool exists = 1;
   }
 }
