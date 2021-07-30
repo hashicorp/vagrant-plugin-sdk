@@ -1184,7 +1184,6 @@ service TargetIndexService {
   rpc Get(TargetIndex.GetRequest) returns (Args.Target);
   rpc Includes(TargetIndex.IncludesRequest) returns (TargetIndex.IncludesResponse);
   rpc Set(Args.Target) returns (Args.Target);
-  rpc Recover(Args.Target) returns (Args.Target);
 }
 
 /*******************************************************

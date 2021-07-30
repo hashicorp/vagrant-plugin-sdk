@@ -6163,7 +6163,6 @@ type TargetIndexServiceClient interface {
 	Get(ctx context.Context, in *TargetIndex_GetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	Includes(ctx context.Context, in *TargetIndex_IncludesRequest, opts ...grpc.CallOption) (*TargetIndex_IncludesResponse, error)
 	Set(ctx context.Context, in *Args_Target, opts ...grpc.CallOption) (*Args_Target, error)
-	Recover(ctx context.Context, in *Args_Target, opts ...grpc.CallOption) (*Args_Target, error)
 }
 
 type targetIndexServiceClient struct {
@@ -6210,15 +6209,6 @@ func (c *targetIndexServiceClient) Set(ctx context.Context, in *Args_Target, opt
 	return out, nil
 }
 
-func (c *targetIndexServiceClient) Recover(ctx context.Context, in *Args_Target, opts ...grpc.CallOption) (*Args_Target, error) {
-	out := new(Args_Target)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetIndexService/Recover", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // TargetIndexServiceServer is the server API for TargetIndexService service.
 // All implementations should embed UnimplementedTargetIndexServiceServer
 // for forward compatibility
@@ -6227,7 +6217,6 @@ type TargetIndexServiceServer interface {
 	Get(context.Context, *TargetIndex_GetRequest) (*Args_Target, error)
 	Includes(context.Context, *TargetIndex_IncludesRequest) (*TargetIndex_IncludesResponse, error)
 	Set(context.Context, *Args_Target) (*Args_Target, error)
-	Recover(context.Context, *Args_Target) (*Args_Target, error)
 }
 
 // UnimplementedTargetIndexServiceServer should be embedded to have forward compatible implementations.
@@ -6245,9 +6234,6 @@ func (UnimplementedTargetIndexServiceServer) Includes(context.Context, *TargetIn
 }
 func (UnimplementedTargetIndexServiceServer) Set(context.Context, *Args_Target) (*Args_Target, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
-}
-func (UnimplementedTargetIndexServiceServer) Recover(context.Context, *Args_Target) (*Args_Target, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Recover not implemented")
 }
 
 // UnsafeTargetIndexServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -6333,24 +6319,6 @@ func _TargetIndexService_Set_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TargetIndexService_Recover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Args_Target)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TargetIndexServiceServer).Recover(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.TargetIndexService/Recover",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetIndexServiceServer).Recover(ctx, req.(*Args_Target))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _TargetIndexService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetIndexService",
 	HandlerType: (*TargetIndexServiceServer)(nil),
@@ -6370,10 +6338,6 @@ var _TargetIndexService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Set",
 			Handler:    _TargetIndexService_Set_Handler,
-		},
-		{
-			MethodName: "Recover",
-			Handler:    _TargetIndexService_Recover_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

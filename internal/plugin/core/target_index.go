@@ -124,27 +124,6 @@ func (t *targetIndexClient) Set(entry core.Target) (updatedEntry core.Target, er
 	return m.(core.Target), err
 }
 
-func (t *targetIndexClient) Recover(entry core.Target) (updatedEntry core.Target, err error) {
-	targetArg, err := t.Map(
-		entry,
-		(*vagrant_plugin_sdk.Args_Target)(nil),
-		argmapper.Typed(t.ctx),
-	)
-	if err != nil {
-		return nil, err
-	}
-	targetOut, err := t.client.Recover(t.ctx, targetArg.(*vagrant_plugin_sdk.Args_Target))
-	if err != nil {
-		return nil, err
-	}
-	m, err := t.Map(
-		targetOut,
-		(*core.Target)(nil),
-		argmapper.Typed(t.ctx),
-	)
-	return m.(core.Target), err
-}
-
 func (t *targetIndexServer) Delete(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Args_Target,
@@ -193,25 +172,6 @@ func (t *targetIndexServer) Set(
 		argmapper.Typed(ctx))
 
 	targetOut, err := t.Impl.Set(targetIn.(core.Target))
-	if err != nil {
-		return nil, err
-	}
-	result, err := t.Map(targetOut, (**vagrant_plugin_sdk.Args_Target)(nil))
-	if err != nil {
-		return nil, err
-	}
-
-	return result.(*vagrant_plugin_sdk.Args_Target), nil
-}
-
-func (t *targetIndexServer) Recover(
-	ctx context.Context,
-	in *vagrant_plugin_sdk.Args_Target,
-) (target *vagrant_plugin_sdk.Args_Target, err error) {
-	targetIn, err := t.Map(in, (*core.Target)(nil),
-		argmapper.Typed(ctx))
-
-	targetOut, err := t.Impl.Recover(targetIn.(core.Target))
 	if err != nil {
 		return nil, err
 	}
