@@ -90,18 +90,18 @@ func (_m *Box) HasUpdate(version string) (bool, error) {
 }
 
 // InUse provides a mock function with given fields: index
-func (_m *Box) InUse(index core.MachineIndex) (bool, error) {
+func (_m *Box) InUse(index core.TargetIndex) (bool, error) {
 	ret := _m.Called(index)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(core.MachineIndex) bool); ok {
+	if rf, ok := ret.Get(0).(func(core.TargetIndex) bool); ok {
 		r0 = rf(index)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(core.MachineIndex) error); ok {
+	if rf, ok := ret.Get(1).(func(core.TargetIndex) error); ok {
 		r1 = rf(index)
 	} else {
 		r1 = ret.Error(1)

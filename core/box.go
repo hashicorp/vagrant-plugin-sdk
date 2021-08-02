@@ -14,7 +14,7 @@ type Box interface {
 
 	// action functions
 	Destroy() (err error)
-	InUse(index MachineIndex) (inUse bool, err error)
+	InUse(index TargetIndex) (inUse bool, err error)
 	LoadMetadata() (metadata BoxMetadata, err error)
 	HasUpdate(version string) (updateAvailable bool, err error)
 	AutomaticUpdateCheckAllowed() (allowed bool, err error)
