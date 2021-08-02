@@ -69,13 +69,13 @@ type targetIndexServer struct {
 func (t *targetIndexClient) Delete(target core.Target) (err error) {
 	targetArg, err := t.Map(
 		target,
-		(*vagrant_plugin_sdk.Args_Target)(nil),
+		(*vagrant_plugin_sdk.Ref_Target)(nil),
 		argmapper.Typed(t.ctx),
 	)
 	if err != nil {
 		return err
 	}
-	_, err = t.client.Delete(t.ctx, targetArg.(*vagrant_plugin_sdk.Args_Target))
+	_, err = t.client.Delete(t.ctx, targetArg.(*vagrant_plugin_sdk.Ref_Target))
 	return
 }
 
@@ -126,7 +126,7 @@ func (t *targetIndexClient) Set(entry core.Target) (updatedEntry core.Target, er
 
 func (t *targetIndexServer) Delete(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.Args_Target,
+	in *vagrant_plugin_sdk.Ref_Target,
 ) (empty *empty.Empty, err error) {
 	tar, err := t.Map(in, (*core.Target)(nil),
 		argmapper.Typed(ctx))
@@ -137,17 +137,17 @@ func (t *targetIndexServer) Delete(
 func (t *targetIndexServer) Get(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.TargetIndex_GetRequest,
-) (target *vagrant_plugin_sdk.Args_Target, err error) {
+) (target *vagrant_plugin_sdk.Ref_Target, err error) {
 	tar, err := t.Impl.Get(in.Uuid)
 	if err != nil {
 		return nil, err
 	}
-	result, err := t.Map(tar, (**vagrant_plugin_sdk.Args_Target)(nil))
+	result, err := t.Map(tar, (**vagrant_plugin_sdk.Ref_Target)(nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.Args_Target), nil
+	return result.(*vagrant_plugin_sdk.Ref_Target), nil
 }
 
 func (t *targetIndexServer) Includes(
@@ -167,7 +167,7 @@ func (t *targetIndexServer) Includes(
 func (t *targetIndexServer) Set(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Args_Target,
-) (target *vagrant_plugin_sdk.Args_Target, err error) {
+) (target *vagrant_plugin_sdk.Ref_Target, err error) {
 	targetIn, err := t.Map(in, (*core.Target)(nil),
 		argmapper.Typed(ctx))
 
@@ -175,12 +175,12 @@ func (t *targetIndexServer) Set(
 	if err != nil {
 		return nil, err
 	}
-	result, err := t.Map(targetOut, (**vagrant_plugin_sdk.Args_Target)(nil))
+	result, err := t.Map(targetOut, (**vagrant_plugin_sdk.Ref_Target)(nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.Args_Target), nil
+	return result.(*vagrant_plugin_sdk.Ref_Target), nil
 }
 
 var (

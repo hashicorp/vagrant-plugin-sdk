@@ -1184,10 +1184,10 @@ message Vagrantfile {
 * TargetIndex services
 ********************************************************************/
 service TargetIndexService {
-  rpc Delete(Args.Target) returns (google.protobuf.Empty);
-  rpc Get(TargetIndex.GetRequest) returns (Args.Target);
+  rpc Delete(Ref.Target) returns (google.protobuf.Empty);
+  rpc Get(TargetIndex.GetRequest) returns (Ref.Target);
   rpc Includes(TargetIndex.IncludesRequest) returns (TargetIndex.IncludesResponse);
-  rpc Set(Args.Target) returns (Args.Target);
+  rpc Set(Args.Target) returns (Ref.Target);
 }
 
 /*******************************************************
