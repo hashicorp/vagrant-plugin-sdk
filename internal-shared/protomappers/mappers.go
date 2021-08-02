@@ -82,6 +82,8 @@ var All = []interface{}{
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
+	TargetIndex,
+	TargetIndexProto,
 }
 
 func NamedCapability(
@@ -839,6 +841,48 @@ func TargetMachine(
 	}
 
 	return client.(core.Machine), nil
+}
+
+func TargetIndexProto(
+	t core.TargetIndex,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_TargetIndex, error) {
+	ti := &plugincore.TargetIndexPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+		Impl:    t,
+	}
+
+	id, ep, err := wrapClient(t, ti, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_TargetIndex{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
+	}, nil
+}
+
+func TargetIndex(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_TargetIndex,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.TargetIndex, error) {
+	ti := &plugincore.TargetIndexPlugin{
+		Mappers: internal.Mappers,
+		Logger:  log,
+	}
+
+	client, err := wrapConnect(ctx, ti, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.TargetIndex), nil
 }
 
 type connInfo interface {
