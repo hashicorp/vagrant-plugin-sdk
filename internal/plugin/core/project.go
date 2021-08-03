@@ -75,6 +75,14 @@ type projectServer struct {
 	vagrant_plugin_sdk.UnimplementedProjectServiceServer
 }
 
+func (c *projectClient) Ref() interface{} {
+	r, err := c.client.Ref(c.ctx, &emptypb.Empty{})
+	if err != nil {
+		return err
+	}
+	return r
+}
+
 func (p *projectClient) CWD() (path string, err error) {
 	r, err := p.client.CWD(p.ctx, &emptypb.Empty{})
 	if err == nil {
@@ -435,6 +443,14 @@ func (p *projectServer) TargetIds(
 
 	return &vagrant_plugin_sdk.Project_TargetIdsResponse{
 		Ids: ids}, nil
+}
+
+func (s *projectServer) Ref(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Ref_Project, err error) {
+	r = s.Impl.Ref().(*vagrant_plugin_sdk.Ref_Project)
+	return
 }
 
 var (

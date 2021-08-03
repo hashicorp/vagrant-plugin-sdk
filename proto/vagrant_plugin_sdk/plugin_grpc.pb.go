@@ -5398,6 +5398,7 @@ type ProjectServiceClient interface {
 	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
 	TargetIds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
+	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Project, error)
 }
 
 type projectServiceClient struct {
@@ -5534,6 +5535,15 @@ func (c *projectServiceClient) TargetIds(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *projectServiceClient) Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Project, error) {
+	out := new(Ref_Project)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Ref", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations should embed UnimplementedProjectServiceServer
 // for forward compatibility
@@ -5553,6 +5563,7 @@ type ProjectServiceServer interface {
 	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
 	TargetNames(context.Context, *empty.Empty) (*Project_TargetNamesResponse, error)
 	TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error)
+	Ref(context.Context, *empty.Empty) (*Ref_Project, error)
 }
 
 // UnimplementedProjectServiceServer should be embedded to have forward compatible implementations.
@@ -5600,6 +5611,9 @@ func (UnimplementedProjectServiceServer) TargetNames(context.Context, *empty.Emp
 }
 func (UnimplementedProjectServiceServer) TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetIds not implemented")
+}
+func (UnimplementedProjectServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Project, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
 
 // UnsafeProjectServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -5865,6 +5879,24 @@ func _ProjectService_TargetIds_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectService_Ref_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Ref(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Ref",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Ref(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ProjectService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProjectService",
 	HandlerType: (*ProjectServiceServer)(nil),
@@ -5924,6 +5956,10 @@ var _ProjectService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TargetIds",
 			Handler:    _ProjectService_TargetIds_Handler,
+		},
+		{
+			MethodName: "Ref",
+			Handler:    _ProjectService_Ref_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

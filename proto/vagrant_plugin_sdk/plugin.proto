@@ -972,6 +972,7 @@ service ProjectService {
   rpc Target(Project.TargetRequest) returns (Args.Target);
   rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
   rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
+  rpc Ref(google.protobuf.Empty) returns (Ref.Project);
 }
 
 /*******************************************************

@@ -45,5 +45,7 @@ type Project interface {
 	TargetNames() (names []string, err error)
 	TargetIds() (ids []string, err error)
 
+	Ref() interface{}
+
 	io.Closer
 }
