@@ -79,10 +79,10 @@ func (t *targetIndexClient) Delete(target core.Target) (err error) {
 	return
 }
 
-func (t *targetIndexClient) Get(uuid string) (entry core.Target, err error) {
+func (t *targetIndexClient) Get(ref *vagrant_plugin_sdk.Ref_Target) (entry core.Target, err error) {
 	target, err := t.client.Get(
 		t.ctx,
-		&vagrant_plugin_sdk.TargetIndex_GetRequest{Uuid: uuid},
+		ref,
 	)
 	if err != nil {
 		return nil, err
@@ -95,10 +95,10 @@ func (t *targetIndexClient) Get(uuid string) (entry core.Target, err error) {
 	return m.(core.Target), err
 }
 
-func (t *targetIndexClient) Includes(uuid string) (exists bool, err error) {
+func (t *targetIndexClient) Includes(ref *vagrant_plugin_sdk.Ref_Target) (exists bool, err error) {
 	incl, err := t.client.Includes(
 		t.ctx,
-		&vagrant_plugin_sdk.TargetIndex_IncludesRequest{Uuid: uuid},
+		ref,
 	)
 	return incl.Exists, err
 }
@@ -136,9 +136,9 @@ func (t *targetIndexServer) Delete(
 
 func (t *targetIndexServer) Get(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.TargetIndex_GetRequest,
-) (target *vagrant_plugin_sdk.Ref_Target, err error) {
-	tar, err := t.Impl.Get(in.Uuid)
+	in *vagrant_plugin_sdk.Ref_Target,
+) (target *vagrant_plugin_sdk.TargetIndex_GetResponse, err error) {
+	tar, err := t.Impl.Get(in)
 	if err != nil {
 		return nil, err
 	}
@@ -147,14 +147,16 @@ func (t *targetIndexServer) Get(
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.Ref_Target), nil
+	return &vagrant_plugin_sdk.TargetIndex_GetResponse{
+		Target: result.(*vagrant_plugin_sdk.Ref_Target),
+	}, nil
 }
 
 func (t *targetIndexServer) Includes(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.TargetIndex_IncludesRequest,
+	in *vagrant_plugin_sdk.Ref_Target,
 ) (result *vagrant_plugin_sdk.TargetIndex_IncludesResponse, err error) {
-	resp, err := t.Impl.Includes(in.Uuid)
+	resp, err := t.Impl.Includes(in)
 	if err != nil {
 		return nil, err
 	}

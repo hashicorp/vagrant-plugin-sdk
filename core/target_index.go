@@ -1,9 +1,11 @@
 package core
 
+import "github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+
 type TargetIndex interface {
-	Delete(target Target) (err error)
-	Get(uuid string) (entry Target, err error)
-	Includes(uuid string) (exists bool, err error)
+	Delete(entry Target) (err error)
+	Get(ref *vagrant_plugin_sdk.Ref_Target) (entry Target, err error)
+	Includes(ref *vagrant_plugin_sdk.Ref_Target) (exists bool, err error)
 	Set(entry Target) (updatedEntry Target, err error)
 	// Recover(entry Target) (updatedEntry Target, err error)
 }
