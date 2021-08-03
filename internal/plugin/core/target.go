@@ -414,12 +414,15 @@ func (s *targetServer) DataDir(
 	if err != nil {
 		return
 	}
-	result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
-	if err != nil {
-		return
+	if d != nil {
+		result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
+		if err != nil {
+			return nil, err
+		}
+		r = result.(*vagrant_plugin_sdk.Args_DataDir_Target)
+	} else {
+		r = &vagrant_plugin_sdk.Args_DataDir_Target{}
 	}
-	r = result.(*vagrant_plugin_sdk.Args_DataDir_Target)
-
 	return
 }
 
