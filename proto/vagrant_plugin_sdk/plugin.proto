@@ -1197,6 +1197,7 @@ service TargetIndexService {
 message TargetIndex {
   message GetResponse {
     Ref.Target target = 1;
+    string provider = 2;
   }
 
   message IncludesResponse {

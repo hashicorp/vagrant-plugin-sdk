@@ -147,8 +147,15 @@ func (t *targetIndexServer) Get(
 		return nil, err
 	}
 
+	// TODO: get the provider
+	// provider, err := tar.Provider()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return &vagrant_plugin_sdk.TargetIndex_GetResponse{
-		Target: result.(*vagrant_plugin_sdk.Ref_Target),
+		Target:   result.(*vagrant_plugin_sdk.Ref_Target),
+		Provider: "virtualbox",
 	}, nil
 }
 
