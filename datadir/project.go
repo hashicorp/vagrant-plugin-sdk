@@ -13,20 +13,9 @@ type Project struct {
 	Dir
 }
 
-// NewProject creates the directory structure for a project. This will
-// create the physical directories on disk if they do not already exist.
-func NewProject(path string) (*Project, error) {
-	dir, err := newRootDir(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Project{Dir: dir}, nil
-}
-
 // Target returns the Dir implementation scoped to a specific target.
-func (p *Project) Target(name string) (*Target, error) {
-	dir, err := NewScopedDir(p, path.NewPath("target").Join(name).String())
+func (p *Project) Target(ident string) (*Target, error) {
+	dir, err := NewScopedDir(p, path.NewPath("target").Join(ident).String())
 	if err != nil {
 		return nil, err
 	}

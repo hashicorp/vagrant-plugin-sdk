@@ -104,7 +104,7 @@ func (p *path) Join(elm ...string) Path {
 
 func (p *path) Parent() Path {
 	parent, _ := p.Split()
-	return parent
+	return parent.Dir()
 }
 
 func (p *path) Split() (dir Path, file string) {

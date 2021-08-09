@@ -21,28 +21,28 @@ import "protostructure.proto";
 message Args {
   message DataDir {
     message Basis {
-      string root_dir = 1;
+      string config_dir = 1;
       string cache_dir = 2;
       string data_dir = 3;
       string temp_dir = 4;
     }
 
     message Project {
-      string root_dir = 1;
+      string config_dir = 1;
       string cache_dir = 2;
       string data_dir = 3;
       string temp_dir = 4;
     }
 
     message Target {
-      string root_dir = 1;
+      string config_dir = 1;
       string cache_dir = 2;
       string data_dir = 3;
       string temp_dir = 4;
     }
 
     message Component {
-      string root_dir = 1;
+      string config_dir = 1;
       string cache_dir = 2;
       string data_dir = 3;
       string temp_dir = 4;
@@ -505,11 +505,15 @@ message StateBag {
 
 service PluginInfoService {
   rpc ComponentTypes(google.protobuf.Empty) returns (PluginInfo.ComponentList);
+  rpc Name(google.protobuf.Empty) returns (PluginInfo.Name);
 }
 
 message PluginInfo {
   message ComponentList {
     repeated uint32 component = 1;
+  }
+  message Name {
+    string name = 1;
   }
 }
 
@@ -1039,7 +1043,7 @@ message Vagrantfile {
   message GetVagrantfileResponse {
     Vagrantfile vagrantfile = 1;
   }
-  
+
   message TargetRequest {
     string name = 1;
     string provider = 2;
@@ -1157,7 +1161,7 @@ message Vagrantfile {
     // A SyncedFolder plugin defines it's own configuration,
     // that gets added in here
     google.protobuf.Any config = 3;
-   
+
     bool create = 4;
     bool disabled = 5;
     string group = 6;
@@ -1193,9 +1197,9 @@ message TargetIndex {
   message GetRequest {
     string uuid = 1;
   }
-     
+
   message IncludesRequest {
-    string uuid = 1;  
+    string uuid = 1;
   }
 
   message IncludesResponse {

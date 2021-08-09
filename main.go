@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"os"
+	"path"
 
 	"github.com/fatih/color"
 	"github.com/hashicorp/go-argmapper"
@@ -66,6 +67,18 @@ func Main(opts ...Option) {
 		hclog.SetDefault(log)
 	}
 
+	if c.Name == "" {
+		ep, err := os.Executable()
+		if err != nil {
+			log.Error("failed to determine name of executable",
+				"error", err,
+			)
+			ep = "unknown"
+		}
+
+		c.Name = path.Base(ep)
+	}
+
 	// Build up our mappers
 	var mappers []*argmapper.Func
 	for _, raw := range c.Mappers {
@@ -90,6 +103,7 @@ func Main(opts ...Option) {
 			sdkplugin.WithComponents(c.Components...),
 			sdkplugin.WithMappers(mappers...),
 			sdkplugin.WithLogger(log),
+			sdkplugin.WithName(c.Name),
 		),
 		GRPCServer: plugin.DefaultGRPCServer,
 		Logger:     log,
@@ -109,6 +123,8 @@ type config struct {
 	InProcess *plugin.ServeTestConfig
 
 	Log hclog.Logger
+
+	Name string
 }
 
 // Option modifies config. Zero or more can be passed to Main.
@@ -116,6 +132,10 @@ type Option func(*config)
 
 func InProcess(tc *plugin.ServeTestConfig) Option {
 	return func(c *config) { c.InProcess = tc }
+}
+
+func WithName(n string) Option {
+	return func(c *config) { c.Name = n }
 }
 
 func WithLogger(l hclog.Logger) Option {

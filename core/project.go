@@ -32,7 +32,7 @@ type Project interface {
 	// Unlock(name string) (err error)
 	// Push ?
 	// Machine(name, provider string, refresh bool) (machine Machine, err error)
-	TargetIndex() (index TargetIndex, err error)
+	// TargetIndex() (index TargetIndex, err error)
 	MachineNames() (names []string, err error)
 	// PrimaryMachineName() (name string, err error)
 	// RootPath() (path string, err error)

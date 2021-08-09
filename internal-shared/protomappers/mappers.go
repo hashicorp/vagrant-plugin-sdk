@@ -287,58 +287,58 @@ func JobInfoProto(input *component.JobInfo) (*vagrant_plugin_sdk.Args_JobInfo, e
 }
 
 func DatadirBasis(input *vagrant_plugin_sdk.Args_DataDir_Basis) *datadir.Basis {
-	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
+	dir := datadir.NewBasicDir(input.ConfigDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Basis{Dir: dir}
 }
 
 func DatadirProject(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Project {
-	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
+	dir := datadir.NewBasicDir(input.ConfigDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Project{Dir: dir}
 }
 
 func DatadirTarget(input *vagrant_plugin_sdk.Args_DataDir_Target) *datadir.Target {
-	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
+	dir := datadir.NewBasicDir(input.ConfigDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Target{Dir: dir}
 }
 
 func DatadirComponent(input *vagrant_plugin_sdk.Args_DataDir_Project) *datadir.Component {
-	dir := datadir.NewBasicDir(input.RootDir, input.CacheDir, input.DataDir, input.TempDir)
+	dir := datadir.NewBasicDir(input.ConfigDir, input.CacheDir, input.DataDir, input.TempDir)
 	return &datadir.Component{Dir: dir}
 }
 
 func DatadirBasisProto(input *datadir.Basis) *vagrant_plugin_sdk.Args_DataDir_Basis {
 	return &vagrant_plugin_sdk.Args_DataDir_Basis{
-		CacheDir: input.CacheDir().String(),
-		DataDir:  input.DataDir().String(),
-		TempDir:  input.TempDir().String(),
-		RootDir:  input.RootDir().String(),
+		CacheDir:  input.CacheDir().String(),
+		DataDir:   input.DataDir().String(),
+		TempDir:   input.TempDir().String(),
+		ConfigDir: input.ConfigDir().String(),
 	}
 }
 
 func DatadirProjectProto(input *datadir.Project) *vagrant_plugin_sdk.Args_DataDir_Project {
 	return &vagrant_plugin_sdk.Args_DataDir_Project{
-		CacheDir: input.CacheDir().String(),
-		DataDir:  input.DataDir().String(),
-		TempDir:  input.TempDir().String(),
-		RootDir:  input.RootDir().String(),
+		CacheDir:  input.CacheDir().String(),
+		DataDir:   input.DataDir().String(),
+		TempDir:   input.TempDir().String(),
+		ConfigDir: input.ConfigDir().String(),
 	}
 }
 
 func DatadirTargetProto(input *datadir.Target) *vagrant_plugin_sdk.Args_DataDir_Target {
 	return &vagrant_plugin_sdk.Args_DataDir_Target{
-		CacheDir: input.CacheDir().String(),
-		DataDir:  input.DataDir().String(),
-		TempDir:  input.TempDir().String(),
-		RootDir:  input.RootDir().String(),
+		CacheDir:  input.CacheDir().String(),
+		DataDir:   input.DataDir().String(),
+		TempDir:   input.TempDir().String(),
+		ConfigDir: input.ConfigDir().String(),
 	}
 }
 
 func DatadirComponentProto(input *datadir.Component) *vagrant_plugin_sdk.Args_DataDir_Component {
 	return &vagrant_plugin_sdk.Args_DataDir_Component{
-		CacheDir: input.CacheDir().String(),
-		DataDir:  input.DataDir().String(),
-		TempDir:  input.TempDir().String(),
-		RootDir:  input.RootDir().String(),
+		CacheDir:  input.CacheDir().String(),
+		DataDir:   input.DataDir().String(),
+		TempDir:   input.TempDir().String(),
+		ConfigDir: input.ConfigDir().String(),
 	}
 }
 
