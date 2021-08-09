@@ -261,6 +261,11 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 	return
 }
 
+func (t *targetClient) Save() (err error) {
+	_, err = t.client.Save(t.ctx, &empty.Empty{})
+	return
+}
+
 // Target Server
 
 func (s *targetServer) Communicate(
@@ -495,6 +500,14 @@ func (s *targetServer) Ref(
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Ref_Target, err error) {
 	r = s.Impl.Ref().(*vagrant_plugin_sdk.Ref_Target)
+	return
+}
+
+func (s *targetServer) Save(
+	ctx context.Context,
+	_ *empty.Empty,
+) (_ *empty.Empty, err error) {
+	err = s.Impl.Save()
 	return
 }
 

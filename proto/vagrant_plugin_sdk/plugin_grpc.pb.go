@@ -13,6 +13,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // TerminalUIServiceClient is the client API for TerminalUIService service.
@@ -42,7 +43,7 @@ func (c *terminalUIServiceClient) Output(ctx context.Context, in *TerminalUI_Out
 }
 
 func (c *terminalUIServiceClient) Events(ctx context.Context, opts ...grpc.CallOption) (TerminalUIService_EventsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_TerminalUIService_serviceDesc.Streams[0], "/hashicorp.vagrant.sdk.TerminalUIService/Events", opts...)
+	stream, err := c.cc.NewStream(ctx, &TerminalUIService_ServiceDesc.Streams[0], "/hashicorp.vagrant.sdk.TerminalUIService/Events", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +113,7 @@ type UnsafeTerminalUIServiceServer interface {
 }
 
 func RegisterTerminalUIServiceServer(s grpc.ServiceRegistrar, srv TerminalUIServiceServer) {
-	s.RegisterService(&_TerminalUIService_serviceDesc, srv)
+	s.RegisterService(&TerminalUIService_ServiceDesc, srv)
 }
 
 func _TerminalUIService_Output_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -177,7 +178,10 @@ func _TerminalUIService_IsInteractive_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TerminalUIService_serviceDesc = grpc.ServiceDesc{
+// TerminalUIService_ServiceDesc is the grpc.ServiceDesc for TerminalUIService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TerminalUIService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TerminalUIService",
 	HandlerType: (*TerminalUIServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -266,7 +270,7 @@ type UnsafeMapperServer interface {
 }
 
 func RegisterMapperServer(s grpc.ServiceRegistrar, srv MapperServer) {
-	s.RegisterService(&_Mapper_serviceDesc, srv)
+	s.RegisterService(&Mapper_ServiceDesc, srv)
 }
 
 func _Mapper_ListMappers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -305,7 +309,10 @@ func _Mapper_Map_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Mapper_serviceDesc = grpc.ServiceDesc{
+// Mapper_ServiceDesc is the grpc.ServiceDesc for Mapper service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Mapper_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.Mapper",
 	HandlerType: (*MapperServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -411,7 +418,7 @@ type UnsafeStateBagServiceServer interface {
 }
 
 func RegisterStateBagServiceServer(s grpc.ServiceRegistrar, srv StateBagServiceServer) {
-	s.RegisterService(&_StateBagService_serviceDesc, srv)
+	s.RegisterService(&StateBagService_ServiceDesc, srv)
 }
 
 func _StateBagService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -486,7 +493,10 @@ func _StateBagService_Remove_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-var _StateBagService_serviceDesc = grpc.ServiceDesc{
+// StateBagService_ServiceDesc is the grpc.ServiceDesc for StateBagService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StateBagService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.StateBagService",
 	HandlerType: (*StateBagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -558,7 +568,7 @@ type UnsafePluginInfoServiceServer interface {
 }
 
 func RegisterPluginInfoServiceServer(s grpc.ServiceRegistrar, srv PluginInfoServiceServer) {
-	s.RegisterService(&_PluginInfoService_serviceDesc, srv)
+	s.RegisterService(&PluginInfoService_ServiceDesc, srv)
 }
 
 func _PluginInfoService_ComponentTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -579,7 +589,10 @@ func _PluginInfoService_ComponentTypes_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-var _PluginInfoService_serviceDesc = grpc.ServiceDesc{
+// PluginInfoService_ServiceDesc is the grpc.ServiceDesc for PluginInfoService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PluginInfoService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.PluginInfoService",
 	HandlerType: (*PluginInfoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -783,7 +796,7 @@ type UnsafeProviderServiceServer interface {
 }
 
 func RegisterProviderServiceServer(s grpc.ServiceRegistrar, srv ProviderServiceServer) {
-	s.RegisterService(&_ProviderService_serviceDesc, srv)
+	s.RegisterService(&ProviderService_ServiceDesc, srv)
 }
 
 func _ProviderService_Usable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -984,7 +997,10 @@ func _ProviderService_Documentation_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ProviderService_serviceDesc = grpc.ServiceDesc{
+// ProviderService_ServiceDesc is the grpc.ServiceDesc for ProviderService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProviderService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProviderService",
 	HandlerType: (*ProviderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -1112,7 +1128,7 @@ type UnsafeProvisionerServiceServer interface {
 }
 
 func RegisterProvisionerServiceServer(s grpc.ServiceRegistrar, srv ProvisionerServiceServer) {
-	s.RegisterService(&_ProvisionerService_serviceDesc, srv)
+	s.RegisterService(&ProvisionerService_ServiceDesc, srv)
 }
 
 func _ProvisionerService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1169,7 +1185,10 @@ func _ProvisionerService_Documentation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ProvisionerService_serviceDesc = grpc.ServiceDesc{
+// ProvisionerService_ServiceDesc is the grpc.ServiceDesc for ProvisionerService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProvisionerService",
 	HandlerType: (*ProvisionerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -1321,7 +1340,7 @@ type UnsafeCommandServiceServer interface {
 }
 
 func RegisterCommandServiceServer(s grpc.ServiceRegistrar, srv CommandServiceServer) {
-	s.RegisterService(&_CommandService_serviceDesc, srv)
+	s.RegisterService(&CommandService_ServiceDesc, srv)
 }
 
 func _CommandService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1450,7 +1469,10 @@ func _CommandService_CommandInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-var _CommandService_serviceDesc = grpc.ServiceDesc{
+// CommandService_ServiceDesc is the grpc.ServiceDesc for CommandService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CommandService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.CommandService",
 	HandlerType: (*CommandServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -1842,7 +1864,7 @@ type UnsafeCommunicatorServiceServer interface {
 }
 
 func RegisterCommunicatorServiceServer(s grpc.ServiceRegistrar, srv CommunicatorServiceServer) {
-	s.RegisterService(&_CommunicatorService_serviceDesc, srv)
+	s.RegisterService(&CommunicatorService_ServiceDesc, srv)
 }
 
 func _CommunicatorService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2259,7 +2281,10 @@ func _CommunicatorService_Reset_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-var _CommunicatorService_serviceDesc = grpc.ServiceDesc{
+// CommunicatorService_ServiceDesc is the grpc.ServiceDesc for CommunicatorService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CommunicatorService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.CommunicatorService",
 	HandlerType: (*CommunicatorServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2435,7 +2460,7 @@ type UnsafeConfigServiceServer interface {
 }
 
 func RegisterConfigServiceServer(s grpc.ServiceRegistrar, srv ConfigServiceServer) {
-	s.RegisterService(&_ConfigService_serviceDesc, srv)
+	s.RegisterService(&ConfigService_ServiceDesc, srv)
 }
 
 func _ConfigService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2492,7 +2517,10 @@ func _ConfigService_Documentation_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ConfigService_serviceDesc = grpc.ServiceDesc{
+// ConfigService_ServiceDesc is the grpc.ServiceDesc for ConfigService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ConfigService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ConfigService",
 	HandlerType: (*ConfigServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -2700,7 +2728,7 @@ type UnsafeHostServiceServer interface {
 }
 
 func RegisterHostServiceServer(s grpc.ServiceRegistrar, srv HostServiceServer) {
-	s.RegisterService(&_HostService_serviceDesc, srv)
+	s.RegisterService(&HostService_ServiceDesc, srv)
 }
 
 func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2901,7 +2929,10 @@ func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-var _HostService_serviceDesc = grpc.ServiceDesc{
+// HostService_ServiceDesc is the grpc.ServiceDesc for HostService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var HostService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.HostService",
 	HandlerType: (*HostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3141,7 +3172,7 @@ type UnsafeGuestServiceServer interface {
 }
 
 func RegisterGuestServiceServer(s grpc.ServiceRegistrar, srv GuestServiceServer) {
-	s.RegisterService(&_GuestService_serviceDesc, srv)
+	s.RegisterService(&GuestService_ServiceDesc, srv)
 }
 
 func _GuestService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3342,7 +3373,10 @@ func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-var _GuestService_serviceDesc = grpc.ServiceDesc{
+// GuestService_ServiceDesc is the grpc.ServiceDesc for GuestService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var GuestService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.GuestService",
 	HandlerType: (*GuestServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3470,7 +3504,7 @@ type UnsafeSyncedFolderServiceServer interface {
 }
 
 func RegisterSyncedFolderServiceServer(s grpc.ServiceRegistrar, srv SyncedFolderServiceServer) {
-	s.RegisterService(&_SyncedFolderService_serviceDesc, srv)
+	s.RegisterService(&SyncedFolderService_ServiceDesc, srv)
 }
 
 func _SyncedFolderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3527,7 +3561,10 @@ func _SyncedFolderService_Documentation_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-var _SyncedFolderService_serviceDesc = grpc.ServiceDesc{
+// SyncedFolderService_ServiceDesc is the grpc.ServiceDesc for SyncedFolderService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.SyncedFolderService",
 	HandlerType: (*SyncedFolderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3623,7 +3660,7 @@ type UnsafeBasisServiceServer interface {
 }
 
 func RegisterBasisServiceServer(s grpc.ServiceRegistrar, srv BasisServiceServer) {
-	s.RegisterService(&_BasisService_serviceDesc, srv)
+	s.RegisterService(&BasisService_ServiceDesc, srv)
 }
 
 func _BasisService_DataDir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3680,7 +3717,10 @@ func _BasisService_Host_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-var _BasisService_serviceDesc = grpc.ServiceDesc{
+// BasisService_ServiceDesc is the grpc.ServiceDesc for BasisService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BasisService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.BasisService",
 	HandlerType: (*BasisServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -3721,6 +3761,7 @@ type TargetServiceClient interface {
 	UpdatedAt(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
 	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error)
+	Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type targetServiceClient struct {
@@ -3875,6 +3916,15 @@ func (c *targetServiceClient) Ref(ctx context.Context, in *empty.Empty, opts ...
 	return out, nil
 }
 
+func (c *targetServiceClient) Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/Save", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetServiceServer is the server API for TargetService service.
 // All implementations should embed UnimplementedTargetServiceServer
 // for forward compatibility
@@ -3895,6 +3945,7 @@ type TargetServiceServer interface {
 	UpdatedAt(context.Context, *empty.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *empty.Empty) (*Args_Communicator, error)
 	Ref(context.Context, *empty.Empty) (*Ref_Target, error)
+	Save(context.Context, *empty.Empty) (*empty.Empty, error)
 }
 
 // UnimplementedTargetServiceServer should be embedded to have forward compatible implementations.
@@ -3949,6 +4000,9 @@ func (UnimplementedTargetServiceServer) Communicate(context.Context, *empty.Empt
 func (UnimplementedTargetServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Target, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
+func (UnimplementedTargetServiceServer) Save(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
+}
 
 // UnsafeTargetServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TargetServiceServer will
@@ -3958,7 +4012,7 @@ type UnsafeTargetServiceServer interface {
 }
 
 func RegisterTargetServiceServer(s grpc.ServiceRegistrar, srv TargetServiceServer) {
-	s.RegisterService(&_TargetService_serviceDesc, srv)
+	s.RegisterService(&TargetService_ServiceDesc, srv)
 }
 
 func _TargetService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -4249,7 +4303,28 @@ func _TargetService_Ref_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TargetService_serviceDesc = grpc.ServiceDesc{
+func _TargetService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetServiceServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetService/Save",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetServiceServer).Save(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// TargetService_ServiceDesc is the grpc.ServiceDesc for TargetService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TargetService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetService",
 	HandlerType: (*TargetServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -4317,6 +4392,10 @@ var _TargetService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Ref",
 			Handler:    _TargetService_Ref_Handler,
 		},
+		{
+			MethodName: "Save",
+			Handler:    _TargetService_Save_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -4343,6 +4422,7 @@ type TargetMachineServiceClient interface {
 	UpdatedAt(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
 	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error)
+	Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	// Machine specific
 	SetID(ctx context.Context, in *Target_Machine_SetIDRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetID(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_Machine_GetIDResponse, error)
@@ -4510,6 +4590,15 @@ func (c *targetMachineServiceClient) Ref(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Save", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *targetMachineServiceClient) SetID(ctx context.Context, in *Target_Machine_SetIDRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/SetID", in, out, opts...)
@@ -4639,6 +4728,7 @@ type TargetMachineServiceServer interface {
 	UpdatedAt(context.Context, *empty.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *empty.Empty) (*Args_Communicator, error)
 	Ref(context.Context, *empty.Empty) (*Ref_Target, error)
+	Save(context.Context, *empty.Empty) (*empty.Empty, error)
 	// Machine specific
 	SetID(context.Context, *Target_Machine_SetIDRequest) (*empty.Empty, error)
 	GetID(context.Context, *empty.Empty) (*Target_Machine_GetIDResponse, error)
@@ -4706,6 +4796,9 @@ func (UnimplementedTargetMachineServiceServer) Communicate(context.Context, *emp
 func (UnimplementedTargetMachineServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Target, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
+func (UnimplementedTargetMachineServiceServer) Save(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
+}
 func (UnimplementedTargetMachineServiceServer) SetID(context.Context, *Target_Machine_SetIDRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetID not implemented")
 }
@@ -4751,7 +4844,7 @@ type UnsafeTargetMachineServiceServer interface {
 }
 
 func RegisterTargetMachineServiceServer(s grpc.ServiceRegistrar, srv TargetMachineServiceServer) {
-	s.RegisterService(&_TargetMachineService_serviceDesc, srv)
+	s.RegisterService(&TargetMachineService_ServiceDesc, srv)
 }
 
 func _TargetMachineService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -5042,6 +5135,24 @@ func _TargetMachineService_Ref_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Save",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).Save(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TargetMachineService_SetID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Target_Machine_SetIDRequest)
 	if err := dec(in); err != nil {
@@ -5258,7 +5369,10 @@ func _TargetMachineService_SyncedFolders_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
+// TargetMachineService_ServiceDesc is the grpc.ServiceDesc for TargetMachineService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetMachineService",
 	HandlerType: (*TargetMachineServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -5325,6 +5439,10 @@ var _TargetMachineService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ref",
 			Handler:    _TargetMachineService_Ref_Handler,
+		},
+		{
+			MethodName: "Save",
+			Handler:    _TargetMachineService_Save_Handler,
 		},
 		{
 			MethodName: "SetID",
@@ -5624,7 +5742,7 @@ type UnsafeProjectServiceServer interface {
 }
 
 func RegisterProjectServiceServer(s grpc.ServiceRegistrar, srv ProjectServiceServer) {
-	s.RegisterService(&_ProjectService_serviceDesc, srv)
+	s.RegisterService(&ProjectService_ServiceDesc, srv)
 }
 
 func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -5897,7 +6015,10 @@ func _ProjectService_Ref_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ProjectService_serviceDesc = grpc.ServiceDesc{
+// ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProjectService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.ProjectService",
 	HandlerType: (*ProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -6069,7 +6190,7 @@ type UnsafeVagrantfileServiceServer interface {
 }
 
 func RegisterVagrantfileServiceServer(s grpc.ServiceRegistrar, srv VagrantfileServiceServer) {
-	s.RegisterService(&_VagrantfileService_serviceDesc, srv)
+	s.RegisterService(&VagrantfileService_ServiceDesc, srv)
 }
 
 func _VagrantfileService_GetVagrantfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -6162,7 +6283,10 @@ func _VagrantfileService_PrimaryTargetName_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-var _VagrantfileService_serviceDesc = grpc.ServiceDesc{
+// VagrantfileService_ServiceDesc is the grpc.ServiceDesc for VagrantfileService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var VagrantfileService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.VagrantfileService",
 	HandlerType: (*VagrantfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -6280,7 +6404,7 @@ type UnsafeTargetIndexServiceServer interface {
 }
 
 func RegisterTargetIndexServiceServer(s grpc.ServiceRegistrar, srv TargetIndexServiceServer) {
-	s.RegisterService(&_TargetIndexService_serviceDesc, srv)
+	s.RegisterService(&TargetIndexService_ServiceDesc, srv)
 }
 
 func _TargetIndexService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -6355,7 +6479,10 @@ func _TargetIndexService_Set_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TargetIndexService_serviceDesc = grpc.ServiceDesc{
+// TargetIndexService_ServiceDesc is the grpc.ServiceDesc for TargetIndexService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TargetIndexService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.TargetIndexService",
 	HandlerType: (*TargetIndexServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
