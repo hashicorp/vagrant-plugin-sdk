@@ -13,6 +13,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -138,6 +139,14 @@ func (p *projectClient) VagrantfileName() (name string, err error) {
 		name = r.Name
 	}
 
+	return
+}
+
+func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
+	r, err := p.client.VagrantfilePath(p.ctx, &emptypb.Empty{})
+	if err == nil {
+		pp = path.NewPath(r.Path)
+	}
 	return
 }
 
@@ -269,6 +278,20 @@ func (p *projectServer) VagrantfileName(
 
 	return &vagrant_plugin_sdk.Project_VagrantfileNameResponse{
 		Name: name,
+	}, nil
+}
+
+func (p *projectServer) VagrantfilePath(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Project_VagrantfilePathResponse, error) {
+	path, err := p.Impl.VagrantfilePath()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_VagrantfilePathResponse{
+		Path: path.String(),
 	}, nil
 }
 
