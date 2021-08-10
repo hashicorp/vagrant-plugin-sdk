@@ -8,4 +8,5 @@ type TargetIndex interface {
 	Includes(ref *vagrant_plugin_sdk.Ref_Target) (exists bool, err error)
 	Set(entry Target) (updatedEntry Target, err error)
 	// Recover(entry Target) (updatedEntry Target, err error)
+	All() (targets []Target, err error)
 }

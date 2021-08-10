@@ -124,6 +124,28 @@ func (t *targetIndexClient) Set(entry core.Target) (updatedEntry core.Target, er
 	return m.(core.Target), err
 }
 
+func (t *targetIndexClient) All() (targets []core.Target, err error) {
+	argTargets, err := t.client.All(t.ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	targets = []core.Target{}
+	for _, argTarget := range argTargets.Targets {
+		result, err := t.Map(
+			argTarget,
+			(*core.Target)(nil),
+			argmapper.Typed(t.ctx),
+		)
+		if err != nil {
+			return nil, err
+		}
+		targets = append(targets, result.(core.Target))
+	}
+	return
+}
+
+// Target Index Server
+
 func (t *targetIndexServer) Delete(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Ref_Target,
@@ -137,26 +159,17 @@ func (t *targetIndexServer) Delete(
 func (t *targetIndexServer) Get(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Ref_Target,
-) (target *vagrant_plugin_sdk.TargetIndex_GetResponse, err error) {
+) (target *vagrant_plugin_sdk.Args_Target, err error) {
 	tar, err := t.Impl.Get(in)
 	if err != nil {
 		return nil, err
 	}
-	result, err := t.Map(tar, (**vagrant_plugin_sdk.Ref_Target)(nil))
+	result, err := t.Map(tar, (**vagrant_plugin_sdk.Args_Target)(nil))
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: get the provider
-	// provider, err := tar.Provider()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	return &vagrant_plugin_sdk.TargetIndex_GetResponse{
-		Target:   result.(*vagrant_plugin_sdk.Ref_Target),
-		Provider: "virtualbox",
-	}, nil
+	return result.(*vagrant_plugin_sdk.Args_Target), err
 }
 
 func (t *targetIndexServer) Includes(
@@ -176,7 +189,7 @@ func (t *targetIndexServer) Includes(
 func (t *targetIndexServer) Set(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Args_Target,
-) (target *vagrant_plugin_sdk.Ref_Target, err error) {
+) (target *vagrant_plugin_sdk.Args_Target, err error) {
 	targetIn, err := t.Map(in, (*core.Target)(nil),
 		argmapper.Typed(ctx))
 
@@ -184,12 +197,31 @@ func (t *targetIndexServer) Set(
 	if err != nil {
 		return nil, err
 	}
-	result, err := t.Map(targetOut, (**vagrant_plugin_sdk.Ref_Target)(nil))
+	result, err := t.Map(targetOut, (**vagrant_plugin_sdk.Args_Target)(nil))
 	if err != nil {
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.Ref_Target), nil
+	return result.(*vagrant_plugin_sdk.Args_Target), nil
+}
+
+func (t *targetIndexServer) All(
+	ctx context.Context,
+	_ *empty.Empty,
+) (resp *vagrant_plugin_sdk.TargetIndex_AllResponse, err error) {
+	targets, err := t.Impl.All()
+	argsTargets := []*vagrant_plugin_sdk.Args_Target{}
+	for _, target := range targets {
+		result, err := t.Map(target, (**vagrant_plugin_sdk.Args_Target)(nil))
+		if err != nil {
+			return nil, err
+		}
+		argsTargets = append(argsTargets, result.(*vagrant_plugin_sdk.Args_Target))
+	}
+	resp = &vagrant_plugin_sdk.TargetIndex_AllResponse{
+		Targets: argsTargets,
+	}
+	return
 }
 
 var (
