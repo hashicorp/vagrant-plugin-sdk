@@ -4,6 +4,7 @@ import (
 	"io"
 	//	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -12,6 +13,7 @@ type Project interface {
 	CWD() (path string, err error)
 	DataDir() (dir *datadir.Project, err error)
 	VagrantfileName() (name string, err error)
+	VagrantfilePath() (p path.Path, err error)
 	UI() (ui terminal.UI, err error)
 	Home() (path string, err error)
 	LocalData() (path string, err error)

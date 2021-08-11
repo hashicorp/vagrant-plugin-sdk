@@ -5471,6 +5471,7 @@ type ProjectServiceClient interface {
 	CWD(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	DataDir(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
 	VagrantfileName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfileNameResponse, error)
+	VagrantfilePath(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error)
 	UI(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Home(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error)
 	LocalData(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error)
@@ -5529,6 +5530,15 @@ func (c *projectServiceClient) DataDir(ctx context.Context, in *empty.Empty, opt
 func (c *projectServiceClient) VagrantfileName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfileNameResponse, error) {
 	out := new(Project_VagrantfileNameResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/VagrantfileName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error) {
+	out := new(Project_VagrantfilePathResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/VagrantfilePath", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -5626,6 +5636,7 @@ type ProjectServiceServer interface {
 	CWD(context.Context, *empty.Empty) (*Project_CwdResponse, error)
 	DataDir(context.Context, *empty.Empty) (*Args_DataDir_Project, error)
 	VagrantfileName(context.Context, *empty.Empty) (*Project_VagrantfileNameResponse, error)
+	VagrantfilePath(context.Context, *empty.Empty) (*Project_VagrantfilePathResponse, error)
 	UI(context.Context, *empty.Empty) (*Args_TerminalUI, error)
 	Home(context.Context, *empty.Empty) (*Project_HomeResponse, error)
 	LocalData(context.Context, *empty.Empty) (*Project_LocalDataResponse, error)
@@ -5655,6 +5666,9 @@ func (UnimplementedProjectServiceServer) DataDir(context.Context, *empty.Empty) 
 }
 func (UnimplementedProjectServiceServer) VagrantfileName(context.Context, *empty.Empty) (*Project_VagrantfileNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VagrantfileName not implemented")
+}
+func (UnimplementedProjectServiceServer) VagrantfilePath(context.Context, *empty.Empty) (*Project_VagrantfilePathResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VagrantfilePath not implemented")
 }
 func (UnimplementedProjectServiceServer) UI(context.Context, *empty.Empty) (*Args_TerminalUI, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UI not implemented")
@@ -5781,6 +5795,24 @@ func _ProjectService_VagrantfileName_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).VagrantfileName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_VagrantfilePath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).VagrantfilePath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/VagrantfilePath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).VagrantfilePath(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5973,6 +6005,10 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VagrantfileName",
 			Handler:    _ProjectService_VagrantfileName_Handler,
+		},
+		{
+			MethodName: "VagrantfilePath",
+			Handler:    _ProjectService_VagrantfilePath_Handler,
 		},
 		{
 			MethodName: "UI",
