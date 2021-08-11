@@ -854,7 +854,6 @@ service TargetService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
-  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
@@ -875,7 +874,6 @@ service TargetMachineService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
-  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   // Machine specific
@@ -974,7 +972,6 @@ service ProjectService {
   rpc Target(Project.TargetRequest) returns (Args.Target);
   rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
   rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
-  rpc Ref(google.protobuf.Empty) returns (Ref.Project);
 }
 
 /*******************************************************

@@ -3796,7 +3796,6 @@ type TargetServiceClient interface {
 	VagrantfilePath(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_VagrantfilePathResponse, error)
 	UpdatedAt(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
-	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error)
 	Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -3943,15 +3942,6 @@ func (c *targetServiceClient) Communicate(ctx context.Context, in *empty.Empty, 
 	return out, nil
 }
 
-func (c *targetServiceClient) Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error) {
-	out := new(Ref_Target)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/Ref", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *targetServiceClient) Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/Save", in, out, opts...)
@@ -3980,7 +3970,6 @@ type TargetServiceServer interface {
 	VagrantfilePath(context.Context, *empty.Empty) (*Target_VagrantfilePathResponse, error)
 	UpdatedAt(context.Context, *empty.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *empty.Empty) (*Args_Communicator, error)
-	Ref(context.Context, *empty.Empty) (*Ref_Target, error)
 	Save(context.Context, *empty.Empty) (*empty.Empty, error)
 }
 
@@ -4032,9 +4021,6 @@ func (UnimplementedTargetServiceServer) UpdatedAt(context.Context, *empty.Empty)
 }
 func (UnimplementedTargetServiceServer) Communicate(context.Context, *empty.Empty) (*Args_Communicator, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Communicate not implemented")
-}
-func (UnimplementedTargetServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Target, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
 func (UnimplementedTargetServiceServer) Save(context.Context, *empty.Empty) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
@@ -4321,24 +4307,6 @@ func _TargetService_Communicate_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TargetService_Ref_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TargetServiceServer).Ref(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.TargetService/Ref",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetServiceServer).Ref(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TargetService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
@@ -4425,10 +4393,6 @@ var TargetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TargetService_Communicate_Handler,
 		},
 		{
-			MethodName: "Ref",
-			Handler:    _TargetService_Ref_Handler,
-		},
-		{
 			MethodName: "Save",
 			Handler:    _TargetService_Save_Handler,
 		},
@@ -4457,7 +4421,6 @@ type TargetMachineServiceClient interface {
 	VagrantfilePath(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_VagrantfilePathResponse, error)
 	UpdatedAt(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
-	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error)
 	Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	// Machine specific
 	SetID(ctx context.Context, in *Target_Machine_SetIDRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -4617,15 +4580,6 @@ func (c *targetMachineServiceClient) Communicate(ctx context.Context, in *empty.
 	return out, nil
 }
 
-func (c *targetMachineServiceClient) Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Target, error) {
-	out := new(Ref_Target)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Ref", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *targetMachineServiceClient) Save(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Save", in, out, opts...)
@@ -4763,7 +4717,6 @@ type TargetMachineServiceServer interface {
 	VagrantfilePath(context.Context, *empty.Empty) (*Target_VagrantfilePathResponse, error)
 	UpdatedAt(context.Context, *empty.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *empty.Empty) (*Args_Communicator, error)
-	Ref(context.Context, *empty.Empty) (*Ref_Target, error)
 	Save(context.Context, *empty.Empty) (*empty.Empty, error)
 	// Machine specific
 	SetID(context.Context, *Target_Machine_SetIDRequest) (*empty.Empty, error)
@@ -4828,9 +4781,6 @@ func (UnimplementedTargetMachineServiceServer) UpdatedAt(context.Context, *empty
 }
 func (UnimplementedTargetMachineServiceServer) Communicate(context.Context, *empty.Empty) (*Args_Communicator, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Communicate not implemented")
-}
-func (UnimplementedTargetMachineServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Target, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
 func (UnimplementedTargetMachineServiceServer) Save(context.Context, *empty.Empty) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
@@ -5153,24 +5103,6 @@ func _TargetMachineService_Communicate_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TargetMachineService_Ref_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TargetMachineServiceServer).Ref(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Ref",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetMachineServiceServer).Ref(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TargetMachineService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
@@ -5473,10 +5405,6 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TargetMachineService_Communicate_Handler,
 		},
 		{
-			MethodName: "Ref",
-			Handler:    _TargetMachineService_Ref_Handler,
-		},
-		{
 			MethodName: "Save",
 			Handler:    _TargetMachineService_Save_Handler,
 		},
@@ -5552,7 +5480,6 @@ type ProjectServiceClient interface {
 	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
 	TargetIds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
-	Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Project, error)
 }
 
 type projectServiceClient struct {
@@ -5689,15 +5616,6 @@ func (c *projectServiceClient) TargetIds(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
-func (c *projectServiceClient) Ref(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Ref_Project, error) {
-	out := new(Ref_Project)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Ref", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations should embed UnimplementedProjectServiceServer
 // for forward compatibility
@@ -5717,7 +5635,6 @@ type ProjectServiceServer interface {
 	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
 	TargetNames(context.Context, *empty.Empty) (*Project_TargetNamesResponse, error)
 	TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error)
-	Ref(context.Context, *empty.Empty) (*Ref_Project, error)
 }
 
 // UnimplementedProjectServiceServer should be embedded to have forward compatible implementations.
@@ -5765,9 +5682,6 @@ func (UnimplementedProjectServiceServer) TargetNames(context.Context, *empty.Emp
 }
 func (UnimplementedProjectServiceServer) TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetIds not implemented")
-}
-func (UnimplementedProjectServiceServer) Ref(context.Context, *empty.Empty) (*Ref_Project, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ref not implemented")
 }
 
 // UnsafeProjectServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -6033,24 +5947,6 @@ func _ProjectService_TargetIds_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_Ref_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Ref(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Ref",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Ref(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -6113,10 +6009,6 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TargetIds",
 			Handler:    _ProjectService_TargetIds_Handler,
-		},
-		{
-			MethodName: "Ref",
-			Handler:    _ProjectService_Ref_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -30,7 +30,6 @@ type Target interface {
 	Record() (*anypb.Any, error)
 	Specialize(kind interface{}) (specialized interface{}, err error)
 
-	Ref() interface{}
 	Save() error
 
 	io.Closer
