@@ -79,14 +79,6 @@ type targetServer struct {
 	//vagrant_plugin_sdk.UnimplementedTargetServiceServer
 }
 
-func (c *targetClient) Ref() interface{} {
-	r, err := c.client.Ref(c.ctx, &emptypb.Empty{})
-	if err != nil {
-		return err
-	}
-	return r
-}
-
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
 	commArg, err := c.client.Communicate(c.ctx, &empty.Empty{})
 	result, err := c.Map(commArg, (*core.Communicator)(nil))
@@ -261,6 +253,11 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 	return
 }
 
+func (t *targetClient) Save() (err error) {
+	_, err = t.client.Save(t.ctx, &empty.Empty{})
+	return
+}
+
 // Target Server
 
 func (s *targetServer) Communicate(
@@ -414,12 +411,15 @@ func (s *targetServer) DataDir(
 	if err != nil {
 		return
 	}
-	result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
-	if err != nil {
-		return
+	if d != nil {
+		result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
+		if err != nil {
+			return nil, err
+		}
+		r = result.(*vagrant_plugin_sdk.Args_DataDir_Target)
+	} else {
+		r = &vagrant_plugin_sdk.Args_DataDir_Target{}
 	}
-	r = result.(*vagrant_plugin_sdk.Args_DataDir_Target)
-
 	return
 }
 
@@ -487,11 +487,11 @@ func (t *targetServer) Specialize(
 	return anypb.New(result.(*vagrant_plugin_sdk.Args_Target_Machine))
 }
 
-func (s *targetServer) Ref(
+func (t *targetServer) Save(
 	ctx context.Context,
 	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Ref_Target, err error) {
-	r = s.Impl.Ref().(*vagrant_plugin_sdk.Ref_Target)
+) (_ *empty.Empty, err error) {
+	err = t.Impl.Save()
 	return
 }
 

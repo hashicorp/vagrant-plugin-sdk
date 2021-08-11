@@ -854,7 +854,7 @@ service TargetService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
-  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
+  rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 service TargetMachineService {
@@ -874,7 +874,7 @@ service TargetMachineService {
   rpc VagrantfilePath(google.protobuf.Empty) returns (Target.VagrantfilePathResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
-  rpc Ref(google.protobuf.Empty) returns (Ref.Target);
+  rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   // Machine specific
   rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);
@@ -1184,22 +1184,23 @@ message Vagrantfile {
 * TargetIndex services
 ********************************************************************/
 service TargetIndexService {
-  rpc Delete(Args.Target) returns (google.protobuf.Empty);
-  rpc Get(TargetIndex.GetRequest) returns (Args.Target);
-  rpc Includes(TargetIndex.IncludesRequest) returns (TargetIndex.IncludesResponse);
+  rpc Delete(TargetIndex.TargetIdentifier) returns (google.protobuf.Empty);
+  rpc Get(TargetIndex.TargetIdentifier) returns (Args.Target);
+  rpc Includes(TargetIndex.TargetIdentifier) returns (TargetIndex.IncludesResponse);
   rpc Set(Args.Target) returns (Args.Target);
+  rpc All(google.protobuf.Empty) returns (TargetIndex.AllResponse);
 }
 
 /*******************************************************
  * TargetIndex message used with TargetIndex service
  *******************************************************/
 message TargetIndex {
-  message GetRequest {
-    string uuid = 1;
+  message TargetIdentifier {
+    string id = 1;
   }
 
-  message IncludesRequest {
-    string uuid = 1;
+  message AllResponse {
+    repeated Args.Target targets = 1;
   }
 
   message IncludesResponse {
