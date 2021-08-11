@@ -491,7 +491,7 @@ func (t *targetServer) Save(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (_ *empty.Empty, err error) {
-	err = s.Impl.Save()
+	err = t.Impl.Save()
 	return
 }
 

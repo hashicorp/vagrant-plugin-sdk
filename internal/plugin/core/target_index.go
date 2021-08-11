@@ -66,23 +66,18 @@ type targetIndexServer struct {
 	vagrant_plugin_sdk.UnimplementedTargetIndexServiceServer
 }
 
-func (t *targetIndexClient) Delete(target core.Target) (err error) {
-	targetArg, err := t.Map(
-		target,
-		(*vagrant_plugin_sdk.Ref_Target)(nil),
-		argmapper.Typed(t.ctx),
+func (t *targetIndexClient) Delete(uuid string) (err error) {
+	_, err = t.client.Delete(
+		t.ctx,
+		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
-	if err != nil {
-		return err
-	}
-	_, err = t.client.Delete(t.ctx, targetArg.(*vagrant_plugin_sdk.Ref_Target))
 	return
 }
 
-func (t *targetIndexClient) Get(ref *vagrant_plugin_sdk.Ref_Target) (entry core.Target, err error) {
+func (t *targetIndexClient) Get(uuid string) (entry core.Target, err error) {
 	target, err := t.client.Get(
 		t.ctx,
-		ref,
+		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
 	if err != nil {
 		return nil, err
@@ -95,10 +90,10 @@ func (t *targetIndexClient) Get(ref *vagrant_plugin_sdk.Ref_Target) (entry core.
 	return m.(core.Target), err
 }
 
-func (t *targetIndexClient) Includes(ref *vagrant_plugin_sdk.Ref_Target) (exists bool, err error) {
+func (t *targetIndexClient) Includes(uuid string) (exists bool, err error) {
 	incl, err := t.client.Includes(
 		t.ctx,
-		ref,
+		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
 	return incl.Exists, err
 }
@@ -148,19 +143,17 @@ func (t *targetIndexClient) All() (targets []core.Target, err error) {
 
 func (t *targetIndexServer) Delete(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.Ref_Target,
+	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (empty *empty.Empty, err error) {
-	tar, err := t.Map(in, (*core.Target)(nil),
-		argmapper.Typed(ctx))
-	err = t.Impl.Delete(tar.(core.Target))
+	err = t.Impl.Delete(in.Id)
 	return
 }
 
 func (t *targetIndexServer) Get(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.Ref_Target,
+	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (target *vagrant_plugin_sdk.Args_Target, err error) {
-	tar, err := t.Impl.Get(in)
+	tar, err := t.Impl.Get(in.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -174,9 +167,9 @@ func (t *targetIndexServer) Get(
 
 func (t *targetIndexServer) Includes(
 	ctx context.Context,
-	in *vagrant_plugin_sdk.Ref_Target,
+	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (result *vagrant_plugin_sdk.TargetIndex_IncludesResponse, err error) {
-	resp, err := t.Impl.Includes(in)
+	resp, err := t.Impl.Includes(in.Id)
 	if err != nil {
 		return nil, err
 	}

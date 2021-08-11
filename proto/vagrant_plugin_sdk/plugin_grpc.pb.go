@@ -6247,9 +6247,9 @@ var VagrantfileService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TargetIndexServiceClient interface {
-	Delete(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*empty.Empty, error)
-	Get(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*Args_Target, error)
-	Includes(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*TargetIndex_IncludesResponse, error)
+	Delete(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*empty.Empty, error)
+	Get(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*Args_Target, error)
+	Includes(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*TargetIndex_IncludesResponse, error)
 	Set(ctx context.Context, in *Args_Target, opts ...grpc.CallOption) (*Args_Target, error)
 	All(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*TargetIndex_AllResponse, error)
 }
@@ -6262,7 +6262,7 @@ func NewTargetIndexServiceClient(cc grpc.ClientConnInterface) TargetIndexService
 	return &targetIndexServiceClient{cc}
 }
 
-func (c *targetIndexServiceClient) Delete(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *targetIndexServiceClient) Delete(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetIndexService/Delete", in, out, opts...)
 	if err != nil {
@@ -6271,7 +6271,7 @@ func (c *targetIndexServiceClient) Delete(ctx context.Context, in *Ref_Target, o
 	return out, nil
 }
 
-func (c *targetIndexServiceClient) Get(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*Args_Target, error) {
+func (c *targetIndexServiceClient) Get(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*Args_Target, error) {
 	out := new(Args_Target)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetIndexService/Get", in, out, opts...)
 	if err != nil {
@@ -6280,7 +6280,7 @@ func (c *targetIndexServiceClient) Get(ctx context.Context, in *Ref_Target, opts
 	return out, nil
 }
 
-func (c *targetIndexServiceClient) Includes(ctx context.Context, in *Ref_Target, opts ...grpc.CallOption) (*TargetIndex_IncludesResponse, error) {
+func (c *targetIndexServiceClient) Includes(ctx context.Context, in *TargetIndex_TargetIdentifier, opts ...grpc.CallOption) (*TargetIndex_IncludesResponse, error) {
 	out := new(TargetIndex_IncludesResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetIndexService/Includes", in, out, opts...)
 	if err != nil {
@@ -6311,9 +6311,9 @@ func (c *targetIndexServiceClient) All(ctx context.Context, in *empty.Empty, opt
 // All implementations should embed UnimplementedTargetIndexServiceServer
 // for forward compatibility
 type TargetIndexServiceServer interface {
-	Delete(context.Context, *Ref_Target) (*empty.Empty, error)
-	Get(context.Context, *Ref_Target) (*Args_Target, error)
-	Includes(context.Context, *Ref_Target) (*TargetIndex_IncludesResponse, error)
+	Delete(context.Context, *TargetIndex_TargetIdentifier) (*empty.Empty, error)
+	Get(context.Context, *TargetIndex_TargetIdentifier) (*Args_Target, error)
+	Includes(context.Context, *TargetIndex_TargetIdentifier) (*TargetIndex_IncludesResponse, error)
 	Set(context.Context, *Args_Target) (*Args_Target, error)
 	All(context.Context, *empty.Empty) (*TargetIndex_AllResponse, error)
 }
@@ -6322,13 +6322,13 @@ type TargetIndexServiceServer interface {
 type UnimplementedTargetIndexServiceServer struct {
 }
 
-func (UnimplementedTargetIndexServiceServer) Delete(context.Context, *Ref_Target) (*empty.Empty, error) {
+func (UnimplementedTargetIndexServiceServer) Delete(context.Context, *TargetIndex_TargetIdentifier) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedTargetIndexServiceServer) Get(context.Context, *Ref_Target) (*Args_Target, error) {
+func (UnimplementedTargetIndexServiceServer) Get(context.Context, *TargetIndex_TargetIdentifier) (*Args_Target, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedTargetIndexServiceServer) Includes(context.Context, *Ref_Target) (*TargetIndex_IncludesResponse, error) {
+func (UnimplementedTargetIndexServiceServer) Includes(context.Context, *TargetIndex_TargetIdentifier) (*TargetIndex_IncludesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Includes not implemented")
 }
 func (UnimplementedTargetIndexServiceServer) Set(context.Context, *Args_Target) (*Args_Target, error) {
@@ -6350,7 +6350,7 @@ func RegisterTargetIndexServiceServer(s grpc.ServiceRegistrar, srv TargetIndexSe
 }
 
 func _TargetIndexService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Ref_Target)
+	in := new(TargetIndex_TargetIdentifier)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -6362,13 +6362,13 @@ func _TargetIndexService_Delete_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/hashicorp.vagrant.sdk.TargetIndexService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetIndexServiceServer).Delete(ctx, req.(*Ref_Target))
+		return srv.(TargetIndexServiceServer).Delete(ctx, req.(*TargetIndex_TargetIdentifier))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TargetIndexService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Ref_Target)
+	in := new(TargetIndex_TargetIdentifier)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -6380,13 +6380,13 @@ func _TargetIndexService_Get_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/hashicorp.vagrant.sdk.TargetIndexService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetIndexServiceServer).Get(ctx, req.(*Ref_Target))
+		return srv.(TargetIndexServiceServer).Get(ctx, req.(*TargetIndex_TargetIdentifier))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TargetIndexService_Includes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Ref_Target)
+	in := new(TargetIndex_TargetIdentifier)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -6398,7 +6398,7 @@ func _TargetIndexService_Includes_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/hashicorp.vagrant.sdk.TargetIndexService/Includes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetIndexServiceServer).Includes(ctx, req.(*Ref_Target))
+		return srv.(TargetIndexServiceServer).Includes(ctx, req.(*TargetIndex_TargetIdentifier))
 	}
 	return interceptor(ctx, in, info, handler)
 }

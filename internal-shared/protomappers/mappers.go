@@ -77,7 +77,6 @@ var All = []interface{}{
 	StateBag,
 	StateBagProto,
 	Target,
-	TargetRefProto,
 	TargetProto,
 	TargetMachine,
 	TargetMachineProto,
@@ -780,14 +779,6 @@ func TargetProto(
 		Network:  endpoint.Network(),
 		Target:   endpoint.String(),
 	}, nil
-}
-
-func TargetRefProto(
-	t core.Target,
-	log hclog.Logger,
-	internal *pluginargs.Internal,
-) (*vagrant_plugin_sdk.Ref_Target, error) {
-	return t.Ref().(*vagrant_plugin_sdk.Ref_Target), nil
 }
 
 func Target(

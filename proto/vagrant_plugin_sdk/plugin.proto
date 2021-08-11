@@ -1184,9 +1184,9 @@ message Vagrantfile {
 * TargetIndex services
 ********************************************************************/
 service TargetIndexService {
-  rpc Delete(Ref.Target) returns (google.protobuf.Empty);
-  rpc Get(Ref.Target) returns (Args.Target);
-  rpc Includes(Ref.Target) returns (TargetIndex.IncludesResponse);
+  rpc Delete(TargetIndex.TargetIdentifier) returns (google.protobuf.Empty);
+  rpc Get(TargetIndex.TargetIdentifier) returns (Args.Target);
+  rpc Includes(TargetIndex.TargetIdentifier) returns (TargetIndex.IncludesResponse);
   rpc Set(Args.Target) returns (Args.Target);
   rpc All(google.protobuf.Empty) returns (TargetIndex.AllResponse);
 }
@@ -1195,6 +1195,10 @@ service TargetIndexService {
  * TargetIndex message used with TargetIndex service
  *******************************************************/
 message TargetIndex {
+  message TargetIdentifier {
+    string id = 1;
+  }
+
   message AllResponse {
     repeated Args.Target targets = 1;
   }
