@@ -3797,6 +3797,7 @@ type TargetServiceClient interface {
 	Save(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SetUUID(ctx context.Context, in *Target_SetUUIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUUID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_GetUUIDResponse, error)
+	Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type targetServiceClient struct {
@@ -3951,6 +3952,15 @@ func (c *targetServiceClient) GetUUID(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *targetServiceClient) Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/Destroy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetServiceServer is the server API for TargetService service.
 // All implementations should embed UnimplementedTargetServiceServer
 // for forward compatibility
@@ -3971,6 +3981,7 @@ type TargetServiceServer interface {
 	Save(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SetUUID(context.Context, *Target_SetUUIDRequest) (*emptypb.Empty, error)
 	GetUUID(context.Context, *emptypb.Empty) (*Target_GetUUIDResponse, error)
+	Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 }
 
 // UnimplementedTargetServiceServer should be embedded to have forward compatible implementations.
@@ -4024,6 +4035,9 @@ func (UnimplementedTargetServiceServer) SetUUID(context.Context, *Target_SetUUID
 }
 func (UnimplementedTargetServiceServer) GetUUID(context.Context, *emptypb.Empty) (*Target_GetUUIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUUID not implemented")
+}
+func (UnimplementedTargetServiceServer) Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Destroy not implemented")
 }
 
 // UnsafeTargetServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4325,6 +4339,24 @@ func _TargetService_GetUUID_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetService_Destroy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetServiceServer).Destroy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetService/Destroy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetServiceServer).Destroy(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TargetService_ServiceDesc is the grpc.ServiceDesc for TargetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4396,6 +4428,10 @@ var TargetService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetUUID",
 			Handler:    _TargetService_GetUUID_Handler,
 		},
+		{
+			MethodName: "Destroy",
+			Handler:    _TargetService_Destroy_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -4422,6 +4458,7 @@ type TargetMachineServiceClient interface {
 	Save(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SetUUID(ctx context.Context, in *Target_SetUUIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUUID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_GetUUIDResponse, error)
+	Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Machine specific
 	SetID(ctx context.Context, in *Target_Machine_SetIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_GetIDResponse, error)
@@ -4587,6 +4624,15 @@ func (c *targetMachineServiceClient) GetUUID(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Destroy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *targetMachineServiceClient) SetID(ctx context.Context, in *Target_Machine_SetIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/SetID", in, out, opts...)
@@ -4698,6 +4744,7 @@ type TargetMachineServiceServer interface {
 	Save(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SetUUID(context.Context, *Target_SetUUIDRequest) (*emptypb.Empty, error)
 	GetUUID(context.Context, *emptypb.Empty) (*Target_GetUUIDResponse, error)
+	Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// Machine specific
 	SetID(context.Context, *Target_Machine_SetIDRequest) (*emptypb.Empty, error)
 	GetID(context.Context, *emptypb.Empty) (*Target_Machine_GetIDResponse, error)
@@ -4762,6 +4809,9 @@ func (UnimplementedTargetMachineServiceServer) SetUUID(context.Context, *Target_
 }
 func (UnimplementedTargetMachineServiceServer) GetUUID(context.Context, *emptypb.Empty) (*Target_GetUUIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUUID not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Destroy not implemented")
 }
 func (UnimplementedTargetMachineServiceServer) SetID(context.Context, *Target_Machine_SetIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetID not implemented")
@@ -5093,6 +5143,24 @@ func _TargetMachineService_GetUUID_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_Destroy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).Destroy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Destroy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).Destroy(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TargetMachineService_SetID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Target_Machine_SetIDRequest)
 	if err := dec(in); err != nil {
@@ -5343,6 +5411,10 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUUID",
 			Handler:    _TargetMachineService_GetUUID_Handler,
+		},
+		{
+			MethodName: "Destroy",
+			Handler:    _TargetMachineService_Destroy_Handler,
 		},
 		{
 			MethodName: "SetID",
