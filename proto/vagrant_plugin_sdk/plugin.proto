@@ -855,6 +855,7 @@ service TargetService {
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc SetUUID(Target.SetUUIDRequest) returns (google.protobuf.Empty);
   rpc GetUUID(google.protobuf.Empty) returns (Target.GetUUIDResponse);
+  rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 service TargetMachineService {
@@ -875,6 +876,7 @@ service TargetMachineService {
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc SetUUID(Target.SetUUIDRequest) returns (google.protobuf.Empty);
   rpc GetUUID(google.protobuf.Empty) returns (Target.GetUUIDResponse);
+  rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
 
   // Machine specific
   rpc SetID(Target.Machine.SetIDRequest) returns (google.protobuf.Empty);

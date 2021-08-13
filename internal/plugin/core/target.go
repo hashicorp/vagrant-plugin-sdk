@@ -258,6 +258,11 @@ func (t *targetClient) Save() (err error) {
 	return
 }
 
+func (t *targetClient) Destroy() (err error) {
+	_, err = t.client.Destroy(t.ctx, &empty.Empty{})
+	return
+}
+
 // Target Server
 
 func (s *targetServer) Communicate(
@@ -487,6 +492,14 @@ func (t *targetServer) Save(
 	_ *empty.Empty,
 ) (_ *empty.Empty, err error) {
 	err = t.Impl.Save()
+	return
+}
+
+func (t *targetServer) Destroy(
+	ctx context.Context,
+	_ *empty.Empty,
+) (_ *empty.Empty, err error) {
+	err = t.Impl.Destroy()
 	return
 }
 

@@ -29,6 +29,7 @@ type Target interface {
 	Specialize(kind interface{}) (specialized interface{}, err error)
 
 	Save() error
+	Destroy() error
 
 	io.Closer
 }
