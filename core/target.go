@@ -23,6 +23,7 @@ type Target interface {
 	GetUUID() (id string, err error)
 	SetUUID(id string) (err error)
 	Provider() (p Provider, err error)
+	ProviderName() (name string, err error)
 	Communicate() (comm Communicator, err error)
 
 	Record() (*anypb.Any, error)

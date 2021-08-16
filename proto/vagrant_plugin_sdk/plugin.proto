@@ -850,6 +850,7 @@ service TargetService {
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Specialize(google.protobuf.Any) returns (google.protobuf.Any);
   rpc Provider(google.protobuf.Empty) returns (Args.Provider);
+  rpc ProviderName(google.protobuf.Empty) returns (Target.NameResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);
@@ -871,6 +872,7 @@ service TargetMachineService {
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Specialize(google.protobuf.Any) returns (google.protobuf.Any);
   rpc Provider(google.protobuf.Empty) returns (Args.Provider);
+  rpc ProviderName(google.protobuf.Empty) returns (Target.NameResponse);
   rpc UpdatedAt(google.protobuf.Empty) returns (Target.UpdatedAtResponse);
   rpc Communicate(google.protobuf.Empty) returns (Args.Communicator);
   rpc Save(google.protobuf.Empty) returns (google.protobuf.Empty);

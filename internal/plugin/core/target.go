@@ -107,6 +107,15 @@ func (c *targetClient) Provider() (p core.Provider, err error) {
 	return
 }
 
+func (c *targetClient) ProviderName() (name string, err error) {
+	result, err := c.client.ProviderName(c.ctx, &empty.Empty{})
+	if err == nil {
+		name = result.Name
+	}
+
+	return
+}
+
 func (c *targetClient) UpdatedAt() (utime *time.Time, err error) {
 	r, err := c.client.UpdatedAt(c.ctx, &empty.Empty{})
 	if err == nil {
@@ -318,6 +327,18 @@ func (t *targetServer) Provider(
 		argmapper.Typed(ctx))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_Provider)
+	}
+
+	return
+}
+
+func (t *targetServer) ProviderName(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
+	pn, err := t.Impl.ProviderName()
+	if err == nil {
+		r = &vagrant_plugin_sdk.Target_NameResponse{Name: pn}
 	}
 
 	return
