@@ -1024,8 +1024,11 @@ func wrapClient(
 	// access off the configured broker, we need to get the listener
 	// and setup the server directly instead of letting the plugin
 	// library handle it for us
-	l, nerr := internal.Broker.Accept(id)
-	if nerr != nil {
+	l, err := internal.Broker.Accept(id)
+	if err != nil {
+		internal.Logger.Warn("failed to establish connection stream",
+			"error", err)
+
 		return
 	}
 	target = l.Addr()
