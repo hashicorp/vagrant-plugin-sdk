@@ -3792,6 +3792,7 @@ type TargetServiceClient interface {
 	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Specialize(ctx context.Context, in *anypb.Any, opts ...grpc.CallOption) (*anypb.Any, error)
 	Provider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Provider, error)
+	ProviderName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_NameResponse, error)
 	UpdatedAt(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
 	Save(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -3907,6 +3908,15 @@ func (c *targetServiceClient) Provider(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
+func (c *targetServiceClient) ProviderName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_NameResponse, error) {
+	out := new(Target_NameResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/ProviderName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *targetServiceClient) UpdatedAt(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error) {
 	out := new(Target_UpdatedAtResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetService/UpdatedAt", in, out, opts...)
@@ -3976,6 +3986,7 @@ type TargetServiceServer interface {
 	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	Specialize(context.Context, *anypb.Any) (*anypb.Any, error)
 	Provider(context.Context, *emptypb.Empty) (*Args_Provider, error)
+	ProviderName(context.Context, *emptypb.Empty) (*Target_NameResponse, error)
 	UpdatedAt(context.Context, *emptypb.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *emptypb.Empty) (*Args_Communicator, error)
 	Save(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -4020,6 +4031,9 @@ func (UnimplementedTargetServiceServer) Specialize(context.Context, *anypb.Any) 
 }
 func (UnimplementedTargetServiceServer) Provider(context.Context, *emptypb.Empty) (*Args_Provider, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Provider not implemented")
+}
+func (UnimplementedTargetServiceServer) ProviderName(context.Context, *emptypb.Empty) (*Target_NameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProviderName not implemented")
 }
 func (UnimplementedTargetServiceServer) UpdatedAt(context.Context, *emptypb.Empty) (*Target_UpdatedAtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatedAt not implemented")
@@ -4249,6 +4263,24 @@ func _TargetService_Provider_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetService_ProviderName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetServiceServer).ProviderName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetService/ProviderName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetServiceServer).ProviderName(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TargetService_UpdatedAt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -4409,6 +4441,10 @@ var TargetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TargetService_Provider_Handler,
 		},
 		{
+			MethodName: "ProviderName",
+			Handler:    _TargetService_ProviderName_Handler,
+		},
+		{
 			MethodName: "UpdatedAt",
 			Handler:    _TargetService_UpdatedAt_Handler,
 		},
@@ -4453,6 +4489,7 @@ type TargetMachineServiceClient interface {
 	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Specialize(ctx context.Context, in *anypb.Any, opts ...grpc.CallOption) (*anypb.Any, error)
 	Provider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Provider, error)
+	ProviderName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_NameResponse, error)
 	UpdatedAt(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_UpdatedAtResponse, error)
 	Communicate(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Communicator, error)
 	Save(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -4573,6 +4610,15 @@ func (c *targetMachineServiceClient) Specialize(ctx context.Context, in *anypb.A
 func (c *targetMachineServiceClient) Provider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Provider, error) {
 	out := new(Args_Provider)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Provider", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *targetMachineServiceClient) ProviderName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_NameResponse, error) {
+	out := new(Target_NameResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/ProviderName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4739,6 +4785,7 @@ type TargetMachineServiceServer interface {
 	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	Specialize(context.Context, *anypb.Any) (*anypb.Any, error)
 	Provider(context.Context, *emptypb.Empty) (*Args_Provider, error)
+	ProviderName(context.Context, *emptypb.Empty) (*Target_NameResponse, error)
 	UpdatedAt(context.Context, *emptypb.Empty) (*Target_UpdatedAtResponse, error)
 	Communicate(context.Context, *emptypb.Empty) (*Args_Communicator, error)
 	Save(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -4794,6 +4841,9 @@ func (UnimplementedTargetMachineServiceServer) Specialize(context.Context, *anyp
 }
 func (UnimplementedTargetMachineServiceServer) Provider(context.Context, *emptypb.Empty) (*Args_Provider, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Provider not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) ProviderName(context.Context, *emptypb.Empty) (*Target_NameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProviderName not implemented")
 }
 func (UnimplementedTargetMachineServiceServer) UpdatedAt(context.Context, *emptypb.Empty) (*Target_UpdatedAtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatedAt not implemented")
@@ -5049,6 +5099,24 @@ func _TargetMachineService_Provider_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TargetMachineServiceServer).Provider(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TargetMachineService_ProviderName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).ProviderName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/ProviderName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).ProviderName(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5391,6 +5459,10 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Provider",
 			Handler:    _TargetMachineService_Provider_Handler,
+		},
+		{
+			MethodName: "ProviderName",
+			Handler:    _TargetMachineService_ProviderName_Handler,
 		},
 		{
 			MethodName: "UpdatedAt",
