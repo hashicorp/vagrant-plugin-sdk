@@ -135,25 +135,6 @@ func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err err
 	return
 }
 
-func (t *targetMachineClient) GetUUID() (id string, err error) {
-	uuid, err := t.client.GetUUID(t.ctx, &empty.Empty{})
-	if err != nil {
-		return
-	}
-	id = uuid.Uuid
-	return
-}
-
-func (t *targetMachineClient) SetUUID(uuid string) (err error) {
-	_, err = t.client.SetUUID(
-		t.ctx,
-		&vagrant_plugin_sdk.Target_Machine_SetUUIDRequest{
-			Uuid: uuid,
-		},
-	)
-	return
-}
-
 func (t *targetMachineClient) Inspect() (printable string, err error) {
 	name, err := t.Name()
 	provider, err := t.Provider()
@@ -360,27 +341,6 @@ func (t *targetMachineServer) SetState(
 	err = t.Impl.SetMachineState(s.(*core.MachineState))
 
 	return
-}
-
-func (t *targetMachineServer) SetUUID(
-	ctx context.Context,
-	in *vagrant_plugin_sdk.Target_Machine_SetUUIDRequest,
-) (*empty.Empty, error) {
-	err := t.Impl.SetUUID(in.Uuid)
-	return &empty.Empty{}, err
-}
-
-func (t *targetMachineServer) GetUUID(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_Machine_GetUUIDResponse, error) {
-	uuid, err := t.Impl.GetUUID()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Target_Machine_GetUUIDResponse{
-		Uuid: uuid}, nil
 }
 
 func (t *targetMachineServer) Box(

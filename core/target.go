@@ -7,7 +7,6 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -20,17 +19,18 @@ type Target interface {
 	DataDir() (*datadir.Target, error)
 	State() (State, error)
 	UI() (ui terminal.UI, err error)
-	VagrantfileName() (name string, err error)
-	VagrantfilePath() (p path.Path, err error)
 	UpdatedAt() (t *time.Time, err error)
-
+	GetUUID() (id string, err error)
+	SetUUID(id string) (err error)
 	Provider() (p Provider, err error)
+	ProviderName() (name string, err error)
 	Communicate() (comm Communicator, err error)
 
 	Record() (*anypb.Any, error)
 	Specialize(kind interface{}) (specialized interface{}, err error)
 
 	Save() error
+	Destroy() error
 
 	io.Closer
 }

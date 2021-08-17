@@ -18,7 +18,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -108,19 +107,10 @@ func (c *targetClient) Provider() (p core.Provider, err error) {
 	return
 }
 
-func (c *targetClient) VagrantfileName() (name string, err error) {
-	r, err := c.client.VagrantfileName(c.ctx, &empty.Empty{})
+func (c *targetClient) ProviderName() (name string, err error) {
+	result, err := c.client.ProviderName(c.ctx, &empty.Empty{})
 	if err == nil {
-		name = r.Name
-	}
-
-	return
-}
-
-func (c *targetClient) VagrantfilePath() (p path.Path, err error) {
-	r, err := c.client.VagrantfilePath(c.ctx, &empty.Empty{})
-	if err == nil {
-		p = path.NewPath(r.Path)
+		name = result.Name
 	}
 
 	return
@@ -216,6 +206,25 @@ func (c *targetClient) Record() (record *anypb.Any, err error) {
 	return
 }
 
+func (c *targetClient) GetUUID() (id string, err error) {
+	uuid, err := c.client.GetUUID(c.ctx, &empty.Empty{})
+	if err != nil {
+		return
+	}
+	id = uuid.Uuid
+	return
+}
+
+func (c *targetClient) SetUUID(uuid string) (err error) {
+	_, err = c.client.SetUUID(
+		c.ctx,
+		&vagrant_plugin_sdk.Target_SetUUIDRequest{
+			Uuid: uuid,
+		},
+	)
+	return
+}
+
 func (c *targetClient) Specialize(kind interface{}) (specialized interface{}, err error) {
 	// TODO: specialize type based on the `kind` requested
 	a, err := anypb.New(&empty.Empty{})
@@ -255,6 +264,11 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 
 func (t *targetClient) Save() (err error) {
 	_, err = t.client.Save(t.ctx, &empty.Empty{})
+	return
+}
+
+func (t *targetClient) Destroy() (err error) {
+	_, err = t.client.Destroy(t.ctx, &empty.Empty{})
 	return
 }
 
@@ -318,30 +332,16 @@ func (t *targetServer) Provider(
 	return
 }
 
-func (t *targetServer) VagrantfileName(
+func (t *targetServer) ProviderName(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_VagrantfileNameResponse, error) {
-	n, err := t.Impl.VagrantfileName()
-	if err != nil {
-		return nil, err
+) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
+	pn, err := t.Impl.ProviderName()
+	if err == nil {
+		r = &vagrant_plugin_sdk.Target_NameResponse{Name: pn}
 	}
 
-	return &vagrant_plugin_sdk.Target_VagrantfileNameResponse{
-		Name: n}, nil
-}
-
-func (t *targetServer) VagrantfilePath(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Target_VagrantfilePathResponse, error) {
-	n, err := t.Impl.VagrantfilePath()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Target_VagrantfilePathResponse{
-		Path: n.String()}, nil
+	return
 }
 
 func (t *targetServer) UpdatedAt(
@@ -470,6 +470,27 @@ func (t *targetServer) UI(
 	return
 }
 
+func (t *targetServer) SetUUID(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Target_SetUUIDRequest,
+) (*empty.Empty, error) {
+	err := t.Impl.SetUUID(in.Uuid)
+	return &empty.Empty{}, err
+}
+
+func (t *targetServer) GetUUID(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Target_GetUUIDResponse, error) {
+	uuid, err := t.Impl.GetUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Target_GetUUIDResponse{
+		Uuid: uuid}, nil
+}
+
 func (t *targetServer) Specialize(
 	ctx context.Context,
 	in *any.Any,
@@ -492,6 +513,14 @@ func (t *targetServer) Save(
 	_ *empty.Empty,
 ) (_ *empty.Empty, err error) {
 	err = t.Impl.Save()
+	return
+}
+
+func (t *targetServer) Destroy(
+	ctx context.Context,
+	_ *empty.Empty,
+) (_ *empty.Empty, err error) {
+	err = t.Impl.Destroy()
 	return
 }
 
