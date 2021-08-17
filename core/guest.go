@@ -7,12 +7,12 @@ import (
 )
 
 type Guest interface {
-	Config() interface{}
-	Documentation() (*docs.Documentation, error)
-	Parents() ([]string, error)
-	Detect() (bool, error)
-	HasCapability(name string) (bool, error)
 	Capability(name string, args ...interface{}) (interface{}, error)
+	Config() interface{}
+	Detect() (bool, error)
+	Documentation() (*docs.Documentation, error)
+	HasCapability(name string) (bool, error)
+	Parents() ([]string, error)
 
 	io.Closer
 }

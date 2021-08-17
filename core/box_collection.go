@@ -21,6 +21,6 @@ type BoxSummary struct {
 type BoxCollection interface {
 	Add(path, name, version string, metadataURL string, providers []*BoxProvider) (box Box, err error)
 	All() (list *BoxSummary, err error)
-	Find(name string, providers []string, version string) (box Box, err error)
 	Clean(name string) (err error)
+	Find(name string, providers []string, version string) (box Box, err error)
 }

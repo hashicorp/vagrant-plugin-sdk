@@ -15,18 +15,15 @@ type MachineState struct {
 type Machine interface {
 	Target
 
-	// Attributes
-	ID() (id string, err error)
-	SetID(value string) (err error)
 	Box() (b *Box, err error)
-
-	// Functions
-	Guest() (g Guest, err error)
-	Inspect() (printable string, err error)
-	Reload() (err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
+	Guest() (g Guest, err error)
+	ID() (id string, err error)
+	Inspect() (printable string, err error)
 	MachineState() (state *MachineState, err error)
+	Reload() (err error)
+	SetID(value string) (err error)
 	SetMachineState(state *MachineState) (err error)
-	UID() (userId string, err error)
 	SyncedFolders() (folders []SyncedFolder, err error)
+	UID() (userId string, err error)
 }
