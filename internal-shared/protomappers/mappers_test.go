@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/gen/vagrant_plugin_sdk"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 func TestMappers(t *testing.T) {
