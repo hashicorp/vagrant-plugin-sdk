@@ -11,6 +11,15 @@ type MachineConfig struct {
 }
 
 type Vagrantfile interface {
+	// Returns the name of the machine that is designated as the
+	// "primary."
+	//
+	// In the case of a single-machine environment, this is just the
+	// single machine name. In the case of a multi-machine environment,
+	// then this is the machine that is marked as primary, or nil if
+	// no primary machine was specified.
+	PrimaryTargetName() (name string, err error)
+
 	// Returns a {Target} for the given name and provider that
 	// is represented by this Vagrantfile.
 	Target(name, provider string, boxes BoxCollection, dataPath string, env Project) (machine Machine, err error)
@@ -36,13 +45,4 @@ type Vagrantfile interface {
 	// were specified for that machine.
 	// TODO: Maybe uncomment this?
 	// TargetNamesAndOptions() (names []string, options map[string]interface{}, err error)
-
-	// Returns the name of the machine that is designated as the
-	// "primary."
-	//
-	// In the case of a single-machine environment, this is just the
-	// single machine name. In the case of a multi-machine environment,
-	// then this is the machine that is marked as primary, or nil if
-	// no primary machine was specified.
-	PrimaryTargetName() (name string, err error)
 }

@@ -11,8 +11,8 @@ import (
 
 type Basis interface {
 	DataDir() (dir *datadir.Basis, err error)
-	UI() (ui terminal.UI, err error)
 	Host() (host Host, err error)
+	UI() (ui terminal.UI, err error)
 
 	io.Closer
 }

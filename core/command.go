@@ -7,8 +7,8 @@ import (
 )
 
 type Command interface {
-	Execute([]string) (int32, error)
 	CommandInfo() (*component.CommandInfo, error)
+	Execute([]string) (int32, error)
 
 	io.Closer
 }
