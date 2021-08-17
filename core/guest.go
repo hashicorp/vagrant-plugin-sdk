@@ -2,15 +2,13 @@ package core
 
 import (
 	"io"
-
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 )
 
 type Guest interface {
+	// Config() interface{}
+	// Documentation() (*docs.Documentation, error)
 	Capability(name string, args ...interface{}) (interface{}, error)
-	Config() interface{}
-	Detect() (bool, error)
-	Documentation() (*docs.Documentation, error)
+	Detect(Machine) (bool, error)
 	HasCapability(name string) (bool, error)
 	Parents() ([]string, error)
 

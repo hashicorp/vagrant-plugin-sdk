@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -33,7 +33,7 @@ func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 			Broker:  broker,
 		},
 	}
-	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &hostServer{
+	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
 		Impl:       p.Impl,
 		baseServer: bs,
 		capabilityServer: &capabilityServer{
@@ -59,7 +59,7 @@ func (p *GuestPlugin) GRPCClient(
 		},
 	}
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
-	return &hostClient{
+	return &guestClient{
 		client:     client,
 		baseClient: bc,
 		capabilityClient: &capabilityClient{
@@ -104,10 +104,11 @@ func (c *guestClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *guestClient) Detect() (bool, error) {
+func (c *guestClient) Detect(machine core.Machine) (bool, error) {
 	f := c.DetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
 	)
 	if err != nil {
 		return false, err
@@ -177,4 +178,5 @@ var (
 	_ plugin.GRPCPlugin                     = (*GuestPlugin)(nil)
 	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
 	_ component.Guest                       = (*guestClient)(nil)
+	_ core.Guest                            = (*guestClient)(nil)
 )
