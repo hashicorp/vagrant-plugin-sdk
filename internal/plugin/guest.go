@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -104,11 +105,11 @@ func (c *guestClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *guestClient) Detect(machine core.Machine) (bool, error) {
+func (c *guestClient) Detect(t core.Target) (bool, error) {
 	f := c.DetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(c.ctx),
-		argmapper.Typed(machine),
+		argmapper.Typed(t),
 	)
 	if err != nil {
 		return false, err
