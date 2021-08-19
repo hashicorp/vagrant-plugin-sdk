@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -33,7 +34,7 @@ func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 			Broker:  broker,
 		},
 	}
-	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &hostServer{
+	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
 		Impl:       p.Impl,
 		baseServer: bs,
 		capabilityServer: &capabilityServer{
@@ -59,7 +60,7 @@ func (p *GuestPlugin) GRPCClient(
 		},
 	}
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
-	return &hostClient{
+	return &guestClient{
 		client:     client,
 		baseClient: bc,
 		capabilityClient: &capabilityClient{
@@ -88,7 +89,7 @@ func (c *guestClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.ctx, c.client)
 }
 
-func (c *guestClient) DetectFunc() interface{} {
+func (c *guestClient) GuestDetectFunc() interface{} {
 	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
@@ -104,10 +105,11 @@ func (c *guestClient) DetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *guestClient) Detect() (bool, error) {
-	f := c.DetectFunc()
+func (c *guestClient) Detect(t core.Target) (bool, error) {
+	f := c.GuestDetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(c.ctx),
+		argmapper.Typed(t),
 	)
 	if err != nil {
 		return false, err
@@ -154,14 +156,14 @@ func (s *guestServer) DetectSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.DetectFunc())
+	return s.generateSpec(s.Impl.GuestDetectFunc())
 }
 
 func (s *guestServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_DetectResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.DetectFunc(), (*bool)(nil), args.Args,
+	raw, err := s.callDynamicFunc(s.Impl.GuestDetectFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -177,4 +179,5 @@ var (
 	_ plugin.GRPCPlugin                     = (*GuestPlugin)(nil)
 	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
 	_ component.Guest                       = (*guestClient)(nil)
+	_ core.Guest                            = (*guestClient)(nil)
 )
