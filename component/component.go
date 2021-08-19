@@ -111,7 +111,7 @@ type CapabilityPlatform interface {
 
 type Guest interface {
 	// Detect if machine is supported guest
-	DetectFunc() interface{}
+	GuestDetectFunc() interface{}
 	// List of parent host names
 	ParentsFunc() interface{}
 	// Test if capability is available
@@ -122,7 +122,7 @@ type Guest interface {
 
 type Host interface {
 	// Detect if machine is supported host
-	DetectFunc() interface{}
+	HostDetectFunc() interface{}
 	// List of parent host names
 	ParentsFunc() interface{}
 	// Test if capability is available

@@ -89,7 +89,7 @@ func (c *guestClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.ctx, c.client)
 }
 
-func (c *guestClient) DetectFunc() interface{} {
+func (c *guestClient) GuestDetectFunc() interface{} {
 	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
@@ -106,7 +106,7 @@ func (c *guestClient) DetectFunc() interface{} {
 }
 
 func (c *guestClient) Detect(t core.Target) (bool, error) {
-	f := c.DetectFunc()
+	f := c.GuestDetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(c.ctx),
 		argmapper.Typed(t),
@@ -156,14 +156,14 @@ func (s *guestServer) DetectSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.DetectFunc())
+	return s.generateSpec(s.Impl.GuestDetectFunc())
 }
 
 func (s *guestServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_DetectResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.DetectFunc(), (*bool)(nil), args.Args,
+	raw, err := s.callDynamicFunc(s.Impl.GuestDetectFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
 
