@@ -15,8 +15,11 @@ import (
 // override any values you want to set.
 func ClientConfig(log hclog.Logger) *plugin.ClientConfig {
 	return &plugin.ClientConfig{
-		HandshakeConfig:  internalplugin.Handshake,
-		VersionedPlugins: internalplugin.Plugins(internalplugin.WithLogger(log)),
+		HandshakeConfig: internalplugin.Handshake,
+		VersionedPlugins: internalplugin.Plugins(
+			internalplugin.WithLogger(log),
+			internalplugin.WithMappers(internalplugin.MapperFns...),
+		),
 		AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
 
 		// We always set managed to true just in case we don't properly
