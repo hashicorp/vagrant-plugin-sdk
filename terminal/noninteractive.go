@@ -37,7 +37,7 @@ func (ui *nonInteractiveUI) Interactive() bool {
 func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
-	msg, style, w := Interpret(msg, raw...)
+	msg, style, disableNewline, w := Interpret(msg, raw...)
 
 	switch style {
 	case HeaderStyle:
@@ -67,7 +67,11 @@ func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 		msg = strings.Join(lines, "\n")
 	}
 
-	fmt.Fprintln(w, msg)
+	if disableNewline {
+		fmt.Fprint(w, msg)
+	} else {
+		fmt.Fprintln(w, msg)
+	}
 }
 
 // NamedValues implements UI
