@@ -167,10 +167,10 @@ func GuestProto(
 		Impl:    input,
 	}
 
-	internal.Logger.Trace("wrapping host plugin", "guest", input)
+	internal.Logger.Trace("wrapping guest plugin", "guest", input)
 	id, ep, err := wrapClient(input, p, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to wrap host plugin", "guest", input, "error", err)
+		internal.Logger.Warn("failed to wrap guest plugin", "guest", input, "error", err)
 		return nil, err
 	}
 	return &vagrant_plugin_sdk.Args_Guest{
