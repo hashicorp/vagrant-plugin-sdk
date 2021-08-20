@@ -90,8 +90,29 @@ func (s *uiServer) Output(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.TerminalUI_OutputRequest,
 ) (*empty.Empty, error) {
+	opts := []interface{}{}
+	if req.DisableNewLine {
+		opts = append(opts, terminal.WithoutNewLine())
+	}
+	switch req.Style {
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_HEADER:
+		opts = append(opts, terminal.WithHeaderStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_ERROR:
+		opts = append(opts, terminal.WithErrorStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_INFO:
+		opts = append(opts, terminal.WithInfoStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_SUCCESS:
+		opts = append(opts, terminal.WithSuccessStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_SUCCESS_BOLD:
+		opts = append(opts, terminal.WithSuccessBoldStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_WARNING:
+		opts = append(opts, terminal.WithWarningStyle())
+	case vagrant_plugin_sdk.TerminalUI_OutputRequest_WARNING_BOLD:
+		opts = append(opts, terminal.WithWarningBoldStyle())
+	}
+
 	for _, line := range req.Lines {
-		s.Impl.Output(line)
+		s.Impl.Output(line, opts...)
 	}
 
 	return &empty.Empty{}, nil
@@ -341,13 +362,14 @@ func (u *uiBridge) Interactive() bool {
 // arguments should be interpolations for the format string. After the
 // interpolations you may add Options.
 func (u *uiBridge) Output(msg string, raw ...interface{}) {
-	msg, style, _ := terminal.Interpret(msg, raw...)
+	msg, style, disableNewline, _ := terminal.Interpret(msg, raw...)
 
 	ev := &vagrant_plugin_sdk.TerminalUI_Event{
 		Event: &vagrant_plugin_sdk.TerminalUI_Event_Line_{
 			Line: &vagrant_plugin_sdk.TerminalUI_Event_Line{
-				Msg:   msg,
-				Style: style,
+				Msg:            msg,
+				Style:          style,
+				DisableNewLine: disableNewline,
 			},
 		},
 	}
