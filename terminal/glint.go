@@ -15,12 +15,14 @@ import (
 )
 
 type glintUI struct {
-	d *glint.Document
+	d     *glint.Document
+	cache []string
 }
 
 func GlintUI(ctx context.Context) UI {
 	result := &glintUI{
-		d: glint.New(),
+		d:     glint.New(),
+		cache: []string{},
 	}
 
 	go result.d.Render(ctx)
@@ -55,7 +57,7 @@ func (ui *glintUI) Interactive() bool {
 
 // Output implements UI
 func (ui *glintUI) Output(msg string, raw ...interface{}) {
-	msg, style, _ := Interpret(msg, raw...)
+	msg, style, disableNewline, _ := Interpret(msg, raw...)
 
 	var cs []glint.StyleOption
 	switch style {
@@ -107,6 +109,32 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 		}
 
 		msg = strings.Join(lines, "\n")
+	}
+
+	// If the disable new line option is set, we want
+	// to cache output until we have the full line
+	// ready to display
+	if disableNewline {
+		// Since our message may contain multiple lines
+		// we want to allow any full lines to be output
+		// while only retaining the last line which should
+		// not include a new line at the end
+		if strings.Contains(msg, "\n") {
+			lines := strings.Split(msg, "\n")
+			ui.cache = append(ui.cache, lines[len(lines)-1])
+			msg = strings.Join(lines[0:len(lines)-1], "\n")
+		} else {
+			ui.cache = append(ui.cache, msg)
+			return
+		}
+	} else {
+		// If any values have been cached previously
+		// we want to prepend them to the current message
+		// since we now have an end of line
+		if len(ui.cache) > 0 {
+			msg = strings.Join(ui.cache, "") + msg
+			ui.cache = []string{}
+		}
 	}
 
 	ui.d.Append(glint.Finalize(

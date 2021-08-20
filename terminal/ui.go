@@ -98,8 +98,8 @@ type Step interface {
 	Abort()
 }
 
-// Interpret decomposes the msg and arguments into the message, style, and writer
-func Interpret(msg string, raw ...interface{}) (string, string, io.Writer) {
+// Interpret decomposes the msg and arguments into the message, style, disabled new line, and writer
+func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer) {
 	// Build our args and options
 	var args []interface{}
 	var opts []Option
@@ -120,7 +120,7 @@ func Interpret(msg string, raw ...interface{}) (string, string, io.Writer) {
 		opt(cfg)
 	}
 
-	return msg, cfg.Style, cfg.Writer
+	return msg, cfg.Style, cfg.DisableNewLine, cfg.Writer
 }
 
 const (
@@ -140,6 +140,9 @@ type config struct {
 
 	// The style the output should take on
 	Style string
+
+	// Do not append new line to end of output
+	DisableNewLine bool
 }
 
 // Option controls output styling.
@@ -151,6 +154,14 @@ type Option func(*config)
 func WithHeaderStyle() Option {
 	return func(c *config) {
 		c.Style = HeaderStyle
+	}
+}
+
+// WithoutNewLine prevents a new line character from being suffixed at
+// the end of the message
+func WithoutNewLine() Option {
+	return func(c *config) {
+		c.DisableNewLine = true
 	}
 }
 
@@ -168,10 +179,24 @@ func WithErrorStyle() Option {
 	}
 }
 
-// WithWarningStyle styles the output as an error message.
+// WithErrorBoldStyle styles the output as a bold error message.
+func WithErrorBoldStyle() Option {
+	return func(c *config) {
+		c.Style = ErrorBoldStyle
+	}
+}
+
+// WithWarningStyle styles the output as a warning message.
 func WithWarningStyle() Option {
 	return func(c *config) {
 		c.Style = WarningStyle
+	}
+}
+
+// WithWarningBoldStyle styles the output as a bold warning message.
+func WithWarningBoldStyle() Option {
+	return func(c *config) {
+		c.Style = WarningBoldStyle
 	}
 }
 
@@ -179,6 +204,13 @@ func WithWarningStyle() Option {
 func WithSuccessStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessStyle
+	}
+}
+
+// WithSuccessBoldStyle styles the output as a bold success message
+func WithSuccessBoldStyle() Option {
+	return func(c *config) {
+		c.Style = SuccessBoldStyle
 	}
 }
 

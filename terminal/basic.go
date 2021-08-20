@@ -94,7 +94,7 @@ func (ui *basicUI) Interactive() bool {
 
 // Output implements UI
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
-	msg, style, w := Interpret(msg, raw...)
+	msg, style, disableNewline, w := Interpret(msg, raw...)
 
 	switch style {
 	case HeaderStyle:
@@ -128,7 +128,11 @@ func (ui *basicUI) Output(msg string, raw ...interface{}) {
 	}
 
 	// Write it
-	fmt.Fprintln(w, msg)
+	if disableNewline {
+		fmt.Fprintf(w, msg)
+	} else {
+		fmt.Fprintln(w, msg)
+	}
 }
 
 // NamedValues implements UI
