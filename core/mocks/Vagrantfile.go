@@ -12,8 +12,29 @@ type Vagrantfile struct {
 	mock.Mock
 }
 
-// Machine provides a mock function with given fields: name, provider, boxes, dataPath, env
-func (_m *Vagrantfile) Machine(name string, provider string, boxes core.BoxCollection, dataPath string, env core.Project) (core.Machine, error) {
+// PrimaryTargetName provides a mock function with given fields:
+func (_m *Vagrantfile) PrimaryTargetName() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Target provides a mock function with given fields: name, provider, boxes, dataPath, env
+func (_m *Vagrantfile) Target(name string, provider string, boxes core.BoxCollection, dataPath string, env core.Project) (core.Machine, error) {
 	ret := _m.Called(name, provider, boxes, dataPath, env)
 
 	var r0 core.Machine
@@ -35,17 +56,15 @@ func (_m *Vagrantfile) Machine(name string, provider string, boxes core.BoxColle
 	return r0, r1
 }
 
-// MachineConfig provides a mock function with given fields: name, provider, boxes, dataPath, validateProvider
-func (_m *Vagrantfile) MachineConfig(name string, provider string, boxes core.BoxCollection, dataPath string, validateProvider bool) (core.MachineConfig, error) {
+// TargetConfig provides a mock function with given fields: name, provider, boxes, dataPath, validateProvider
+func (_m *Vagrantfile) TargetConfig(name string, provider string, boxes core.BoxCollection, dataPath string, validateProvider bool) (core.MachineConfig, error) {
 	ret := _m.Called(name, provider, boxes, dataPath, validateProvider)
 
 	var r0 core.MachineConfig
 	if rf, ok := ret.Get(0).(func(string, string, core.BoxCollection, string, bool) core.MachineConfig); ok {
 		r0 = rf(name, provider, boxes, dataPath, validateProvider)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(core.MachineConfig)
-		}
+		r0 = ret.Get(0).(core.MachineConfig)
 	}
 
 	var r1 error
@@ -58,8 +77,8 @@ func (_m *Vagrantfile) MachineConfig(name string, provider string, boxes core.Bo
 	return r0, r1
 }
 
-// MachineNames provides a mock function with given fields:
-func (_m *Vagrantfile) MachineNames() ([]string, error) {
+// TargetNames provides a mock function with given fields:
+func (_m *Vagrantfile) TargetNames() ([]string, error) {
 	ret := _m.Called()
 
 	var r0 []string
@@ -69,59 +88,6 @@ func (_m *Vagrantfile) MachineNames() ([]string, error) {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MachineNamesAndOptions provides a mock function with given fields:
-func (_m *Vagrantfile) MachineNamesAndOptions() ([]string, map[string]interface{}, error) {
-	ret := _m.Called()
-
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-
-	var r1 map[string]interface{}
-	if rf, ok := ret.Get(1).(func() map[string]interface{}); ok {
-		r1 = rf()
-	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(map[string]interface{})
-		}
-	}
-
-	var r2 error
-	if rf, ok := ret.Get(2).(func() error); ok {
-		r2 = rf()
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
-}
-
-// PrimaryMachineName provides a mock function with given fields:
-func (_m *Vagrantfile) PrimaryMachineName() (string, error) {
-	ret := _m.Called()
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error

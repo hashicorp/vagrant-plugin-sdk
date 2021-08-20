@@ -42,6 +42,20 @@ func (_m *Provider) Installed() bool {
 	return r0
 }
 
+// Name provides a mock function with given fields:
+func (_m *Provider) Name() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // Usable provides a mock function with given fields:
 func (_m *Provider) Usable() bool {
 	ret := _m.Called()
