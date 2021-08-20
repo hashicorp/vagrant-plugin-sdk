@@ -23,6 +23,8 @@ import (
 // Mock generation
 //go:generate mockery --all --dir ./component --output ./component/mocks
 
+//go:generate mockery --all --dir ./core --output ./core/mocks
+
 // String generation
 //go:generate stringer -type=Type -linecomment ./component
 
