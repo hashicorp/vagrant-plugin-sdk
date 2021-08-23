@@ -8,6 +8,8 @@ import (
 
 	mock "github.com/stretchr/testify/mock"
 
+	path "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+
 	terminal "github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -229,6 +231,29 @@ func (_m *Project) TargetIds() ([]string, error) {
 	return r0, r1
 }
 
+// TargetIndex provides a mock function with given fields:
+func (_m *Project) TargetIndex() (core.TargetIndex, error) {
+	ret := _m.Called()
+
+	var r0 core.TargetIndex
+	if rf, ok := ret.Get(0).(func() core.TargetIndex); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.TargetIndex)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // TargetNames provides a mock function with given fields:
 func (_m *Project) TargetNames() ([]string, error) {
 	ret := _m.Called()
@@ -305,6 +330,29 @@ func (_m *Project) VagrantfileName() (string, error) {
 		r0 = rf()
 	} else {
 		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// VagrantfilePath provides a mock function with given fields:
+func (_m *Project) VagrantfilePath() (path.Path, error) {
+	ret := _m.Called()
+
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error

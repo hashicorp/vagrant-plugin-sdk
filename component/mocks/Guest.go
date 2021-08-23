@@ -25,8 +25,8 @@ func (_m *Guest) CapabilityFunc(capName string) interface{} {
 	return r0
 }
 
-// DetectFunc provides a mock function with given fields:
-func (_m *Guest) DetectFunc() interface{} {
+// GuestDetectFunc provides a mock function with given fields:
+func (_m *Guest) GuestDetectFunc() interface{} {
 	ret := _m.Called()
 
 	var r0 interface{}

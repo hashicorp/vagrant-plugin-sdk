@@ -10,8 +10,6 @@ import (
 
 	mock "github.com/stretchr/testify/mock"
 
-	path "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-
 	terminal "github.com/hashicorp/vagrant-plugin-sdk/terminal"
 
 	time "time"
@@ -70,6 +68,41 @@ func (_m *Target) DataDir() (*datadir.Target, error) {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*datadir.Target)
 		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Destroy provides a mock function with given fields:
+func (_m *Target) Destroy() error {
+	ret := _m.Called()
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetUUID provides a mock function with given fields:
+func (_m *Target) GetUUID() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
@@ -172,6 +205,27 @@ func (_m *Target) Provider() (core.Provider, error) {
 	return r0, r1
 }
 
+// ProviderName provides a mock function with given fields:
+func (_m *Target) ProviderName() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Record provides a mock function with given fields:
 func (_m *Target) Record() (*anypb.Any, error) {
 	ret := _m.Called()
@@ -216,6 +270,20 @@ func (_m *Target) ResourceId() (string, error) {
 	return r0, r1
 }
 
+// Save provides a mock function with given fields:
+func (_m *Target) Save() error {
+	ret := _m.Called()
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // SetName provides a mock function with given fields: value
 func (_m *Target) SetName(value string) error {
 	ret := _m.Called(value)
@@ -223,6 +291,20 @@ func (_m *Target) SetName(value string) error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string) error); ok {
 		r0 = rf(value)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SetUUID provides a mock function with given fields: id
+func (_m *Target) SetUUID(id string) error {
+	ret := _m.Called(id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -307,50 +389,6 @@ func (_m *Target) UpdatedAt() (*time.Time, error) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*time.Time)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// VagrantfileName provides a mock function with given fields:
-func (_m *Target) VagrantfileName() (string, error) {
-	ret := _m.Called()
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// VagrantfilePath provides a mock function with given fields:
-func (_m *Target) VagrantfilePath() (path.Path, error) {
-	ret := _m.Called()
-
-	var r0 path.Path
-	if rf, ok := ret.Get(0).(func() path.Path); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(path.Path)
 		}
 	}
 

@@ -25,8 +25,8 @@ func (_m *Host) CapabilityFunc(capName string) interface{} {
 	return r0
 }
 
-// DetectFunc provides a mock function with given fields:
-func (_m *Host) DetectFunc() interface{} {
+// HasCapabilityFunc provides a mock function with given fields:
+func (_m *Host) HasCapabilityFunc() interface{} {
 	ret := _m.Called()
 
 	var r0 interface{}
@@ -41,8 +41,8 @@ func (_m *Host) DetectFunc() interface{} {
 	return r0
 }
 
-// HasCapabilityFunc provides a mock function with given fields:
-func (_m *Host) HasCapabilityFunc() interface{} {
+// HostDetectFunc provides a mock function with given fields:
+func (_m *Host) HostDetectFunc() interface{} {
 	ret := _m.Called()
 
 	var r0 interface{}
