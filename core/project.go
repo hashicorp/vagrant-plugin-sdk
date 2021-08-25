@@ -20,7 +20,6 @@ type Project interface {
 	VagrantfileName() (name string, err error)
 	VagrantfilePath() (p path.Path, err error)
 	UI() (ui terminal.UI, err error)
-	MachineNames() (names []string, err error)
 	Target(name string) (t Target, err error)
 	TargetIds() (ids []string, err error)
 	TargetIndex() (index TargetIndex, err error)

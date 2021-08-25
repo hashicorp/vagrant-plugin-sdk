@@ -200,15 +200,6 @@ func (p *projectClient) DefaultPrivateKey() (path string, err error) {
 	return
 }
 
-func (p *projectClient) MachineNames() (names []string, err error) {
-	r, err := p.client.MachineNames(p.ctx, &emptypb.Empty{})
-	if err == nil {
-		names = r.Names
-	}
-
-	return
-}
-
 func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
 	r, err := p.client.TargetIndex(p.ctx, &emptypb.Empty{})
 	if err != nil {
@@ -384,20 +375,6 @@ func (p *projectServer) Host(
 	}
 
 	return
-}
-
-func (p *projectServer) MachineNames(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Project_MachineNamesResponse, error) {
-	names, err := p.Impl.MachineNames()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_MachineNamesResponse{
-		Names: names,
-	}, nil
 }
 
 func (p *projectServer) TargetIndex(
