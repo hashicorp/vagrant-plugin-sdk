@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 type capabilityPlatform interface {
@@ -145,8 +146,10 @@ func (s *capabilityServer) HasCapability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	ctx_out := metadata.NewOutgoingContext(ctx, md)
 	raw, err := s.callDynamicFunc(s.CapabilityImpl.HasCapabilityFunc(), (*bool)(nil),
-		args.Args, argmapper.Typed(ctx))
+		args.Args, argmapper.Typed(ctx_out))
 
 	if err != nil {
 		return nil, err
@@ -171,8 +174,10 @@ func (s *capabilityServer) Capability(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Platform_Capability_NamedRequest,
 ) (*vagrant_plugin_sdk.Platform_Capability_Resp, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	ctx_out := metadata.NewOutgoingContext(ctx, md)
 	_, err := s.callDynamicFunc(s.CapabilityImpl.CapabilityFunc(args.Name), false,
-		args.FuncArgs.Args, argmapper.Typed(ctx))
+		args.FuncArgs.Args, argmapper.Typed(ctx_out))
 
 	if err != nil {
 		return nil, err
@@ -196,8 +201,10 @@ func (s *capabilityServer) Parents(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	ctx_out := metadata.NewOutgoingContext(ctx, md)
 	raw, err := s.callDynamicFunc(s.CapabilityImpl.ParentsFunc(), (*[]string)(nil),
-		args.Args, argmapper.Typed(ctx))
+		args.Args, argmapper.Typed(ctx_out))
 
 	if err != nil {
 		return nil, err
