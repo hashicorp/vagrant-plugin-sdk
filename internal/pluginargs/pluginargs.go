@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 )
 
 // Internal is a struct that is available to mappers. This is an internal-only
@@ -14,6 +15,7 @@ type Internal struct {
 	Broker  *plugin.GRPCBroker
 	Mappers []*argmapper.Func
 	Cleanup *Cleanup
+	Cache   cacher.Cache
 	Logger  hclog.Logger
 }
 
