@@ -16,6 +16,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -35,6 +36,8 @@ type base struct {
 	Broker  *plugin.GRPCBroker
 	Logger  hclog.Logger
 	Mappers []*argmapper.Func
+	Cleanup *pluginargs.Cleanup
+	Cache   cacher.Cache
 }
 
 type baseClient struct {
@@ -52,16 +55,27 @@ type baseServer struct {
 // dynamic calls. The Internal structure is an internal-only argument
 // that is used to perform cleanup.
 func (b *base) internal() *pluginargs.Internal {
+	// if the cache isn't currently set, just create
+	// a new cache instance and set it now
+	if b.Cache == nil {
+		b.Cache = cacher.New()
+	}
+
 	return &pluginargs.Internal{
 		Broker:  b.Broker,
 		Mappers: b.Mappers,
-		Cleanup: &pluginargs.Cleanup{},
+		Cleanup: b.Cleanup,
+		Cache:   b.Cache,
 		Logger:  b.Logger,
 	}
 }
 
 func (b *baseClient) Close() error {
-	return nil
+	return b.Cleanup.Close()
+}
+
+func (b *base) SetCache(c cacher.Cache) {
+	b.Cache = c
 }
 
 // Used internally to extract broker
@@ -116,7 +130,9 @@ func (b *baseClient) callDynamicFunc(
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
 	internal := b.internal()
-	defer internal.Cleanup.Close()
+	// TODO(spox): We need to determine how to properly cleanup when connections
+	//             may still exist after the dynamic call is complete
+	//	defer internal.Cleanup.Close()
 	callArgs = append(callArgs,
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
@@ -142,7 +158,6 @@ func (b *baseServer) callDynamicFunc(
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
 	internal := b.internal()
-	defer internal.Cleanup.Close()
 
 	// Decode our *any.Any values.
 	for _, arg := range args {
