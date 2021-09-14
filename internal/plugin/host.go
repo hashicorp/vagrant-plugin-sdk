@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -30,6 +31,7 @@ type HostPlugin struct {
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	bs := &baseServer{
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
 			Logger:  p.Logger,
 			Broker:  broker,
@@ -55,6 +57,7 @@ func (p *HostPlugin) GRPCClient(
 	bc := &baseClient{
 		ctx: context.Background(),
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
 			Logger:  p.Logger,
 			Broker:  broker,
