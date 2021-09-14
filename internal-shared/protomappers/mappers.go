@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
 	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
@@ -763,6 +764,15 @@ func TargetProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target, error) {
+	rid, err := t.ResourceId()
+	if err != nil {
+		return nil, err
+	}
+	if at := internal.Cache.Get(rid); at != nil {
+		log.Warn("using cached target value", "value", at)
+		return at.(*vagrant_plugin_sdk.Args_Target), nil
+	}
+
 	tp := &plugincore.TargetPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
@@ -774,11 +784,18 @@ func TargetProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Target{
+	proto := &vagrant_plugin_sdk.Args_Target{
 		StreamId: id,
 		Network:  endpoint.Network(),
 		Target:   endpoint.String(),
-	}, nil
+	}
+
+	log.Warn("registering target proto to cache",
+		"rid", rid,
+		"proto", proto,
+	)
+	internal.Cache.Register(rid, proto)
+	return proto, nil
 }
 
 func Target(
@@ -968,6 +985,10 @@ func wrapConnect(
 
 	if closer, ok := client.(io.Closer); ok {
 		internal.Cleanup.Do(func() { closer.Close() })
+	}
+
+	if cache, ok := client.(cacher.HasCache); ok {
+		cache.SetCache(internal.Cache)
 	}
 
 	internal.Logger.Trace("new client built for wrapped plugin",
