@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -31,6 +32,7 @@ func (p *MapperPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) err
 	vagrant_plugin_sdk.RegisterMapperServer(s, &mapperServer{
 		baseServer: &baseServer{
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
 				Logger:  p.Logger,
 				Broker:  broker,
@@ -50,6 +52,7 @@ func (p *MapperPlugin) GRPCClient(
 		baseClient: &baseClient{
 			ctx: ctx,
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
 				Logger:  p.Logger,
 				Broker:  broker,
