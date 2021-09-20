@@ -1,9 +1,5 @@
 package core
 
-import (
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-)
-
 type CommunicatorOptions struct {
 	// Return error when command fails
 	ErrorCheck bool
@@ -18,8 +14,8 @@ type CommunicatorOptions struct {
 }
 
 type Communicator interface {
-	Config() interface{}
-	Documentation() (*docs.Documentation, error)
+	// Config() interface{}
+	// Documentation() (*docs.Documentation, error)
 	Download(machine Machine, source, destination string) error
 	Execute(machine Machine, command []string, options *CommunicatorOptions) (status int32, err error)
 	Init(machine Machine) error

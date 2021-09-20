@@ -12,7 +12,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -67,18 +66,6 @@ type communicatorClient struct {
 	*baseClient
 
 	client vagrant_plugin_sdk.CommunicatorServiceClient
-}
-
-func (c *communicatorClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
-}
-
-func (c *communicatorClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
-}
-
-func (c *communicatorClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
 }
 
 func (c *communicatorClient) MatchFunc() interface{} {
@@ -668,4 +655,5 @@ var (
 	_ plugin.GRPCPlugin                            = (*CommunicatorPlugin)(nil)
 	_ vagrant_plugin_sdk.CommunicatorServiceServer = (*communicatorServer)(nil)
 	_ component.Communicator                       = (*communicatorClient)(nil)
+	_ core.Communicator                            = (*communicatorClient)(nil)
 )
