@@ -677,9 +677,11 @@ service CommunicatorService {
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 
+  // TODO: maybe delete?
   rpc MatchSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Match(FuncSpec.Args) returns (Communicator.MatchResp);
 
+  // TODO: maybe delete?
   rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Init(FuncSpec.Args) returns (Communicator.InitResp);
 
@@ -737,6 +739,10 @@ message Communicator {
   }
 
   message ResetResp {}
+
+  message WaitDuration {
+    int32 duration = 1;
+  }
 }
 
 service ConfigService {
