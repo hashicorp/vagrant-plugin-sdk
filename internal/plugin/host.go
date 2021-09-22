@@ -110,10 +110,11 @@ func (c *hostClient) HostDetectFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *hostClient) Detect() (bool, error) {
+func (c *hostClient) Detect(statebag core.StateBag) (bool, error) {
 	f := c.HostDetectFunc()
 	raw, err := c.callDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(c.ctx),
+		argmapper.Typed(statebag),
 	)
 	if err != nil {
 		return false, err
