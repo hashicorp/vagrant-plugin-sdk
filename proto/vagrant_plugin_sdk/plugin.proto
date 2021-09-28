@@ -724,6 +724,7 @@ message Communicator {
   message FileTransferResp {
   }
 
+  // TODO: remove this message
   message ExecutionRequest {
     Args.Target.Machine machine = 1;
     string command = 2;
@@ -742,6 +743,14 @@ message Communicator {
 
   message WaitDuration {
     int32 duration = 1;
+  }
+
+  message Command {
+    string command = 1;
+  }
+
+  message Options {
+    Args.MetadataSet options = 1;
   }
 }
 
