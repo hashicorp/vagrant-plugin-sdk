@@ -741,6 +741,7 @@ message Communicator {
 
   message ResetResp {}
 
+  // TODO: Move these to a generic arguments super message
   message WaitDuration {
     int32 duration = 1;
   }
@@ -751,6 +752,10 @@ message Communicator {
 
   message Options {
     Args.MetadataSet options = 1;
+  }
+
+  message Path {
+    string path = 1;
   }
 }
 
