@@ -19,6 +19,18 @@ import "protostructure.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
+ message TimeDuration {
+    int32 duration = 1;
+  }
+
+  message Command {
+    string command = 1;
+  }
+
+  message Path {
+    string path = 1;
+  }
+
   message DataDir {
     message Basis {
       string config_dir = 1;
@@ -740,23 +752,6 @@ message Communicator {
   }
 
   message ResetResp {}
-
-  // TODO: Move these to a generic arguments super message
-  message WaitDuration {
-    int32 duration = 1;
-  }
-
-  message Command {
-    string command = 1;
-  }
-
-  message Options {
-    Args.MetadataSet options = 1;
-  }
-
-  message Path {
-    string path = 1;
-  }
 }
 
 service ConfigService {
