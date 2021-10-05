@@ -220,7 +220,9 @@ func (p *projectClient) Host() (h core.Host, err error) {
 		return
 	}
 
-	result, err := p.Map(r, (*core.Host)(nil))
+	result, err := p.Map(r, (*core.Host)(nil),
+		argmapper.Typed(p.ctx),
+	)
 	if err == nil {
 		h = result.(core.Host)
 	}
