@@ -2,9 +2,7 @@ package plugin
 
 import (
 	"context"
-	"fmt"
 	"net"
-	"reflect"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -12,9 +10,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
@@ -163,31 +158,13 @@ func (b *baseServer) callDynamicFunc(
 	for _, arg := range args {
 		anyVal := arg.Value
 
-		name, err := ptypes.AnyMessageName(anyVal)
+		_, v, err := dynamic.DecodeAny(anyVal)
 		if err != nil {
 			return nil, err
 		}
 
-		typ := proto.MessageType(name)
-		if typ == nil {
-			return nil, fmt.Errorf("cannot decode type: %s", name)
-		}
-
-		// Allocate the message type. If it is a pointer we want to
-		// allocate the actual structure and not the pointer to the structure.
-		if typ.Kind() == reflect.Ptr {
-			typ = typ.Elem()
-		}
-		v := reflect.New(typ)
-		v.Elem().Set(reflect.Zero(typ))
-
-		// Unmarshal directly into our newly allocated structure.
-		if err := ptypes.UnmarshalAny(anyVal, v.Interface().(proto.Message)); err != nil {
-			return nil, err
-		}
-
 		callArgs = append(callArgs,
-			argmapper.NamedSubtype(arg.Name, v.Interface(), arg.Type),
+			argmapper.NamedSubtype(arg.Name, v, arg.Type),
 		)
 	}
 	callArgs = append(callArgs,
