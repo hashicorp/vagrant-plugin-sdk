@@ -168,7 +168,11 @@ message Args {
   }
 
   message NamedCapability {
-    string Capability = 1;
+    string capability = 1;
+  }
+
+  message Direct {
+    repeated google.protobuf.Any list = 1;
   }
 }
 
