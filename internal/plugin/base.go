@@ -40,8 +40,9 @@ type base struct {
 type baseClient struct {
 	*base
 
-	ctx    context.Context
-	target net.Addr
+	ParentPlugins []interface{}
+	ctx           context.Context
+	target        net.Addr
 }
 
 type baseServer struct {

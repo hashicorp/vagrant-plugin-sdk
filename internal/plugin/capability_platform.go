@@ -36,9 +36,21 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
 		ctx, _ = joincontext.Join(c.ctx, ctx)
 		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-
 		if err != nil {
 			return false, err
+		}
+
+		if !resp.HasCapability {
+			for _, p := range c.ParentPlugins {
+				// TODO: get the name from the args
+				r, err := p.(*capabilityClient).HasCapability("thing")
+				if err != nil {
+					return false, err
+				}
+				if r {
+					return r, nil
+				}
+			}
 		}
 		return resp.HasCapability, nil
 	}
