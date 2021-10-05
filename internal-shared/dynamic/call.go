@@ -6,6 +6,10 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-argmapper"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -119,4 +123,32 @@ func CallFunc(
 	}
 
 	return final, nil
+}
+
+func DecodeAny(
+	input *anypb.Any,
+) (t reflect.Type, r interface{}, err error) {
+	name := input.MessageName()
+
+	typ, err := protoregistry.GlobalTypes.FindMessageByName(name)
+	if err != nil {
+		return t, nil, fmt.Errorf("cannot decode type: %s (%s)", name, err)
+	}
+
+	// Allocate the message type. If it is a pointer we want to
+	// allocate the actual structure and not the pointer to the structure.
+	v := typ.New()
+	if err := input.UnmarshalTo(v.Interface().(proto.Message)); err != nil {
+		return t, nil, err
+	}
+	r = v.Interface()
+	t = reflect.TypeOf(r)
+
+	return
+}
+
+func EncodeAny(
+	input protoreflect.ProtoMessage,
+) (*anypb.Any, error) {
+	return anypb.New(input)
 }
