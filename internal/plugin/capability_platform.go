@@ -23,6 +23,10 @@ type capabilityClient struct {
 	client capabilityPlatform
 }
 
+type CapabilityArguments struct {
+	Arguments []interface{}
+}
+
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
@@ -82,8 +86,10 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 
 func (c *capabilityClient) Capability(name string, args ...interface{}) (interface{}, error) {
 	f := c.CapabilityFunc(name)
+
 	raw, err := c.callDynamicFunc(f, false,
 		argmapper.Typed(args...),
+		argmapper.Typed(&CapabilityArguments{Arguments: args}),
 		argmapper.Typed(c.ctx),
 	)
 	if err != nil {
