@@ -15,12 +15,17 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
 	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
@@ -29,6 +34,29 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
+
+var KnownTypes = []interface{}{
+	Boolean,
+	BooleanProto,
+	Bytes,
+	BytesProto,
+	Double,
+	DoubleProto,
+	Float,
+	FloatProto,
+	Int32,
+	Int32Proto,
+	Int64,
+	Int64Proto,
+	String,
+	StringProto,
+	Timestamp,
+	TimestampProto,
+	UInt32,
+	UInt32Proto,
+	UInt64,
+	UInt64Proto,
+}
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
@@ -53,6 +81,8 @@ var All = []interface{}{
 	DatadirTargetProto,
 	DatadirComponent,
 	DatadirComponentProto,
+	Direct,
+	DirectProto,
 	Flags,
 	FlagsProto,
 	JobInfo,
@@ -79,13 +109,155 @@ var All = []interface{}{
 	StateBagProto,
 	Target,
 	TargetProto,
+	TargetIndex,
+	TargetIndexProto,
 	TargetMachine,
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
-	TargetIndex,
-	TargetIndexProto,
 }
+
+// Known type mappers
+
+func Boolean(
+	input *wrapperspb.BoolValue,
+) bool {
+	return input.Value
+}
+
+func BooleanProto(
+	input bool,
+) *wrapperspb.BoolValue {
+	return &wrapperspb.BoolValue{
+		Value: input,
+	}
+}
+
+func Bytes(
+	input *wrapperspb.BytesValue,
+) []byte {
+	return input.Value
+}
+
+func BytesProto(
+	input []byte,
+) *wrapperspb.BytesValue {
+	return &wrapperspb.BytesValue{
+		Value: input,
+	}
+}
+
+func Double(
+	input *wrapperspb.DoubleValue,
+) float64 {
+	return input.Value
+}
+
+func DoubleProto(
+	input float64,
+) *wrapperspb.DoubleValue {
+	return &wrapperspb.DoubleValue{
+		Value: input,
+	}
+}
+
+func Float(
+	input *wrapperspb.FloatValue,
+) float32 {
+	return input.Value
+}
+
+func FloatProto(
+	input float32,
+) *wrapperspb.FloatValue {
+	return &wrapperspb.FloatValue{
+		Value: input,
+	}
+}
+
+func Int32(
+	input *wrapperspb.Int32Value,
+) int32 {
+	return input.Value
+}
+
+func Int32Proto(
+	input int32,
+) *wrapperspb.Int32Value {
+	return &wrapperspb.Int32Value{
+		Value: input,
+	}
+}
+
+func Int64(
+	input *wrapperspb.Int64Value,
+) int64 {
+	return input.Value
+}
+
+func Int64Proto(
+	input int64,
+) *wrapperspb.Int64Value {
+	return &wrapperspb.Int64Value{
+		Value: input,
+	}
+}
+
+func String(
+	input *wrapperspb.StringValue,
+) string {
+	return input.Value
+}
+
+func StringProto(
+	input string,
+) *wrapperspb.StringValue {
+	return &wrapperspb.StringValue{
+		Value: input,
+	}
+}
+
+func UInt32(
+	input *wrapperspb.UInt32Value,
+) uint32 {
+	return input.Value
+}
+
+func UInt32Proto(
+	input uint32,
+) *wrapperspb.UInt32Value {
+	return &wrapperspb.UInt32Value{
+		Value: input,
+	}
+}
+
+func UInt64(
+	input *wrapperspb.UInt64Value,
+) uint64 {
+	return input.Value
+}
+
+func UInt64Proto(
+	input uint64,
+) *wrapperspb.UInt64Value {
+	return &wrapperspb.UInt64Value{
+		Value: input,
+	}
+}
+
+func Timestamp(
+	input *timestamppb.Timestamp,
+) time.Time {
+	return input.AsTime()
+}
+
+func TimestampProto(
+	input time.Time,
+) *timestamppb.Timestamp {
+	return timestamppb.New(input)
+}
+
+// Custom mappers
 
 func NamedCapability(
 	input *vagrant_plugin_sdk.Args_NamedCapability,
@@ -103,11 +275,69 @@ func NamedCapabilityProto(
 	}
 }
 
+func Direct(
+	input *vagrant_plugin_sdk.Args_Direct,
+) *plugincomponent.CapabilityArguments {
+	return &plugincomponent.CapabilityArguments{}
+}
+
+func DirectProto(
+	input *plugincomponent.CapabilityArguments,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Direct, error) {
+	list := make([]*anypb.Any, len(input.Arguments))
+	for i := 0; i < len(list); i++ {
+		arg := input.Arguments[i]
+		v, err := dynamic.Map(arg, (*proto.Message)(nil), argmapper.Converter(KnownTypes...))
+		if err == nil {
+			if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
+				return nil, err
+			}
+			continue
+		}
+		t := reflect.TypeOf(arg)
+		maps := []*argmapper.Func{}
+		for _, m := range internal.Mappers {
+			for _, typ := range m.Input().Signature() {
+				if t == typ || t.AssignableTo(typ) {
+					maps = append(maps, m)
+					break
+				}
+			}
+		}
+
+		v, err = dynamic.Map(arg, (*proto.Message)(nil),
+			argmapper.ConverterFunc(maps...),
+			argmapper.Typed(internal),
+			argmapper.Typed(ctx),
+			argmapper.Typed(log),
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
+			return nil, err
+		}
+	}
+
+	return &vagrant_plugin_sdk.Args_Direct{
+		List: list,
+	}, nil
+}
+
 func HostProto(
 	input component.Host,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Host, error) {
+	cid := fmt.Sprintf("%p", input)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_Host), nil
+	}
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
@@ -125,11 +355,13 @@ func HostProto(
 
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Args_Host{
+	proto := &vagrant_plugin_sdk.Args_Host{
 		Network:  ep.Network(),
 		Target:   ep.String(),
 		StreamId: id,
-	}, nil
+	}
+	internal.Cache.Register(cid, proto)
+	return proto, nil
 }
 
 func Host(
@@ -1101,4 +1333,15 @@ func init() {
 		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
 		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
+	for _, fn := range KnownTypes {
+		mFn, err := argmapper.NewFunc(fn)
+		if err != nil {
+			panic(err)
+		}
+		plugincomponent.KnownTypeFns = append(plugincomponent.KnownTypeFns, mFn)
+	}
+}
+
+type pluginMetadata interface {
+	SetRequestMetadata(k, v string)
 }
