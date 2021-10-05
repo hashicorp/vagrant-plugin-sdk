@@ -34,16 +34,18 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		new_ctx, _ := joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
 
 		if !resp.HasCapability {
 			for _, p := range c.parentPlugins {
+				parentPlugin := p.(*hostClient)
+				new_ctx, _ = joincontext.Join(parentPlugin.ctx, ctx)
 				// TODO: keep going up the parent chain
-				r, err := p.(*hostClient).client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+				r, err := parentPlugin.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 				if err != nil {
 					return false, err
 				}
