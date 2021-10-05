@@ -53,7 +53,9 @@ func (p *HostPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	bc := &baseClient{
-		ctx: context.Background(),
+		// TODO: populate parent plugins
+		parentPlugins: []interface{}{},
+		ctx:           context.Background(),
 		base: &base{
 			Mappers: p.Mappers,
 			Logger:  p.Logger,

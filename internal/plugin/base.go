@@ -40,7 +40,7 @@ type base struct {
 type baseClient struct {
 	*base
 
-	ParentPlugins []interface{}
+	parentPlugins []interface{}
 	ctx           context.Context
 	target        net.Addr
 }
@@ -80,6 +80,11 @@ func (b *baseClient) SetTarget(t net.Addr) {
 // by this client.
 func (b *baseClient) Target() net.Addr {
 	return b.target
+}
+
+// Sets the parent plugins
+func (b *baseClient) SetParentPlugins(plugins []interface{}) {
+	b.parentPlugins = plugins
 }
 
 // This is here for internal usage on plugin setup

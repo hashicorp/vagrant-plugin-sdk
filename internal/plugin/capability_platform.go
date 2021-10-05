@@ -41,14 +41,14 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 		}
 
 		if !resp.HasCapability {
-			for _, p := range c.ParentPlugins {
-				// TODO: get the name from the args
-				r, err := p.(*capabilityClient).HasCapability("thing")
+			for _, p := range c.parentPlugins {
+				// TODO: keep going up the parent chain
+				r, err := p.(*hostClient).client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 				if err != nil {
 					return false, err
 				}
-				if r {
-					return r, nil
+				if r.HasCapability {
+					return r.HasCapability, nil
 				}
 			}
 		}
