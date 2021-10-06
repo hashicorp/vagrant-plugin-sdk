@@ -6,9 +6,11 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 type capabilityPlatform interface {
@@ -96,7 +98,29 @@ func (c *capabilityClient) Capability(name string, args ...interface{}) (interfa
 		return nil, err
 	}
 
-	return raw, nil
+	// Result will be returned as an Any so decode it
+	_, val, err := dynamic.DecodeAny(raw.(*anypb.Any))
+
+	// And the actual result can be pretty much anything, so
+	// attempt to map it into something usable. If we can't
+	// map it, log the mapping failure but then just return
+	// the decoded value
+	result, err := dynamic.UnknownMap(val, (*interface{})(nil), c.Mappers,
+		argmapper.Typed(c.internal()),
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(c.Logger),
+	)
+
+	if err != nil {
+		c.Logger.Debug("failed to map decoded result from capability",
+			"value", val,
+			"error", err,
+		)
+
+		return val, err
+	}
+
+	return result, nil
 }
 
 type capabilityServer struct {
