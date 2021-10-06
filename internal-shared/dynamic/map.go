@@ -74,6 +74,7 @@ func UnknownMap(
 	mappers []*argmapper.Func, // list of mappers to utilize
 	args ...argmapper.Arg, // any extra arguments to use when mapping
 ) (interface{}, error) {
+	// If the value provided is nil, we are already done!
 	if value == nil {
 		return nil, nil
 	}
