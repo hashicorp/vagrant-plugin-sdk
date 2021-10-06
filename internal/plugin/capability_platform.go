@@ -26,6 +26,10 @@ type capabilityClient struct {
 	client capabilityPlatform
 }
 
+type hasContext interface {
+	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
+}
+
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
@@ -42,15 +46,15 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 
 		if !resp.HasCapability {
 			for _, p := range c.parentPlugins {
-				parentPlugin := p.(*hostClient)
-				new_ctx, _ = joincontext.Join(parentPlugin.ctx, ctx)
-				// TODO: keep going up the parent chain
-				r, err := parentPlugin.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+				new_ctx, _ = p.(hasContext).GenerateContext(ctx)
+				// raw, err := parentPlugin.HasCapability("thing")
+				raw, err := p.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 				if err != nil {
+					panic(err)
 					return false, err
 				}
-				if r.HasCapability {
-					return r.HasCapability, nil
+				if raw {
+					return raw, nil
 				}
 			}
 		}

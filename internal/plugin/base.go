@@ -6,6 +6,7 @@ import (
 	"net"
 	"reflect"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -93,6 +94,10 @@ func (b *baseClient) SetRequestMetadata(key, value string) {
 	b.ctx = metadata.AppendToOutgoingContext(b.ctx, key, value)
 	b.Logger.Trace("new metadata has been set for outgoing requests",
 		"key", key, "value", value)
+}
+
+func (b *baseClient) GenerateContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return joincontext.Join(ctx, b.ctx)
 }
 
 // Generate a function from a provided spec
