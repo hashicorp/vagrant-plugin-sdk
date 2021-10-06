@@ -20,7 +20,6 @@ var Handshake = plugin.HandshakeConfig{
 	MagicCookieValue: "1cf2a7e8cbbd6cec9ec78b952860dc65a7a9eae433b815bea3257bff2257b3a7",
 }
 var MapperFns []*argmapper.Func
-var KnownTypeFns []*argmapper.Func
 
 // Plugins returns the list of available plugins and initializes them with
 // the given components. This will panic if an invalid component is given.

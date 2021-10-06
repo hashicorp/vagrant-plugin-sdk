@@ -35,7 +35,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-var KnownTypes = []interface{}{
+var WellKnownTypes = []interface{}{
 	Boolean,
 	BooleanProto,
 	Bytes,
@@ -290,33 +290,18 @@ func DirectProto(
 	list := make([]*anypb.Any, len(input.Arguments))
 	for i := 0; i < len(list); i++ {
 		arg := input.Arguments[i]
-		v, err := dynamic.Map(arg, (*proto.Message)(nil), argmapper.Converter(KnownTypes...))
-		if err == nil {
-			if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
+		var v interface{}
+		v, err := dynamic.MapToWellKnownProto(arg)
+		if err != nil {
+			v, err = dynamic.UnknownMap(arg, (*proto.Message)(nil),
+				internal.Mappers,
+				argmapper.Typed(internal),
+				argmapper.Typed(ctx),
+				argmapper.Typed(log),
+			)
+			if err != nil {
 				return nil, err
 			}
-			continue
-		}
-		t := reflect.TypeOf(arg)
-		maps := []*argmapper.Func{}
-		for _, m := range internal.Mappers {
-			for _, typ := range m.Input().Signature() {
-				if t == typ || t.AssignableTo(typ) {
-					maps = append(maps, m)
-					break
-				}
-			}
-		}
-
-		v, err = dynamic.Map(arg, (*proto.Message)(nil),
-			argmapper.ConverterFunc(maps...),
-			argmapper.Typed(internal),
-			argmapper.Typed(ctx),
-			argmapper.Typed(log),
-		)
-
-		if err != nil {
-			return nil, err
 		}
 
 		if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
@@ -1333,12 +1318,12 @@ func init() {
 		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
 		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
-	for _, fn := range KnownTypes {
+	for _, fn := range WellKnownTypes {
 		mFn, err := argmapper.NewFunc(fn)
 		if err != nil {
 			panic(err)
 		}
-		plugincomponent.KnownTypeFns = append(plugincomponent.KnownTypeFns, mFn)
+		dynamic.WellKnownTypeFns = append(dynamic.WellKnownTypeFns, mFn)
 	}
 }
 
