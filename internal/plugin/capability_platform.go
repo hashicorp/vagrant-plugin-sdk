@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -31,6 +32,26 @@ type hasContext interface {
 	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
 }
 
+func (c *capabilityClient) getCapabilityFromParent(ctx context.Context, args funcspec.Args) (interface{}, error) {
+	for _, p := range c.parentPlugins {
+		new_ctx, _ := p.(hasContext).GenerateContext(ctx)
+		parentPlugin := p.(component.CapabilityPlatform)
+		f := parentPlugin.HasCapabilityFunc()
+		parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
+		for _, a := range args {
+			parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
+		}
+		raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
+		if err != nil {
+			return nil, err
+		}
+		if raw.(bool) {
+			return p, nil
+		}
+	}
+	return nil, errors.New("Could not find capability in parent plugins")
+}
+
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.ctx, &empty.Empty{})
 	if err != nil {
@@ -46,21 +67,9 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 		}
 
 		if !resp.HasCapability {
-			for _, p := range c.parentPlugins {
-				new_ctx, _ = p.(hasContext).GenerateContext(ctx)
-				parentPlugin := p.(component.CapabilityPlatform)
-				f := parentPlugin.HasCapabilityFunc()
-				parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
-				for _, a := range args {
-					parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
-				}
-				raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
-				if err != nil {
-					return false, err
-				}
-				if raw.(bool) {
-					return raw.(bool), nil
-				}
+			p, _ := c.getCapabilityFromParent(ctx, args)
+			if p != nil {
+				return true, nil
 			}
 		}
 		return resp.HasCapability, nil
