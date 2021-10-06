@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
@@ -47,14 +48,18 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 		if !resp.HasCapability {
 			for _, p := range c.parentPlugins {
 				new_ctx, _ = p.(hasContext).GenerateContext(ctx)
-				// raw, err := parentPlugin.HasCapability("thing")
-				raw, err := p.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+				parentPlugin := p.(component.CapabilityPlatform)
+				f := parentPlugin.HasCapabilityFunc()
+				parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
+				for _, a := range args {
+					parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
+				}
+				raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
 				if err != nil {
-					panic(err)
 					return false, err
 				}
-				if raw {
-					return raw, nil
+				if raw.(bool) {
+					return raw.(bool), nil
 				}
 			}
 		}
