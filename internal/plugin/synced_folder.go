@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -34,16 +35,22 @@ func (p *SyncedFolderPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
+	bc := p.NewClient(ctx, broker)
+	client := vagrant_plugin_sdk.NewSyncedFolderServiceClient(c)
 	return &syncedFolderClient{
-		client:     vagrant_plugin_sdk.NewSyncedFolderServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: bc,
+		client:     client,
+		capabilityClient: &capabilityClient{
+			client:     client,
+			BaseClient: bc,
+		},
 	}, nil
 }
 
 // syncedFolderClient is an implementation of component.SyncedFolder over gRPC.
 type syncedFolderClient struct {
 	*BaseClient
-
+	*capabilityClient
 	client vagrant_plugin_sdk.SyncedFolderServiceClient
 }
 
@@ -99,4 +106,5 @@ var (
 	_ plugin.GRPCPlugin                            = (*SyncedFolderPlugin)(nil)
 	_ vagrant_plugin_sdk.SyncedFolderServiceServer = (*syncedFolderServer)(nil)
 	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
+	_ core.SyncedFolder                            = (*syncedFolderClient)(nil)
 )

@@ -153,6 +153,15 @@ type Provisioner interface {
 }
 
 type SyncedFolder interface {
+	// Determines if an implementation is usable
+	UsableFunc() interface{}
+	// Called after the machine is booted and networks are setup
+	// Adds folders without removing any existing ones
+	EnableFunc() interface{}
+	// Removes folders from a running machine
+	DisableFunc() interface{}
+	// Called after destroying a machine
+	CleanupFunc() interface{}
 }
 
 type MetadataSet struct {
