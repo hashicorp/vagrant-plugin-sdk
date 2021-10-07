@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
@@ -23,9 +24,15 @@ type SyncedFolderPlugin struct {
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
+	bs := p.NewServer(broker)
 	vagrant_plugin_sdk.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: bs,
+		capabilityServer: &capabilityServer{
+			BaseServer:     bs,
+			CapabilityImpl: p.Impl,
+			typ:            "synced_folder",
+		},
 	})
 	return nil
 }
@@ -75,9 +82,9 @@ func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
 // real implementation of the component.
 type syncedFolderServer struct {
 	*BaseServer
+	*capabilityServer
 
 	Impl component.SyncedFolder
-	vagrant_plugin_sdk.UnimplementedSyncedFolderServiceServer
 }
 
 func (s *syncedFolderServer) ConfigStruct(
@@ -99,6 +106,107 @@ func (s *syncedFolderServer) Documentation(
 	empty *empty.Empty,
 ) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
+}
+
+func (s *syncedFolderServer) UsableSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, s.typ); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.UsableFunc())
+}
+
+func (s *syncedFolderServer) Usable(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.SyncedFolder_UsableResp, error) {
+	raw, err := s.CallDynamicFunc(s.Impl.UsableFunc(), (*bool)(nil),
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.SyncedFolder_UsableResp{
+		Usable: raw.(bool)}, nil
+}
+
+func (s *syncedFolderServer) EnableSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, s.typ); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.EnableFunc())
+}
+
+func (s *syncedFolderServer) Enable(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*empty.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.EnableFunc(), false,
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *syncedFolderServer) DisableSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, s.typ); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.DisableFunc())
+}
+
+func (s *syncedFolderServer) Disable(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*empty.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.DisableFunc(), false,
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *syncedFolderServer) CleanupSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, s.typ); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.CleanupFunc())
+}
+
+func (s *syncedFolderServer) Cleanup(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*empty.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.CleanupFunc(), false,
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 var (
