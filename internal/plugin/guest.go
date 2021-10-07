@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -118,6 +119,36 @@ func (c *guestClient) Detect(t core.Target) (bool, error) {
 	return raw.(bool), nil
 }
 
+func (c *guestClient) ParentsFunc() interface{} {
+	spec, err := c.client.ParentsSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Parents, nil
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *guestClient) Parents() ([]string, error) {
+	f := c.ParentsFunc()
+	raw, err := c.callDynamicFunc(f, (*[]string)(nil),
+		argmapper.Typed(c.ctx),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.([]string), nil
+}
+
 // guestServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type guestServer struct {
@@ -172,6 +203,32 @@ func (s *guestServer) Detect(
 	}
 
 	return &vagrant_plugin_sdk.Platform_DetectResp{Detected: raw.(bool)}, nil
+}
+
+func (s *guestServer) ParentsSpec(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, s.typ); err != nil {
+		return nil, err
+	}
+
+	return s.generateSpec(s.Impl.ParentsFunc())
+}
+
+func (s *guestServer) Parents(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
+	raw, err := s.callDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+		args.Args, argmapper.Typed(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Platform_ParentsResp{
+		Parents: raw.([]string)}, nil
 }
 
 var (

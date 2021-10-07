@@ -3,7 +3,6 @@ package plugin
 import (
 	"context"
 
-	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -17,8 +16,6 @@ type capabilityPlatform interface {
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 	Capability(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_Resp, error)
 	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	Parents(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_ParentsResp, error)
-	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 }
 
 type capabilityClient struct {
@@ -94,36 +91,6 @@ func (c *capabilityClient) Capability(name string, args ...interface{}) (interfa
 	return raw, nil
 }
 
-func (c *capabilityClient) ParentsFunc() interface{} {
-	spec, err := c.client.ParentsSpec(c.ctx, &empty.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
-		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Parents, nil
-	}
-
-	return c.generateFunc(spec, cb)
-}
-
-func (c *capabilityClient) Parents() ([]string, error) {
-	f := c.ParentsFunc()
-	raw, err := c.callDynamicFunc(f, (*[]string)(nil),
-		argmapper.Typed(c.ctx),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return raw.([]string), nil
-}
-
 type capabilityServer struct {
 	*baseServer
 	CapabilityImpl component.CapabilityPlatform
@@ -179,32 +146,6 @@ func (s *capabilityServer) Capability(
 	}
 
 	return &vagrant_plugin_sdk.Platform_Capability_Resp{}, nil
-}
-
-func (s *capabilityServer) ParentsSpec(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, s.typ); err != nil {
-		return nil, err
-	}
-
-	return s.generateSpec(s.CapabilityImpl.ParentsFunc())
-}
-
-func (s *capabilityServer) Parents(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
-	raw, err := s.callDynamicFunc(s.CapabilityImpl.ParentsFunc(), (*[]string)(nil),
-		args.Args, argmapper.Typed(ctx))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Platform_ParentsResp{
-		Parents: raw.([]string)}, nil
 }
 
 var (
