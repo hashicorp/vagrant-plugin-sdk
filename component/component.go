@@ -162,6 +162,11 @@ type SyncedFolder interface {
 	DisableFunc() interface{}
 	// Called after destroying a machine
 	CleanupFunc() interface{}
+
+	// Test if capability is available
+	HasCapabilityFunc() interface{}
+	// Run a capability
+	CapabilityFunc(capName string) interface{}
 }
 
 type MetadataSet struct {

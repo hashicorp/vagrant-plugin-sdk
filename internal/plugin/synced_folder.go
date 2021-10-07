@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -73,9 +75,112 @@ func (c *syncedFolderClient) Documentation() (*docs.Documentation, error) {
 	return documentationCall(c.Ctx, c.client)
 }
 
-func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
-	//TODO
-	return nil
+func (c *syncedFolderClient) UsableFunc() interface{} {
+	spec, err := c.client.UsableSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.Usable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return resp.Usable, nil
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *syncedFolderClient) Usable(machine core.Machine) (bool, error) {
+	f := c.UsableFunc()
+	raw, err := c.callDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
+}
+
+func (c *syncedFolderClient) EnableFunc() interface{} {
+	spec, err := c.client.EnableSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		_, err := c.client.Enable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		return err
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
+	f := c.EnableFunc()
+	_, err := c.callDynamicFunc(f, false,
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(folders),
+		argmapper.Typed(opts),
+	)
+	return err
+}
+
+func (c *syncedFolderClient) DisableFunc() interface{} {
+	spec, err := c.client.DisableSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		_, err := c.client.Disable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		return err
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
+	f := c.DisableFunc()
+	_, err := c.callDynamicFunc(f, false,
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(folders),
+		argmapper.Typed(opts),
+	)
+	return err
+}
+
+func (c *syncedFolderClient) CleanupFunc() interface{} {
+	spec, err := c.client.CleanupSpec(c.ctx, &empty.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.ctx, ctx)
+		_, err := c.client.Cleanup(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		return err
+	}
+
+	return c.generateFunc(spec, cb)
+}
+
+func (c *syncedFolderClient) Cleanup(machine core.Machine, opts map[string]string) error {
+	f := c.CleanupFunc()
+	_, err := c.callDynamicFunc(f, false,
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(opts),
+	)
+	return err
 }
 
 // syncedFolderServer is a gRPC server that the client talks to and calls a
