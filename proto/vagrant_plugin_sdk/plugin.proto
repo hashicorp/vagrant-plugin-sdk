@@ -19,6 +19,10 @@ import "protostructure.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
+  message OptionsHash {
+    map<string, google.protobuf.Any> data = 1;
+  }
+
   message DataDir {
     message Basis {
       string config_dir = 1;
