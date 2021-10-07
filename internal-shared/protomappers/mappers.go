@@ -56,6 +56,14 @@ var WellKnownTypes = []interface{}{
 	UInt32Proto,
 	UInt64,
 	UInt64Proto,
+	ValueToBool,
+	ValueToList,
+	ValueToNull,
+	ValueToNumber,
+	ValueToString,
+	ValueToStruct,
+	ValueToString,
+	// ValueProto,
 }
 
 // All is the list of all mappers as raw function pointers.
@@ -217,6 +225,18 @@ func StringProto(
 	}
 }
 
+func Timestamp(
+	input *timestamppb.Timestamp,
+) time.Time {
+	return input.AsTime()
+}
+
+func TimestampProto(
+	input time.Time,
+) *timestamppb.Timestamp {
+	return timestamppb.New(input)
+}
+
 func UInt32(
 	input *wrapperspb.UInt32Value,
 ) uint32 {
@@ -245,16 +265,63 @@ func UInt64Proto(
 	}
 }
 
-func Timestamp(
-	input *timestamppb.Timestamp,
-) time.Time {
-	return input.AsTime()
+func ValueToBool(
+	input *structpb.Value,
+) (bool, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_BoolValue)(nil)) {
+		return false, fmt.Errorf("value is not bool kind")
+	}
+
+	return input.GetBoolValue(), nil
 }
 
-func TimestampProto(
-	input time.Time,
-) *timestamppb.Timestamp {
-	return timestamppb.New(input)
+func ValueToList(
+	input *structpb.Value,
+) ([]*structpb.Value, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_ListValue)(nil)) {
+		return nil, fmt.Errorf("value is not list kind")
+	}
+
+	return input.GetListValue().Values, nil
+}
+
+func ValueToNull(
+	input *structpb.Value,
+) (interface{}, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_NullValue)(nil)) {
+		return nil, fmt.Errorf("value is not null kind")
+	}
+
+	return nil, nil
+}
+
+func ValueToNumber(
+	input *structpb.Value,
+) (float64, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_NumberValue)(nil)) {
+		return 0, fmt.Errorf("value is not number kind")
+	}
+
+	return input.GetNumberValue(), nil
+}
+
+func ValueToString(
+	input *structpb.Value,
+) (string, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_StringValue)(nil)) {
+		return "", fmt.Errorf("value is not string kind")
+	}
+	return input.GetStringValue(), nil
+}
+
+func ValueToStruct(
+	input *structpb.Value,
+) (map[string]*structpb.Value, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_StructValue)(nil)) {
+		return nil, fmt.Errorf("value is not struct kind")
+	}
+
+	return input.GetStructValue().GetFields(), nil
 }
 
 // Custom mappers
