@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/reflect/protoregistry"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -35,7 +34,7 @@ func DecodeAny(
 
 // Encode a proto message to Any
 func EncodeAny(
-	input protoreflect.ProtoMessage, // proto to encode
+	input proto.Message, // proto to encode
 ) (*anypb.Any, error) {
 	return anypb.New(input)
 }
