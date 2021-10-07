@@ -65,9 +65,7 @@ func Map(
 // type that matches (or satisfies) the given value. Extra args
 // can be provided which are used when applying the mapping to
 // convert the value. The expected type can be useful where a
-// generic interface may be expected (like proto.Message). If
-// the expected type is unknown, setting as an interface{} nil
-// pointer will effectively disable the type check.
+// generic interface may be expected (like proto.Message).
 func UnknownMap(
 	value, // value to map
 	expectedType interface{}, // nil pointer of desired type
@@ -99,6 +97,37 @@ func UnknownMap(
 	return v, nil
 }
 
+// This converts a value to another value using the provider mappers
+// without any required type information. It is similar to the UnknownMap
+// function but the expected type is not required. Due to this missing
+// information, however, this function will be slower as it iterates
+// the entire mapper list provided and attempts to call any function
+// who's input signature includes a matching type for the given value.
+func BlindMap(
+	value interface{}, // value to map
+	mappers []*argmapper.Func, // list of mappers to utilize
+	args ...argmapper.Arg, // any extra argument to use when mapping
+) (interface{}, error) {
+	if value == nil {
+		return nil, nil
+	}
+
+	t := reflect.TypeOf(value)
+	for _, m := range mappers {
+		for _, typ := range m.Input().Signature() {
+			if t == typ || t.AssignableTo(typ) {
+				margs := append(args, argmapper.Typed(value))
+				r := m.Call(margs...)
+				if r.Err() == nil {
+					return r.Out(0), nil
+				}
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("failed to map type (%T)", value)
+}
+
 // Map a well known value to proto
 func MapToWellKnownProto(
 	input interface{}, // value to be converted to proto
@@ -117,12 +146,5 @@ func MapToWellKnownProto(
 func MapFromWellKnownProto(
 	input proto.Message, // proto to be converted to value
 ) (interface{}, error) {
-	v, err := Map(input, (*interface{})(nil),
-		argmapper.ConverterFunc(WellKnownTypeFns...),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return v, nil
+	return BlindMap(input, WellKnownTypeFns)
 }
