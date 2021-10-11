@@ -260,7 +260,7 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.ExecuteFunc()
 	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
@@ -293,7 +293,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.PrivilegedExecuteFunc()
 	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
@@ -326,7 +326,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	return c.generateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
+func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...interface{}) (valid bool, err error) {
 	f := c.TestFunc()
 	raw, err := c.callDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
