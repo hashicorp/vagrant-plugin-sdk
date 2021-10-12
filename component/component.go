@@ -101,8 +101,6 @@ type Communicator interface {
 }
 
 type CapabilityPlatform interface {
-	// List of parent host names
-	ParentsFunc() interface{}
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
 	// Run a capability
