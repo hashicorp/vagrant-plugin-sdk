@@ -13,10 +13,10 @@ import (
 // exported in an internal package.
 type Internal struct {
 	Broker  *plugin.GRPCBroker
-	Mappers []*argmapper.Func
-	Cleanup *Cleanup
 	Cache   cacher.Cache
+	Cleanup *Cleanup
 	Logger  hclog.Logger
+	Mappers []*argmapper.Func
 }
 
 // Cleanup can be used to register cleanup functions.
