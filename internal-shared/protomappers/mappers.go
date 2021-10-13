@@ -439,6 +439,7 @@ func HostProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
+		Wrapped: true,
 	}
 
 	internal.Logger.Trace("wrapping host plugin",
@@ -470,6 +471,7 @@ func Host(
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 	internal.Logger.Trace("connecting to wrapped host plugin",
 		"connection-info", input)
@@ -495,6 +497,7 @@ func GuestProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
+		Wrapped: true,
 	}
 
 	internal.Logger.Trace("wrapping guest plugin", "guest", input)
@@ -519,6 +522,7 @@ func Guest(
 	p := &plugincomponent.GuestPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -757,7 +761,8 @@ func StateBag(
 ) (core.StateBag, error) {
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Logger: log,
+		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -780,8 +785,9 @@ func StateBagProto(
 
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Impl:   bag,
-		Logger: log.ResetNamed("vagrant.wrapped"),
+		Impl:    bag,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(bag, p, internal)
@@ -896,6 +902,7 @@ func BasisProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    b,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(b, bp, internal)
@@ -919,6 +926,7 @@ func Basis(
 	b := &plugincore.BasisPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, b, input, internal)
@@ -938,6 +946,7 @@ func CommunicatorProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    c,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(c, cp, internal)
@@ -961,6 +970,7 @@ func Communicator(
 	p := &plugincomponent.CommunicatorPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -980,6 +990,7 @@ func ProjectProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    p,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(p, pp, internal)
@@ -1003,6 +1014,7 @@ func Project(
 	p := &plugincore.ProjectPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -1022,6 +1034,7 @@ func SyncedFolderProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    s,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(s, sp, internal)
@@ -1045,6 +1058,7 @@ func SyncedFolder(
 	s := &plugincomponent.SyncedFolderPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, s, input, internal)
@@ -1064,6 +1078,7 @@ func ProviderProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -1087,6 +1102,7 @@ func Provider(
 	t := &plugincomponent.ProviderPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -1115,6 +1131,7 @@ func TargetProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -1145,6 +1162,7 @@ func Target(
 	t := &plugincore.TargetPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -1165,6 +1183,7 @@ func TargetMachineProto(
 		Logger:     log.ResetNamed("vagrant.wrapped"),
 		Impl:       m,
 		TargetImpl: m,
+		Wrapped:    true,
 	}
 
 	id, ep, err := wrapClient(m, mp, internal)
@@ -1188,6 +1207,7 @@ func TargetMachine(
 	m := &plugincore.TargetMachinePlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, m, input, internal)
@@ -1207,6 +1227,7 @@ func TargetIndexProto(
 		Mappers: internal.Mappers,
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(t, ti, internal)
@@ -1230,6 +1251,7 @@ func TargetIndex(
 	ti := &plugincore.TargetIndexPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, ti, input, internal)
