@@ -763,6 +763,8 @@ service HostService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
   rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
 
 service GuestService {
@@ -779,6 +781,8 @@ service GuestService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
   rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
 
 message Platform {
