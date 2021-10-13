@@ -35,7 +35,7 @@ func (p *BasisPlugin) GRPCClient(
 		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.basis"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},
@@ -47,7 +47,7 @@ func (p *BasisPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 		Impl: p.Impl,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.basis"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},

@@ -32,7 +32,7 @@ func (p *TargetIndexPlugin) GRPCClient(
 		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target-index"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},
@@ -44,7 +44,7 @@ func (p *TargetIndexPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server
 		Impl: p.Impl,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target-index"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},

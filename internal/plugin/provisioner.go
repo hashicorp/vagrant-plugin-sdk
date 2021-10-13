@@ -32,7 +32,7 @@ func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("provisioner"),
 				Broker:  broker,
 			},
 		},
@@ -52,7 +52,7 @@ func (p *ProvisionerPlugin) GRPCClient(
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("provisioner"),
 				Broker:  broker,
 			},
 		},

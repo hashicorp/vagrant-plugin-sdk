@@ -37,7 +37,7 @@ func (t *TargetMachinePlugin) GRPCClient(
 	cl := vagrant_plugin_sdk.NewTargetMachineServiceClient(c)
 	b := &base{
 		Mappers: t.Mappers,
-		Logger:  t.Logger,
+		Logger:  t.Logger.Named("core.target-machine"),
 		Broker:  broker,
 		Cleanup: &pluginargs.Cleanup{},
 	}
@@ -56,7 +56,7 @@ func (t *TargetMachinePlugin) GRPCClient(
 func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	b := &base{
 		Mappers: t.Mappers,
-		Logger:  t.Logger,
+		Logger:  t.Logger.Named("core.target-machine"),
 		Broker:  broker,
 		Cleanup: &pluginargs.Cleanup{},
 	}

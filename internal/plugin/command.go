@@ -35,7 +35,7 @@ func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("command"),
 				Broker:  broker,
 			},
 		},
@@ -55,7 +55,7 @@ func (p *CommandPlugin) GRPCClient(
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("command"),
 				Broker:  broker,
 			},
 		},

@@ -32,7 +32,7 @@ func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
 			},
 		},
@@ -52,7 +52,7 @@ func (p *SyncedFolderPlugin) GRPCClient(
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
 			},
 		},

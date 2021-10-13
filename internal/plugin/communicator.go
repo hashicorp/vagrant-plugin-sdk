@@ -35,7 +35,7 @@ func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
 			},
 		},
@@ -55,7 +55,7 @@ func (p *CommunicatorPlugin) GRPCClient(
 			base: &base{
 				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
 			},
 		},

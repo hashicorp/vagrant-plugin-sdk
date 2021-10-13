@@ -39,7 +39,7 @@ func (p *ProjectPlugin) GRPCClient(
 		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.project"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},
@@ -54,7 +54,7 @@ func (p *ProjectPlugin) GRPCServer(
 		Impl: p.Impl,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.project"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},

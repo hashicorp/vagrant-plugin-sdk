@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -33,7 +34,7 @@ func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error
 		base: &base{
 			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
 		},
 	}
@@ -59,7 +60,7 @@ func (p *HostPlugin) GRPCClient(
 		base: &base{
 			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
 		},
 	}

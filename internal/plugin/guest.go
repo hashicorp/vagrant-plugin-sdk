@@ -33,7 +33,7 @@ func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 		base: &base{
 			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
 		},
 	}
@@ -59,7 +59,7 @@ func (p *GuestPlugin) GRPCClient(
 		base: &base{
 			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
 		},
 	}

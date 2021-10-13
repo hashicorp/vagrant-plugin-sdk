@@ -42,7 +42,7 @@ func (p *TargetPlugin) GRPCClient(
 		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},
@@ -54,7 +54,7 @@ func (p *TargetPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) err
 		Impl: p.Impl,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
 		},
