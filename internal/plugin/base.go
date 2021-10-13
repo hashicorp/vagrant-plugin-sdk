@@ -36,6 +36,7 @@ type base struct {
 	Wrapped bool
 }
 
+// If this plugin is a wrapper
 func (b *base) IsWrapped() bool {
 	return b.Wrapped
 }

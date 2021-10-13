@@ -30,6 +30,11 @@ func (b *base) SetCache(c cacher.Cache) {
 	b.Cache = c
 }
 
+// If this plugin is a wrapper
+func (b *base) IsWrapped() bool {
+	return b.Wrapped
+}
+
 // Provide access to the GRPC broker in use by this plugin
 func (b *base) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
