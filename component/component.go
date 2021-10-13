@@ -109,8 +109,6 @@ type CapabilityPlatform interface {
 	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
-	Seed(...interface{}) error
-	Seeds() ([]interface{}, error)
 }
 
 type Guest interface {
@@ -122,10 +120,6 @@ type Guest interface {
 	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
-
-	// TODO(spox): make these internal details?
-	Seed(...interface{}) error
-	Seeds() ([]interface{}, error)
 }
 
 type Host interface {
@@ -137,10 +131,6 @@ type Host interface {
 	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
-
-	// TODO(spox): make these internal details?
-	Seed(...interface{}) error
-	Seeds() ([]interface{}, error)
 }
 
 type Provider interface {
