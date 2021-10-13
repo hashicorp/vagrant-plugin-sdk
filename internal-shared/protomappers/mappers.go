@@ -437,7 +437,7 @@ func HostProto(
 	}
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
 	}
 
@@ -493,7 +493,7 @@ func GuestProto(
 ) (*vagrant_plugin_sdk.Args_Guest, error) {
 	p := &plugincomponent.GuestPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
 	}
 
@@ -720,7 +720,7 @@ func TerminalUIProto(
 	p := &pluginterminal.UIPlugin{
 		Impl:    ui,
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 	}
 
 	internal.Logger.Trace("wrapping ui", "ui", ui)
@@ -773,10 +773,15 @@ func StateBagProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_StateBag, error) {
+	cid := fmt.Sprintf("%p", bag)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_StateBag), nil
+	}
+
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
 		Impl:   bag,
-		Logger: log,
+		Logger: log.ResetNamed("vagrant.wrapped"),
 	}
 
 	id, ep, err := wrapClient(bag, p, internal)
@@ -784,10 +789,14 @@ func StateBagProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_StateBag{
+	proto := &vagrant_plugin_sdk.Args_StateBag{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}, nil
+		Target:   ep.String()}
+
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
 }
 
 func CommandInfoFromResponse(
@@ -885,7 +894,7 @@ func BasisProto(
 ) (*vagrant_plugin_sdk.Args_Basis, error) {
 	bp := &plugincore.BasisPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    b,
 	}
 
@@ -927,7 +936,7 @@ func CommunicatorProto(
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
 	cp := &plugincomponent.CommunicatorPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    c,
 	}
 
@@ -969,7 +978,7 @@ func ProjectProto(
 ) (*vagrant_plugin_sdk.Args_Project, error) {
 	pp := &plugincore.ProjectPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    p,
 	}
 
@@ -1011,7 +1020,7 @@ func SyncedFolderProto(
 ) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
 	sp := &plugincomponent.SyncedFolderPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    s,
 	}
 
@@ -1053,7 +1062,7 @@ func ProviderProto(
 ) (*vagrant_plugin_sdk.Args_Provider, error) {
 	tp := &plugincomponent.ProviderPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
 	}
 
@@ -1104,7 +1113,7 @@ func TargetProto(
 
 	tp := &plugincore.TargetPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
 	}
 
@@ -1153,7 +1162,7 @@ func TargetMachineProto(
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
 	mp := &plugincore.TargetMachinePlugin{
 		Mappers:    internal.Mappers,
-		Logger:     log,
+		Logger:     log.ResetNamed("vagrant.wrapped"),
 		Impl:       m,
 		TargetImpl: m,
 	}
@@ -1196,7 +1205,7 @@ func TargetIndexProto(
 ) (*vagrant_plugin_sdk.Args_TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
 	}
 
