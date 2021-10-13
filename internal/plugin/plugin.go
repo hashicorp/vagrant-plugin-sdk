@@ -34,6 +34,9 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		c.Logger = hclog.L()
 	}
 
+	// Save this so we can update it before we finish
+	info := &PluginInfoPlugin{}
+
 	// Build our plugin types
 	result := map[int]plugin.PluginSet{
 		1: {
@@ -43,6 +46,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"guest":        &GuestPlugin{},
 			"host":         &HostPlugin{},
 			"mapper":       &MapperPlugin{},
+			"plugininfo":   info,
 			"provider":     &ProviderPlugin{},
 			"provisioner":  &ProvisionerPlugin{},
 			"syncedfolder": &SyncedFolderPlugin{},
@@ -74,9 +78,12 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		panic(err)
 	}
 
-	// Set plugin info
-	result[1]["plugininfo"] = &PluginInfoPlugin{
-		Impl: &pluginInfo{types: t, name: c.Name}}
+	if err := setFieldValue(result, c.Name); err != nil {
+		panic(err)
+	}
+
+	// Set plugin info before we finish
+	info.Impl = &pluginInfo{types: t, name: c.Name}
 
 	return result
 }
