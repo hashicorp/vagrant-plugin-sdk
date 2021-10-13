@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
@@ -22,15 +23,13 @@ type capabilityPlatform interface {
 	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 	Parents(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_ParentsResp, error)
 	ParentsSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Direct, error)
+	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type capabilityClient struct {
 	*baseClient
 	client capabilityPlatform
-}
-
-type CapabilityArguments struct {
-	Arguments []interface{}
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -121,12 +120,49 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	return c.generateFunc(spec, cb)
 }
 
+func (c *capabilityClient) Seed(args ...interface{}) error {
+	cb := func(d *vagrant_plugin_sdk.Args_Direct) error {
+		_, err := c.client.Seed(c.ctx, d)
+		return err
+	}
+
+	_, err := c.callDynamicFunc(cb, false,
+		argmapper.Typed(c.ctx),
+		argmapper.Typed(&component.Direct{Arguments: args}),
+	)
+
+	return err
+}
+
+func (c *capabilityClient) Seeds() ([]interface{}, error) {
+	cb := func() (*vagrant_plugin_sdk.Args_Direct, error) {
+		return c.client.Seeds(c.ctx, &emptypb.Empty{})
+	}
+
+	r, err := c.callDynamicFunc(cb,
+		(**component.Direct)(nil),
+		argmapper.Typed(c.ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.(*component.Direct).Arguments, nil
+}
+
 func (c *capabilityClient) Capability(name string, args ...interface{}) (interface{}, error) {
 	f := c.CapabilityFunc(name)
 
+	ex, err := c.Seeds()
+	if err != nil {
+		return nil, err
+	}
+
 	return c.callDynamicFunc(f, false,
 		argmapper.Typed(args...),
-		argmapper.Typed(&CapabilityArguments{Arguments: args}),
+		argmapper.Typed(ex...),
+		argmapper.Typed(&component.Direct{Arguments: args}),
 		argmapper.Typed(c.ctx),
 	)
 }
@@ -135,6 +171,7 @@ type capabilityServer struct {
 	*baseServer
 	CapabilityImpl component.CapabilityPlatform
 	typ            string
+	seeds          []*anypb.Any
 }
 
 func (s *capabilityServer) HasCapabilitySpec(
