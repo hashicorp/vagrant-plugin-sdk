@@ -344,12 +344,57 @@ func NamedCapabilityProto(
 
 func Direct(
 	input *vagrant_plugin_sdk.Args_Direct,
-) *plugincomponent.CapabilityArguments {
-	return &plugincomponent.CapabilityArguments{}
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*component.Direct, error) {
+	args := make([]interface{}, len(input.List))
+
+	for i := 0; i < len(args); i++ {
+		v := input.List[i]
+		// List item are Any values so start with decoding
+		_, val, err := dynamic.DecodeAny(v)
+		if err != nil {
+			return nil, err
+		}
+
+		// First attempt to map the decoded value using
+		// the well known type protos
+		nv, err := dynamic.MapFromWellKnownProto(val.(proto.Message))
+
+		// If we didn't generate an error, set the value and move on
+		if err == nil {
+			args[i] = nv
+			continue
+		}
+
+		// Next attempt a blind map to convert the value into something
+		// we may have a converter for
+		nv, err = dynamic.BlindMap(val, internal.Mappers,
+			argmapper.Typed(internal, ctx, log))
+
+		// Again, if there's no error, set the value and move on
+		if err == nil {
+			args[i] = nv
+			continue
+		}
+
+		// Log the mapping failure to the debug output
+		log.Warn("failed to map decoded direct argument",
+			"value", val,
+			"error", err,
+		)
+
+		// Set the decoded value into the result set since it's
+		// the best we can do
+		args[i] = val
+	}
+
+	return &component.Direct{Arguments: args}, nil
 }
 
 func DirectProto(
-	input *plugincomponent.CapabilityArguments,
+	input *component.Direct,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
