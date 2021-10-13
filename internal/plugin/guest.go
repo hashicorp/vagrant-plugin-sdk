@@ -26,6 +26,7 @@ type GuestPlugin struct {
 	Impl    component.Guest   // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Wrapped bool
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -35,6 +36,7 @@ func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 			Mappers: p.Mappers,
 			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
@@ -61,6 +63,7 @@ func (p *GuestPlugin) GRPCClient(
 			Mappers: p.Mappers,
 			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)

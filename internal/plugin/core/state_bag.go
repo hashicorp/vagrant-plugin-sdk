@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
@@ -15,15 +16,21 @@ import (
 type StateBagPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl   core.StateBag
-	Logger hclog.Logger
+	Impl    core.StateBag
+	Mappers []*argmapper.Func
+	Logger  hclog.Logger
+	Wrapped bool
 }
 
 func (p *StateBagPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterStateBagServiceServer(s, &stateBagServer{
-		Impl:   p.Impl,
-		Logger: p.Logger.Named("core.state-bag"),
-		Broker: broker,
+		Impl: p.Impl,
+		base: &base{
+			Logger:  p.Logger.Named("core.state-bag"),
+			Broker:  broker,
+			Mappers: p.Mappers,
+			Wrapped: p.Wrapped,
+		},
 	})
 	return nil
 }
@@ -36,14 +43,17 @@ func (p *StateBagPlugin) GRPCClient(
 	return &stateBagClient{
 		client: vagrant_plugin_sdk.NewStateBagServiceClient(c),
 		ctx:    ctx,
-		Logger: p.Logger.Named("core.state-bag"),
-		Broker: broker,
+		base: &base{
+			Mappers: p.Mappers,
+			Logger:  p.Logger.Named("core.state-bag"),
+			Broker:  broker,
+			Wrapped: p.Wrapped,
+		},
 	}, nil
 }
 
 type stateBagClient struct {
-	Logger hclog.Logger
-	Broker *plugin.GRPCBroker
+	*base
 
 	ctx    context.Context
 	client vagrant_plugin_sdk.StateBagServiceClient
@@ -102,8 +112,7 @@ func (c *stateBagClient) Remove(key string) {
 }
 
 type stateBagServer struct {
-	Logger hclog.Logger
-	Broker *plugin.GRPCBroker
+	*base
 
 	Impl core.StateBag
 	vagrant_plugin_sdk.UnimplementedStateBagServiceServer

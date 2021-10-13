@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -27,6 +26,7 @@ type HostPlugin struct {
 	Impl    component.Host    // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Wrapped bool
 }
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -36,6 +36,7 @@ func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error
 			Mappers: p.Mappers,
 			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	vagrant_plugin_sdk.RegisterHostServiceServer(s, &hostServer{
@@ -62,6 +63,7 @@ func (p *HostPlugin) GRPCClient(
 			Mappers: p.Mappers,
 			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	client := vagrant_plugin_sdk.NewHostServiceClient(c)

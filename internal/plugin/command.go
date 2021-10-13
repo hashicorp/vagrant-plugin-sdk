@@ -26,6 +26,7 @@ type CommandPlugin struct {
 	Impl    component.Command // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Wrapped bool
 }
 
 func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -37,6 +38,7 @@ func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("command"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -57,6 +59,7 @@ func (p *CommandPlugin) GRPCClient(
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("command"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

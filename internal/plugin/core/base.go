@@ -20,6 +20,7 @@ type base struct {
 	Logger  hclog.Logger
 	Cleanup *pluginargs.Cleanup
 	Cache   cacher.Cache
+	Wrapped bool
 
 	target net.Addr
 }

@@ -19,6 +19,7 @@ type VagrantfilePlugin struct {
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Impl    core.Vagrantfile
+	Wrapped bool
 }
 
 // Implements plugin.GRPCPlugin
@@ -35,6 +36,7 @@ func (p *VagrantfilePlugin) GRPCClient(
 			Logger:  p.Logger.Named("core.vagrantfile"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	}, nil
 }
@@ -50,6 +52,7 @@ func (p *VagrantfilePlugin) GRPCServer(
 			Logger:  p.Logger.Named("core.vagrantfile"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	})
 	return nil

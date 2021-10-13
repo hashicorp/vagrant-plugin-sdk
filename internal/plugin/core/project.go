@@ -26,6 +26,7 @@ type ProjectPlugin struct {
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Impl    core.Project
+	Wrapped bool
 }
 
 // Implements plugin.GRPCPlugin
@@ -42,6 +43,7 @@ func (p *ProjectPlugin) GRPCClient(
 			Logger:  p.Logger.Named("core.project"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	}, nil
 }
@@ -57,6 +59,7 @@ func (p *ProjectPlugin) GRPCServer(
 			Logger:  p.Logger.Named("core.project"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	})
 	return nil

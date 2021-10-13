@@ -33,6 +33,11 @@ type base struct {
 	Mappers []*argmapper.Func
 	Cleanup *pluginargs.Cleanup
 	Cache   cacher.Cache
+	Wrapped bool
+}
+
+func (b *base) IsWrapped() bool {
+	return b.Wrapped
 }
 
 type baseClient struct {

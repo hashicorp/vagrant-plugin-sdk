@@ -23,6 +23,7 @@ type BasisPlugin struct {
 	Impl    core.Basis
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
+	Wrapped bool
 }
 
 func (p *BasisPlugin) GRPCClient(
@@ -38,6 +39,7 @@ func (p *BasisPlugin) GRPCClient(
 			Logger:  p.Logger.Named("core.basis"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	}, nil
 }
@@ -50,6 +52,7 @@ func (p *BasisPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) erro
 			Logger:  p.Logger.Named("core.basis"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	})
 	return nil

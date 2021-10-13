@@ -26,6 +26,7 @@ type CommunicatorPlugin struct {
 	Impl    component.Communicator // Impl is the concrete implementation
 	Mappers []*argmapper.Func      // Mappers
 	Logger  hclog.Logger           // Logger
+	Wrapped bool
 }
 
 func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -37,6 +38,7 @@ func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -57,6 +59,7 @@ func (p *CommunicatorPlugin) GRPCClient(
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

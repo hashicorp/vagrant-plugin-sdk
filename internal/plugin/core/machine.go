@@ -26,6 +26,7 @@ type TargetMachinePlugin struct {
 	Logger     hclog.Logger
 	Impl       core.Machine
 	TargetImpl core.Target
+	Wrapped    bool
 }
 
 // Implements plugin.GRPCPlugin
@@ -40,6 +41,7 @@ func (t *TargetMachinePlugin) GRPCClient(
 		Logger:  t.Logger.Named("core.target-machine"),
 		Broker:  broker,
 		Cleanup: &pluginargs.Cleanup{},
+		Wrapped: t.Wrapped,
 	}
 	return &targetMachineClient{
 		client: cl,
@@ -59,6 +61,7 @@ func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serv
 		Logger:  t.Logger.Named("core.target-machine"),
 		Broker:  broker,
 		Cleanup: &pluginargs.Cleanup{},
+		Wrapped: t.Wrapped,
 	}
 
 	vagrant_plugin_sdk.RegisterTargetMachineServiceServer(s, &targetMachineServer{

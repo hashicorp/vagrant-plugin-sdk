@@ -23,6 +23,7 @@ type SyncedFolderPlugin struct {
 	Impl    component.SyncedFolder // Impl is the concrete implementation
 	Mappers []*argmapper.Func      // Mappers
 	Logger  hclog.Logger           // Logger
+	Wrapped bool
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -34,6 +35,7 @@ func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -54,6 +56,7 @@ func (p *SyncedFolderPlugin) GRPCClient(
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

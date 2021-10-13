@@ -28,6 +28,7 @@ type ProviderPlugin struct {
 	Impl    component.Provider // Impl is the concrete implementation
 	Mappers []*argmapper.Func  // Mappers
 	Logger  hclog.Logger       // Logger
+	Wrapped bool
 }
 
 func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -39,6 +40,7 @@ func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) e
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("provider"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -59,6 +61,7 @@ func (p *ProviderPlugin) GRPCClient(
 				Mappers: p.Mappers,
 				Logger:  p.Logger.Named("provider"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil
