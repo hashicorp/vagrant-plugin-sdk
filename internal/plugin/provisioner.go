@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -22,6 +23,7 @@ type ProvisionerPlugin struct {
 	Impl    component.Provisioner // Impl is the concrete implementation
 	Mappers []*argmapper.Func     // Mappers
 	Logger  hclog.Logger          // Logger
+	Wrapped bool
 }
 
 func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -29,9 +31,11 @@ func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("provisioner"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -48,9 +52,11 @@ func (p *ProvisionerPlugin) GRPCClient(
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("provisioner"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

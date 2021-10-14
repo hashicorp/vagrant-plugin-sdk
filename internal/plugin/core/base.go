@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 )
@@ -18,10 +19,23 @@ type base struct {
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
 	Cleanup *pluginargs.Cleanup
+	Cache   cacher.Cache
+	Wrapped bool
 
 	target net.Addr
 }
 
+// Set the cache to be used by this plugin
+func (b *base) SetCache(c cacher.Cache) {
+	b.Cache = c
+}
+
+// If this plugin is a wrapper
+func (b *base) IsWrapped() bool {
+	return b.Wrapped
+}
+
+// Provide access to the GRPC broker in use by this plugin
 func (b *base) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
 }
@@ -65,9 +79,15 @@ func (b *base) Target() net.Addr {
 }
 
 func (b *base) internal() *pluginargs.Internal {
+	// if the cache isn't currently set, just create
+	// a new cache instance and set it now
+	if b.Cache == nil {
+		b.Cache = cacher.New()
+	}
 	return &pluginargs.Internal{
 		Broker:  b.Broker,
 		Mappers: b.Mappers,
+		Cache:   b.Cache,
 		Cleanup: b.Cleanup,
 		Logger:  b.Logger,
 	}

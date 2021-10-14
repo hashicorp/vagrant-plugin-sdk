@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -22,6 +23,7 @@ type SyncedFolderPlugin struct {
 	Impl    component.SyncedFolder // Impl is the concrete implementation
 	Mappers []*argmapper.Func      // Mappers
 	Logger  hclog.Logger           // Logger
+	Wrapped bool
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -29,9 +31,11 @@ func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -48,9 +52,11 @@ func (p *SyncedFolderPlugin) GRPCClient(
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("synced-folder"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

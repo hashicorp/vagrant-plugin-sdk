@@ -18,54 +18,6 @@ type SpecAndFunc struct {
 	Spec *vagrant_plugin_sdk.FuncSpec
 }
 
-// Convert a value to an expected type. Converter functions should be
-// included in the args list. It is important to note that the expectedType
-// is a pointer to the desired type (including interfaces). For example,
-// if an `int` is wanted, the expectedType would be `(*int)(nil)`.
-func Map(
-	resultValue, // value to be converted
-	expectedType interface{}, // nil pointer of desired type
-	args ...argmapper.Arg, // list of argmapper arguments (including converter funcs)
-) (interface{}, error) {
-	typPtr := reflect.TypeOf(expectedType)
-	if typPtr.Kind() != reflect.Ptr {
-		return nil, fmt.Errorf("expectedType must be nil pointer")
-	}
-	typ := typPtr.Elem()
-
-	vIn := argmapper.Value{Type: typ}
-	vOut := argmapper.Value{Type: typ}
-	vsIn, err := argmapper.NewValueSet([]argmapper.Value{vIn})
-	if err != nil {
-		return nil, err
-	}
-	vsOut, err := argmapper.NewValueSet([]argmapper.Value{vOut})
-	if err != nil {
-		return nil, err
-	}
-
-	cb := func(in, out *argmapper.ValueSet) error {
-		val := in.Typed(typ).Value.Interface()
-		out.Typed(typ).Value = reflect.ValueOf(val)
-		return nil
-	}
-
-	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb)
-	if err != nil {
-		return nil, err
-	}
-
-	args = append(args,
-		argmapper.Typed(resultValue),
-		argmapper.Logger(Logger.Named("map")))
-
-	if err = vsOut.FromResult(callFn.Call(args...)); err != nil {
-		return nil, err
-	}
-
-	return vsOut.Typed(typ).Value.Interface(), nil
-}
-
 // Calls the function provided and converts the
 // result to an expected type. If no type conversion
 // is required, a `false` value for the expectedType

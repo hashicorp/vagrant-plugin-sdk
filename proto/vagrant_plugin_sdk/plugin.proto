@@ -168,7 +168,11 @@ message Args {
   }
 
   message NamedCapability {
-    string Capability = 1;
+    string capability = 1;
+  }
+
+  message Direct {
+    repeated google.protobuf.Any list = 1;
   }
 }
 
@@ -759,6 +763,8 @@ service HostService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
   rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
 
 service GuestService {
@@ -775,6 +781,8 @@ service GuestService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
   rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
 
 message Platform {

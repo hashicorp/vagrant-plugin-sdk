@@ -20,6 +20,7 @@ type TargetIndexPlugin struct {
 	Impl    core.TargetIndex
 	Mappers []*argmapper.Func
 	Logger  hclog.Logger
+	Wrapped bool
 }
 
 func (p *TargetIndexPlugin) GRPCClient(
@@ -32,9 +33,10 @@ func (p *TargetIndexPlugin) GRPCClient(
 		ctx:    ctx,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target-index"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	}, nil
 }
@@ -44,9 +46,10 @@ func (p *TargetIndexPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server
 		Impl: p.Impl,
 		base: &base{
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("core.target-index"),
 			Broker:  broker,
 			Cleanup: &pluginargs.Cleanup{},
+			Wrapped: p.Wrapped,
 		},
 	})
 	return nil

@@ -15,11 +15,17 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
 	plugincomponent "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	plugincore "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin/core"
@@ -28,6 +34,37 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
+
+var WellKnownTypes = []interface{}{
+	Boolean,
+	BooleanProto,
+	Bytes,
+	BytesProto,
+	Double,
+	DoubleProto,
+	Float,
+	FloatProto,
+	Int32,
+	Int32Proto,
+	Int64,
+	Int64Proto,
+	String,
+	StringProto,
+	Timestamp,
+	TimestampProto,
+	UInt32,
+	UInt32Proto,
+	UInt64,
+	UInt64Proto,
+	ValueToBool,
+	ValueToList,
+	ValueToNull,
+	ValueToNumber,
+	ValueToString,
+	ValueToStruct,
+	ValueToString,
+	// ValueProto,
+}
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
@@ -52,6 +89,8 @@ var All = []interface{}{
 	DatadirTargetProto,
 	DatadirComponent,
 	DatadirComponentProto,
+	Direct,
+	DirectProto,
 	Flags,
 	FlagsProto,
 	JobInfo,
@@ -78,13 +117,214 @@ var All = []interface{}{
 	StateBagProto,
 	Target,
 	TargetProto,
+	TargetIndex,
+	TargetIndexProto,
 	TargetMachine,
 	TargetMachineProto,
 	TerminalUI,
 	TerminalUIProto,
-	TargetIndex,
-	TargetIndexProto,
 }
+
+// Known type mappers
+
+func Boolean(
+	input *wrapperspb.BoolValue,
+) bool {
+	return input.Value
+}
+
+func BooleanProto(
+	input bool,
+) *wrapperspb.BoolValue {
+	return &wrapperspb.BoolValue{
+		Value: input,
+	}
+}
+
+func Bytes(
+	input *wrapperspb.BytesValue,
+) []byte {
+	return input.Value
+}
+
+func BytesProto(
+	input []byte,
+) *wrapperspb.BytesValue {
+	return &wrapperspb.BytesValue{
+		Value: input,
+	}
+}
+
+func Double(
+	input *wrapperspb.DoubleValue,
+) float64 {
+	return input.Value
+}
+
+func DoubleProto(
+	input float64,
+) *wrapperspb.DoubleValue {
+	return &wrapperspb.DoubleValue{
+		Value: input,
+	}
+}
+
+func Float(
+	input *wrapperspb.FloatValue,
+) float32 {
+	return input.Value
+}
+
+func FloatProto(
+	input float32,
+) *wrapperspb.FloatValue {
+	return &wrapperspb.FloatValue{
+		Value: input,
+	}
+}
+
+func Int32(
+	input *wrapperspb.Int32Value,
+) int32 {
+	return input.Value
+}
+
+func Int32Proto(
+	input int32,
+) *wrapperspb.Int32Value {
+	return &wrapperspb.Int32Value{
+		Value: input,
+	}
+}
+
+func Int64(
+	input *wrapperspb.Int64Value,
+) int64 {
+	return input.Value
+}
+
+func Int64Proto(
+	input int64,
+) *wrapperspb.Int64Value {
+	return &wrapperspb.Int64Value{
+		Value: input,
+	}
+}
+
+func String(
+	input *wrapperspb.StringValue,
+) string {
+	return input.Value
+}
+
+func StringProto(
+	input string,
+) *wrapperspb.StringValue {
+	return &wrapperspb.StringValue{
+		Value: input,
+	}
+}
+
+func Timestamp(
+	input *timestamppb.Timestamp,
+) time.Time {
+	return input.AsTime()
+}
+
+func TimestampProto(
+	input time.Time,
+) *timestamppb.Timestamp {
+	return timestamppb.New(input)
+}
+
+func UInt32(
+	input *wrapperspb.UInt32Value,
+) uint32 {
+	return input.Value
+}
+
+func UInt32Proto(
+	input uint32,
+) *wrapperspb.UInt32Value {
+	return &wrapperspb.UInt32Value{
+		Value: input,
+	}
+}
+
+func UInt64(
+	input *wrapperspb.UInt64Value,
+) uint64 {
+	return input.Value
+}
+
+func UInt64Proto(
+	input uint64,
+) *wrapperspb.UInt64Value {
+	return &wrapperspb.UInt64Value{
+		Value: input,
+	}
+}
+
+func ValueToBool(
+	input *structpb.Value,
+) (bool, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_BoolValue)(nil)) {
+		return false, fmt.Errorf("value is not bool kind")
+	}
+
+	return input.GetBoolValue(), nil
+}
+
+func ValueToList(
+	input *structpb.Value,
+) ([]*structpb.Value, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_ListValue)(nil)) {
+		return nil, fmt.Errorf("value is not list kind")
+	}
+
+	return input.GetListValue().Values, nil
+}
+
+func ValueToNull(
+	input *structpb.Value,
+) (interface{}, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_NullValue)(nil)) {
+		return nil, fmt.Errorf("value is not null kind")
+	}
+
+	return nil, nil
+}
+
+func ValueToNumber(
+	input *structpb.Value,
+) (float64, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_NumberValue)(nil)) {
+		return 0, fmt.Errorf("value is not number kind")
+	}
+
+	return input.GetNumberValue(), nil
+}
+
+func ValueToString(
+	input *structpb.Value,
+) (string, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_StringValue)(nil)) {
+		return "", fmt.Errorf("value is not string kind")
+	}
+	return input.GetStringValue(), nil
+}
+
+func ValueToStruct(
+	input *structpb.Value,
+) (map[string]*structpb.Value, error) {
+	if reflect.TypeOf(input.Kind) != reflect.TypeOf((*structpb.Value_StructValue)(nil)) {
+		return nil, fmt.Errorf("value is not struct kind")
+	}
+
+	return input.GetStructValue().GetFields(), nil
+}
+
+// Custom mappers
 
 func NamedCapability(
 	input *vagrant_plugin_sdk.Args_NamedCapability,
@@ -102,15 +342,104 @@ func NamedCapabilityProto(
 	}
 }
 
+func Direct(
+	input *vagrant_plugin_sdk.Args_Direct,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*component.Direct, error) {
+	args := make([]interface{}, len(input.List))
+
+	for i := 0; i < len(args); i++ {
+		v := input.List[i]
+		// List item are Any values so start with decoding
+		_, val, err := dynamic.DecodeAny(v)
+		if err != nil {
+			return nil, err
+		}
+
+		// First attempt to map the decoded value using
+		// the well known type protos
+		nv, err := dynamic.MapFromWellKnownProto(val.(proto.Message))
+
+		// If we didn't generate an error, set the value and move on
+		if err == nil {
+			args[i] = nv
+			continue
+		}
+
+		// Next attempt a blind map to convert the value into something
+		// we may have a converter for
+		nv, err = dynamic.BlindMap(val, internal.Mappers,
+			argmapper.Typed(internal, ctx, log))
+
+		// Again, if there's no error, set the value and move on
+		if err == nil {
+			args[i] = nv
+			continue
+		}
+
+		// Log the mapping failure to the debug output
+		log.Warn("failed to map decoded direct argument",
+			"value", val,
+			"error", err,
+		)
+
+		// Set the decoded value into the result set since it's
+		// the best we can do
+		args[i] = val
+	}
+
+	return &component.Direct{Arguments: args}, nil
+}
+
+func DirectProto(
+	input *component.Direct,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Direct, error) {
+	list := make([]*anypb.Any, len(input.Arguments))
+	for i := 0; i < len(list); i++ {
+		arg := input.Arguments[i]
+		var v interface{}
+		v, err := dynamic.MapToWellKnownProto(arg)
+		if err != nil {
+			v, err = dynamic.UnknownMap(arg, (*proto.Message)(nil),
+				internal.Mappers,
+				argmapper.Typed(internal),
+				argmapper.Typed(ctx),
+				argmapper.Typed(log),
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
+			return nil, err
+		}
+	}
+
+	return &vagrant_plugin_sdk.Args_Direct{
+		List: list,
+	}, nil
+}
+
 func HostProto(
 	input component.Host,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Host, error) {
+	cid := fmt.Sprintf("%p", input)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_Host), nil
+	}
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
+		Wrapped: true,
 	}
 
 	internal.Logger.Trace("wrapping host plugin",
@@ -124,11 +453,13 @@ func HostProto(
 
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Args_Host{
+	proto := &vagrant_plugin_sdk.Args_Host{
 		Network:  ep.Network(),
 		Target:   ep.String(),
 		StreamId: id,
-	}, nil
+	}
+	internal.Cache.Register(cid, proto)
+	return proto, nil
 }
 
 func Host(
@@ -140,6 +471,7 @@ func Host(
 	p := &plugincomponent.HostPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 	internal.Logger.Trace("connecting to wrapped host plugin",
 		"connection-info", input)
@@ -163,8 +495,9 @@ func GuestProto(
 ) (*vagrant_plugin_sdk.Args_Guest, error) {
 	p := &plugincomponent.GuestPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    input,
+		Wrapped: true,
 	}
 
 	internal.Logger.Trace("wrapping guest plugin", "guest", input)
@@ -189,6 +522,7 @@ func Guest(
 	p := &plugincomponent.GuestPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -390,7 +724,7 @@ func TerminalUIProto(
 	p := &pluginterminal.UIPlugin{
 		Impl:    ui,
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 	}
 
 	internal.Logger.Trace("wrapping ui", "ui", ui)
@@ -427,7 +761,8 @@ func StateBag(
 ) (core.StateBag, error) {
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Logger: log,
+		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -443,10 +778,16 @@ func StateBagProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_StateBag, error) {
+	cid := fmt.Sprintf("%p", bag)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_StateBag), nil
+	}
+
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Impl:   bag,
-		Logger: log,
+		Impl:    bag,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(bag, p, internal)
@@ -454,10 +795,14 @@ func StateBagProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_StateBag{
+	proto := &vagrant_plugin_sdk.Args_StateBag{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}, nil
+		Target:   ep.String()}
+
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
 }
 
 func CommandInfoFromResponse(
@@ -555,8 +900,9 @@ func BasisProto(
 ) (*vagrant_plugin_sdk.Args_Basis, error) {
 	bp := &plugincore.BasisPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    b,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(b, bp, internal)
@@ -580,6 +926,7 @@ func Basis(
 	b := &plugincore.BasisPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, b, input, internal)
@@ -597,8 +944,9 @@ func CommunicatorProto(
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
 	cp := &plugincomponent.CommunicatorPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    c,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(c, cp, internal)
@@ -622,6 +970,7 @@ func Communicator(
 	p := &plugincomponent.CommunicatorPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -639,8 +988,9 @@ func ProjectProto(
 ) (*vagrant_plugin_sdk.Args_Project, error) {
 	pp := &plugincore.ProjectPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    p,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(p, pp, internal)
@@ -664,6 +1014,7 @@ func Project(
 	p := &plugincore.ProjectPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -681,8 +1032,9 @@ func SyncedFolderProto(
 ) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
 	sp := &plugincomponent.SyncedFolderPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    s,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(s, sp, internal)
@@ -706,6 +1058,7 @@ func SyncedFolder(
 	s := &plugincomponent.SyncedFolderPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, s, input, internal)
@@ -723,8 +1076,9 @@ func ProviderProto(
 ) (*vagrant_plugin_sdk.Args_Provider, error) {
 	tp := &plugincomponent.ProviderPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -748,6 +1102,7 @@ func Provider(
 	t := &plugincomponent.ProviderPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -763,10 +1118,20 @@ func TargetProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target, error) {
+	rid, err := t.ResourceId()
+	if err != nil {
+		return nil, err
+	}
+	if at := internal.Cache.Get(rid); at != nil {
+		log.Warn("using cached target value", "value", at)
+		return at.(*vagrant_plugin_sdk.Args_Target), nil
+	}
+
 	tp := &plugincore.TargetPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -774,11 +1139,18 @@ func TargetProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Target{
+	proto := &vagrant_plugin_sdk.Args_Target{
 		StreamId: id,
 		Network:  endpoint.Network(),
 		Target:   endpoint.String(),
-	}, nil
+	}
+
+	log.Warn("registering target proto to cache",
+		"rid", rid,
+		"proto", proto,
+	)
+	internal.Cache.Register(rid, proto)
+	return proto, nil
 }
 
 func Target(
@@ -790,6 +1162,7 @@ func Target(
 	t := &plugincore.TargetPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -807,9 +1180,10 @@ func TargetMachineProto(
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
 	mp := &plugincore.TargetMachinePlugin{
 		Mappers:    internal.Mappers,
-		Logger:     log,
+		Logger:     log.ResetNamed("vagrant.wrapped"),
 		Impl:       m,
 		TargetImpl: m,
+		Wrapped:    true,
 	}
 
 	id, ep, err := wrapClient(m, mp, internal)
@@ -833,6 +1207,7 @@ func TargetMachine(
 	m := &plugincore.TargetMachinePlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, m, input, internal)
@@ -850,8 +1225,9 @@ func TargetIndexProto(
 ) (*vagrant_plugin_sdk.Args_TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
 		Mappers: internal.Mappers,
-		Logger:  log,
+		Logger:  log.ResetNamed("vagrant.wrapped"),
 		Impl:    t,
+		Wrapped: true,
 	}
 
 	id, ep, err := wrapClient(t, ti, internal)
@@ -875,6 +1251,7 @@ func TargetIndex(
 	ti := &plugincore.TargetIndexPlugin{
 		Mappers: internal.Mappers,
 		Logger:  log,
+		Wrapped: true,
 	}
 
 	client, err := wrapConnect(ctx, ti, input, internal)
@@ -968,6 +1345,10 @@ func wrapConnect(
 
 	if closer, ok := client.(io.Closer); ok {
 		internal.Cleanup.Do(func() { closer.Close() })
+	}
+
+	if cache, ok := client.(cacher.HasCache); ok {
+		cache.SetCache(internal.Cache)
 	}
 
 	internal.Logger.Trace("new client built for wrapped plugin",
@@ -1080,4 +1461,15 @@ func init() {
 		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
 		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
+	for _, fn := range WellKnownTypes {
+		mFn, err := argmapper.NewFunc(fn)
+		if err != nil {
+			panic(err)
+		}
+		dynamic.WellKnownTypeFns = append(dynamic.WellKnownTypeFns, mFn)
+	}
+}
+
+type pluginMetadata interface {
+	SetRequestMetadata(k, v string)
 }

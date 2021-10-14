@@ -40,19 +40,3 @@ func (_m *CapabilityPlatform) HasCapabilityFunc() interface{} {
 
 	return r0
 }
-
-// ParentsFunc provides a mock function with given fields:
-func (_m *CapabilityPlatform) ParentsFunc() interface{} {
-	ret := _m.Called()
-
-	var r0 interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(interface{})
-		}
-	}
-
-	return r0
-}

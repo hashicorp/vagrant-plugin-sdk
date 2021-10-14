@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -25,14 +26,17 @@ type HostPlugin struct {
 	Impl    component.Host    // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Wrapped bool
 }
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	bs := &baseServer{
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	vagrant_plugin_sdk.RegisterHostServiceServer(s, &hostServer{
@@ -55,9 +59,11 @@ func (p *HostPlugin) GRPCClient(
 	bc := &baseClient{
 		ctx: context.Background(),
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("host"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	client := vagrant_plugin_sdk.NewHostServiceClient(c)

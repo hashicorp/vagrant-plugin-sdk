@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -25,6 +26,7 @@ type CommunicatorPlugin struct {
 	Impl    component.Communicator // Impl is the concrete implementation
 	Mappers []*argmapper.Func      // Mappers
 	Logger  hclog.Logger           // Logger
+	Wrapped bool
 }
 
 func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
@@ -32,9 +34,11 @@ func (p *CommunicatorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	})
@@ -51,9 +55,11 @@ func (p *CommunicatorPlugin) GRPCClient(
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("communicator"),
 				Broker:  broker,
+				Wrapped: p.Wrapped,
 			},
 		},
 	}, nil

@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -39,8 +40,9 @@ func (p *PluginInfoPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server)
 		Impl: p.Impl,
 		baseServer: &baseServer{
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("plugin-info"),
 				Broker:  broker,
 			},
 		},
@@ -58,8 +60,9 @@ func (p *PluginInfoPlugin) GRPCClient(
 		baseClient: &baseClient{
 			ctx: context.Background(),
 			base: &base{
+				Cleanup: &pluginargs.Cleanup{},
 				Mappers: p.Mappers,
-				Logger:  p.Logger,
+				Logger:  p.Logger.Named("plugin-info"),
 				Broker:  broker,
 			},
 		},

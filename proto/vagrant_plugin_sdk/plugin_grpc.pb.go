@@ -2592,6 +2592,8 @@ type HostServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
 	ParentsSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Direct, error)
 }
 
 type hostServiceClient struct {
@@ -2701,6 +2703,24 @@ func (c *hostServiceClient) ParentsSpec(ctx context.Context, in *emptypb.Empty, 
 	return out, nil
 }
 
+func (c *hostServiceClient) Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Seed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Direct, error) {
+	out := new(Args_Direct)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Seeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HostServiceServer is the server API for HostService service.
 // All implementations should embed UnimplementedHostServiceServer
 // for forward compatibility
@@ -2716,6 +2736,8 @@ type HostServiceServer interface {
 	HasCapabilitySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
 	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
 	ParentsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Seed(context.Context, *Args_Direct) (*emptypb.Empty, error)
+	Seeds(context.Context, *emptypb.Empty) (*Args_Direct, error)
 }
 
 // UnimplementedHostServiceServer should be embedded to have forward compatible implementations.
@@ -2754,6 +2776,12 @@ func (UnimplementedHostServiceServer) Parents(context.Context, *FuncSpec_Args) (
 }
 func (UnimplementedHostServiceServer) ParentsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
+}
+func (UnimplementedHostServiceServer) Seed(context.Context, *Args_Direct) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
+}
+func (UnimplementedHostServiceServer) Seeds(context.Context, *emptypb.Empty) (*Args_Direct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
 }
 
 // UnsafeHostServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -2965,6 +2993,42 @@ func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HostService_Seed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Args_Direct)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Seed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Seed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Seed(ctx, req.(*Args_Direct))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).Seeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/Seeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).Seeds(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HostService_ServiceDesc is the grpc.ServiceDesc for HostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3016,6 +3080,14 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ParentsSpec",
 			Handler:    _HostService_ParentsSpec_Handler,
 		},
+		{
+			MethodName: "Seed",
+			Handler:    _HostService_Seed_Handler,
+		},
+		{
+			MethodName: "Seeds",
+			Handler:    _HostService_Seeds_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -3036,6 +3108,8 @@ type GuestServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
 	ParentsSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Direct, error)
 }
 
 type guestServiceClient struct {
@@ -3145,6 +3219,24 @@ func (c *guestServiceClient) ParentsSpec(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
+func (c *guestServiceClient) Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Seed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *guestServiceClient) Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Direct, error) {
+	out := new(Args_Direct)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Seeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GuestServiceServer is the server API for GuestService service.
 // All implementations should embed UnimplementedGuestServiceServer
 // for forward compatibility
@@ -3160,6 +3252,8 @@ type GuestServiceServer interface {
 	HasCapabilitySpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
 	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
 	ParentsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Seed(context.Context, *Args_Direct) (*emptypb.Empty, error)
+	Seeds(context.Context, *emptypb.Empty) (*Args_Direct, error)
 }
 
 // UnimplementedGuestServiceServer should be embedded to have forward compatible implementations.
@@ -3198,6 +3292,12 @@ func (UnimplementedGuestServiceServer) Parents(context.Context, *FuncSpec_Args) 
 }
 func (UnimplementedGuestServiceServer) ParentsSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
+}
+func (UnimplementedGuestServiceServer) Seed(context.Context, *Args_Direct) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
+}
+func (UnimplementedGuestServiceServer) Seeds(context.Context, *emptypb.Empty) (*Args_Direct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
 }
 
 // UnsafeGuestServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -3409,6 +3509,42 @@ func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GuestService_Seed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Args_Direct)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Seed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Seed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Seed(ctx, req.(*Args_Direct))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GuestService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GuestServiceServer).Seeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Seeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GuestServiceServer).Seeds(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GuestService_ServiceDesc is the grpc.ServiceDesc for GuestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3459,6 +3595,14 @@ var GuestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ParentsSpec",
 			Handler:    _GuestService_ParentsSpec_Handler,
+		},
+		{
+			MethodName: "Seed",
+			Handler:    _GuestService_Seed_Handler,
+		},
+		{
+			MethodName: "Seeds",
+			Handler:    _GuestService_Seeds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

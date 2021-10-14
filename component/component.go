@@ -67,6 +67,10 @@ type CommandInfo struct {
 	Subcommands []*CommandInfo
 }
 
+type Direct struct {
+	Arguments []interface{}
+}
+
 type Command interface {
 	// Execute a command
 	ExecuteFunc([]string) interface{}

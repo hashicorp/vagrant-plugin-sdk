@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -25,14 +26,17 @@ type GuestPlugin struct {
 	Impl    component.Guest   // Impl is the concrete implementation
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
+	Wrapped bool
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	bs := &baseServer{
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
@@ -55,9 +59,11 @@ func (p *GuestPlugin) GRPCClient(
 	bc := &baseClient{
 		ctx: context.Background(),
 		base: &base{
+			Cleanup: &pluginargs.Cleanup{},
 			Mappers: p.Mappers,
-			Logger:  p.Logger,
+			Logger:  p.Logger.Named("guest"),
 			Broker:  broker,
+			Wrapped: p.Wrapped,
 		},
 	}
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
