@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/LK4D4/joincontext"
@@ -63,6 +64,30 @@ func (c *capabilityClient) Seeds() ([]interface{}, error) {
 	return r.(*component.Direct).Arguments, nil
 }
 
+type generatesContext interface {
+	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
+}
+
+func (c *capabilityClient) getCapabilityFromParent(ctx context.Context, args funcspec.Args) (interface{}, error) {
+	for _, p := range c.parentPlugins {
+		new_ctx, _ := p.(generatesContext).GenerateContext(ctx)
+		parentPlugin := p.(component.CapabilityPlatform)
+		f := parentPlugin.HasCapabilityFunc()
+		parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
+		for _, a := range args {
+			parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
+		}
+		raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
+		if err != nil {
+			return nil, err
+		}
+		if raw.(bool) {
+			return p, nil
+		}
+	}
+	return nil, errors.New("could not find capability in parent plugins")
+}
+
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
@@ -71,11 +96,18 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		ctx, _ = joincontext.Join(c.Ctx, ctx)
-		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		new_ctx, _ := joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 
 		if err != nil {
 			return false, err
+		}
+
+		if !resp.HasCapability {
+			p, _ := c.getCapabilityFromParent(ctx, args)
+			if p != nil {
+				return true, nil
+			}
 		}
 		return resp.HasCapability, nil
 	}
