@@ -7,13 +7,12 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -22,11 +21,9 @@ var errNotImplemented = errors.New("not implemented")
 type TargetMachinePlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Mappers    []*argmapper.Func
-	Logger     hclog.Logger
 	Impl       core.Machine
 	TargetImpl core.Target
-	Wrapped    bool
+	*vplugin.BasePlugin
 }
 
 // Implements plugin.GRPCPlugin
@@ -36,40 +33,26 @@ func (t *TargetMachinePlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	cl := vagrant_plugin_sdk.NewTargetMachineServiceClient(c)
-	b := &base{
-		Mappers: t.Mappers,
-		Logger:  t.Logger.Named("core.target-machine"),
-		Broker:  broker,
-		Cleanup: &pluginargs.Cleanup{},
-		Wrapped: t.Wrapped,
-	}
+	bc := t.NewClient(ctx, broker)
 	return &targetMachineClient{
-		client: cl,
-		ctx:    ctx,
-		base:   b,
+		client:     cl,
+		BaseClient: bc,
 		targetClient: &targetClient{
-			client: cl,
-			ctx:    ctx,
-			base:   b,
+			client:     cl,
+			BaseClient: bc,
 		},
 	}, nil
 }
 
 func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	b := &base{
-		Mappers: t.Mappers,
-		Logger:  t.Logger.Named("core.target-machine"),
-		Broker:  broker,
-		Cleanup: &pluginargs.Cleanup{},
-		Wrapped: t.Wrapped,
-	}
+	bs := t.NewServer(broker)
 
 	vagrant_plugin_sdk.RegisterTargetMachineServiceServer(s, &targetMachineServer{
-		Impl: t.Impl,
-		base: b,
+		Impl:       t.Impl,
+		BaseServer: bs,
 		targetServer: &targetServer{
-			Impl: t.TargetImpl,
-			base: b,
+			Impl:       t.TargetImpl,
+			BaseServer: bs,
 		},
 	})
 
@@ -78,15 +61,14 @@ func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serv
 
 // Machine implements core.Machine interface
 type targetMachineClient struct {
-	*base
+	*vplugin.BaseClient
 	*targetClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.TargetMachineServiceClient
 }
 
 type targetMachineServer struct {
-	*base
+	*vplugin.BaseServer
 	*targetServer
 
 	Impl core.Machine
@@ -94,13 +76,13 @@ type targetMachineServer struct {
 }
 
 func (t *targetMachineClient) Guest() (g core.Guest, err error) {
-	guestResp, err := t.client.Guest(t.ctx, &empty.Empty{})
+	guestResp, err := t.client.Guest(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := t.Map(guestResp, (*core.Guest)(nil),
-		argmapper.Typed(t.ctx))
+		argmapper.Typed(t.Ctx))
 	if err == nil {
 		g = result.(core.Guest)
 	}
@@ -109,13 +91,13 @@ func (t *targetMachineClient) Guest() (g core.Guest, err error) {
 }
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
-	r, err := t.client.GetState(t.ctx, &empty.Empty{})
+	r, err := t.client.GetState(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := t.Map(r, (**core.MachineState)(nil),
-		argmapper.Typed(t.ctx))
+		argmapper.Typed(t.Ctx))
 	if err == nil {
 		state = result.(*core.MachineState)
 	}
@@ -127,10 +109,10 @@ func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err err
 	stateArg, err := t.Map(
 		state,
 		(*vagrant_plugin_sdk.Args_Target_Machine_State)(nil),
-		argmapper.Typed(t.ctx),
+		argmapper.Typed(t.Ctx),
 	)
 	_, err = t.client.SetState(
-		t.ctx,
+		t.Ctx,
 		&vagrant_plugin_sdk.Target_Machine_SetStateRequest{
 			State: stateArg.(*vagrant_plugin_sdk.Args_Target_Machine_State),
 		},
@@ -146,26 +128,26 @@ func (t *targetMachineClient) Inspect() (printable string, err error) {
 }
 
 func (t *targetMachineClient) Reload() (err error) {
-	_, err = t.client.Reload(t.ctx, &empty.Empty{})
+	_, err = t.client.Reload(t.Ctx, &empty.Empty{})
 	return
 }
 
 func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
-	connResp, err := t.client.ConnectionInfo(t.ctx, &empty.Empty{})
+	connResp, err := t.client.ConnectionInfo(t.Ctx, &empty.Empty{})
 	return info, mapstructure.Decode(connResp, &info)
 }
 
 func (t *targetMachineClient) UID() (id string, err error) {
-	uidResp, err := t.client.UID(t.ctx, &empty.Empty{})
+	uidResp, err := t.client.UID(t.Ctx, &empty.Empty{})
 	id = uidResp.UserId
 	return
 }
 
 func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
-	sfResp, err := t.client.SyncedFolders(t.ctx, &empty.Empty{})
+	sfResp, err := t.client.SyncedFolders(t.Ctx, &empty.Empty{})
 	folders = []core.SyncedFolder{}
 	for _, folder := range sfResp.SyncedFolders {
-		f, err := t.Map(folder, (*core.SyncedFolder)(nil), argmapper.Typed(t.ctx))
+		f, err := t.Map(folder, (*core.SyncedFolder)(nil), argmapper.Typed(t.Ctx))
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +158,7 @@ func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err 
 }
 
 func (t *targetMachineClient) ID() (id string, err error) {
-	r, err := t.client.GetID(t.ctx, &empty.Empty{})
+	r, err := t.client.GetID(t.Ctx, &empty.Empty{})
 	if err == nil {
 		id = r.Id
 	}
@@ -185,19 +167,19 @@ func (t *targetMachineClient) ID() (id string, err error) {
 }
 
 func (t *targetMachineClient) SetID(id string) (err error) {
-	_, err = t.client.SetID(t.ctx, &vagrant_plugin_sdk.Target_Machine_SetIDRequest{
+	_, err = t.client.SetID(t.Ctx, &vagrant_plugin_sdk.Target_Machine_SetIDRequest{
 		Id: id})
 	return
 }
 
 func (t *targetMachineClient) Box() (b *core.Box, err error) {
-	r, err := t.client.Box(t.ctx, &empty.Empty{})
+	r, err := t.client.Box(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := t.Map(r, (*core.Box)(nil),
-		argmapper.Typed(t.ctx))
+		argmapper.Typed(t.Ctx))
 	if err == nil {
 		b = result.(*core.Box)
 	}

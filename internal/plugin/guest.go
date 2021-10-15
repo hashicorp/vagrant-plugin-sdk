@@ -6,7 +6,6 @@ import (
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -23,27 +21,17 @@ import (
 type GuestPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Guest   // Impl is the concrete implementation
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Wrapped bool
+	Impl component.Guest // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	bs := &baseServer{
-		base: &base{
-			Cleanup: &pluginargs.Cleanup{},
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("guest"),
-			Broker:  broker,
-			Wrapped: p.Wrapped,
-		},
-	}
+	bs := p.NewServer(broker)
 	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
 		Impl:       p.Impl,
-		baseServer: bs,
+		BaseServer: bs,
 		capabilityServer: &capabilityServer{
-			baseServer:     bs,
+			BaseServer:     bs,
 			CapabilityImpl: p.Impl,
 			typ:            "guest",
 		},
@@ -56,48 +44,39 @@ func (p *GuestPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	bc := &baseClient{
-		ctx: context.Background(),
-		base: &base{
-			Cleanup: &pluginargs.Cleanup{},
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("guest"),
-			Broker:  broker,
-			Wrapped: p.Wrapped,
-		},
-	}
+	bc := p.NewClient(ctx, broker)
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
 	return &guestClient{
 		client:     client,
-		baseClient: bc,
+		BaseClient: bc,
 		capabilityClient: &capabilityClient{
 			client:     client,
-			baseClient: bc,
+			BaseClient: bc,
 		},
 	}, nil
 }
 
 // guestClient is an implementation of component.Guest over gRPC.
 type guestClient struct {
-	*baseClient
+	*BaseClient
 	*capabilityClient
 	client vagrant_plugin_sdk.GuestServiceClient
 }
 
 func (c *guestClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+	return configStructCall(c.Ctx, c.client)
 }
 
 func (c *guestClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+	return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *guestClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *guestClient) GuestDetectFunc() interface{} {
-	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.DetectSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -109,13 +88,13 @@ func (c *guestClient) GuestDetectFunc() interface{} {
 		}
 		return resp.Detected, nil
 	}
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *guestClient) Detect(t core.Target) (bool, error) {
 	f := c.GuestDetectFunc()
-	raw, err := c.callDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(c.ctx),
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(t),
 	)
 	if err != nil {
@@ -126,13 +105,13 @@ func (c *guestClient) Detect(t core.Target) (bool, error) {
 }
 
 func (c *guestClient) ParentsFunc() interface{} {
-	spec, err := c.client.ParentsSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.ParentsSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
@@ -140,13 +119,13 @@ func (c *guestClient) ParentsFunc() interface{} {
 		return resp.Parents, nil
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *guestClient) Parents() ([]string, error) {
 	f := c.ParentsFunc()
-	raw, err := c.callDynamicFunc(f, (*[]string)(nil),
-		argmapper.Typed(c.ctx),
+	raw, err := c.CallDynamicFunc(f, (*[]string)(nil),
+		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
 		return nil, err
@@ -158,7 +137,7 @@ func (c *guestClient) Parents() ([]string, error) {
 // guestServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type guestServer struct {
-	*baseServer
+	*BaseServer
 	*capabilityServer
 
 	Impl component.Guest
@@ -193,14 +172,14 @@ func (s *guestServer) DetectSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.GuestDetectFunc())
+	return s.GenerateSpec(s.Impl.GuestDetectFunc())
 }
 
 func (s *guestServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_DetectResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.GuestDetectFunc(), (*bool)(nil), args.Args,
+	raw, err := s.CallDynamicFunc(s.Impl.GuestDetectFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx),
 	)
 
@@ -219,14 +198,14 @@ func (s *guestServer) ParentsSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.ParentsFunc())
+	return s.GenerateSpec(s.Impl.ParentsFunc())
 }
 
 func (s *guestServer) Parents(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {

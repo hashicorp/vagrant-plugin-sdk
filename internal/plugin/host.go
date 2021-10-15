@@ -6,7 +6,6 @@ import (
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -23,27 +21,17 @@ import (
 type HostPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Host    // Impl is the concrete implementation
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Wrapped bool
+	Impl component.Host // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *HostPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	bs := &baseServer{
-		base: &base{
-			Cleanup: &pluginargs.Cleanup{},
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("host"),
-			Broker:  broker,
-			Wrapped: p.Wrapped,
-		},
-	}
+	bs := p.NewServer(broker)
 	vagrant_plugin_sdk.RegisterHostServiceServer(s, &hostServer{
 		Impl:       p.Impl,
-		baseServer: bs,
+		BaseServer: bs,
 		capabilityServer: &capabilityServer{
-			baseServer:     bs,
+			BaseServer:     bs,
 			CapabilityImpl: p.Impl,
 			typ:            "host",
 		},
@@ -56,53 +44,44 @@ func (p *HostPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	bc := &baseClient{
-		ctx: context.Background(),
-		base: &base{
-			Cleanup: &pluginargs.Cleanup{},
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("host"),
-			Broker:  broker,
-			Wrapped: p.Wrapped,
-		},
-	}
+	bc := p.NewClient(ctx, broker)
 	client := vagrant_plugin_sdk.NewHostServiceClient(c)
 	return &hostClient{
 		client:     client,
-		baseClient: bc,
+		BaseClient: bc,
 		capabilityClient: &capabilityClient{
 			client:     client,
-			baseClient: bc,
+			BaseClient: bc,
 		},
 	}, nil
 }
 
 type hostClient struct {
-	*baseClient
+	*BaseClient
 	*capabilityClient
 	client vagrant_plugin_sdk.HostServiceClient
 }
 
 func (c *hostClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+	return configStructCall(c.Ctx, c.client)
 }
 
 func (c *hostClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+	return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *hostClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *hostClient) HostDetectFunc() interface{} {
-	spec, err := c.client.DetectSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.DetectSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Detect(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -110,13 +89,13 @@ func (c *hostClient) HostDetectFunc() interface{} {
 		return resp.Detected, nil
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *hostClient) Detect(statebag core.StateBag) (bool, error) {
 	f := c.HostDetectFunc()
-	raw, err := c.callDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(c.ctx),
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(statebag),
 	)
 	if err != nil {
@@ -127,13 +106,13 @@ func (c *hostClient) Detect(statebag core.StateBag) (bool, error) {
 }
 
 func (c *hostClient) ParentsFunc() interface{} {
-	spec, err := c.client.ParentsSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.ParentsSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
@@ -141,13 +120,13 @@ func (c *hostClient) ParentsFunc() interface{} {
 		return resp.Parents, nil
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *hostClient) Parents() ([]string, error) {
 	f := c.ParentsFunc()
-	raw, err := c.callDynamicFunc(f, (*[]string)(nil),
-		argmapper.Typed(c.ctx),
+	raw, err := c.CallDynamicFunc(f, (*[]string)(nil),
+		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
 		return nil, err
@@ -157,7 +136,7 @@ func (c *hostClient) Parents() ([]string, error) {
 }
 
 type hostServer struct {
-	*baseServer
+	*BaseServer
 	*capabilityServer
 
 	Impl component.Host
@@ -196,14 +175,14 @@ func (s *hostServer) DetectSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.HostDetectFunc())
+	return s.GenerateSpec(s.Impl.HostDetectFunc())
 }
 
 func (s *hostServer) Detect(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_DetectResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.HostDetectFunc(), (*bool)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.HostDetectFunc(), (*bool)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
@@ -222,14 +201,14 @@ func (s *hostServer) ParentsSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.ParentsFunc())
+	return s.GenerateSpec(s.Impl.ParentsFunc())
 }
 
 func (s *hostServer) Parents(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {

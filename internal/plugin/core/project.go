@@ -8,13 +8,12 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -23,10 +22,8 @@ import (
 type ProjectPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Impl    core.Project
-	Wrapped bool
+	Impl core.Project
+	*vplugin.BasePlugin
 }
 
 // Implements plugin.GRPCPlugin
@@ -36,15 +33,8 @@ func (p *ProjectPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &projectClient{
-		client: vagrant_plugin_sdk.NewProjectServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.project"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewProjectServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
@@ -53,34 +43,27 @@ func (p *ProjectPlugin) GRPCServer(
 	s *grpc.Server,
 ) error {
 	vagrant_plugin_sdk.RegisterProjectServiceServer(s, &projectServer{
-		Impl: p.Impl,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.project"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
 
 type projectClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.ProjectServiceClient
 }
 
 type projectServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.Project
 	vagrant_plugin_sdk.UnimplementedProjectServiceServer
 }
 
 func (p *projectClient) CWD() (path string, err error) {
-	r, err := p.client.CWD(p.ctx, &emptypb.Empty{})
+	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
 	}
@@ -89,7 +72,7 @@ func (p *projectClient) CWD() (path string, err error) {
 }
 
 func (p *projectClient) Target(name string) (t core.Target, err error) {
-	r, err := p.client.Target(p.ctx, &vagrant_plugin_sdk.Project_TargetRequest{
+	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
 		Name: name,
 	})
 	if err != nil {
@@ -97,7 +80,7 @@ func (p *projectClient) Target(name string) (t core.Target, err error) {
 	}
 
 	result, err := p.Map(r, (*core.Target)(nil),
-		argmapper.Typed(p.ctx))
+		argmapper.Typed(p.Ctx))
 	if err == nil {
 		t = result.(core.Target)
 	}
@@ -105,7 +88,7 @@ func (p *projectClient) Target(name string) (t core.Target, err error) {
 }
 
 func (p *projectClient) TargetNames() (names []string, err error) {
-	r, err := p.client.TargetNames(p.ctx, &empty.Empty{})
+	r, err := p.client.TargetNames(p.Ctx, &empty.Empty{})
 	if err == nil {
 		names = r.Names
 	}
@@ -114,7 +97,7 @@ func (p *projectClient) TargetNames() (names []string, err error) {
 }
 
 func (p *projectClient) TargetIds() (ids []string, err error) {
-	r, err := p.client.TargetIds(p.ctx, &empty.Empty{})
+	r, err := p.client.TargetIds(p.Ctx, &empty.Empty{})
 	if err == nil {
 		ids = r.Ids
 	}
@@ -123,7 +106,7 @@ func (p *projectClient) TargetIds() (ids []string, err error) {
 }
 
 func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
-	r, err := p.client.DataDir(p.ctx, &emptypb.Empty{})
+	r, err := p.client.DataDir(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -137,7 +120,7 @@ func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
 }
 
 func (p *projectClient) VagrantfileName() (name string, err error) {
-	r, err := p.client.VagrantfileName(p.ctx, &emptypb.Empty{})
+	r, err := p.client.VagrantfileName(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		name = r.Name
 	}
@@ -146,7 +129,7 @@ func (p *projectClient) VagrantfileName() (name string, err error) {
 }
 
 func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
-	r, err := p.client.VagrantfilePath(p.ctx, &emptypb.Empty{})
+	r, err := p.client.VagrantfilePath(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		pp = path.NewPath(r.Path)
 	}
@@ -154,13 +137,13 @@ func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
 }
 
 func (p *projectClient) UI() (ui terminal.UI, err error) {
-	r, err := p.client.UI(p.ctx, &emptypb.Empty{})
+	r, err := p.client.UI(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := p.Map(r, (*terminal.UI)(nil),
-		argmapper.Typed(p.ctx))
+		argmapper.Typed(p.Ctx))
 	if err == nil {
 		ui = result.(terminal.UI)
 	}
@@ -169,7 +152,7 @@ func (p *projectClient) UI() (ui terminal.UI, err error) {
 }
 
 func (p *projectClient) Home() (path string, err error) {
-	r, err := p.client.Home(p.ctx, &emptypb.Empty{})
+	r, err := p.client.Home(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
 	}
@@ -177,7 +160,7 @@ func (p *projectClient) Home() (path string, err error) {
 	return
 }
 func (p *projectClient) LocalData() (path string, err error) {
-	r, err := p.client.LocalData(p.ctx, &emptypb.Empty{})
+	r, err := p.client.LocalData(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
 	}
@@ -186,7 +169,7 @@ func (p *projectClient) LocalData() (path string, err error) {
 }
 
 func (p *projectClient) Tmp() (path string, err error) {
-	r, err := p.client.Tmp(p.ctx, &emptypb.Empty{})
+	r, err := p.client.Tmp(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
 	}
@@ -195,7 +178,7 @@ func (p *projectClient) Tmp() (path string, err error) {
 }
 
 func (p *projectClient) DefaultPrivateKey() (path string, err error) {
-	r, err := p.client.DefaultPrivateKey(p.ctx, &emptypb.Empty{})
+	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Key
 	}
@@ -204,13 +187,13 @@ func (p *projectClient) DefaultPrivateKey() (path string, err error) {
 }
 
 func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
-	r, err := p.client.TargetIndex(p.ctx, &emptypb.Empty{})
+	r, err := p.client.TargetIndex(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := p.Map(r, (*core.TargetIndex)(nil),
-		argmapper.Typed(p.ctx))
+		argmapper.Typed(p.Ctx))
 	if err == nil {
 		index = result.(core.TargetIndex)
 	}
@@ -218,13 +201,13 @@ func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
 }
 
 func (p *projectClient) Host() (h core.Host, err error) {
-	r, err := p.client.Host(p.ctx, &emptypb.Empty{})
+	r, err := p.client.Host(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := p.Map(r, (*core.Host)(nil),
-		argmapper.Typed(p.ctx),
+		argmapper.Typed(p.Ctx),
 	)
 	if err == nil {
 		h = result.(core.Host)

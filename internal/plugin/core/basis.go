@@ -5,14 +5,13 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -20,10 +19,8 @@ import (
 type BasisPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    core.Basis
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Wrapped bool
+	Impl core.Basis
+	*vplugin.BasePlugin
 }
 
 func (p *BasisPlugin) GRPCClient(
@@ -32,53 +29,39 @@ func (p *BasisPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &basisClient{
-		client: vagrant_plugin_sdk.NewBasisServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.basis"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewBasisServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 func (p *BasisPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterBasisServiceServer(s, &basisServer{
-		Impl: p.Impl,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.basis"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
 
 type basisClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.BasisServiceClient
 }
 
 type basisServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.Basis
 	vagrant_plugin_sdk.UnimplementedBasisServiceServer
 }
 
 func (p *basisClient) UI() (ui terminal.UI, err error) {
-	r, err := p.client.UI(p.ctx, &emptypb.Empty{})
+	r, err := p.client.UI(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
-	result, err := p.Map(r, (*terminal.UI)(nil), argmapper.Typed(p.ctx))
+	result, err := p.Map(r, (*terminal.UI)(nil), argmapper.Typed(p.Ctx))
 	if err == nil {
 		ui = result.(terminal.UI)
 	}
@@ -87,7 +70,7 @@ func (p *basisClient) UI() (ui terminal.UI, err error) {
 }
 
 func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
-	r, err := p.client.DataDir(p.ctx, &emptypb.Empty{})
+	r, err := p.client.DataDir(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -101,12 +84,12 @@ func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
 }
 
 func (p *basisClient) Host() (h core.Host, err error) {
-	r, err := p.client.Host(p.ctx, &emptypb.Empty{})
+	r, err := p.client.Host(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
-	result, err := p.Map(r, (*core.Host)(nil), argmapper.Typed(p.ctx))
+	result, err := p.Map(r, (*core.Host)(nil), argmapper.Typed(p.Ctx))
 	if err == nil {
 		h = result.(core.Host)
 	}

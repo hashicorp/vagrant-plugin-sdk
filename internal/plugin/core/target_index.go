@@ -5,22 +5,19 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 type TargetIndexPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    core.TargetIndex
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Wrapped bool
+	Impl core.TargetIndex
+	*vplugin.BasePlugin
 }
 
 func (p *TargetIndexPlugin) GRPCClient(
@@ -29,41 +26,27 @@ func (p *TargetIndexPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &targetIndexClient{
-		client: vagrant_plugin_sdk.NewTargetIndexServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.target-index"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewTargetIndexServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 func (p *TargetIndexPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterTargetIndexServiceServer(s, &targetIndexServer{
-		Impl: p.Impl,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.target-index"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
 
 type targetIndexClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.TargetIndexServiceClient
 }
 
 type targetIndexServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.TargetIndex
 	vagrant_plugin_sdk.UnimplementedTargetIndexServiceServer
@@ -71,7 +54,7 @@ type targetIndexServer struct {
 
 func (t *targetIndexClient) Delete(uuid string) (err error) {
 	_, err = t.client.Delete(
-		t.ctx,
+		t.Ctx,
 		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
 	return
@@ -79,7 +62,7 @@ func (t *targetIndexClient) Delete(uuid string) (err error) {
 
 func (t *targetIndexClient) Get(uuid string) (entry core.Target, err error) {
 	target, err := t.client.Get(
-		t.ctx,
+		t.Ctx,
 		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
 	if err != nil {
@@ -88,14 +71,14 @@ func (t *targetIndexClient) Get(uuid string) (entry core.Target, err error) {
 	m, err := t.Map(
 		target,
 		(*core.Target)(nil),
-		argmapper.Typed(t.ctx),
+		argmapper.Typed(t.Ctx),
 	)
 	return m.(core.Target), err
 }
 
 func (t *targetIndexClient) Includes(uuid string) (exists bool, err error) {
 	incl, err := t.client.Includes(
-		t.ctx,
+		t.Ctx,
 		&vagrant_plugin_sdk.TargetIndex_TargetIdentifier{Id: uuid},
 	)
 	return incl.Exists, err
@@ -105,25 +88,25 @@ func (t *targetIndexClient) Set(entry core.Target) (updatedEntry core.Target, er
 	targetArg, err := t.Map(
 		entry,
 		(*vagrant_plugin_sdk.Args_Target)(nil),
-		argmapper.Typed(t.ctx),
+		argmapper.Typed(t.Ctx),
 	)
 	if err != nil {
 		return nil, err
 	}
-	targetOut, err := t.client.Set(t.ctx, targetArg.(*vagrant_plugin_sdk.Args_Target))
+	targetOut, err := t.client.Set(t.Ctx, targetArg.(*vagrant_plugin_sdk.Args_Target))
 	if err != nil {
 		return nil, err
 	}
 	m, err := t.Map(
 		targetOut,
 		(*core.Target)(nil),
-		argmapper.Typed(t.ctx),
+		argmapper.Typed(t.Ctx),
 	)
 	return m.(core.Target), err
 }
 
 func (t *targetIndexClient) All() (targets []core.Target, err error) {
-	argTargets, err := t.client.All(t.ctx, &empty.Empty{})
+	argTargets, err := t.client.All(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +115,7 @@ func (t *targetIndexClient) All() (targets []core.Target, err error) {
 		result, err := t.Map(
 			argTarget,
 			(*core.Target)(nil),
-			argmapper.Typed(t.ctx),
+			argmapper.Typed(t.Ctx),
 		)
 		if err != nil {
 			return nil, err
