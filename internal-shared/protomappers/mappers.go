@@ -436,10 +436,8 @@ func HostProto(
 		return ch.(*vagrant_plugin_sdk.Args_Host), nil
 	}
 	p := &plugincomponent.HostPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    input,
-		Wrapped: true,
+		BasePlugin: basePlugin(input, internal),
+		Impl:       input,
 	}
 
 	internal.Logger.Trace("wrapping host plugin",
@@ -469,9 +467,7 @@ func Host(
 	internal *pluginargs.Internal,
 ) (core.Host, error) {
 	p := &plugincomponent.HostPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 	internal.Logger.Trace("connecting to wrapped host plugin",
 		"connection-info", input)
@@ -494,10 +490,8 @@ func GuestProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Guest, error) {
 	p := &plugincomponent.GuestPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    input,
-		Wrapped: true,
+		BasePlugin: basePlugin(input, internal),
+		Impl:       input,
 	}
 
 	internal.Logger.Trace("wrapping guest plugin", "guest", input)
@@ -520,9 +514,7 @@ func Guest(
 	internal *pluginargs.Internal,
 ) (core.Guest, error) {
 	p := &plugincomponent.GuestPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -761,8 +753,7 @@ func StateBag(
 ) (core.StateBag, error) {
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -783,12 +774,15 @@ func StateBagProto(
 		return ch.(*vagrant_plugin_sdk.Args_StateBag), nil
 	}
 
+	log.Warn("failed to locate cached statebag", "cid", cid)
+
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
-		Impl:    bag,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Wrapped: true,
+		BasePlugin: basePlugin(bag, internal),
+		Impl:       bag,
 	}
+
+	log.Warn("wrapping statebag to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(bag, p, internal)
 	if err != nil {
@@ -800,6 +794,7 @@ func StateBagProto(
 		Network:  ep.Network(),
 		Target:   ep.String()}
 
+	log.Warn("registered statebag into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
 
 	return proto, nil
@@ -899,10 +894,8 @@ func BasisProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Basis, error) {
 	bp := &plugincore.BasisPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    b,
-		Wrapped: true,
+		BasePlugin: basePlugin(b, internal),
+		Impl:       b,
 	}
 
 	id, ep, err := wrapClient(b, bp, internal)
@@ -924,9 +917,7 @@ func Basis(
 	internal *pluginargs.Internal,
 ) (core.Basis, error) {
 	b := &plugincore.BasisPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, b, input, internal)
@@ -943,10 +934,8 @@ func CommunicatorProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
 	cp := &plugincomponent.CommunicatorPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    c,
-		Wrapped: true,
+		BasePlugin: basePlugin(c, internal),
+		Impl:       c,
 	}
 
 	id, ep, err := wrapClient(c, cp, internal)
@@ -968,9 +957,7 @@ func Communicator(
 	internal *pluginargs.Internal,
 ) (core.Communicator, error) {
 	p := &plugincomponent.CommunicatorPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -987,10 +974,8 @@ func ProjectProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Project, error) {
 	pp := &plugincore.ProjectPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    p,
-		Wrapped: true,
+		BasePlugin: basePlugin(p, internal),
+		Impl:       p,
 	}
 
 	id, ep, err := wrapClient(p, pp, internal)
@@ -1012,9 +997,7 @@ func Project(
 	internal *pluginargs.Internal,
 ) (core.Project, error) {
 	p := &plugincore.ProjectPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, p, input, internal)
@@ -1031,10 +1014,8 @@ func SyncedFolderProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
 	sp := &plugincomponent.SyncedFolderPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    s,
-		Wrapped: true,
+		BasePlugin: basePlugin(s, internal),
+		Impl:       s,
 	}
 
 	id, endpoint, err := wrapClient(s, sp, internal)
@@ -1056,9 +1037,7 @@ func SyncedFolder(
 	internal *pluginargs.Internal,
 ) (core.SyncedFolder, error) {
 	s := &plugincomponent.SyncedFolderPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, s, input, internal)
@@ -1075,10 +1054,8 @@ func ProviderProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Provider, error) {
 	tp := &plugincomponent.ProviderPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    t,
-		Wrapped: true,
+		BasePlugin: basePlugin(t, internal),
+		Impl:       t,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -1100,9 +1077,7 @@ func Provider(
 	internal *pluginargs.Internal,
 ) (core.Provider, error) {
 	t := &plugincomponent.ProviderPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -1128,10 +1103,8 @@ func TargetProto(
 	}
 
 	tp := &plugincore.TargetPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    t,
-		Wrapped: true,
+		BasePlugin: basePlugin(t, internal),
+		Impl:       t,
 	}
 
 	id, endpoint, err := wrapClient(t, tp, internal)
@@ -1160,9 +1133,7 @@ func Target(
 	internal *pluginargs.Internal,
 ) (core.Target, error) {
 	t := &plugincore.TargetPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, t, input, internal)
@@ -1179,11 +1150,8 @@ func TargetMachineProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
 	mp := &plugincore.TargetMachinePlugin{
-		Mappers:    internal.Mappers,
-		Logger:     log.ResetNamed("vagrant.wrapped"),
-		Impl:       m,
+		BasePlugin: basePlugin(m, internal),
 		TargetImpl: m,
-		Wrapped:    true,
 	}
 
 	id, ep, err := wrapClient(m, mp, internal)
@@ -1205,9 +1173,7 @@ func TargetMachine(
 	internal *pluginargs.Internal,
 ) (core.Machine, error) {
 	m := &plugincore.TargetMachinePlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, m, input, internal)
@@ -1224,10 +1190,8 @@ func TargetIndexProto(
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log.ResetNamed("vagrant.wrapped"),
-		Impl:    t,
-		Wrapped: true,
+		BasePlugin: basePlugin(t, internal),
+		Impl:       t,
 	}
 
 	id, ep, err := wrapClient(t, ti, internal)
@@ -1249,9 +1213,7 @@ func TargetIndex(
 	internal *pluginargs.Internal,
 ) (core.TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
-		Mappers: internal.Mappers,
-		Logger:  log,
-		Wrapped: true,
+		BasePlugin: basePlugin(nil, internal),
 	}
 
 	client, err := wrapConnect(ctx, ti, input, internal)
@@ -1451,13 +1413,29 @@ func wrapClient(
 	return
 }
 
+// creates a BasePlugin configuration using an optional
+// source client and the internal args
+func basePlugin(
+	src interface{},
+	internal *pluginargs.Internal,
+) *plugincomponent.BasePlugin {
+	if w, ok := src.(wrappable); ok {
+		return w.Wrap()
+	}
+	return &plugincomponent.BasePlugin{
+		Mappers: internal.Mappers,
+		Logger:  internal.Logger,
+		Cache:   internal.Cache,
+		Wrapped: true,
+	}
+}
+
 func init() {
 	for _, fn := range All {
 		mFn, err := argmapper.NewFunc(fn)
 		if err != nil {
 			panic(err)
 		}
-		plugincore.MapperFns = append(plugincore.MapperFns, mFn)
 		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
 		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
@@ -1472,4 +1450,8 @@ func init() {
 
 type pluginMetadata interface {
 	SetRequestMetadata(k, v string)
+}
+
+type wrappable interface {
+	Wrap() *plugincomponent.BasePlugin
 }
