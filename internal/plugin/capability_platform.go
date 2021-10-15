@@ -19,6 +19,12 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
+type capabilityParent interface {
+	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
+	PluginHasCapability() interface{}
+	HasCapability(name string) (bool, error)
+}
+
 type capabilityPlatform interface {
 	HasCapability(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
@@ -64,15 +70,11 @@ func (c *capabilityClient) Seeds() ([]interface{}, error) {
 	return r.(*component.Direct).Arguments, nil
 }
 
-type generatesContext interface {
-	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
-}
-
 func (c *capabilityClient) getCapabilityFromParent(ctx context.Context, args funcspec.Args) (interface{}, error) {
 	for _, p := range c.parentPlugins {
-		new_ctx, _ := p.(generatesContext).GenerateContext(ctx)
-		parentPlugin := p.(component.CapabilityPlatform)
-		f := parentPlugin.HasCapabilityFunc()
+		parentPlugin := p.(capabilityParent)
+		new_ctx, _ := parentPlugin.GenerateContext(ctx)
+		f := parentPlugin.PluginHasCapability()
 		parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
 		for _, a := range args {
 			parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
@@ -86,6 +88,39 @@ func (c *capabilityClient) getCapabilityFromParent(ctx context.Context, args fun
 		}
 	}
 	return nil, errors.New("could not find capability in parent plugins")
+}
+
+func (c *capabilityClient) getCapabilityFromParent2(ctx context.Context, name string) (interface{}, error) {
+	for _, p := range c.parentPlugins {
+		parentPlugin := p.(capabilityParent)
+		// new_ctx, _ := parentPlugin.GenerateContext(ctx)
+		hasCap, err := parentPlugin.HasCapability(name)
+		if err != nil {
+			return nil, err
+		}
+		if hasCap {
+			return p, nil
+		}
+	}
+	return nil, errors.New("could not find capability in parent plugins")
+}
+
+func (c *capabilityClient) PluginHasCapability() interface{} {
+	spec, err := c.client.HasCapabilitySpec(c.ctx, &emptypb.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		new_ctx, _ := joincontext.Join(c.ctx, ctx)
+		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return resp.HasCapability, nil
+	}
+	return c.generateFunc(spec, cb)
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -136,12 +171,12 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		p, _ := c.getCapabilityFromParent(ctx, args)
+		p, _ := c.getCapabilityFromParent2(ctx, name)
 		var pluginWithCapability *capabilityClient
 		if p == nil {
-			pluginWithCapability = p.(*capabilityClient)
-		} else {
 			pluginWithCapability = c
+		} else {
+			pluginWithCapability = p.(*capabilityClient)
 		}
 
 		ctx, _ = joincontext.Join(pluginWithCapability.Ctx, ctx)
