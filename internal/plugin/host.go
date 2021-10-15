@@ -62,6 +62,10 @@ type hostClient struct {
 	client vagrant_plugin_sdk.HostServiceClient
 }
 
+func (c *hostClient) GetCapabilityClient() *capabilityClient {
+	return c.capabilityClient
+}
+
 func (c *hostClient) Config() (interface{}, error) {
 	return configStructCall(c.Ctx, c.client)
 }

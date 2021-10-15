@@ -23,6 +23,7 @@ type capabilityParent interface {
 	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
 	PluginHasCapability() interface{}
 	HasCapability(name string) (bool, error)
+	GetCapabilityClient() *capabilityClient
 }
 
 type capabilityPlatform interface {
@@ -37,6 +38,10 @@ type capabilityPlatform interface {
 type capabilityClient struct {
 	*BaseClient
 	client capabilityPlatform
+}
+
+func (c *capabilityClient) GetCapabilityClient() *capabilityClient {
+	return c
 }
 
 func (c *capabilityClient) Seed(args ...interface{}) error {
@@ -106,21 +111,21 @@ func (c *capabilityClient) getCapabilityFromParent2(ctx context.Context, name st
 }
 
 func (c *capabilityClient) PluginHasCapability() interface{} {
-	spec, err := c.client.HasCapabilitySpec(c.ctx, &emptypb.Empty{})
+	spec, err := c.client.HasCapabilitySpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		new_ctx, _ := joincontext.Join(c.ctx, ctx)
+		new_ctx, _ := joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
 		}
 		return resp.HasCapability, nil
 	}
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -164,23 +169,25 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
-	spec, err := c.client.CapabilitySpec(c.Ctx,
+	p, _ := c.getCapabilityFromParent2(c.Ctx, name)
+	var pluginWithCapability interface{}
+	if p == nil {
+		pluginWithCapability = c
+	} else {
+		pluginWithCapability = p
+	}
+
+	client := pluginWithCapability.(capabilityParent).GetCapabilityClient()
+
+	spec, err := client.client.CapabilitySpec(c.Ctx,
 		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		p, _ := c.getCapabilityFromParent2(ctx, name)
-		var pluginWithCapability *capabilityClient
-		if p == nil {
-			pluginWithCapability = c
-		} else {
-			pluginWithCapability = p.(*capabilityClient)
-		}
-
-		ctx, _ = joincontext.Join(pluginWithCapability.Ctx, ctx)
-		resp, err := pluginWithCapability.client.Capability(ctx,
+		ctx, _ = joincontext.Join(client.Ctx, ctx)
+		resp, err := client.client.Capability(ctx,
 			&vagrant_plugin_sdk.Platform_Capability_NamedRequest{
 				FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 				Name:     name,
