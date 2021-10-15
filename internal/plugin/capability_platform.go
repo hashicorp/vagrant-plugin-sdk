@@ -96,7 +96,7 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		new_ctx, _ := joincontext.Join(c.ctx, ctx)
+		new_ctx, _ := joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 
 		if err != nil {
@@ -136,8 +136,16 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-		ctx, _ = joincontext.Join(c.Ctx, ctx)
-		resp, err := c.client.Capability(ctx,
+		p, _ := c.getCapabilityFromParent(ctx, args)
+		var pluginWithCapability *capabilityClient
+		if p == nil {
+			pluginWithCapability = p.(*capabilityClient)
+		} else {
+			pluginWithCapability = c
+		}
+
+		ctx, _ = joincontext.Join(pluginWithCapability.Ctx, ctx)
+		resp, err := pluginWithCapability.client.Capability(ctx,
 			&vagrant_plugin_sdk.Platform_Capability_NamedRequest{
 				FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 				Name:     name,
