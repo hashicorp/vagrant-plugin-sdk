@@ -4,14 +4,11 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -20,24 +17,14 @@ import (
 type SyncedFolderPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.SyncedFolder // Impl is the concrete implementation
-	Mappers []*argmapper.Func      // Mappers
-	Logger  hclog.Logger           // Logger
-	Wrapped bool
+	Impl component.SyncedFolder // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
-		Impl: p.Impl,
-		baseServer: &baseServer{
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("synced-folder"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
@@ -48,37 +35,28 @@ func (p *SyncedFolderPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &syncedFolderClient{
-		client: vagrant_plugin_sdk.NewSyncedFolderServiceClient(c),
-		baseClient: &baseClient{
-			ctx: context.Background(),
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("synced-folder"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
-		},
+		client:     vagrant_plugin_sdk.NewSyncedFolderServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 // syncedFolderClient is an implementation of component.SyncedFolder over gRPC.
 type syncedFolderClient struct {
-	*baseClient
+	*BaseClient
 
 	client vagrant_plugin_sdk.SyncedFolderServiceClient
 }
 
 func (c *syncedFolderClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+	return configStructCall(c.Ctx, c.client)
 }
 
 func (c *syncedFolderClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+	return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *syncedFolderClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
@@ -89,7 +67,7 @@ func (c *syncedFolderClient) SyncedFolderFunc() interface{} {
 // syncedFolderServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type syncedFolderServer struct {
-	*baseServer
+	*BaseServer
 
 	Impl component.SyncedFolder
 	vagrant_plugin_sdk.UnimplementedSyncedFolderServiceServer

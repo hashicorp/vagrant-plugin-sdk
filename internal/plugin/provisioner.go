@@ -4,14 +4,11 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -20,24 +17,14 @@ import (
 type ProvisionerPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Provisioner // Impl is the concrete implementation
-	Mappers []*argmapper.Func     // Mappers
-	Logger  hclog.Logger          // Logger
-	Wrapped bool
+	Impl component.Provisioner // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterProvisionerServiceServer(s, &provisionerServer{
-		Impl: p.Impl,
-		baseServer: &baseServer{
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("provisioner"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
@@ -48,37 +35,28 @@ func (p *ProvisionerPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &provisionerClient{
-		client: vagrant_plugin_sdk.NewProvisionerServiceClient(c),
-		baseClient: &baseClient{
-			ctx: context.Background(),
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("provisioner"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
-		},
+		client:     vagrant_plugin_sdk.NewProvisionerServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 // provisionerClient is an implementation of component.Provisioner over gRPC.
 type provisionerClient struct {
-	*baseClient
+	*BaseClient
 
 	client vagrant_plugin_sdk.ProvisionerServiceClient
 }
 
 func (c *provisionerClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+	return configStructCall(c.Ctx, c.client)
 }
 
 func (c *provisionerClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+	return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *provisionerClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *provisionerClient) ProvisionerFunc() interface{} {
@@ -89,7 +67,7 @@ func (c *provisionerClient) ProvisionerFunc() interface{} {
 // provisionerServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type provisionerServer struct {
-	*baseServer
+	*BaseServer
 
 	Impl component.Provisioner
 	vagrant_plugin_sdk.UnimplementedProvisionerServiceServer

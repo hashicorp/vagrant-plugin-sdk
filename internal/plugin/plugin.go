@@ -34,22 +34,28 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		c.Logger = hclog.L()
 	}
 
+	bp := &BasePlugin{
+		Mappers: c.Mappers,
+		Logger:  c.Logger,
+		Wrapped: false,
+	}
+
 	// Save this so we can update it before we finish
-	info := &PluginInfoPlugin{}
+	info := &PluginInfoPlugin{BasePlugin: bp}
 
 	// Build our plugin types
 	result := map[int]plugin.PluginSet{
 		1: {
-			"command":      &CommandPlugin{},
-			"communicator": &CommunicatorPlugin{},
+			"command":      &CommandPlugin{BasePlugin: bp.Clone()},
+			"communicator": &CommunicatorPlugin{BasePlugin: bp.Clone()},
 			"config":       &ConfigPlugin{},
-			"guest":        &GuestPlugin{},
-			"host":         &HostPlugin{},
-			"mapper":       &MapperPlugin{},
+			"guest":        &GuestPlugin{BasePlugin: bp.Clone()},
+			"host":         &HostPlugin{BasePlugin: bp.Clone()},
+			"mapper":       &MapperPlugin{BasePlugin: bp.Clone()},
 			"plugininfo":   info,
-			"provider":     &ProviderPlugin{},
-			"provisioner":  &ProvisionerPlugin{},
-			"syncedfolder": &SyncedFolderPlugin{},
+			"provider":     &ProviderPlugin{BasePlugin: bp.Clone()},
+			"provisioner":  &ProvisionerPlugin{BasePlugin: bp.Clone()},
+			"syncedfolder": &SyncedFolderPlugin{BasePlugin: bp.Clone()},
 		},
 	}
 
@@ -67,19 +73,6 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 		if err := setFieldValue(result, c); err != nil {
 			panic(err)
 		}
-	}
-
-	// Set the mappers
-	if err := setFieldValue(result, c.Mappers); err != nil {
-		panic(err)
-	}
-	// Set the logger
-	if err := setFieldValue(result, c.Logger); err != nil {
-		panic(err)
-	}
-
-	if err := setFieldValue(result, c.Name); err != nil {
-		panic(err)
 	}
 
 	// Set plugin info before we finish
@@ -159,6 +152,30 @@ func setFieldValue(m map[int]plugin.PluginSet, c interface{}) error {
 
 	if !once {
 		return fmt.Errorf("no plugin available for setting field of type %T", c)
+	}
+
+	return nil
+}
+
+func directSetFieldValue(dst interface{}, c interface{}) error {
+	cv := reflect.ValueOf(c)
+	ct := cv.Type()
+
+	// Get the value, dereferencing the pointer. We expect
+	// the value to be &SomeStruct{} so we must deref once.
+	v := reflect.ValueOf(dst).Elem()
+
+	// Go through all the fields
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+
+		// If the field is valid and our component can be assigned
+		// to it then we set the value directly. We continue setting
+		// values because some values we set are available in multiple
+		// plugins (loggers for example).
+		if f.IsValid() && ct.AssignableTo(f.Type()) {
+			f.Set(cv)
+		}
 	}
 
 	return nil

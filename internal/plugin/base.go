@@ -25,9 +25,60 @@ func isImplemented(t interface{}, name string) error {
 	return nil
 }
 
-// base contains shared logic for all plugins. This should be embedded
-// in every plugin implementation.
-type base struct {
+// BasePlugin contains the information which is common among
+// all plugins. It should be embedded in every plugin type.
+type BasePlugin struct {
+	Cache   cacher.Cache      // Cache for mappers
+	Mappers []*argmapper.Func // Mappers
+	Logger  hclog.Logger      // Logger
+	Wrapped bool              // Used to determine if wrapper
+}
+
+func (b *BasePlugin) Clone() *BasePlugin {
+	return &BasePlugin{
+		Cache:   b.Cache,
+		Mappers: b.Mappers,
+		Logger:  b.Logger,
+		Wrapped: b.Wrapped,
+	}
+}
+
+func (b *BasePlugin) NewClient(
+	ctx context.Context,
+	broker *plugin.GRPCBroker,
+) *BaseClient {
+	return &BaseClient{
+		Ctx: ctx,
+		Base: &Base{
+			Broker:  broker,
+			Cache:   b.Cache,
+			Cleanup: &pluginargs.Cleanup{},
+			Logger:  b.Logger,
+			Mappers: b.Mappers,
+			Wrapped: b.Wrapped,
+		},
+	}
+}
+
+func (b *BasePlugin) NewServer(
+	broker *plugin.GRPCBroker,
+) *BaseServer {
+	return &BaseServer{
+		Base: &Base{
+			Broker:  broker,
+			Cache:   b.Cache,
+			Cleanup: &pluginargs.Cleanup{},
+			Logger:  b.Logger,
+			Mappers: b.Mappers,
+			Wrapped: b.Wrapped,
+		},
+	}
+}
+
+// Base contains shared logic for all plugin server/client implementations.
+// This should be embedded in every plugin server/client implementation using
+// the specialized server and client types.
+type Base struct {
 	Broker  *plugin.GRPCBroker
 	Logger  hclog.Logger
 	Mappers []*argmapper.Func
@@ -36,26 +87,37 @@ type base struct {
 	Wrapped bool
 }
 
+func (b *Base) Wrap() *BasePlugin {
+	return &BasePlugin{
+		Logger:  b.Logger,
+		Mappers: b.Mappers,
+		Cache:   b.Cache,
+		Wrapped: true,
+	}
+}
+
 // If this plugin is a wrapper
-func (b *base) IsWrapped() bool {
+func (b *Base) IsWrapped() bool {
 	return b.Wrapped
 }
 
-type baseClient struct {
-	*base
+// Base client type
+type BaseClient struct {
+	*Base
 
-	ctx    context.Context
+	Ctx    context.Context
 	target net.Addr
 }
 
-type baseServer struct {
-	*base
+// Base server type
+type BaseServer struct {
+	*Base
 }
 
 // internal returns a new pluginargs.Internal that can be used with
 // dynamic calls. The Internal structure is an internal-only argument
 // that is used to perform cleanup.
-func (b *base) internal() *pluginargs.Internal {
+func (b *Base) internal() *pluginargs.Internal {
 	// if the cache isn't currently set, just create
 	// a new cache instance and set it now
 	if b.Cache == nil {
@@ -71,41 +133,60 @@ func (b *base) internal() *pluginargs.Internal {
 	}
 }
 
-func (b *baseClient) Close() error {
-	return b.Cleanup.Close()
+// Map a value to the expected type using registered mappers
+// NOTE: The expected type must be a pointer, so an expected type
+// of `*int` means an `int` is wanted. Expected type of `**int`
+// means an `*int` is wanted, etc.
+func (b *Base) Map(
+	resultValue, // value to be converted
+	expectedType interface{}, // nil pointer of desired type
+	args ...argmapper.Arg, // list of argmapper arguments
+) (interface{}, error) {
+	args = append(args,
+		argmapper.ConverterFunc(MapperFns...),
+		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.Typed(b.internal()),
+		argmapper.Typed(b.Logger),
+	)
+
+	return dynamic.Map(resultValue, expectedType, args...)
 }
 
-func (b *base) SetCache(c cacher.Cache) {
+func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
 }
 
+func (b *BaseClient) Close() error {
+	return b.Cleanup.Close()
+}
+
 // Used internally to extract broker
-func (b *baseClient) GRPCBroker() *plugin.GRPCBroker {
+func (b *BaseClient) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
 }
 
 // Sets a direct target which can be connected
 // to when passing this client over proto.
-func (b *baseClient) SetTarget(t net.Addr) {
+func (b *BaseClient) SetTarget(t net.Addr) {
 	b.target = t
 }
 
 // Provides the direct target being used
 // by this client.
-func (b *baseClient) Target() net.Addr {
+func (b *BaseClient) Target() net.Addr {
 	return b.target
 }
 
 // This is here for internal usage on plugin setup
-// to provide extra information to ruby based plugins
-func (b *baseClient) SetRequestMetadata(key, value string) {
-	b.ctx = metadata.AppendToOutgoingContext(b.ctx, key, value)
+// to provide extra information to ruby Based plugins
+func (b *BaseClient) SetRequestMetadata(key, value string) {
+	b.Ctx = metadata.AppendToOutgoingContext(b.Ctx, key, value)
 	b.Logger.Trace("new metadata has been set for outgoing requests",
 		"key", key, "value", value)
 }
 
 // Generate a function from a provided spec
-func (b *baseClient) generateFunc(
+func (b *BaseClient) GenerateFunc(
 	spec *vagrant_plugin_sdk.FuncSpec, // spec for the function
 	cbFn interface{}, // callback function
 	args ...argmapper.Arg, // any extra argmapper args
@@ -125,7 +206,7 @@ func (b *baseClient) generateFunc(
 //
 // NOTE: Provide a `false` value for expectedType if no
 // type conversion is required.
-func (b *baseClient) callDynamicFunc(
+func (b *BaseClient) CallDynamicFunc(
 	f interface{}, // function to call
 	expectedType interface{}, // nil pointer of expected return type
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
@@ -152,7 +233,7 @@ func (b *baseClient) callDynamicFunc(
 //
 // NOTE: Provide a `false` value for expectedType if no
 // type conversion is required.
-func (b *baseServer) callDynamicFunc(
+func (b *BaseServer) CallDynamicFunc(
 	f interface{}, // function to call
 	expectedType interface{}, // nil pointer of expected return type
 	args funcspec.Args, // funspec defined arguments
@@ -181,8 +262,8 @@ func (b *baseServer) callDynamicFunc(
 	return dynamic.CallFunc(f, expectedType, b.Mappers, callArgs...)
 }
 
-// Generate a funcspec based on the provided function
-func (b *baseServer) generateSpec(
+// Generate a funcspec Based on the provided function
+func (b *BaseServer) GenerateSpec(
 	fn interface{}, // function to generate funcspec
 	args ...argmapper.Arg, // optional argmapper args
 ) (*vagrant_plugin_sdk.FuncSpec, error) {

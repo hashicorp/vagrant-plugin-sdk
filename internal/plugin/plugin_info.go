@@ -4,13 +4,10 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -30,22 +27,14 @@ func (p *pluginInfo) Name() string {
 type PluginInfoPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.PluginInfo // Impl is the concrete implementation
-	Mappers []*argmapper.Func    // Mappers
-	Logger  hclog.Logger         // Logger
+	Impl component.PluginInfo // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *PluginInfoPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterPluginInfoServiceServer(s, &pluginInfoServer{
-		Impl: p.Impl,
-		baseServer: &baseServer{
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("plugin-info"),
-				Broker:  broker,
-			},
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
@@ -56,28 +45,20 @@ func (p *PluginInfoPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &pluginInfoClient{
-		client: vagrant_plugin_sdk.NewPluginInfoServiceClient(c),
-		baseClient: &baseClient{
-			ctx: context.Background(),
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("plugin-info"),
-				Broker:  broker,
-			},
-		},
+		client:     vagrant_plugin_sdk.NewPluginInfoServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 // pluginInfoClient is an implementation of component.PluginInfo over gRPC.
 type pluginInfoClient struct {
-	*baseClient
+	*BaseClient
 
 	client vagrant_plugin_sdk.PluginInfoServiceClient
 }
 
 type pluginInfoServer struct {
-	*baseServer
+	*BaseServer
 
 	Impl component.PluginInfo
 	vagrant_plugin_sdk.UnimplementedPluginInfoServiceServer
@@ -85,7 +66,7 @@ type pluginInfoServer struct {
 
 func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 	result = []component.Type{}
-	resp, err := c.client.ComponentTypes(c.ctx, &empty.Empty{})
+	resp, err := c.client.ComponentTypes(c.Ctx, &empty.Empty{})
 	if err != nil {
 		c.Logger.Error("unexpected error when requesting component types",
 			"error", err)
@@ -98,7 +79,7 @@ func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 }
 
 func (c *pluginInfoClient) Name() string {
-	resp, err := c.client.Name(c.ctx, &empty.Empty{})
+	resp, err := c.client.Name(c.Ctx, &empty.Empty{})
 	if err != nil {
 		c.Logger.Error("unexpected error when requesting component name",
 			"error", err)

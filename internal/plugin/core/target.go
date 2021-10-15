@@ -13,12 +13,11 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
@@ -26,10 +25,8 @@ import (
 type TargetPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    core.Target
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Wrapped bool
+	Impl core.Target
+	*vplugin.BasePlugin
 }
 
 // Implements plugin.GRPCPlugin
@@ -39,42 +36,28 @@ func (p *TargetPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &targetClient{
-		client: vagrant_plugin_sdk.NewTargetServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.target"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewTargetServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 func (p *TargetPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterTargetServiceServer(s, &targetServer{
-		Impl: p.Impl,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.target"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
 
 // Target implements core.Target interface
 type targetClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.TargetServiceClient
 }
 
 type targetServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.Target
 	vagrant_plugin_sdk.UnsafeTargetServiceServer
@@ -82,7 +65,7 @@ type targetServer struct {
 }
 
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
-	commArg, err := c.client.Communicate(c.ctx, &empty.Empty{})
+	commArg, err := c.client.Communicate(c.Ctx, &empty.Empty{})
 	result, err := c.Map(commArg, (*core.Communicator)(nil))
 	if err != nil {
 		return
@@ -92,13 +75,13 @@ func (c *targetClient) Communicate() (comm core.Communicator, err error) {
 }
 
 func (c *targetClient) SetName(name string) (err error) {
-	_, err = c.client.SetName(c.ctx, &vagrant_plugin_sdk.Target_SetNameRequest{
+	_, err = c.client.SetName(c.Ctx, &vagrant_plugin_sdk.Target_SetNameRequest{
 		Name: name})
 	return
 }
 
 func (c *targetClient) Provider() (p core.Provider, err error) {
-	pr, err := c.client.Provider(c.ctx, &emptypb.Empty{})
+	pr, err := c.client.Provider(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -111,7 +94,7 @@ func (c *targetClient) Provider() (p core.Provider, err error) {
 }
 
 func (c *targetClient) ProviderName() (name string, err error) {
-	result, err := c.client.ProviderName(c.ctx, &empty.Empty{})
+	result, err := c.client.ProviderName(c.Ctx, &empty.Empty{})
 	if err == nil {
 		name = result.Name
 	}
@@ -120,7 +103,7 @@ func (c *targetClient) ProviderName() (name string, err error) {
 }
 
 func (c *targetClient) UpdatedAt() (utime *time.Time, err error) {
-	r, err := c.client.UpdatedAt(c.ctx, &empty.Empty{})
+	r, err := c.client.UpdatedAt(c.Ctx, &empty.Empty{})
 	if err == nil {
 		ut := r.UpdatedAt.AsTime()
 		utime = &ut
@@ -130,7 +113,7 @@ func (c *targetClient) UpdatedAt() (utime *time.Time, err error) {
 }
 
 func (c *targetClient) Name() (name string, err error) {
-	r, err := c.client.Name(c.ctx, &emptypb.Empty{})
+	r, err := c.client.Name(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -139,7 +122,7 @@ func (c *targetClient) Name() (name string, err error) {
 }
 
 func (c *targetClient) ResourceId() (rid string, err error) {
-	r, err := c.client.ResourceId(c.ctx, &emptypb.Empty{})
+	r, err := c.client.ResourceId(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -149,7 +132,7 @@ func (c *targetClient) ResourceId() (rid string, err error) {
 }
 
 func (c *targetClient) Project() (project core.Project, err error) {
-	r, err := c.client.Project(c.ctx, &emptypb.Empty{})
+	r, err := c.client.Project(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -162,7 +145,7 @@ func (c *targetClient) Project() (project core.Project, err error) {
 }
 
 func (c *targetClient) Metadata() (mdata map[string]string, err error) {
-	r, err := c.client.Metadata(c.ctx, &emptypb.Empty{})
+	r, err := c.client.Metadata(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -175,7 +158,7 @@ func (c *targetClient) Metadata() (mdata map[string]string, err error) {
 }
 
 func (c *targetClient) DataDir() (dir *datadir.Target, err error) {
-	r, err := c.client.DataDir(c.ctx, &emptypb.Empty{})
+	r, err := c.client.DataDir(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -188,7 +171,7 @@ func (c *targetClient) DataDir() (dir *datadir.Target, err error) {
 }
 
 func (c *targetClient) State() (state core.State, err error) {
-	r, err := c.client.State(c.ctx, &emptypb.Empty{})
+	r, err := c.client.State(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -201,7 +184,7 @@ func (c *targetClient) State() (state core.State, err error) {
 }
 
 func (c *targetClient) Record() (record *anypb.Any, err error) {
-	r, err := c.client.Record(c.ctx, &emptypb.Empty{})
+	r, err := c.client.Record(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -210,7 +193,7 @@ func (c *targetClient) Record() (record *anypb.Any, err error) {
 }
 
 func (c *targetClient) GetUUID() (id string, err error) {
-	uuid, err := c.client.GetUUID(c.ctx, &empty.Empty{})
+	uuid, err := c.client.GetUUID(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return
 	}
@@ -220,7 +203,7 @@ func (c *targetClient) GetUUID() (id string, err error) {
 
 func (c *targetClient) SetUUID(uuid string) (err error) {
 	_, err = c.client.SetUUID(
-		c.ctx,
+		c.Ctx,
 		&vagrant_plugin_sdk.Target_SetUUIDRequest{
 			Uuid: uuid,
 		},
@@ -234,7 +217,7 @@ func (c *targetClient) Specialize(kind interface{}) (specialized interface{}, er
 	if err != nil {
 		return
 	}
-	r, err := c.client.Specialize(c.ctx, a)
+	r, err := c.client.Specialize(c.Ctx, a)
 
 	if err != nil {
 		return
@@ -246,18 +229,18 @@ func (c *targetClient) Specialize(kind interface{}) (specialized interface{}, er
 	}
 
 	s, err := c.Map(m, (*core.Machine)(nil),
-		argmapper.Typed(c.ctx))
+		argmapper.Typed(c.Ctx))
 	return s.(core.Machine), err
 }
 
 func (c *targetClient) UI() (ui terminal.UI, err error) {
-	r, err := c.client.UI(c.ctx, &emptypb.Empty{})
+	r, err := c.client.UI(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
 
 	result, err := c.Map(r, (*terminal.UI)(nil),
-		argmapper.Typed(c.ctx))
+		argmapper.Typed(c.Ctx))
 	if err == nil {
 		ui = result.(terminal.UI)
 	}
@@ -266,12 +249,12 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 }
 
 func (t *targetClient) Save() (err error) {
-	_, err = t.client.Save(t.ctx, &empty.Empty{})
+	_, err = t.client.Save(t.Ctx, &empty.Empty{})
 	return
 }
 
 func (t *targetClient) Destroy() (err error) {
-	_, err = t.client.Destroy(t.ctx, &empty.Empty{})
+	_, err = t.client.Destroy(t.Ctx, &empty.Empty{})
 	return
 }
 

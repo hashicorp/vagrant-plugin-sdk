@@ -4,22 +4,20 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // VagrantfilePlugin is just a GRPC client for a vagrantfile
 type VagrantfilePlugin struct {
 	plugin.NetRPCUnsupportedPlugin
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Impl    core.Vagrantfile
-	Wrapped bool
+
+	Impl core.Vagrantfile
+	*vplugin.BasePlugin
 }
 
 // Implements plugin.GRPCPlugin
@@ -29,15 +27,8 @@ func (p *VagrantfilePlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &vagrantfileClient{
-		client: vagrant_plugin_sdk.NewVagrantfileServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.vagrantfile"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewVagrantfileServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
@@ -46,27 +37,20 @@ func (p *VagrantfilePlugin) GRPCServer(
 	s *grpc.Server,
 ) error {
 	vagrant_plugin_sdk.RegisterVagrantfileServiceServer(s, &vagrantfileServer{
-		Impl: p.Impl,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.vagrantfile"),
-			Broker:  broker,
-			Cleanup: &pluginargs.Cleanup{},
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
 
 type vagrantfileClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.VagrantfileServiceClient
 }
 
 type vagrantfileServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.Vagrantfile
 	vagrant_plugin_sdk.UnimplementedVagrantfileServiceServer

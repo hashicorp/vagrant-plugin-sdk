@@ -6,7 +6,6 @@ import (
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
-	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -23,25 +21,17 @@ import (
 type CommandPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    component.Command // Impl is the concrete implementation
-	Mappers []*argmapper.Func // Mappers
-	Logger  hclog.Logger      // Logger
-	Wrapped bool
+	Impl component.Command // Impl is the concrete implementation
+	*BasePlugin
 }
 
 func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	vagrant_plugin_sdk.RegisterCommandServiceServer(s, &commandServer{
-		Impl: p.Impl,
-		baseServer: &baseServer{
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("command"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
+	vagrant_plugin_sdk.RegisterCommandServiceServer(s,
+		&commandServer{
+			Impl:       p.Impl,
+			BaseServer: p.NewServer(broker),
 		},
-	})
+	)
 	return nil
 }
 
@@ -51,47 +41,38 @@ func (p *CommandPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &commandClient{
-		client: vagrant_plugin_sdk.NewCommandServiceClient(c),
-		baseClient: &baseClient{
-			ctx: context.Background(),
-			base: &base{
-				Cleanup: &pluginargs.Cleanup{},
-				Mappers: p.Mappers,
-				Logger:  p.Logger.Named("command"),
-				Broker:  broker,
-				Wrapped: p.Wrapped,
-			},
-		},
+		client:     vagrant_plugin_sdk.NewCommandServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 // commandClient is an implementation of component.Command over gRPC.
 type commandClient struct {
-	*baseClient
+	*BaseClient
 
 	client vagrant_plugin_sdk.CommandServiceClient
 }
 
 func (c *commandClient) Config() (interface{}, error) {
-	return configStructCall(c.ctx, c.client)
+	return configStructCall(c.Ctx, c.client)
 }
 
 func (c *commandClient) ConfigSet(v interface{}) error {
-	return configureCall(c.ctx, c.client, v)
+	return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *commandClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.ctx, c.client)
+	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *commandClient) CommandInfoFunc() interface{} {
-	spec, err := c.client.CommandInfoSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.CommandInfoSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.CommandInfo(
 			ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 		)
@@ -100,13 +81,13 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 		}
 		return resp, nil
 	}
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *commandClient) CommandInfo() (*component.CommandInfo, error) {
 	f := c.CommandInfoFunc()
-	raw, err := c.callDynamicFunc(f, (**component.CommandInfo)(nil),
-		argmapper.Typed(c.ctx))
+	raw, err := c.CallDynamicFunc(f, (**component.CommandInfo)(nil),
+		argmapper.Typed(c.Ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -115,14 +96,14 @@ func (c *commandClient) CommandInfo() (*component.CommandInfo, error) {
 }
 
 func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
-	spec, err := c.client.ExecuteSpec(c.ctx, &vagrant_plugin_sdk.Command_ExecuteSpecReq{
+	spec, err := c.client.ExecuteSpec(c.Ctx, &vagrant_plugin_sdk.Command_ExecuteSpecReq{
 		CommandArgs: cliArgs})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		executeArgs := &vagrant_plugin_sdk.Command_ExecuteReq{
 			Spec:        &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 			CommandArgs: cliArgs,
@@ -133,14 +114,14 @@ func (c *commandClient) ExecuteFunc(cliArgs []string) interface{} {
 		}
 		return resp.ExitCode, nil
 	}
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *commandClient) Execute(cliArgs []string) (int32, error) {
 	f := c.ExecuteFunc(cliArgs)
 
-	raw, err := c.callDynamicFunc(f, (*int32)(nil),
-		argmapper.Typed(c.ctx))
+	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
+		argmapper.Typed(c.Ctx))
 	if err != nil {
 		return -1, err
 	}
@@ -151,7 +132,7 @@ func (c *commandClient) Execute(cliArgs []string) (int32, error) {
 // commandServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type commandServer struct {
-	*baseServer
+	*BaseServer
 
 	Impl component.Command
 	vagrant_plugin_sdk.UnimplementedCommandServiceServer
@@ -186,14 +167,14 @@ func (s *commandServer) CommandInfoSpec(
 		return nil, err
 	}
 
-	return s.generateSpec(s.Impl.CommandInfoFunc())
+	return s.GenerateSpec(s.Impl.CommandInfoFunc())
 }
 
 func (s *commandServer) CommandInfo(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.CommandInfoFunc(),
+	raw, err := s.CallDynamicFunc(s.Impl.CommandInfoFunc(),
 		(**vagrant_plugin_sdk.Command_CommandInfo)(nil),
 		req.Args,
 		argmapper.Typed(ctx),
@@ -215,14 +196,14 @@ func (s *commandServer) ExecuteSpec(
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
 	}
-	return s.generateSpec(s.Impl.ExecuteFunc(req.CommandArgs))
+	return s.GenerateSpec(s.Impl.ExecuteFunc(req.CommandArgs))
 }
 
 func (s *commandServer) Execute(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Command_ExecuteReq,
 ) (*vagrant_plugin_sdk.Command_ExecuteResp, error) {
-	raw, err := s.callDynamicFunc(s.Impl.ExecuteFunc(req.CommandArgs),
+	raw, err := s.CallDynamicFunc(s.Impl.ExecuteFunc(req.CommandArgs),
 		(*int32)(nil),
 		req.Spec.Args,
 		argmapper.Typed(ctx),

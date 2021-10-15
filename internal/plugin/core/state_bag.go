@@ -4,33 +4,25 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/hashicorp/go-argmapper"
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
-	"google.golang.org/grpc"
 )
 
 type StateBagPlugin struct {
 	plugin.NetRPCUnsupportedPlugin
 
-	Impl    core.StateBag
-	Mappers []*argmapper.Func
-	Logger  hclog.Logger
-	Wrapped bool
+	Impl core.StateBag
+	*vplugin.BasePlugin
 }
 
 func (p *StateBagPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterStateBagServiceServer(s, &stateBagServer{
-		Impl: p.Impl,
-		base: &base{
-			Logger:  p.Logger.Named("core.state-bag"),
-			Broker:  broker,
-			Mappers: p.Mappers,
-			Wrapped: p.Wrapped,
-		},
+		Impl:       p.Impl,
+		BaseServer: p.NewServer(broker),
 	})
 	return nil
 }
@@ -41,26 +33,19 @@ func (p *StateBagPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	return &stateBagClient{
-		client: vagrant_plugin_sdk.NewStateBagServiceClient(c),
-		ctx:    ctx,
-		base: &base{
-			Mappers: p.Mappers,
-			Logger:  p.Logger.Named("core.state-bag"),
-			Broker:  broker,
-			Wrapped: p.Wrapped,
-		},
+		client:     vagrant_plugin_sdk.NewStateBagServiceClient(c),
+		BaseClient: p.NewClient(ctx, broker),
 	}, nil
 }
 
 type stateBagClient struct {
-	*base
+	*vplugin.BaseClient
 
-	ctx    context.Context
 	client vagrant_plugin_sdk.StateBagServiceClient
 }
 
 func (c *stateBagClient) Get(key string) (value interface{}) {
-	r, err := c.client.Get(c.ctx, &vagrant_plugin_sdk.StateBag_GetRequest{
+	r, err := c.client.Get(c.Ctx, &vagrant_plugin_sdk.StateBag_GetRequest{
 		Key: key})
 	if err != nil {
 		c.Logger.Error("failed to get state bag value", "key", key, "error", err)
@@ -75,7 +60,7 @@ func (c *stateBagClient) Get(key string) (value interface{}) {
 }
 
 func (c *stateBagClient) GetOk(key string) (value interface{}, ok bool) {
-	r, err := c.client.GetOk(c.ctx, &vagrant_plugin_sdk.StateBag_GetRequest{
+	r, err := c.client.GetOk(c.Ctx, &vagrant_plugin_sdk.StateBag_GetRequest{
 		Key: key})
 	if err != nil {
 		c.Logger.Error("failed to get state bag value", "key", key, "error", err)
@@ -92,7 +77,7 @@ func (c *stateBagClient) GetOk(key string) (value interface{}, ok bool) {
 
 func (c *stateBagClient) Put(key string, value interface{}) {
 	v, err := json.Marshal(value)
-	_, err = c.client.Put(c.ctx, &vagrant_plugin_sdk.StateBag_PutRequest{
+	_, err = c.client.Put(c.Ctx, &vagrant_plugin_sdk.StateBag_PutRequest{
 		Key: key, Value: string(v)})
 	if err != nil {
 		c.Logger.Error("failed to store value in state bag", "key", key,
@@ -102,7 +87,7 @@ func (c *stateBagClient) Put(key string, value interface{}) {
 }
 
 func (c *stateBagClient) Remove(key string) {
-	_, err := c.client.Remove(c.ctx, &vagrant_plugin_sdk.StateBag_RemoveRequest{
+	_, err := c.client.Remove(c.Ctx, &vagrant_plugin_sdk.StateBag_RemoveRequest{
 		Key: key})
 	if err != nil {
 		c.Logger.Error("failed to remove value from state bag", "key", key,
@@ -112,7 +97,7 @@ func (c *stateBagClient) Remove(key string) {
 }
 
 type stateBagServer struct {
-	*base
+	*vplugin.BaseServer
 
 	Impl core.StateBag
 	vagrant_plugin_sdk.UnimplementedStateBagServiceServer

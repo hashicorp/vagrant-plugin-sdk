@@ -131,7 +131,7 @@ func (c *authenticatorClient) validateAuth(
 
 // authenticatorServer implements the common Authenticator-related RPC calls.
 type authenticatorServer struct {
-	*base
+	*BaseServer
 	Impl interface{}
 }
 
