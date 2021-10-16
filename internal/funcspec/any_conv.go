@@ -1,6 +1,7 @@
 package funcspec
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/golang/protobuf/proto"
@@ -45,5 +46,6 @@ func anyConvGen(v argmapper.Value) (*argmapper.Func, error) {
 
 		outputSet.Typed(anyType).Value = reflect.ValueOf(anyVal)
 		return nil
-	})
+	}, argmapper.FuncName(fmt.Sprintf("converter: %s -> *anypb.Any", v.Type)))
+
 }
