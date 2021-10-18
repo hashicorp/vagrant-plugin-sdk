@@ -21,7 +21,8 @@ import (
 
 type capabilityParent interface {
 	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
-	PluginHasCapability() interface{}
+	PluginHasCapabilityFunc() interface{}
+	PluginHasCapability(name string) (bool, error)
 	HasCapability(name string) (bool, error)
 	GetCapabilityClient() *capabilityClient
 }
@@ -79,7 +80,7 @@ func (c *capabilityClient) getCapabilityFromParent(ctx context.Context, args fun
 	for _, p := range c.parentPlugins {
 		parentPlugin := p.(capabilityParent)
 		new_ctx, _ := parentPlugin.GenerateContext(ctx)
-		f := parentPlugin.PluginHasCapability()
+		f := parentPlugin.PluginHasCapabilityFunc()
 		parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
 		for _, a := range args {
 			parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
@@ -99,7 +100,7 @@ func (c *capabilityClient) getCapabilityFromParent2(ctx context.Context, name st
 	for _, p := range c.parentPlugins {
 		parentPlugin := p.(capabilityParent)
 		// new_ctx, _ := parentPlugin.GenerateContext(ctx)
-		hasCap, err := parentPlugin.HasCapability(name)
+		hasCap, err := parentPlugin.PluginHasCapability(name)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +111,21 @@ func (c *capabilityClient) getCapabilityFromParent2(ctx context.Context, name st
 	return nil, errors.New("could not find capability in parent plugins")
 }
 
-func (c *capabilityClient) PluginHasCapability() interface{} {
+func (c *capabilityClient) PluginHasCapability(name string) (bool, error) {
+	f := c.PluginHasCapabilityFunc()
+	n := &component.NamedCapability{Capability: name}
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(n),
+		argmapper.Typed(c.Ctx),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
+}
+
+func (c *capabilityClient) PluginHasCapabilityFunc() interface{} {
 	spec, err := c.client.HasCapabilitySpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
