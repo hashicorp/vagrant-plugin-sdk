@@ -285,7 +285,7 @@ func (s *capabilityServer) Seed(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.Args_Direct,
 ) (*emptypb.Empty, error) {
-	if s.IsWrapped() {
+	if !s.IsWrapped() {
 		s.seeds = args.List
 		return &emptypb.Empty{}, nil
 	}
