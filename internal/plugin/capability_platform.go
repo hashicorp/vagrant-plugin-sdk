@@ -218,6 +218,10 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 			return nil, err
 		}
 
+		if resp.Result == nil {
+			return nil, nil
+		}
+
 		// Result will be returned as an Any so decode it
 		_, val, err := dynamic.DecodeAny(resp.Result)
 		if err != nil {
@@ -363,14 +367,19 @@ func (s *capabilityServer) Capability(
 		}
 	}
 
-	result, err := dynamic.EncodeAny(val.(proto.Message))
-	if err != nil {
-		s.Logger.Error("failed to encode capability response message",
-			"value", val,
-			"error", err,
-		)
+	var result *anypb.Any
+	if val == nil {
+		result = nil
+	} else {
+		result, err = dynamic.EncodeAny(val.(proto.Message))
+		if err != nil {
+			s.Logger.Error("failed to encode capability response message",
+				"value", val,
+				"error", err,
+			)
 
-		return nil, err
+			return nil, err
+		}
 	}
 
 	return &vagrant_plugin_sdk.Platform_Capability_Resp{
