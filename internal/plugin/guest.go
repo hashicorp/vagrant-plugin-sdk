@@ -63,6 +63,10 @@ type guestClient struct {
 	client vagrant_plugin_sdk.GuestServiceClient
 }
 
+func (c *guestClient) GetCapabilityClient() *capabilityClient {
+	return c.capabilityClient
+}
+
 func (c *guestClient) Config() (interface{}, error) {
 	return configStructCall(c.Ctx, c.client)
 }
@@ -222,4 +226,5 @@ var (
 	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
 	_ component.Guest                       = (*guestClient)(nil)
 	_ core.Guest                            = (*guestClient)(nil)
+	_ capabilityParent                      = (*hostClient)(nil)
 )
