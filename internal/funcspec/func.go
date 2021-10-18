@@ -19,7 +19,8 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 	// Build a Func around our callback so that we can inspect the
 	// input/output sets since we want to merge with that.
 	cbFunc, err := argmapper.NewFunc(cb,
-		argmapper.Logger(dynamic.Logger))
+		argmapper.Logger(dynamic.Logger),
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -134,6 +135,7 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 		return nil
 	}, append([]argmapper.Arg{
 		argmapper.ConverterGen(anyConvGen),
+		argmapper.FuncName(s.Name),
 	}, args...)...)
 	if err != nil {
 		panic(err)
