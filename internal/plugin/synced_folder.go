@@ -121,7 +121,7 @@ func (c *syncedFolderClient) EnableFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
+func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder, opts ...interface{}) error {
 	f := c.EnableFunc()
 	_, err := c.CallDynamicFunc(f, false,
 		argmapper.Typed(c.Ctx),
@@ -147,7 +147,7 @@ func (c *syncedFolderClient) DisableFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
+func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folder, opts ...interface{}) error {
 	f := c.DisableFunc()
 	_, err := c.CallDynamicFunc(f, false,
 		argmapper.Typed(c.Ctx),
@@ -173,7 +173,7 @@ func (c *syncedFolderClient) CleanupFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *syncedFolderClient) Cleanup(machine core.Machine, opts map[string]string) error {
+func (c *syncedFolderClient) Cleanup(machine core.Machine, opts ...interface{}) error {
 	f := c.CleanupFunc()
 	_, err := c.CallDynamicFunc(f, false,
 		argmapper.Typed(c.Ctx),
