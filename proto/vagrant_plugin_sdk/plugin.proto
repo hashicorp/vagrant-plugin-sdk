@@ -834,6 +834,8 @@ service SyncedFolderService {
   rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
   rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
 
 message SyncedFolder {
