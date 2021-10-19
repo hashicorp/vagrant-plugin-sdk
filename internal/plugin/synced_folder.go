@@ -76,13 +76,13 @@ func (c *syncedFolderClient) Documentation() (*docs.Documentation, error) {
 }
 
 func (c *syncedFolderClient) UsableFunc() interface{} {
-	spec, err := c.client.UsableSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.UsableSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Usable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -90,13 +90,13 @@ func (c *syncedFolderClient) UsableFunc() interface{} {
 		return resp.Usable, nil
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *syncedFolderClient) Usable(machine core.Machine) (bool, error) {
 	f := c.UsableFunc()
-	raw, err := c.callDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(c.ctx),
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 	)
 	if err != nil {
@@ -107,24 +107,24 @@ func (c *syncedFolderClient) Usable(machine core.Machine) (bool, error) {
 }
 
 func (c *syncedFolderClient) EnableFunc() interface{} {
-	spec, err := c.client.EnableSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.EnableSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) error {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		_, err := c.client.Enable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
 	f := c.EnableFunc()
-	_, err := c.callDynamicFunc(f, false,
-		argmapper.Typed(c.ctx),
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 		argmapper.Typed(folders),
 		argmapper.Typed(opts),
@@ -133,24 +133,24 @@ func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder
 }
 
 func (c *syncedFolderClient) DisableFunc() interface{} {
-	spec, err := c.client.DisableSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.DisableSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) error {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		_, err := c.client.Disable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folder, opts map[string]string) error {
 	f := c.DisableFunc()
-	_, err := c.callDynamicFunc(f, false,
-		argmapper.Typed(c.ctx),
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 		argmapper.Typed(folders),
 		argmapper.Typed(opts),
@@ -159,24 +159,24 @@ func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folde
 }
 
 func (c *syncedFolderClient) CleanupFunc() interface{} {
-	spec, err := c.client.CleanupSpec(c.ctx, &empty.Empty{})
+	spec, err := c.client.CleanupSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) error {
-		ctx, _ = joincontext.Join(c.ctx, ctx)
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		_, err := c.client.Cleanup(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err
 	}
 
-	return c.generateFunc(spec, cb)
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *syncedFolderClient) Cleanup(machine core.Machine, opts map[string]string) error {
 	f := c.CleanupFunc()
-	_, err := c.callDynamicFunc(f, false,
-		argmapper.Typed(c.ctx),
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 		argmapper.Typed(opts),
 	)
