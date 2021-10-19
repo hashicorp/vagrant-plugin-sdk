@@ -56,6 +56,10 @@ message Args {
   message Path {
     string path = 1;
   }
+  
+  message Folder {
+    map<string, google.protobuf.Any> folders = 1;
+  }
 
   message TerminalUI {
     uint32 stream_id = 1;
