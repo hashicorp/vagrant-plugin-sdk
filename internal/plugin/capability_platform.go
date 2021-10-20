@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/LK4D4/joincontext"
@@ -110,36 +109,6 @@ func (c *capabilityClient) Seeds() ([]interface{}, error) {
 	}
 
 	return r.(*component.Direct).Arguments, nil
-}
-
-func (c *capabilityClient) capabilityInParent(ctx context.Context, args funcspec.Args) (bool, error) {
-	parentPlugin := c.parentPlugin.(capabilityParent)
-	new_ctx, _ := parentPlugin.GenerateContext(ctx)
-	f := parentPlugin.PluginHasCapabilityFunc()
-	parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
-	for _, a := range args {
-		parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
-	}
-	raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
-	if err != nil {
-		return false, err
-	}
-	if result, ok := raw.(bool); ok {
-		return result, nil
-	}
-	return false, nil
-}
-
-func (c *capabilityClient) getParentPluginCapability(ctx context.Context, name string) (interface{}, error) {
-	parentPlugin := c.parentPlugin.(capabilityParent)
-	hasCap, err := parentPlugin.PluginHasCapability(name)
-	if err != nil {
-		return nil, err
-	}
-	if hasCap {
-		return c.parentPlugin, nil
-	}
-	return nil, errors.New("could not find capability in parent plugins")
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -261,86 +230,6 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	}
 	return c.GenerateFunc(spec, cb)
 }
-
-// func (c *capabilityClient) CapabilityFunc(name string) interface{} {
-// 	p, _ := c.getParentPluginCapability(c.Ctx, name)
-// 	var pluginWithCapability interface{}
-// 	if p == nil {
-// 		pluginWithCapability = c
-// 	} else {
-// 		pluginWithCapability = p
-// 	}
-
-// 	client := pluginWithCapability.(capabilityParent).GetCapabilityClient()
-
-// 	spec, err := client.client.CapabilitySpec(c.Ctx,
-// 		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
-// 	if err != nil {
-// 		return funcErr(err)
-// 	}
-// 	spec.Result = nil
-// 	cb := func(ctx context.Context, args funcspec.Args) (interface{}, error) {
-// 		ctx, _ = joincontext.Join(client.Ctx, ctx)
-// 		resp, err := client.client.Capability(ctx,
-// 			&vagrant_plugin_sdk.Platform_Capability_NamedRequest{
-// 				FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
-// 				Name:     name,
-// 			},
-// 		)
-
-// 		if err != nil {
-// 			c.Logger.Error("failure encountered while running capability",
-// 				"name", name,
-// 				"error", err,
-// 			)
-
-// 			return nil, err
-// 		}
-
-// 		if resp.Result == nil {
-// 			return nil, nil
-// 		}
-
-// 		// Result will be returned as an Any so decode it
-// 		_, val, err := dynamic.DecodeAny(resp.Result)
-// 		if err != nil {
-// 			c.Logger.Error("failure while attempting to decode capability result",
-// 				"name", name,
-// 				"result", resp.Result,
-// 				"error", err,
-// 			)
-
-// 			return nil, err
-// 		}
-
-// 		// Start by attempting to map the decoded value using
-// 		// the well known type protos
-// 		result, err := dynamic.MapFromWellKnownProto(val.(proto.Message))
-// 		if err != nil {
-// 			// And the actual result can be pretty much anything, so
-// 			// attempt to map it into something usable. If we can't
-// 			// map it, log the mapping failure but then just return
-// 			// the decoded value
-// 			result, err = dynamic.BlindMap(val, c.Mappers,
-// 				argmapper.Typed(c.internal()),
-// 				argmapper.Typed(c.Ctx),
-// 				argmapper.Typed(c.Logger),
-// 			)
-
-// 			if err != nil {
-// 				c.Logger.Debug("failed to map decoded result from capability",
-// 					"value", val,
-// 					"error", err,
-// 				)
-
-// 				return val, err
-// 			}
-// 		}
-
-// 		return result, nil
-// 	}
-// 	return c.GenerateFunc(spec, cb)
-// }
 
 func (c *capabilityClient) Capability(name string, args ...interface{}) (interface{}, error) {
 	f := c.CapabilityFunc(name)
