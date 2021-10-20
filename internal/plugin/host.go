@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -202,17 +203,21 @@ func (s *hostServer) ParentSpec(
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
-		return nil, err
+		return nil, errors.New("error with is implemented")
 	}
 
-	return s.GenerateSpec(s.Impl.ParentFunc())
+	f, err := s.GenerateSpec(s.Impl.ParentFunc())
+	if err != nil {
+		return nil, errors.New("generating spec")
+	}
+	return f, err
 }
 
 func (s *hostServer) Parent(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*[]string)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {

@@ -49,8 +49,7 @@ func (b *BasePlugin) NewClient(
 	broker *plugin.GRPCBroker,
 ) *BaseClient {
 	return &BaseClient{
-		parentPlugins: []interface{}{},
-		Ctx:           ctx,
+		Ctx: ctx,
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
@@ -107,9 +106,9 @@ func (b *Base) IsWrapped() bool {
 type BaseClient struct {
 	*Base
 
-	Ctx           context.Context
-	target        net.Addr
-	parentPlugins []interface{}
+	Ctx          context.Context
+	target       net.Addr
+	parentPlugin interface{}
 }
 
 // Base server type
@@ -160,8 +159,8 @@ func (b *Base) SetCache(c cacher.Cache) {
 }
 
 // Sets the parent plugins
-func (b *BaseClient) SetParentPlugins(plugins []interface{}) {
-	b.parentPlugins = plugins
+func (b *BaseClient) SetParentPlugin(plugin interface{}) {
+	b.parentPlugin = plugin
 }
 
 func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, context.CancelFunc) {

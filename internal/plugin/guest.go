@@ -209,7 +209,7 @@ func (s *guestServer) Parent(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*[]string)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
