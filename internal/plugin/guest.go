@@ -108,7 +108,7 @@ func (c *guestClient) Detect(t core.Target) (bool, error) {
 	return raw.(bool), nil
 }
 
-func (c *guestClient) ParentsFunc() interface{} {
+func (c *guestClient) ParentFunc() interface{} {
 	spec, err := c.client.ParentSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
@@ -126,16 +126,16 @@ func (c *guestClient) ParentsFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *guestClient) Parents() ([]string, error) {
-	f := c.ParentsFunc()
-	raw, err := c.CallDynamicFunc(f, (*[]string)(nil),
+func (c *guestClient) Parent() (string, error) {
+	f := c.ParentFunc()
+	raw, err := c.CallDynamicFunc(f, (*string)(nil),
 		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return raw.([]string), nil
+	return raw.(string), nil
 }
 
 // guestServer is a gRPC server that the client talks to and calls a
@@ -202,14 +202,14 @@ func (s *guestServer) ParentSpec(
 		return nil, err
 	}
 
-	return s.GenerateSpec(s.Impl.ParentsFunc())
+	return s.GenerateSpec(s.Impl.ParentFunc())
 }
 
 func (s *guestServer) Parent(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Platform_ParentResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*[]string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {

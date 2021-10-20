@@ -10,7 +10,7 @@ type Guest interface {
 	Capability(name string, args ...interface{}) (interface{}, error)
 	Detect(Target) (bool, error)
 	HasCapability(name string) (bool, error)
-	Parents() ([]string, error)
+	Parent() (string, error)
 
 	io.Closer
 }
