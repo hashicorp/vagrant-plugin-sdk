@@ -1151,6 +1151,7 @@ func TargetMachineProto(
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
 	mp := &plugincore.TargetMachinePlugin{
 		BasePlugin: basePlugin(m, internal),
+		Impl:       m,
 		TargetImpl: m,
 	}
 
