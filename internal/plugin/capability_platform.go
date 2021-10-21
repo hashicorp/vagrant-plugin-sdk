@@ -126,7 +126,7 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 			return false, err
 		}
 
-		if !resp.HasCapability {
+		if !resp.HasCapability && c.parentPlugin != nil {
 			// Check the parent plugin for the capability
 			parentPlugin := c.parentPlugin.(capabilityParent)
 			new_ctx, _ := parentPlugin.GenerateContext(ctx)
@@ -158,7 +158,7 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
-	if ok, _ := c.PluginHasCapability(name); !ok {
+	if ok, _ := c.PluginHasCapability(name); !ok && c.parentPlugin != nil {
 		parentPlugin := c.parentPlugin.(capabilityParent).GetCapabilityClient()
 		return parentPlugin.CapabilityFunc(name)
 	}
