@@ -2590,8 +2590,8 @@ type HostServiceClient interface {
 	CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
 	HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
-	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Parent(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentResp, error)
+	ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Direct, error)
 }
@@ -2694,7 +2694,7 @@ func (c *hostServiceClient) Parent(ctx context.Context, in *FuncSpec_Args, opts 
 	return out, nil
 }
 
-func (c *hostServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *hostServiceClient) ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ParentSpec", in, out, opts...)
 	if err != nil {
@@ -2734,8 +2734,8 @@ type HostServiceServer interface {
 	CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error)
 	HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
-	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Parent(context.Context, *FuncSpec_Args) (*Platform_ParentResp, error)
+	ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Direct) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Direct, error)
 }
@@ -2774,8 +2774,8 @@ func (UnimplementedHostServiceServer) HasCapabilitySpec(context.Context, *empty.
 func (UnimplementedHostServiceServer) Parent(context.Context, *FuncSpec_Args) (*Platform_ParentResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Parent not implemented")
 }
-func (UnimplementedHostServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
+func (UnimplementedHostServiceServer) ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParentSpec not implemented")
 }
 func (UnimplementedHostServiceServer) Seed(context.Context, *Args_Direct) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
@@ -2975,7 +2975,7 @@ func _HostService_Parent_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _HostService_ParentSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -2988,7 +2988,7 @@ func _HostService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/hashicorp.vagrant.sdk.HostService/ParentSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
+		return srv.(HostServiceServer).ParentSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3106,8 +3106,8 @@ type GuestServiceClient interface {
 	CapabilitySpec(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*FuncSpec, error)
 	HasCapability(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Parents(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentsResp, error)
-	ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Parent(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_ParentResp, error)
+	ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Direct, error)
 }
@@ -3210,7 +3210,7 @@ func (c *guestServiceClient) Parent(ctx context.Context, in *FuncSpec_Args, opts
 	return out, nil
 }
 
-func (c *guestServiceClient) ParentsSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+func (c *guestServiceClient) ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ParentSpec", in, out, opts...)
 	if err != nil {
@@ -3250,8 +3250,8 @@ type GuestServiceServer interface {
 	CapabilitySpec(context.Context, *Platform_Capability_NamedRequest) (*FuncSpec, error)
 	HasCapability(context.Context, *FuncSpec_Args) (*Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	Parents(context.Context, *FuncSpec_Args) (*Platform_ParentsResp, error)
-	ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Parent(context.Context, *FuncSpec_Args) (*Platform_ParentResp, error)
+	ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Direct) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Direct, error)
 }
@@ -3290,8 +3290,8 @@ func (UnimplementedGuestServiceServer) HasCapabilitySpec(context.Context, *empty
 func (UnimplementedGuestServiceServer) Parent(context.Context, *FuncSpec_Args) (*Platform_ParentResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Parent not implemented")
 }
-func (UnimplementedGuestServiceServer) ParentsSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ParentsSpec not implemented")
+func (UnimplementedGuestServiceServer) ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ParentSpec not implemented")
 }
 func (UnimplementedGuestServiceServer) Seed(context.Context, *Args_Direct) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
@@ -3491,7 +3491,7 @@ func _GuestService_Parent_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GuestService_ParentSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -3504,7 +3504,7 @@ func _GuestService_ParentsSpec_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ParentSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).ParentsSpec(ctx, req.(*empty.Empty))
+		return srv.(GuestServiceServer).ParentSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
