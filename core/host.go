@@ -10,7 +10,7 @@ type Host interface {
 	Capability(name string, args ...interface{}) (interface{}, error)
 	Detect(state StateBag) (bool, error)
 	HasCapability(name string) (bool, error)
-	Parents() ([]string, error)
+	Parent() (string, error)
 
 	io.Closer
 }

@@ -761,8 +761,8 @@ service HostService {
   rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
   rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
-  rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Parent(FuncSpec.Args) returns (Platform.ParentResp);
+  rpc ParentSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Seed(Args.Direct) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
@@ -779,8 +779,8 @@ service GuestService {
   rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
   rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Parents(FuncSpec.Args) returns (Platform.ParentsResp);
-  rpc ParentsSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Parent(FuncSpec.Args) returns (Platform.ParentResp);
+  rpc ParentSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Seed(Args.Direct) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
 }
@@ -789,8 +789,8 @@ message Platform {
   message DetectResp {
     bool detected = 1;
   }
-  message ParentsResp {
-    repeated string parents = 1;
+  message ParentResp {
+    string parent = 1;
   }
   message Capability {
     message NamedRequest {

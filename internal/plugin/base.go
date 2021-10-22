@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -105,8 +106,9 @@ func (b *Base) IsWrapped() bool {
 type BaseClient struct {
 	*Base
 
-	Ctx    context.Context
-	target net.Addr
+	Ctx          context.Context
+	target       net.Addr
+	parentPlugin interface{}
 }
 
 // Base server type
@@ -154,6 +156,15 @@ func (b *Base) Map(
 
 func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
+}
+
+// Sets the parent plugins
+func (b *BaseClient) SetParentPlugin(plugin interface{}) {
+	b.parentPlugin = plugin
+}
+
+func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return joincontext.Join(ctx, b.Ctx)
 }
 
 func (b *BaseClient) Close() error {

@@ -18,6 +18,13 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
+type capabilityParent interface {
+	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
+	GetCapabilityClient() *capabilityClient
+	PluginHasCapabilityFunc() interface{}
+	PluginHasCapability(name string) (bool, error)
+}
+
 type capabilityPlatform interface {
 	HasCapability(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
@@ -30,6 +37,47 @@ type capabilityPlatform interface {
 type capabilityClient struct {
 	*BaseClient
 	client capabilityPlatform
+}
+
+// Implements capabilityParent
+func (c *capabilityClient) GetCapabilityClient() *capabilityClient {
+	return c
+}
+
+// Implements capabilityParent
+// Checkes if the current plugin has a capability. Does NOT check up the
+// parent platform chain.
+func (c *capabilityClient) PluginHasCapability(name string) (bool, error) {
+	f := c.PluginHasCapabilityFunc()
+	n := &component.NamedCapability{Capability: name}
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(n),
+		argmapper.Typed(c.Ctx),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return raw.(bool), nil
+}
+
+// Implements capabilityParent
+func (c *capabilityClient) PluginHasCapabilityFunc() interface{} {
+	spec, err := c.client.HasCapabilitySpec(c.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+
+	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		new_ctx, _ := joincontext.Join(c.Ctx, ctx)
+		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return false, err
+		}
+		return resp.HasCapability, nil
+	}
+	return c.GenerateFunc(spec, cb)
 }
 
 func (c *capabilityClient) Seed(args ...interface{}) error {
@@ -71,11 +119,24 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 	spec.Result = nil
 
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		ctx, _ = joincontext.Join(c.Ctx, ctx)
-		resp, err := c.client.HasCapability(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		new_ctx, _ := joincontext.Join(c.Ctx, ctx)
+		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 
 		if err != nil {
 			return false, err
+		}
+
+		if !resp.HasCapability && c.parentPlugin != nil {
+			// Check the parent plugin for the capability
+			parentPlugin := c.parentPlugin.(capabilityParent)
+			new_ctx, _ := parentPlugin.GenerateContext(ctx)
+			f := parentPlugin.PluginHasCapabilityFunc()
+			parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
+			for _, a := range args {
+				parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
+			}
+			raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
+			return raw.(bool), err
 		}
 		return resp.HasCapability, nil
 	}
@@ -97,6 +158,10 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
+	if ok, _ := c.PluginHasCapability(name); !ok && c.parentPlugin != nil {
+		parentPlugin := c.parentPlugin.(capabilityParent).GetCapabilityClient()
+		return parentPlugin.CapabilityFunc(name)
+	}
 	spec, err := c.client.CapabilitySpec(c.Ctx,
 		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
 	if err != nil {
@@ -119,6 +184,10 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 			)
 
 			return nil, err
+		}
+
+		if resp.Result == nil {
+			return nil, nil
 		}
 
 		// Result will be returned as an Any so decode it
@@ -266,14 +335,19 @@ func (s *capabilityServer) Capability(
 		}
 	}
 
-	result, err := dynamic.EncodeAny(val.(proto.Message))
-	if err != nil {
-		s.Logger.Error("failed to encode capability response message",
-			"value", val,
-			"error", err,
-		)
+	var result *anypb.Any
+	if val == nil {
+		result = nil
+	} else {
+		result, err = dynamic.EncodeAny(val.(proto.Message))
+		if err != nil {
+			s.Logger.Error("failed to encode capability response message",
+				"value", val,
+				"error", err,
+			)
 
-		return nil, err
+			return nil, err
+		}
 	}
 
 	return &vagrant_plugin_sdk.Platform_Capability_Resp{

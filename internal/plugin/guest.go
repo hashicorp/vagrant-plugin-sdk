@@ -63,6 +63,10 @@ type guestClient struct {
 	client vagrant_plugin_sdk.GuestServiceClient
 }
 
+func (c *guestClient) GetCapabilityClient() *capabilityClient {
+	return c.capabilityClient
+}
+
 func (c *guestClient) Config() (interface{}, error) {
 	return configStructCall(c.Ctx, c.client)
 }
@@ -104,34 +108,34 @@ func (c *guestClient) Detect(t core.Target) (bool, error) {
 	return raw.(bool), nil
 }
 
-func (c *guestClient) ParentsFunc() interface{} {
-	spec, err := c.client.ParentsSpec(c.Ctx, &empty.Empty{})
+func (c *guestClient) ParentFunc() interface{} {
+	spec, err := c.client.ParentSpec(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) ([]string, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (string, error) {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
-		resp, err := c.client.Parents(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		resp, err := c.client.Parent(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		return resp.Parents, nil
+		return resp.Parent, nil
 	}
 
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *guestClient) Parents() ([]string, error) {
-	f := c.ParentsFunc()
-	raw, err := c.CallDynamicFunc(f, (*[]string)(nil),
+func (c *guestClient) Parent() (string, error) {
+	f := c.ParentFunc()
+	raw, err := c.CallDynamicFunc(f, (*string)(nil),
 		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return raw.([]string), nil
+	return raw.(string), nil
 }
 
 // guestServer is a gRPC server that the client talks to and calls a
@@ -190,7 +194,7 @@ func (s *guestServer) Detect(
 	return &vagrant_plugin_sdk.Platform_DetectResp{Detected: raw.(bool)}, nil
 }
 
-func (s *guestServer) ParentsSpec(
+func (s *guestServer) ParentSpec(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
@@ -198,22 +202,22 @@ func (s *guestServer) ParentsSpec(
 		return nil, err
 	}
 
-	return s.GenerateSpec(s.Impl.ParentsFunc())
+	return s.GenerateSpec(s.Impl.ParentFunc())
 }
 
-func (s *guestServer) Parents(
+func (s *guestServer) Parent(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Platform_ParentsResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.ParentsFunc(), (*[]string)(nil),
+) (*vagrant_plugin_sdk.Platform_ParentResp, error) {
+	raw, err := s.CallDynamicFunc(s.Impl.ParentFunc(), (*string)(nil),
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Platform_ParentsResp{
-		Parents: raw.([]string)}, nil
+	return &vagrant_plugin_sdk.Platform_ParentResp{
+		Parent: raw.(string)}, nil
 }
 
 var (
@@ -222,4 +226,5 @@ var (
 	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
 	_ component.Guest                       = (*guestClient)(nil)
 	_ core.Guest                            = (*guestClient)(nil)
+	_ capabilityParent                      = (*hostClient)(nil)
 )
