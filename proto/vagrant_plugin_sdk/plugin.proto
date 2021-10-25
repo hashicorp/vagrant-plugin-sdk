@@ -712,7 +712,7 @@ service CommunicatorService {
   rpc Match(FuncSpec.Args) returns (Communicator.MatchResp);
 
   rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Init(FuncSpec.Args) returns (Communicator.InitResp);
+  rpc Init(FuncSpec.Args) returns (google.protobuf.Empty);
 
   rpc ReadySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Ready(FuncSpec.Args) returns (Communicator.ReadyResp);
@@ -721,10 +721,10 @@ service CommunicatorService {
   rpc WaitForReady(FuncSpec.Args) returns (Communicator.ReadyResp);
 
   rpc DownloadSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Download(FuncSpec.Args) returns (Communicator.FileTransferResp);
+  rpc Download(FuncSpec.Args) returns (google.protobuf.Empty);
 
   rpc UploadSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Upload(FuncSpec.Args) returns (Communicator.FileTransferResp);
+  rpc Upload(FuncSpec.Args) returns (google.protobuf.Empty);
 
   rpc ExecuteSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Execute(FuncSpec.Args) returns (Communicator.ExecuteResp);
@@ -746,19 +746,8 @@ message Communicator {
     bool match = 1;
   }
 
-  message InitResp {}
-
   message ReadyResp {
     bool ready = 1;
-  }
-
-  message FileTransferResp {
-  }
-
-  message ExecutionRequest {
-    Args.Target.Machine machine = 1;
-    string command = 2;
-    Args.MetadataSet options = 3;
   }
 
   message ExecuteResp {
@@ -768,8 +757,6 @@ message Communicator {
   message TestResp {
     bool valid = 1;
   }
-
-  message ResetResp {}
 }
 
 service ConfigService {
