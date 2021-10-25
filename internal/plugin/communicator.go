@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -50,18 +49,6 @@ type communicatorClient struct {
 	*BaseClient
 
 	client vagrant_plugin_sdk.CommunicatorServiceClient
-}
-
-func (c *communicatorClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
-}
-
-func (c *communicatorClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
-}
-
-func (c *communicatorClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *communicatorClient) MatchFunc() interface{} {
