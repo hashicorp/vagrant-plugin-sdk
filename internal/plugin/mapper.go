@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -157,6 +159,10 @@ func (s *mapperServer) Map(
 	)
 	if err != nil {
 		return nil, err
+	}
+	if _, ok := result.(*any.Any); !ok {
+		res, _ := anypb.New(result.(protoreflect.ProtoMessage))
+		return &vagrant_plugin_sdk.Map_Response{Result: res}, nil
 	}
 	return &vagrant_plugin_sdk.Map_Response{Result: result.(*any.Any)}, nil
 }
