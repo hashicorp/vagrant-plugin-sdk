@@ -163,6 +163,10 @@ func (b *BaseClient) SetParentPlugin(plugin interface{}) {
 	b.parentPlugin = plugin
 }
 
+func (b *BaseClient) AppendMappers(mappers ...*argmapper.Func) {
+	b.Mappers = append(b.Mappers, mappers...)
+}
+
 func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, context.CancelFunc) {
 	return joincontext.Join(ctx, b.Ctx)
 }
