@@ -13,8 +13,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/reflect/protoreflect"
-	"google.golang.org/protobuf/types/known/anypb"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -154,17 +154,17 @@ func (s *mapperServer) Map(
 	).Interface()
 
 	// Call it!
-	result, err := s.CallDynamicFunc(f, false, args.Args.Args,
+	result, err := s.CallDynamicFunc(f, (*proto.Message)(nil), args.Args.Args,
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
 		return nil, err
 	}
-	if _, ok := result.(*any.Any); !ok {
-		res, _ := anypb.New(result.(protoreflect.ProtoMessage))
-		return &vagrant_plugin_sdk.Map_Response{Result: res}, nil
+	resultAny, err := dynamic.EncodeAny(result.(protoreflect.ProtoMessage))
+	if err != nil {
+		return nil, err
 	}
-	return &vagrant_plugin_sdk.Map_Response{Result: result.(*any.Any)}, nil
+	return &vagrant_plugin_sdk.Map_Response{Result: resultAny}, nil
 }
 
 var (
