@@ -84,6 +84,9 @@ var All = []interface{}{
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
+	CommunicatorCommandToString,
+	CommunicatorPathToString,
+	CommunicatorRemotePathToString,
 	Communicator,
 	CommunicatorProto,
 	DatadirBasis,
@@ -1255,6 +1258,24 @@ func Basis(
 	}
 
 	return client.(core.Basis), nil
+}
+
+func CommunicatorCommandToString(
+	c *vagrant_plugin_sdk.Communicator_Command,
+) ([]string, error) {
+	return []string{c.Command}, nil
+}
+
+func CommunicatorPathToString(
+	c *vagrant_plugin_sdk.Communicator_Path,
+) (string, error) {
+	return c.Path, nil
+}
+
+func CommunicatorRemotePathToString(
+	c *vagrant_plugin_sdk.Communicator_RemotePath,
+) (string, error) {
+	return c.Path, nil
 }
 
 func CommunicatorProto(
