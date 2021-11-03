@@ -262,6 +262,7 @@ func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts ..
 func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	spec, err := c.client.PrivilegedExecuteSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
+		panic(err)
 		return funcErr(err)
 	}
 	spec.Result = nil
@@ -269,6 +270,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		result, err := c.client.PrivilegedExecute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
+			panic(err)
 			return -1, err
 		}
 		return result.ExitCode, nil
@@ -527,6 +529,7 @@ func (s *communicatorServer) Upload(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		panic(err)
 		return nil, err
 	}
 
@@ -577,6 +580,7 @@ func (s *communicatorServer) PrivilegedExecute(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		panic(err)
 		return nil, err
 	}
 
