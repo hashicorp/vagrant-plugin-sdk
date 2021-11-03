@@ -71,6 +71,7 @@ var WellKnownTypes = []interface{}{
 var All = []interface{}{
 	Array,
 	ArrayProto,
+	ValueToString,
 	Basis,
 	BasisProto,
 	Box,
