@@ -94,8 +94,6 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 			if inputFilter(v) && v.Name != "" {
 				result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
 					Name: v.Name,
-					// TODO: what should this type be?
-					Type: "google.protobuf.Value",
 				})
 			}
 			continue
