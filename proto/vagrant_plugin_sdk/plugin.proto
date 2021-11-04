@@ -177,11 +177,6 @@ message Args {
 }
 
 ///////
-  message BoxCollection {
-    string directory = 1;
-  }
-
-
   message SSHInfo {
     string host = 1;
     string port = 2;
@@ -1074,7 +1069,6 @@ message Vagrantfile {
   message TargetRequest {
     string name = 1;
     string provider = 2;
-    BoxCollection boxes = 3;
     string data_path = 4;
     Args.Project project = 5;
   }
@@ -1086,7 +1080,6 @@ message Vagrantfile {
   message TargetConfigRequest {
     string name = 1;
     string provider = 2;
-    BoxCollection boxes = 3;
     string data_path = 4;
     bool validate_provider = 5;
   }
