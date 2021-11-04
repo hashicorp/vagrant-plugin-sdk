@@ -111,12 +111,9 @@ message Args {
     // Specialized targets
     message Machine {
       message Box {
-        string name = 1;
-        string provider = 2;
-        string version = 3;
-        string directory = 4;
-        map<string, string> metadata = 5;
-        string metadata_url = 6;
+        uint32 stream_id = 1;
+        string network = 2;
+        string target = 3;
       }
 
       message State {
