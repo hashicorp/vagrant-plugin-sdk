@@ -1,7 +1,7 @@
 package core
 
 // for boxes
-type Metadata map[string]interface{}
+type BoxMetadataMap map[string]interface{}
 
 type Box interface {
 	AutomaticUpdateCheckAllowed() (allowed bool, err error)
@@ -10,7 +10,7 @@ type Box interface {
 	HasUpdate(version string) (updateAvailable bool, err error)
 	InUse(index TargetIndex) (inUse bool, err error)
 	LoadMetadata() (metadata BoxMetadata, err error)
-	Metadata() (metadata Metadata, err error)
+	Metadata() (metadata BoxMetadataMap, err error)
 	MetadataURL() (url string, err error)
 	Name() (name string, err error)
 	Provider() (name string, err error)
