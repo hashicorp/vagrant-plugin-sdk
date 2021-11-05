@@ -53,6 +53,10 @@ message Args {
     map<string, string> metadata = 1;
   }
 
+  message Path {
+    string path = 1;
+  }
+
   message TerminalUI {
     uint32 stream_id = 1;
     string network = 2;
@@ -110,12 +114,6 @@ message Args {
     }
     // Specialized targets
     message Machine {
-      message Box {
-        uint32 stream_id = 1;
-        string network = 2;
-        string target = 3;
-      }
-
       message State {
         string id = 1;
         string short_description = 2;
@@ -126,6 +124,12 @@ message Args {
       string network = 2;
       string target = 3;
     }
+  }
+
+  message Box {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
   }
 
   message StateBag {
@@ -903,7 +907,7 @@ service TargetMachineService {
   rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
   rpc SetState(Target.Machine.SetStateRequest) returns (google.protobuf.Empty);
   rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
-  rpc Box(google.protobuf.Empty) returns (Args.Target.Machine.Box);
+  rpc Box(google.protobuf.Empty) returns (Args.Box);
   rpc Guest(google.protobuf.Empty) returns (Args.Guest);
   rpc Reload(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc ConnectionInfo(google.protobuf.Empty) returns(Target.Machine.ConnectionInfoResponse);
@@ -1230,5 +1234,68 @@ message TargetIndex {
 
   message IncludesResponse {
     bool exists = 1;
+  }
+}
+
+
+/********************************************************************
+* Box services
+********************************************************************/
+service BoxService {
+  rpc AutomaticUpdateCheckAllowed(google.protobuf.Empty) returns (Box.AutomaticUpdateCheckAllowedResponse);
+  rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc HasUpdate(Box.HasUpdateRequest) returns (Box.HasUpdateResponse);
+  rpc InUse(Args.TargetIndex) returns (Box.InUseResponse);
+  rpc Repackage(Args.Path) returns (google.protobuf.Empty);
+
+  rpc Directory(google.protobuf.Empty) returns (Args.Path);
+  rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
+  rpc MetadataURL(google.protobuf.Empty) returns (Box.MetadataUrlResponse);
+  rpc Name(google.protobuf.Empty) returns (Box.NameResponse);
+  rpc Provider(google.protobuf.Empty) returns (Box.ProviderResponse);
+  rpc Version(google.protobuf.Empty) returns (Box.VersionResponse);
+
+  rpc GreaterThanOrEqual(Args.Box) returns (Box.EqualityResponse);
+  rpc LessThan(Args.Box) returns (Box.EqualityResponse);
+}
+
+/*******************************************************
+ * Box message used with Box service
+ *******************************************************/
+message Box {
+  message AutomaticUpdateCheckAllowedResponse {
+    bool allowed = 1;
+  }
+
+  message HasUpdateRequest {
+    string version = 1;
+  }
+
+  message HasUpdateResponse {
+    bool hasUpdate = 1;
+  }
+
+  message InUseResponse {
+    bool inUse = 1;
+  }
+
+  message MetadataUrlResponse {
+    string metadataUrl = 1;
+  }
+
+  message NameResponse {
+    string name = 1;
+  }
+
+  message ProviderResponse {
+    string provider = 1;
+  }
+
+  message VersionResponse {
+    string version = 1;
+  }
+  
+  message EqualityResponse {
+    bool result = 1;
   }
 }

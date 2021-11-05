@@ -590,13 +590,14 @@ func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Targe
 	return &result, mapstructure.Decode(input, &result)
 }
 
-func Box(input *vagrant_plugin_sdk.Args_Target_Machine_Box) (*core.Box, error) {
+// TODO: fix these box Mappers
+func Box(input *vagrant_plugin_sdk.Args_Box) (*core.Box, error) {
 	var result core.Box
 	return &result, mapstructure.Decode(input, &result)
 }
 
-func BoxProto(input *core.Box) (*vagrant_plugin_sdk.Args_Target_Machine_Box, error) {
-	var result vagrant_plugin_sdk.Args_Target_Machine_Box
+func BoxProto(input *core.Box) (*vagrant_plugin_sdk.Args_Box, error) {
+	var result vagrant_plugin_sdk.Args_Box
 	return &result, mapstructure.Decode(input, &result)
 }
 
