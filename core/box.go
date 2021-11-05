@@ -16,7 +16,8 @@ type Box interface {
 	Repackage(path string) (err error)
 	Version() (version string, err error)
 
-	// TODO(spox): Needs comparison function for sorting
+	GreaterThanOrEqual(box Box) (bool, error)
+	LessThan(box Box) (bool, error)
 }
 
 type BoxMetadata interface {
