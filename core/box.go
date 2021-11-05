@@ -13,7 +13,7 @@ type Box interface {
 	MetadataURL() (url string, err error)
 	Name() (name string, err error)
 	Provider() (name string, err error)
-	Repackage() (err error)
+	Repackage(path string) (err error)
 	Version() (version string, err error)
 
 	// TODO(spox): Needs comparison function for sorting
