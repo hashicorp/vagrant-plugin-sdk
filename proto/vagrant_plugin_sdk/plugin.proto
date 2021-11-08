@@ -826,6 +826,9 @@ message Ref {
   // Box references a Box.
   message Box {
     string resource_id = 1;
+    string name = 2;
+    string version = 3;
+    string provider = 4;
   }
 
   // References a basis configuration (analogous to VAGRANT_HOME)
