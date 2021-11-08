@@ -15,9 +15,7 @@ type Box interface {
 	Provider() (name string, err error)
 	Repackage(path string) (err error)
 	Version() (version string, err error)
-
-	GreaterThanOrEqual(box Box) (bool, error)
-	LessThan(box Box) (bool, error)
+	Compare(box Box) (int, error)
 }
 
 type BoxMetadata interface {

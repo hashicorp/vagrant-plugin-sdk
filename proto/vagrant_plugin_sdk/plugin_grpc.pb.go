@@ -6738,8 +6738,7 @@ type BoxServiceClient interface {
 	Name(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Box_NameResponse, error)
 	Provider(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Box_ProviderResponse, error)
 	Version(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Box_VersionResponse, error)
-	GreaterThanOrEqual(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error)
-	LessThan(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error)
+	Compare(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error)
 }
 
 type boxServiceClient struct {
@@ -6849,18 +6848,9 @@ func (c *boxServiceClient) Version(ctx context.Context, in *empty.Empty, opts ..
 	return out, nil
 }
 
-func (c *boxServiceClient) GreaterThanOrEqual(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error) {
+func (c *boxServiceClient) Compare(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error) {
 	out := new(Box_EqualityResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/GreaterThanOrEqual", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *boxServiceClient) LessThan(ctx context.Context, in *Args_Box, opts ...grpc.CallOption) (*Box_EqualityResponse, error) {
-	out := new(Box_EqualityResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/LessThan", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/Compare", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -6882,8 +6872,7 @@ type BoxServiceServer interface {
 	Name(context.Context, *empty.Empty) (*Box_NameResponse, error)
 	Provider(context.Context, *empty.Empty) (*Box_ProviderResponse, error)
 	Version(context.Context, *empty.Empty) (*Box_VersionResponse, error)
-	GreaterThanOrEqual(context.Context, *Args_Box) (*Box_EqualityResponse, error)
-	LessThan(context.Context, *Args_Box) (*Box_EqualityResponse, error)
+	Compare(context.Context, *Args_Box) (*Box_EqualityResponse, error)
 }
 
 // UnimplementedBoxServiceServer should be embedded to have forward compatible implementations.
@@ -6923,11 +6912,8 @@ func (UnimplementedBoxServiceServer) Provider(context.Context, *empty.Empty) (*B
 func (UnimplementedBoxServiceServer) Version(context.Context, *empty.Empty) (*Box_VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
-func (UnimplementedBoxServiceServer) GreaterThanOrEqual(context.Context, *Args_Box) (*Box_EqualityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GreaterThanOrEqual not implemented")
-}
-func (UnimplementedBoxServiceServer) LessThan(context.Context, *Args_Box) (*Box_EqualityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LessThan not implemented")
+func (UnimplementedBoxServiceServer) Compare(context.Context, *Args_Box) (*Box_EqualityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Compare not implemented")
 }
 
 // UnsafeBoxServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -7139,38 +7125,20 @@ func _BoxService_Version_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BoxService_GreaterThanOrEqual_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BoxService_Compare_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Args_Box)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BoxServiceServer).GreaterThanOrEqual(ctx, in)
+		return srv.(BoxServiceServer).Compare(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.BoxService/GreaterThanOrEqual",
+		FullMethod: "/hashicorp.vagrant.sdk.BoxService/Compare",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxServiceServer).GreaterThanOrEqual(ctx, req.(*Args_Box))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BoxService_LessThan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Args_Box)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BoxServiceServer).LessThan(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.BoxService/LessThan",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxServiceServer).LessThan(ctx, req.(*Args_Box))
+		return srv.(BoxServiceServer).Compare(ctx, req.(*Args_Box))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -7227,12 +7195,8 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BoxService_Version_Handler,
 		},
 		{
-			MethodName: "GreaterThanOrEqual",
-			Handler:    _BoxService_GreaterThanOrEqual_Handler,
-		},
-		{
-			MethodName: "LessThan",
-			Handler:    _BoxService_LessThan_Handler,
+			MethodName: "Compare",
+			Handler:    _BoxService_Compare_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

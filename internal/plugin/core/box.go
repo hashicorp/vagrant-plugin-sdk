@@ -138,12 +138,8 @@ func (b *boxClient) Version() (version string, err error) {
 	return result.Version, nil
 }
 
-func (b *boxClient) GreaterThanOrEqual(box core.Box) (bool, error) {
-	return false, nil
-}
-
-func (b *boxClient) LessThan(box core.Box) (bool, error) {
-	return false, nil
+func (b *boxClient) Compare(box core.Box) (int, error) {
+	return 0, nil
 }
 
 type boxServer struct {
@@ -284,7 +280,7 @@ func (b *boxServer) Version(
 	}, nil
 }
 
-func (b *boxServer) GreaterThanOrEqual(
+func (b *boxServer) Compare(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_Box,
 ) (r *vagrant_plugin_sdk.Box_EqualityResponse, err error) {
 	box, err := b.Map(in, (*core.Box)(nil))
@@ -292,31 +288,13 @@ func (b *boxServer) GreaterThanOrEqual(
 		return
 	}
 
-	result, err := b.Impl.GreaterThanOrEqual(box.(core.Box))
+	result, err := b.Impl.Compare(box.(core.Box))
 	if err != nil {
 		return
 	}
 
 	return &vagrant_plugin_sdk.Box_EqualityResponse{
-		Result: result,
-	}, nil
-}
-
-func (b *boxServer) LessThan(
-	ctx context.Context, in *vagrant_plugin_sdk.Args_Box,
-) (r *vagrant_plugin_sdk.Box_EqualityResponse, err error) {
-	box, err := b.Map(in, (*core.Box)(nil))
-	if err != nil {
-		return
-	}
-
-	result, err := b.Impl.LessThan(box.(core.Box))
-	if err != nil {
-		return
-	}
-
-	return &vagrant_plugin_sdk.Box_EqualityResponse{
-		Result: result,
+		Result: int32(result),
 	}, nil
 }
 

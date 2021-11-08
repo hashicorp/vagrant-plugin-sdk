@@ -1258,8 +1258,7 @@ service BoxService {
   rpc Provider(google.protobuf.Empty) returns (Box.ProviderResponse);
   rpc Version(google.protobuf.Empty) returns (Box.VersionResponse);
 
-  rpc GreaterThanOrEqual(Args.Box) returns (Box.EqualityResponse);
-  rpc LessThan(Args.Box) returns (Box.EqualityResponse);
+  rpc Compare(Args.Box) returns (Box.EqualityResponse);
 }
 
 /*******************************************************
@@ -1298,7 +1297,9 @@ message Box {
     string version = 1;
   }
   
+  // Returns -1, 0, or 1 if this version is smaller, equal,
+  // or larger than the other version, respectively.
   message EqualityResponse {
-    bool result = 1;
+    int32 result = 1;
   }
 }
