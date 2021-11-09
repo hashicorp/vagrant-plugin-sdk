@@ -172,7 +172,7 @@ func (t *targetMachineClient) SetID(id string) (err error) {
 	return
 }
 
-func (t *targetMachineClient) Box() (b *core.Box, err error) {
+func (t *targetMachineClient) Box() (b core.Box, err error) {
 	r, err := t.client.Box(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -181,7 +181,7 @@ func (t *targetMachineClient) Box() (b *core.Box, err error) {
 	result, err := t.Map(r, (*core.Box)(nil),
 		argmapper.Typed(t.Ctx))
 	if err == nil {
-		b = result.(*core.Box)
+		b = result.(core.Box)
 	}
 
 	return
@@ -331,16 +331,16 @@ func (t *targetMachineServer) SetState(
 func (t *targetMachineServer) Box(
 	ctx context.Context,
 	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Args_Target_Machine_Box, err error) {
+) (r *vagrant_plugin_sdk.Args_Box, err error) {
 	b, err := t.Impl.Box()
 	if err != nil {
 		return
 	}
 
-	result, err := t.Map(b, (**vagrant_plugin_sdk.Args_Target_Machine_Box)(nil),
+	result, err := t.Map(b, (**vagrant_plugin_sdk.Args_Box)(nil),
 		argmapper.Typed(ctx))
 	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Target_Machine_Box)
+		r = result.(*vagrant_plugin_sdk.Args_Box)
 	}
 
 	return

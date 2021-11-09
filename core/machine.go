@@ -15,7 +15,7 @@ type MachineState struct {
 type Machine interface {
 	Target
 
-	Box() (b *Box, err error)
+	Box() (b Box, err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	Guest() (g Guest, err error)
 	ID() (id string, err error)
