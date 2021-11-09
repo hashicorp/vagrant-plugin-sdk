@@ -591,14 +591,58 @@ func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Targe
 }
 
 // TODO: fix these box Mappers
-func Box(input *vagrant_plugin_sdk.Args_Box) (*core.Box, error) {
-	var result core.Box
-	return &result, mapstructure.Decode(input, &result)
+func Box(ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Box,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Box, error) {
+	// Create our plugin
+	p := &plugincore.BoxPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Box), nil
 }
 
-func BoxProto(input *core.Box) (*vagrant_plugin_sdk.Args_Box, error) {
-	var result vagrant_plugin_sdk.Args_Box
-	return &result, mapstructure.Decode(input, &result)
+func BoxProto(
+	box core.Box,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Box, error) {
+	cid := fmt.Sprintf("%p", box)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_Box), nil
+	}
+
+	log.Warn("failed to locate cached box", "cid", cid)
+
+	// Create our plugin
+	p := &plugincore.BoxPlugin{
+		BasePlugin: basePlugin(box, internal),
+		Impl:       box,
+	}
+
+	log.Warn("wrapping box to generate proto", "cid", cid)
+
+	id, ep, err := wrapClient(box, p, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	proto := &vagrant_plugin_sdk.Args_Box{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String()}
+
+	log.Warn("registered box into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
