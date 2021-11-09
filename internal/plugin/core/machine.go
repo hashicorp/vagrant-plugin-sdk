@@ -178,7 +178,7 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 		return
 	}
 
-	result, err := t.Map(r, (core.Box)(nil),
+	result, err := t.Map(r, (*core.Box)(nil),
 		argmapper.Typed(t.Ctx))
 	if err == nil {
 		b = result.(core.Box)

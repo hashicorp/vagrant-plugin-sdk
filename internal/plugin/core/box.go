@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
@@ -151,7 +150,7 @@ type boxServer struct {
 
 func (b *boxServer) AutomaticUpdateCheckAllowed(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Box_AutomaticUpdateCheckAllowedResponse, err error) {
 	d, err := b.Impl.AutomaticUpdateCheckAllowed()
 	if err != nil {
@@ -164,10 +163,10 @@ func (b *boxServer) AutomaticUpdateCheckAllowed(
 }
 
 func (b *boxServer) Destroy(
-	ctx context.Context, in *empty.Empty,
-) (*empty.Empty, error) {
+	ctx context.Context, in *emptypb.Empty,
+) (*emptypb.Empty, error) {
 	err := b.Impl.Destroy()
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 func (b *boxServer) HasUpdate(
@@ -203,13 +202,13 @@ func (b *boxServer) InUse(
 
 func (b *boxServer) Repackage(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_Path,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	err := b.Impl.Repackage(in.Path)
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 func (b *boxServer) Directory(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Path, err error) {
 	d, err := b.Impl.Directory()
 	if err != nil {
@@ -222,14 +221,14 @@ func (b *boxServer) Directory(
 }
 
 func (b *boxServer) Metadata(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_MetadataSet, err error) {
 	// TODO
 	return
 }
 
 func (b *boxServer) MetadataURL(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Box_MetadataUrlResponse, err error) {
 	d, err := b.Impl.MetadataURL()
 	if err != nil {
@@ -242,7 +241,7 @@ func (b *boxServer) MetadataURL(
 }
 
 func (b *boxServer) Name(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Box_NameResponse, err error) {
 	d, err := b.Impl.Name()
 	if err != nil {
@@ -255,7 +254,7 @@ func (b *boxServer) Name(
 }
 
 func (b *boxServer) Provider(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Box_ProviderResponse, err error) {
 	d, err := b.Impl.Provider()
 	if err != nil {
@@ -268,7 +267,7 @@ func (b *boxServer) Provider(
 }
 
 func (b *boxServer) Version(
-	ctx context.Context, in *empty.Empty,
+	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Box_VersionResponse, err error) {
 	d, err := b.Impl.Version()
 	if err != nil {
