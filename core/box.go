@@ -18,10 +18,10 @@ type Box interface {
 	Compare(box Box) (int, error)
 }
 
-type BoxMetadata interface {
-	Description() (description string, err error)
-	Load(pathOrURL string) (err error)
-	Name() (name string, err error)
-	Version(version string, providers []string) (v BoxVersion, err error)
-	Versions(providers []string) (versions []BoxVersion, err error)
-}
+// type BoxMetadata interface {
+// 	Description() (description string, err error)
+// 	Load(pathOrURL string) (err error)
+// 	Name() (name string, err error)
+// 	Version(version string, providers []string) (v BoxVersion, err error)
+// 	Versions(providers []string) (versions []BoxVersion, err error)
+// }
