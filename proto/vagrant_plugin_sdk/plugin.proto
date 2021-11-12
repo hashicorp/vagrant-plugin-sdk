@@ -1323,7 +1323,8 @@ message BoxCollection {
     string name = 2;
     string version = 3;
     string metadataUrl = 4;
-    repeated string providers = 5;
+    bool force = 5;
+    repeated string providers = 6;
   }
 
   message AllResponse {

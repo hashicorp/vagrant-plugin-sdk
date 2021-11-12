@@ -45,9 +45,9 @@ type boxCollectionClient struct {
 	client vagrant_plugin_sdk.BoxCollectionServiceClient
 }
 
-func (b *boxCollectionClient) Add(path, name, version string, metadataURL string, providers ...string) (box core.Box, err error) {
+func (b *boxCollectionClient) Add(path, name, version, metadataURL string, force bool, providers ...string) (box core.Box, err error) {
 	r, err := b.client.Add(b.Ctx, &vagrant_plugin_sdk.BoxCollection_AddRequest{
-		Path: path, Name: name, Version: version, MetadataUrl: metadataURL, Providers: providers,
+		Path: path, Name: name, Version: version, MetadataUrl: metadataURL, Force: force, Providers: providers,
 	})
 	if err != nil {
 		return
@@ -113,7 +113,7 @@ func (b *boxCollectionServer) Add(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxCollection_AddRequest,
 ) (r *vagrant_plugin_sdk.Args_Box, err error) {
 	box, err := b.Impl.Add(
-		in.Path, in.Name, in.Version, in.MetadataUrl, in.Providers...,
+		in.Path, in.Name, in.Version, in.MetadataUrl, in.Force, in.Providers...,
 	)
 	if err != nil {
 		return
