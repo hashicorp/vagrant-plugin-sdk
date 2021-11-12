@@ -7202,3 +7202,195 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
+
+// BoxCollectionServiceClient is the client API for BoxCollectionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BoxCollectionServiceClient interface {
+	Add(ctx context.Context, in *BoxCollection_AddRequest, opts ...grpc.CallOption) (*Args_Box, error)
+	All(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BoxCollection_AllResponse, error)
+	Clean(ctx context.Context, in *BoxCollection_CleanRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Find(ctx context.Context, in *BoxCollection_FindRequest, opts ...grpc.CallOption) (*Args_Box, error)
+}
+
+type boxCollectionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBoxCollectionServiceClient(cc grpc.ClientConnInterface) BoxCollectionServiceClient {
+	return &boxCollectionServiceClient{cc}
+}
+
+func (c *boxCollectionServiceClient) Add(ctx context.Context, in *BoxCollection_AddRequest, opts ...grpc.CallOption) (*Args_Box, error) {
+	out := new(Args_Box)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxCollectionService/Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxCollectionServiceClient) All(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*BoxCollection_AllResponse, error) {
+	out := new(BoxCollection_AllResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxCollectionService/All", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxCollectionServiceClient) Clean(ctx context.Context, in *BoxCollection_CleanRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxCollectionService/Clean", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxCollectionServiceClient) Find(ctx context.Context, in *BoxCollection_FindRequest, opts ...grpc.CallOption) (*Args_Box, error) {
+	out := new(Args_Box)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxCollectionService/Find", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BoxCollectionServiceServer is the server API for BoxCollectionService service.
+// All implementations should embed UnimplementedBoxCollectionServiceServer
+// for forward compatibility
+type BoxCollectionServiceServer interface {
+	Add(context.Context, *BoxCollection_AddRequest) (*Args_Box, error)
+	All(context.Context, *empty.Empty) (*BoxCollection_AllResponse, error)
+	Clean(context.Context, *BoxCollection_CleanRequest) (*empty.Empty, error)
+	Find(context.Context, *BoxCollection_FindRequest) (*Args_Box, error)
+}
+
+// UnimplementedBoxCollectionServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedBoxCollectionServiceServer struct {
+}
+
+func (UnimplementedBoxCollectionServiceServer) Add(context.Context, *BoxCollection_AddRequest) (*Args_Box, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
+}
+func (UnimplementedBoxCollectionServiceServer) All(context.Context, *empty.Empty) (*BoxCollection_AllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedBoxCollectionServiceServer) Clean(context.Context, *BoxCollection_CleanRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Clean not implemented")
+}
+func (UnimplementedBoxCollectionServiceServer) Find(context.Context, *BoxCollection_FindRequest) (*Args_Box, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
+}
+
+// UnsafeBoxCollectionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BoxCollectionServiceServer will
+// result in compilation errors.
+type UnsafeBoxCollectionServiceServer interface {
+	mustEmbedUnimplementedBoxCollectionServiceServer()
+}
+
+func RegisterBoxCollectionServiceServer(s grpc.ServiceRegistrar, srv BoxCollectionServiceServer) {
+	s.RegisterService(&BoxCollectionService_ServiceDesc, srv)
+}
+
+func _BoxCollectionService_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxCollection_AddRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxCollectionServiceServer).Add(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxCollectionService/Add",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxCollectionServiceServer).Add(ctx, req.(*BoxCollection_AddRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxCollectionService_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxCollectionServiceServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxCollectionService/All",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxCollectionServiceServer).All(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxCollectionService_Clean_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxCollection_CleanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxCollectionServiceServer).Clean(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxCollectionService/Clean",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxCollectionServiceServer).Clean(ctx, req.(*BoxCollection_CleanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxCollectionService_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxCollection_FindRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxCollectionServiceServer).Find(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxCollectionService/Find",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxCollectionServiceServer).Find(ctx, req.(*BoxCollection_FindRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BoxCollectionService_ServiceDesc is the grpc.ServiceDesc for BoxCollectionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.BoxCollectionService",
+	HandlerType: (*BoxCollectionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Add",
+			Handler:    _BoxCollectionService_Add_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _BoxCollectionService_All_Handler,
+		},
+		{
+			MethodName: "Clean",
+			Handler:    _BoxCollectionService_Clean_Handler,
+		},
+		{
+			MethodName: "Find",
+			Handler:    _BoxCollectionService_Find_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
