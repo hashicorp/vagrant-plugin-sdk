@@ -216,6 +216,22 @@ func (p *projectClient) Host() (h core.Host, err error) {
 	return
 }
 
+func (p *projectClient) Boxes() (b core.BoxCollection, err error) {
+	r, err := p.client.Boxes(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.BoxCollection)(nil),
+		argmapper.Typed(p.Ctx),
+	)
+	if err == nil {
+		b = result.(core.BoxCollection)
+	}
+
+	return
+}
+
 func (p *projectServer) CWD(
 	ctx context.Context,
 	_ *empty.Empty,
@@ -423,6 +439,23 @@ func (p *projectServer) TargetIds(
 
 	return &vagrant_plugin_sdk.Project_TargetIdsResponse{
 		Ids: ids}, nil
+}
+
+func (p *projectServer) Boxes(
+	ctx context.Context,
+	_ *empty.Empty,
+) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
+	boxCollection, err := p.Impl.Boxes()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := p.Map(boxCollection, (**vagrant_plugin_sdk.Args_BoxCollection)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_BoxCollection)
+	}
+
+	return
 }
 
 var (

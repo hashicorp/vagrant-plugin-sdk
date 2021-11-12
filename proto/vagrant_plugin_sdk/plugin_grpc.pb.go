@@ -5697,6 +5697,7 @@ type ProjectServiceClient interface {
 	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetNames(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
 	TargetIds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
+	Boxes(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
 }
 
 type projectServiceClient struct {
@@ -5842,6 +5843,15 @@ func (c *projectServiceClient) TargetIds(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *projectServiceClient) Boxes(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error) {
+	out := new(Args_BoxCollection)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Boxes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations should embed UnimplementedProjectServiceServer
 // for forward compatibility
@@ -5862,6 +5872,7 @@ type ProjectServiceServer interface {
 	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
 	TargetNames(context.Context, *empty.Empty) (*Project_TargetNamesResponse, error)
 	TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error)
+	Boxes(context.Context, *empty.Empty) (*Args_BoxCollection, error)
 }
 
 // UnimplementedProjectServiceServer should be embedded to have forward compatible implementations.
@@ -5912,6 +5923,9 @@ func (UnimplementedProjectServiceServer) TargetNames(context.Context, *empty.Emp
 }
 func (UnimplementedProjectServiceServer) TargetIds(context.Context, *empty.Empty) (*Project_TargetIdsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetIds not implemented")
+}
+func (UnimplementedProjectServiceServer) Boxes(context.Context, *empty.Empty) (*Args_BoxCollection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
 }
 
 // UnsafeProjectServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -6195,6 +6209,24 @@ func _ProjectService_TargetIds_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectService_Boxes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Boxes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Boxes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Boxes(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -6261,6 +6293,10 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TargetIds",
 			Handler:    _ProjectService_TargetIds_Handler,
+		},
+		{
+			MethodName: "Boxes",
+			Handler:    _ProjectService_Boxes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
