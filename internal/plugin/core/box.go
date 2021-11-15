@@ -185,7 +185,7 @@ func (b *boxServer) HasUpdate(
 func (b *boxServer) InUse(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_TargetIndex,
 ) (r *vagrant_plugin_sdk.Box_InUseResponse, err error) {
-	targetIndex, err := b.Map(in, (*core.TargetIndex)(nil))
+	targetIndex, err := b.Map(in, (*core.TargetIndex)(nil), argmapper.Typed(ctx))
 	if err != nil {
 		return
 	}
@@ -282,7 +282,7 @@ func (b *boxServer) Version(
 func (b *boxServer) Compare(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_Box,
 ) (r *vagrant_plugin_sdk.Box_EqualityResponse, err error) {
-	box, err := b.Map(in, (*core.Box)(nil))
+	box, err := b.Map(in, (*core.Box)(nil), argmapper.Typed(ctx))
 	if err != nil {
 		return
 	}
