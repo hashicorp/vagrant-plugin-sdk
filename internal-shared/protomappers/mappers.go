@@ -72,6 +72,8 @@ var All = []interface{}{
 	BasisProto,
 	Box,
 	BoxProto,
+	BoxCollection,
+	BoxCollectionProto,
 	Host,
 	HostProto,
 	Guest,
@@ -590,7 +592,6 @@ func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Targe
 	return &result, mapstructure.Decode(input, &result)
 }
 
-// TODO: fix these box Mappers
 func Box(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Box,
 	log hclog.Logger,
@@ -640,6 +641,60 @@ func BoxProto(
 		Target:   ep.String()}
 
 	log.Warn("registered box into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
+}
+
+func BoxCollection(ctx context.Context,
+	input *vagrant_plugin_sdk.Args_BoxCollection,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.BoxCollection, error) {
+	// Create our plugin
+	p := &plugincore.BoxCollectionPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.BoxCollection), nil
+}
+
+func BoxCollectionProto(
+	boxCollection core.BoxCollection,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_BoxCollection, error) {
+	cid := fmt.Sprintf("%p", boxCollection)
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_BoxCollection), nil
+	}
+
+	log.Warn("failed to locate cached box collection", "cid", cid)
+
+	// Create our plugin
+	p := &plugincore.BoxCollectionPlugin{
+		BasePlugin: basePlugin(boxCollection, internal),
+		Impl:       boxCollection,
+	}
+
+	log.Warn("wrapping box to generate proto", "cid", cid)
+
+	id, ep, err := wrapClient(boxCollection, p, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	proto := &vagrant_plugin_sdk.Args_BoxCollection{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String()}
+
+	log.Warn("registered box collection into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
 
 	return proto, nil
