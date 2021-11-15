@@ -32,7 +32,7 @@ type Project interface {
 	// DefaultProvider() (name string, err error)
 	// CanInstallProvider() (can bool, err error)
 	// InstallProvider() (err error)
-	// Boxes() (boxes BoxCollection, err error)
+	Boxes() (boxes BoxCollection, err error)
 	// Project(v Vagrantfile) (env Project, err error)
 	// Hook(name string) (err error)
 

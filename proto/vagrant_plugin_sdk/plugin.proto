@@ -132,6 +132,12 @@ message Args {
     string target = 3;
   }
 
+  message BoxCollection {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+  
   message StateBag {
     uint32 stream_id = 1;
     string network = 2;
@@ -995,6 +1001,7 @@ service ProjectService {
   rpc Target(Project.TargetRequest) returns (Args.Target);
   rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
   rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
+  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
 }
 
 /*******************************************************
