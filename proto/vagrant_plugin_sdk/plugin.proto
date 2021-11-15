@@ -178,12 +178,7 @@ message Args {
 }
 
 ///////
-  message BoxCollection {
-    string directory = 1;
-  }
-
-
-  message SSHInfo {
+    message SSHInfo {
     string host = 1;
     string port = 2;
     string private_key_path = 3;
@@ -1063,6 +1058,10 @@ service VagrantfileService {
  * Vagrantfile message used with Vagrantfile service
  *******************************************************/
 message Vagrantfile {
+  message BoxCollection {
+    string directory = 1;
+  }
+
   message GetVagrantfileRequest {
     oneof component {
       Ref.Project project = 1;
@@ -1301,5 +1300,44 @@ message Box {
   // or larger than the other version, respectively.
   message EqualityResponse {
     int32 result = 1;
+  }
+}
+
+
+/********************************************************************
+* BoxCollecion services
+********************************************************************/
+service BoxCollectionService {
+  rpc Add(BoxCollection.AddRequest) returns (Args.Box);
+  rpc All(google.protobuf.Empty) returns (BoxCollection.AllResponse);
+  rpc Clean(BoxCollection.CleanRequest) returns (google.protobuf.Empty);
+  rpc Find(BoxCollection.FindRequest) returns (Args.Box);
+}
+
+/*******************************************************
+ * BoxCollection messages used with BoxCollection service
+ *******************************************************/
+message BoxCollection {
+  message AddRequest {
+    string path = 1;
+    string name = 2;
+    string version = 3;
+    string metadataUrl = 4;
+    bool force = 5;
+    repeated string providers = 6;
+  }
+
+  message AllResponse {
+    repeated Args.Box boxes = 1;
+  }
+
+  message CleanRequest {
+    string name = 1;
+  }
+
+  message FindRequest {
+    string name = 1;
+    string version = 2;
+    repeated string providers = 3;
   }
 }
