@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
@@ -165,6 +166,9 @@ func (b *boxCollectionServer) Find(
 	)
 	if err != nil {
 		return
+	}
+	if box == nil {
+		return nil, errors.New("no box found")
 	}
 	boxProto, err := b.Map(
 		box, (**vagrant_plugin_sdk.Args_Box)(nil), argmapper.Typed(ctx),
