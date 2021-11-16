@@ -615,7 +615,19 @@ func BoxProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Box, error) {
-	cid := fmt.Sprintf("%p", box)
+	n, err := box.Name()
+	if err != nil {
+		return nil, err
+	}
+	v, err := box.Version()
+	if err != nil {
+		return nil, err
+	}
+	pr, err := box.Provider()
+	if err != nil {
+		return nil, err
+	}
+	cid := n + "-" + v + "-" + pr
 	if ch := internal.Cache.Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_Box), nil
 	}
