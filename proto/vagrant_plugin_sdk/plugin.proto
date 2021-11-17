@@ -137,7 +137,7 @@ message Args {
     string network = 2;
     string target = 3;
   }
-  
+
   message StateBag {
     uint32 stream_id = 1;
     string network = 2;
@@ -179,7 +179,15 @@ message Args {
   }
 
   message Direct {
+    repeated google.protobuf.Any arguments = 1;
+  }
+
+  message Array {
     repeated google.protobuf.Any list = 1;
+  }
+
+  message Hash {
+    map<string, google.protobuf.Any> fields = 1;
   }
 }
 
@@ -1002,12 +1010,16 @@ service ProjectService {
   rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
   rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
   rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
+  rpc ResourceId(google.protobuf.Empty) returns (Project.ResourceIdResponse);
 }
 
 /*******************************************************
  * Project message used with Project service
  *******************************************************/
 message Project {
+  message ResourceIdResponse {
+    string resource_id = 1;
+  }
   message TargetRequest {
     string name = 1;
   }
@@ -1302,7 +1314,7 @@ message Box {
   message VersionResponse {
     string version = 1;
   }
-  
+
   // Returns -1, 0, or 1 if this version is smaller, equal,
   // or larger than the other version, respectively.
   message EqualityResponse {
