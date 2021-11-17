@@ -6,7 +6,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 
@@ -71,6 +70,15 @@ func (p *projectClient) CWD() (path string, err error) {
 	return
 }
 
+func (p *projectClient) ResourceId() (rid string, err error) {
+	r, err := p.client.ResourceId(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		rid = r.ResourceId
+	}
+
+	return
+}
+
 func (p *projectClient) Target(name string) (t core.Target, err error) {
 	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
 		Name: name,
@@ -88,7 +96,7 @@ func (p *projectClient) Target(name string) (t core.Target, err error) {
 }
 
 func (p *projectClient) TargetNames() (names []string, err error) {
-	r, err := p.client.TargetNames(p.Ctx, &empty.Empty{})
+	r, err := p.client.TargetNames(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		names = r.Names
 	}
@@ -97,7 +105,7 @@ func (p *projectClient) TargetNames() (names []string, err error) {
 }
 
 func (p *projectClient) TargetIds() (ids []string, err error) {
-	r, err := p.client.TargetIds(p.Ctx, &empty.Empty{})
+	r, err := p.client.TargetIds(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		ids = r.Ids
 	}
@@ -234,7 +242,7 @@ func (p *projectClient) Boxes() (b core.BoxCollection, err error) {
 
 func (p *projectServer) CWD(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_CwdResponse, error) {
 	c, err := p.Impl.CWD()
 	if err != nil {
@@ -248,7 +256,7 @@ func (p *projectServer) CWD(
 
 func (p *projectServer) DataDir(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Project, err error) {
 	d, err := p.Impl.DataDir()
 	if err != nil {
@@ -264,7 +272,7 @@ func (p *projectServer) DataDir(
 
 func (p *projectServer) VagrantfileName(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_VagrantfileNameResponse, error) {
 	name, err := p.Impl.VagrantfileName()
 	if err != nil {
@@ -278,7 +286,7 @@ func (p *projectServer) VagrantfileName(
 
 func (p *projectServer) VagrantfilePath(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_VagrantfilePathResponse, error) {
 	path, err := p.Impl.VagrantfilePath()
 	if err != nil {
@@ -292,7 +300,7 @@ func (p *projectServer) VagrantfilePath(
 
 func (p *projectServer) UI(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
 	d, err := p.Impl.UI()
 	if err != nil {
@@ -310,7 +318,7 @@ func (p *projectServer) UI(
 
 func (p *projectServer) Home(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
 	path, err := p.Impl.Home()
 	if err != nil {
@@ -324,7 +332,7 @@ func (p *projectServer) Home(
 
 func (p *projectServer) LocalData(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
 	path, err := p.Impl.LocalData()
 	if err != nil {
@@ -337,7 +345,7 @@ func (p *projectServer) LocalData(
 
 func (p *projectServer) Tmp(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
 	path, err := p.Impl.Tmp()
 	if err != nil {
@@ -350,7 +358,7 @@ func (p *projectServer) Tmp(
 
 func (p *projectServer) DefaultPrivateKey(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
 	key, err := p.Impl.DefaultPrivateKey()
 	p.Logger.Warn("private key on project server", "key", key)
@@ -365,7 +373,7 @@ func (p *projectServer) DefaultPrivateKey(
 
 func (p *projectServer) Host(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	d, err := p.Impl.Host()
 	if err != nil {
@@ -383,7 +391,7 @@ func (p *projectServer) Host(
 
 func (p *projectServer) TargetIndex(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
 	idx, err := p.Impl.TargetIndex()
 	if err != nil {
@@ -417,7 +425,7 @@ func (p *projectServer) Target(
 
 func (p *projectServer) TargetNames(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_TargetNamesResponse, error) {
 	n, err := p.Impl.TargetNames()
 	if err != nil {
@@ -430,7 +438,7 @@ func (p *projectServer) TargetNames(
 
 func (p *projectServer) TargetIds(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_TargetIdsResponse, error) {
 	ids, err := p.Impl.TargetIds()
 	if err != nil {
@@ -443,11 +451,11 @@ func (p *projectServer) TargetIds(
 
 func (p *projectServer) Boxes(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
 	boxCollection, err := p.Impl.Boxes()
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	result, err := p.Map(boxCollection, (**vagrant_plugin_sdk.Args_BoxCollection)(nil))
@@ -456,6 +464,21 @@ func (p *projectServer) Boxes(
 	}
 
 	return
+}
+
+func (p *projectServer) ResourceId(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_ResourceIdResponse, error) {
+	rid, err := p.Impl.ResourceId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_ResourceIdResponse{
+		ResourceId: rid,
+	}, nil
 }
 
 var (
