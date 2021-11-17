@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
@@ -68,6 +69,8 @@ var WellKnownTypes = []interface{}{
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
+	Array,
+	ArrayProto,
 	Basis,
 	BasisProto,
 	Box,
@@ -95,10 +98,13 @@ var All = []interface{}{
 	DirectProto,
 	Flags,
 	FlagsProto,
+	Hash,
+	HashProto,
 	JobInfo,
 	JobInfoProto,
 	Logger,
 	LoggerProto,
+	MachineProject,
 	MachineState,
 	MachineStateProto,
 	MapToProto,
@@ -108,6 +114,8 @@ var All = []interface{}{
 	MetadataSetProto,
 	NamedCapability,
 	NamedCapabilityProto,
+	Path,
+	PathProto,
 	Project,
 	ProjectProto,
 	ProtoToMap,
@@ -123,6 +131,7 @@ var All = []interface{}{
 	TargetIndexProto,
 	TargetMachine,
 	TargetMachineProto,
+	TargetProject,
 	TerminalUI,
 	TerminalUIProto,
 }
@@ -328,6 +337,108 @@ func ValueToStruct(
 
 // Custom mappers
 
+func Array(
+	input *vagrant_plugin_sdk.Args_Array,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) ([]interface{}, error) {
+	result, err := Direct(
+		&vagrant_plugin_sdk.Args_Direct{
+			Arguments: input.List,
+		},
+		log,
+		internal,
+		ctx,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Arguments, nil
+}
+
+func ArrayProto(
+	input []interface{},
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Array, error) {
+	result, err := DirectProto(
+		&component.Direct{
+			Arguments: input,
+		},
+		log,
+		internal,
+		ctx,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Array{
+		List: result.Arguments,
+	}, nil
+}
+
+func Hash(
+	input *vagrant_plugin_sdk.Args_Hash,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (result map[string]interface{}, err error) {
+	result = make(map[string]interface{}, len(input.Fields))
+
+	for k, v := range input.Fields {
+		r, err := Direct(
+			&vagrant_plugin_sdk.Args_Direct{Arguments: []*anypb.Any{v}},
+			log,
+			internal,
+			ctx,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		result[k] = r.Arguments[0]
+	}
+
+	return
+}
+
+func HashProto(
+	input map[string]interface{},
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Hash, error) {
+	content := make(map[string]*anypb.Any, len(input))
+
+	for k, v := range input {
+		r, err := DirectProto(
+			&component.Direct{
+				Arguments: []interface{}{v},
+			},
+			log,
+			internal,
+			ctx,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		content[k] = r.Arguments[0]
+	}
+
+	return &vagrant_plugin_sdk.Args_Hash{
+		Fields: content,
+	}, nil
+}
+
 func NamedCapability(
 	input *vagrant_plugin_sdk.Args_NamedCapability,
 ) *component.NamedCapability {
@@ -350,10 +461,10 @@ func Direct(
 	internal *pluginargs.Internal,
 	ctx context.Context,
 ) (*component.Direct, error) {
-	args := make([]interface{}, len(input.List))
+	args := make([]interface{}, len(input.Arguments))
 
 	for i := 0; i < len(args); i++ {
-		v := input.List[i]
+		v := input.Arguments[i]
 		// List item are Any values so start with decoding
 		_, val, err := dynamic.DecodeAny(v)
 		if err != nil {
@@ -424,7 +535,7 @@ func DirectProto(
 	}
 
 	return &vagrant_plugin_sdk.Args_Direct{
-		List: list,
+		Arguments: list,
 	}, nil
 }
 
@@ -886,15 +997,11 @@ func StateBagProto(
 		return ch.(*vagrant_plugin_sdk.Args_StateBag), nil
 	}
 
-	log.Warn("failed to locate cached statebag", "cid", cid)
-
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
 		BasePlugin: basePlugin(bag, internal),
 		Impl:       bag,
 	}
-
-	log.Warn("wrapping statebag to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(bag, p, internal)
 	if err != nil {
@@ -906,7 +1013,6 @@ func StateBagProto(
 		Network:  ep.Network(),
 		Target:   ep.String()}
 
-	log.Warn("registered statebag into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
 
 	return proto, nil
@@ -1085,6 +1191,16 @@ func ProjectProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Project, error) {
+	cid, err := p.ResourceId()
+	if err != nil {
+		log.Warn("failed to get resource ID from project", "error", err)
+		cid = fmt.Sprintf("%p", p)
+	}
+
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_Project), nil
+	}
+
 	pp := &plugincore.ProjectPlugin{
 		BasePlugin: basePlugin(p, internal),
 		Impl:       p,
@@ -1095,11 +1211,14 @@ func ProjectProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Project{
+	proto := &vagrant_plugin_sdk.Args_Project{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
-	}, nil
+		Target:   ep.String()}
+
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
 }
 
 func Project(
@@ -1108,6 +1227,13 @@ func Project(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (core.Project, error) {
+	cid := input.Target
+	if cid != "" {
+		if ch := internal.Cache.Get(cid); ch != nil {
+			return ch.(core.Project), nil
+		}
+	}
+
 	p := &plugincore.ProjectPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
@@ -1116,6 +1242,8 @@ func Project(
 	if err != nil {
 		return nil, err
 	}
+
+	internal.Cache.Register(cid, client)
 
 	return client.(core.Project), nil
 }
@@ -1198,6 +1326,32 @@ func Provider(
 	}
 
 	return client.(core.Provider), nil
+}
+
+func PathProto(
+	p path.Path,
+) *vagrant_plugin_sdk.Args_Path {
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: p.String(),
+	}
+}
+
+func Path(
+	input *vagrant_plugin_sdk.Args_Path,
+) path.Path {
+	return path.NewPath(input.Path)
+}
+
+func MachineProject(
+	m core.Machine,
+) (core.Project, error) {
+	return m.Project()
+}
+
+func TargetProject(
+	t core.Target,
+) (core.Project, error) {
+	return t.Project()
 }
 
 func TargetProto(
