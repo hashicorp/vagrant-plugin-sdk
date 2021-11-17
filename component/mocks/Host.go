@@ -57,8 +57,8 @@ func (_m *Host) HostDetectFunc() interface{} {
 	return r0
 }
 
-// ParentsFunc provides a mock function with given fields:
-func (_m *Host) ParentsFunc() interface{} {
+// ParentFunc provides a mock function with given fields:
+func (_m *Host) ParentFunc() interface{} {
 	ret := _m.Called()
 
 	var r0 interface{}

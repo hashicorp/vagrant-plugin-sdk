@@ -18,6 +18,29 @@ type Project struct {
 	mock.Mock
 }
 
+// Boxes provides a mock function with given fields:
+func (_m *Project) Boxes() (core.BoxCollection, error) {
+	ret := _m.Called()
+
+	var r0 core.BoxCollection
+	if rf, ok := ret.Get(0).(func() core.BoxCollection); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.BoxCollection)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CWD provides a mock function with given fields:
 func (_m *Project) CWD() (string, error) {
 	ret := _m.Called()
@@ -143,6 +166,27 @@ func (_m *Project) Host() (core.Host, error) {
 
 // LocalData provides a mock function with given fields:
 func (_m *Project) LocalData() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ResourceId provides a mock function with given fields:
+func (_m *Project) ResourceId() (string, error) {
 	ret := _m.Called()
 
 	var r0 string

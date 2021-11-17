@@ -33,6 +33,27 @@ func (_m *Box) AutomaticUpdateCheckAllowed() (bool, error) {
 	return r0, r1
 }
 
+// Compare provides a mock function with given fields: box
+func (_m *Box) Compare(box core.Box) (int, error) {
+	ret := _m.Called(box)
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func(core.Box) int); ok {
+		r0 = rf(box)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(core.Box) error); ok {
+		r1 = rf(box)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Destroy provides a mock function with given fields:
 func (_m *Box) Destroy() error {
 	ret := _m.Called()
@@ -110,39 +131,16 @@ func (_m *Box) InUse(index core.TargetIndex) (bool, error) {
 	return r0, r1
 }
 
-// LoadMetadata provides a mock function with given fields:
-func (_m *Box) LoadMetadata() (core.BoxMetadata, error) {
-	ret := _m.Called()
-
-	var r0 core.BoxMetadata
-	if rf, ok := ret.Get(0).(func() core.BoxMetadata); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(core.BoxMetadata)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // Metadata provides a mock function with given fields:
-func (_m *Box) Metadata() (core.Metadata, error) {
+func (_m *Box) Metadata() (core.BoxMetadataMap, error) {
 	ret := _m.Called()
 
-	var r0 core.Metadata
-	if rf, ok := ret.Get(0).(func() core.Metadata); ok {
+	var r0 core.BoxMetadataMap
+	if rf, ok := ret.Get(0).(func() core.BoxMetadataMap); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(core.Metadata)
+			r0 = ret.Get(0).(core.BoxMetadataMap)
 		}
 	}
 
@@ -219,13 +217,13 @@ func (_m *Box) Provider() (string, error) {
 	return r0, r1
 }
 
-// Repackage provides a mock function with given fields:
-func (_m *Box) Repackage() error {
-	ret := _m.Called()
+// Repackage provides a mock function with given fields: path
+func (_m *Box) Repackage(path string) error {
+	ret := _m.Called(path)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func() error); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(path)
 	} else {
 		r0 = ret.Error(0)
 	}

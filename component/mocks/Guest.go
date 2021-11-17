@@ -57,8 +57,8 @@ func (_m *Guest) HasCapabilityFunc() interface{} {
 	return r0
 }
 
-// ParentsFunc provides a mock function with given fields:
-func (_m *Guest) ParentsFunc() interface{} {
+// ParentFunc provides a mock function with given fields:
+func (_m *Guest) ParentFunc() interface{} {
 	ret := _m.Called()
 
 	var r0 interface{}

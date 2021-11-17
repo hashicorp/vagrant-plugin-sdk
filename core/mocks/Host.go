@@ -94,17 +94,15 @@ func (_m *Host) HasCapability(name string) (bool, error) {
 	return r0, r1
 }
 
-// Parents provides a mock function with given fields:
-func (_m *Host) Parents() ([]string, error) {
+// Parent provides a mock function with given fields:
+func (_m *Host) Parent() (string, error) {
 	ret := _m.Called()
 
-	var r0 []string
-	if rf, ok := ret.Get(0).(func() []string); ok {
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
 		r0 = rf()
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
+		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
