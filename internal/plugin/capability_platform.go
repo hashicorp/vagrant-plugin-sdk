@@ -18,13 +18,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
-type capabilityParent interface {
-	GenerateContext(ctx context.Context) (context.Context, context.CancelFunc)
-	GetCapabilityClient() *capabilityClient
-	PluginHasCapabilityFunc() interface{}
-	PluginHasCapability(name string) (bool, error)
-}
-
 type capabilityPlatform interface {
 	HasCapability(ctx context.Context, in *vagrant_plugin_sdk.FuncSpec_Args, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_CheckResp, error)
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
@@ -34,50 +27,16 @@ type capabilityPlatform interface {
 	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
+type capabilityComponent interface {
+	HasCapabilityFunc() interface{}
+	HasCapability(name string) (bool, error)
+	CapabilityFunc(name string) interface{}
+	Capability(name string, args ...interface{}) (interface{}, error)
+}
+
 type capabilityClient struct {
 	*BaseClient
 	client capabilityPlatform
-}
-
-// Implements capabilityParent
-func (c *capabilityClient) GetCapabilityClient() *capabilityClient {
-	return c
-}
-
-// Implements capabilityParent
-// Checkes if the current plugin has a capability. Does NOT check up the
-// parent platform chain.
-func (c *capabilityClient) PluginHasCapability(name string) (bool, error) {
-	f := c.PluginHasCapabilityFunc()
-	n := &component.NamedCapability{Capability: name}
-	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(n),
-		argmapper.Typed(c.Ctx),
-	)
-	if err != nil {
-		return false, err
-	}
-
-	return raw.(bool), nil
-}
-
-// Implements capabilityParent
-func (c *capabilityClient) PluginHasCapabilityFunc() interface{} {
-	spec, err := c.client.HasCapabilitySpec(c.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-
-	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		new_ctx, _ := joincontext.Join(c.Ctx, ctx)
-		resp, err := c.client.HasCapability(new_ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return false, err
-		}
-		return resp.HasCapability, nil
-	}
-	return c.GenerateFunc(spec, cb)
 }
 
 func (c *capabilityClient) Seed(args ...interface{}) error {
@@ -128,9 +87,9 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 
 		if !resp.HasCapability && c.parentPlugin != nil {
 			// Check the parent plugin for the capability
-			parentPlugin := c.parentPlugin.(capabilityParent)
-			new_ctx, _ := parentPlugin.GenerateContext(ctx)
-			f := parentPlugin.PluginHasCapabilityFunc()
+			parentPlugin := c.parentPlugin.(capabilityComponent)
+			new_ctx, _ := joincontext.Join(ctx, c.Ctx)
+			f := parentPlugin.HasCapabilityFunc()
 			parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
 			for _, a := range args {
 				parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
@@ -138,6 +97,7 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 			raw, err := dynamic.CallFunc(f, (*bool)(nil), c.Mappers, parentRequestArgs...)
 			return raw.(bool), err
 		}
+
 		return resp.HasCapability, nil
 	}
 	return c.GenerateFunc(spec, cb)
@@ -158,9 +118,10 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
-	if ok, _ := c.PluginHasCapability(name); !ok && c.parentPlugin != nil {
-		parentPlugin := c.parentPlugin.(capabilityParent).GetCapabilityClient()
-		return parentPlugin.CapabilityFunc(name)
+	if c.parentPlugin != nil {
+		if ok, _ := c.parentPlugin.(capabilityComponent).HasCapability(name); ok {
+			return c.parentPlugin.(capabilityComponent).CapabilityFunc(name)
+		}
 	}
 	spec, err := c.client.CapabilitySpec(c.Ctx,
 		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
@@ -360,7 +321,7 @@ func (s *capabilityServer) Seed(
 	args *vagrant_plugin_sdk.Args_Direct,
 ) (*emptypb.Empty, error) {
 	if !s.IsWrapped() {
-		s.seeds = args.List
+		s.seeds = args.Arguments
 		return &emptypb.Empty{}, nil
 	}
 
@@ -391,7 +352,7 @@ func (s *capabilityServer) Seeds(
 ) (*vagrant_plugin_sdk.Args_Direct, error) {
 	if !s.IsWrapped() {
 		return &vagrant_plugin_sdk.Args_Direct{
-			List: s.seeds,
+			Arguments: s.seeds,
 		}, nil
 	}
 
