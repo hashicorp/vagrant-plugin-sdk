@@ -1280,11 +1280,11 @@ message Box {
   }
 
   message HasUpdateResponse {
-    bool hasUpdate = 1;
+    bool has_update = 1;
   }
 
   message InUseResponse {
-    bool inUse = 1;
+    bool in_use = 1;
   }
 
   message MetadataUrlResponse {
