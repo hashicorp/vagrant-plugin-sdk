@@ -8,15 +8,21 @@ recommend that the developers leverage the [Vagrant SDK](https://github.com/hash
 
 ## Generating protos
 
-To generate go protos run
+All Go & Ruby protos are wired into `go-generate`. To generate them you'll need a few binaries on your path:
 
+ * `protoc` - installation instructions on the [gRPC Docs](https://grpc.io/docs/protoc-installation/)
+ * `grpc_tools_ruby_protoc` - from the [`grpc-tools` gem](https://rubygems.org/gems/grpc-tools/versions/1.41.1), which bundles that binary prebuilt
+ * `stringer` - from the [go tools pkg](https://pkg.go.dev/golang.org/x/tools/cmd/stringer)
+ * `mockery` - from the [go library hosted at vektra/mockery](https://github.com/vektra/mockery)
+
+You also need to ensure the output directory is present:
+ 
+```sh
+$ mkdir -p ruby-proto
 ```
+
+Once that's all set up you should be ready to roll:
+
+```sh
 $ go generate .
-```
-
-To generate ruby protos run
-(Remember to install gems `grpc-tools` and `grpc`)
-
-```
-$ sh -c "grpc_tools_ruby_protoc -I `go list -m -f \"{{.Dir}}\" github.com/mitchellh/protostructure` -I ./3rdparty/proto/api-common-protos -I proto --ruby_out=proto/gen/ --grpc_out=proto/gen/ ./proto/plugin.proto"
 ```
