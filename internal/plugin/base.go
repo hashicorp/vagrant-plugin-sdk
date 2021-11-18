@@ -163,6 +163,10 @@ func (b *BaseClient) SetParentPlugin(plugin interface{}) {
 	b.parentPlugin = plugin
 }
 
+func (b *BaseClient) GetParentPlugin() interface{} {
+	return b.parentPlugin
+}
+
 func (b *BaseClient) AppendMappers(mappers ...*argmapper.Func) {
 	b.Mappers = append(b.Mappers, mappers...)
 }

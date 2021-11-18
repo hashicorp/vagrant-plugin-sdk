@@ -59,6 +59,7 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.Logger.Info("list of mappers for plugin", "mappers", resp.Funcs)
 
 	// For each FuncSpec we turn that into a real mapper.Func which calls back
 	// into our client to make an RPC call to generate the proper type.
@@ -66,6 +67,10 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 	for _, spec := range resp.Funcs {
 		specCopy := spec
 
+		if len(specCopy.Result) < 1 {
+			c.Logger.Error("spec result is invalid length", "length", len(specCopy.Result))
+			continue
+		}
 		// We use a closure here to capture spec so that we can provide
 		// the correct result type. All we're doing is making our callback
 		// call the Map RPC call and return the result/error.

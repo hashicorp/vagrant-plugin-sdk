@@ -16,15 +16,15 @@ type Project interface {
 	Home() (path string, err error)
 	Host() (h Host, err error)
 	LocalData() (path string, err error)
-
-	VagrantfileName() (name string, err error)
-	VagrantfilePath() (p path.Path, err error)
-	UI() (ui terminal.UI, err error)
+	ResourceId() (string, error)
 	Target(name string) (t Target, err error)
 	TargetIds() (ids []string, err error)
 	TargetIndex() (index TargetIndex, err error)
 	TargetNames() (names []string, err error)
 	Tmp() (path string, err error)
+	UI() (ui terminal.UI, err error)
+	VagrantfileName() (name string, err error)
+	VagrantfilePath() (p path.Path, err error)
 
 	// actual workers
 	// Inspect() (printable string, err error)
