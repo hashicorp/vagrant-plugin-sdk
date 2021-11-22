@@ -125,6 +125,8 @@ var All = []interface{}{
 	StateProto,
 	StateBag,
 	StateBagProto,
+	SyncedFolder,
+	SyncedFolderProto,
 	Target,
 	TargetProto,
 	TargetIndex,
