@@ -127,7 +127,7 @@ func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder
 		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 		argmapper.Typed(folders),
-		argmapper.Typed(opts),
+		argmapper.Typed(argmapper.Typed(&component.Direct{Arguments: opts})),
 	)
 	return err
 }
@@ -153,7 +153,7 @@ func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folde
 		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
 		argmapper.Typed(folders),
-		argmapper.Typed(opts),
+		argmapper.Typed(argmapper.Typed(&component.Direct{Arguments: opts})),
 	)
 	return err
 }
@@ -178,7 +178,7 @@ func (c *syncedFolderClient) Cleanup(machine core.Machine, opts ...interface{}) 
 	_, err := c.CallDynamicFunc(f, false,
 		argmapper.Typed(c.Ctx),
 		argmapper.Typed(machine),
-		argmapper.Typed(opts),
+		argmapper.Typed(argmapper.Typed(&component.Direct{Arguments: opts})),
 	)
 	return err
 }
@@ -320,4 +320,5 @@ var (
 	_ vagrant_plugin_sdk.SyncedFolderServiceServer = (*syncedFolderServer)(nil)
 	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
 	_ core.SyncedFolder                            = (*syncedFolderClient)(nil)
+	_ capabilityComponent                          = (*syncedFolderClient)(nil)
 )
