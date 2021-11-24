@@ -193,6 +193,10 @@ message Args {
   message Hash {
     map<string, google.protobuf.Any> fields = 1;
   }
+
+  message PluginName {
+    string name = 1;
+  }
 }
 
 ///////
@@ -840,6 +844,8 @@ service SyncedFolderService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Seed(Args.Direct) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
+
+  rpc PluginName(google.protobuf.Empty) returns (Args.PluginName);
 }
 
 message SyncedFolder {

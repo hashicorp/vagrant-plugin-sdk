@@ -9,3 +9,7 @@
 // making porting plugins less time consuming.
 
 package core
+
+type PluginType interface {
+	PluginName() (string, error)
+}

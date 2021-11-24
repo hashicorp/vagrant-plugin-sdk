@@ -3630,6 +3630,7 @@ type SyncedFolderServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Direct, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Direct, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_PluginName, error)
 }
 
 type syncedFolderServiceClient struct {
@@ -3793,6 +3794,15 @@ func (c *syncedFolderServiceClient) Seeds(ctx context.Context, in *empty.Empty, 
 	return out, nil
 }
 
+func (c *syncedFolderServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_PluginName, error) {
+	out := new(Args_PluginName)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SyncedFolderServiceServer is the server API for SyncedFolderService service.
 // All implementations should embed UnimplementedSyncedFolderServiceServer
 // for forward compatibility
@@ -3814,6 +3824,7 @@ type SyncedFolderServiceServer interface {
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Direct) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Direct, error)
+	PluginName(context.Context, *empty.Empty) (*Args_PluginName, error)
 }
 
 // UnimplementedSyncedFolderServiceServer should be embedded to have forward compatible implementations.
@@ -3870,6 +3881,9 @@ func (UnimplementedSyncedFolderServiceServer) Seed(context.Context, *Args_Direct
 }
 func (UnimplementedSyncedFolderServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Direct, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedSyncedFolderServiceServer) PluginName(context.Context, *empty.Empty) (*Args_PluginName, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeSyncedFolderServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4189,6 +4203,24 @@ func _SyncedFolderService_Seeds_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncedFolderService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SyncedFolderService_ServiceDesc is the grpc.ServiceDesc for SyncedFolderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4263,6 +4295,10 @@ var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Seeds",
 			Handler:    _SyncedFolderService_Seeds_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _SyncedFolderService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

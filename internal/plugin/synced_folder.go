@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -61,6 +62,14 @@ type syncedFolderClient struct {
 	*BaseClient
 	*capabilityClient
 	client vagrant_plugin_sdk.SyncedFolderServiceClient
+}
+
+func (c *syncedFolderClient) PluginName() (string, error) {
+	resp, err := c.client.PluginName(c.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return "", err
+	}
+	return resp.Name, nil
 }
 
 func (c *syncedFolderClient) Config() (interface{}, error) {
@@ -192,6 +201,19 @@ type syncedFolderServer struct {
 	Impl component.SyncedFolder
 }
 
+func (s *syncedFolderServer) PluginName(
+	ctx context.Context,
+	empty *empty.Empty,
+) (*vagrant_plugin_sdk.Args_PluginName, error) {
+	name, err := s.Impl.(core.PluginType).PluginName()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Args_PluginName{
+		Name: name,
+	}, nil
+}
+
 func (s *syncedFolderServer) ConfigStruct(
 	ctx context.Context,
 	empty *empty.Empty,
@@ -321,4 +343,5 @@ var (
 	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
 	_ core.SyncedFolder                            = (*syncedFolderClient)(nil)
 	_ capabilityComponent                          = (*syncedFolderClient)(nil)
+	_ core.PluginType                              = (*syncedFolderClient)(nil)
 )
