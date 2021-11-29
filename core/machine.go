@@ -12,6 +12,11 @@ type MachineState struct {
 	LongDescription  string
 }
 
+type MachineSyncedFolder struct {
+	Plugin SyncedFolder
+	Folder *Folder
+}
+
 type Machine interface {
 	Target
 
@@ -24,6 +29,6 @@ type Machine interface {
 	Reload() (err error)
 	SetID(value string) (err error)
 	SetMachineState(state *MachineState) (err error)
-	SyncedFolders() (folders []SyncedFolder, err error)
+	SyncedFolders() (folders []*MachineSyncedFolder, err error)
 	UID() (userId string, err error)
 }

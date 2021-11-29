@@ -143,15 +143,22 @@ func (t *targetMachineClient) UID() (id string, err error) {
 	return
 }
 
-func (t *targetMachineClient) SyncedFolders() (folders []core.SyncedFolder, err error) {
+func (t *targetMachineClient) SyncedFolders() (folders []*core.MachineSyncedFolder, err error) {
 	sfResp, err := t.client.SyncedFolders(t.Ctx, &empty.Empty{})
-	folders = []core.SyncedFolder{}
+	folders = []*core.MachineSyncedFolder{}
 	for _, folder := range sfResp.SyncedFolders {
-		f, err := t.Map(folder, (*core.SyncedFolder)(nil), argmapper.Typed(t.Ctx))
+		fp, err := t.Map(folder.Plugin, (*core.SyncedFolder)(nil), argmapper.Typed(t.Ctx))
 		if err != nil {
 			return nil, err
 		}
-		folders = append(folders, f.(core.SyncedFolder))
+		f, err := t.Map(folder.Folder, (*core.Folder)(nil), argmapper.Typed(t.Ctx))
+		if err != nil {
+			return nil, err
+		}
+		folders = append(folders, &core.MachineSyncedFolder{
+			Plugin: fp.(core.SyncedFolder),
+			Folder: f.(*core.Folder),
+		})
 	}
 
 	return
@@ -223,13 +230,20 @@ func (t *targetMachineServer) SyncedFolders(
 		return nil, err
 	}
 
-	sf := []*vagrant_plugin_sdk.Args_SyncedFolder{}
+	sf := []*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_MachineSyncedFolder{}
 	for _, folder := range syncedFolders {
-		f, err := t.Map(folder, (**vagrant_plugin_sdk.Args_SyncedFolder)(nil), argmapper.Typed(ctx))
+		plg, err := t.Map(folder.Plugin, (**vagrant_plugin_sdk.Args_SyncedFolder)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
-		sf = append(sf, f.(*vagrant_plugin_sdk.Args_SyncedFolder))
+		f, err := t.Map(folder.Folder, (**vagrant_plugin_sdk.Vagrantfile_SyncedFolder)(nil), argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		sf = append(sf, &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_MachineSyncedFolder{
+			Plugin: plg.(*vagrant_plugin_sdk.Args_SyncedFolder),
+			Folder: f.(*vagrant_plugin_sdk.Vagrantfile_SyncedFolder),
+		})
 	}
 	resp = &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse{
 		SyncedFolders: sf,
