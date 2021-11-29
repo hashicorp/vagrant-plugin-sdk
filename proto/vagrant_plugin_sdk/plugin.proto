@@ -56,6 +56,10 @@ message Args {
   message Path {
     string path = 1;
   }
+  
+  message Folder {
+    map<string, google.protobuf.Any> folders = 1;
+  }
 
   message TerminalUI {
     uint32 stream_id = 1;
@@ -820,6 +824,28 @@ service SyncedFolderService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+
+  rpc Usable(FuncSpec.Args) returns (SyncedFolder.UsableResp);
+  rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Enable(FuncSpec.Args) returns (google.protobuf.Empty);
+  rpc EnableSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Disable(FuncSpec.Args) returns (google.protobuf.Empty);
+  rpc DisableSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Cleanup(FuncSpec.Args) returns (google.protobuf.Empty);
+  rpc CleanupSpec(google.protobuf.Empty) returns (FuncSpec);
+
+  rpc Capability(Platform.Capability.NamedRequest) returns (Platform.Capability.Resp);
+  rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
+  rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
+  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
+}
+
+message SyncedFolder {
+  message UsableResp {
+    bool usable = 1;
+  }
 }
 
 /** core services **/
@@ -985,7 +1011,11 @@ message Target {
       string user_id = 1;
     }
     message SyncedFoldersResponse {
-      repeated Args.SyncedFolder synced_folders = 1;
+      message MachineSyncedFolder {
+        Args.SyncedFolder plugin = 1;
+        Vagrantfile.SyncedFolder folder = 2;
+      }
+      repeated MachineSyncedFolder synced_folders = 1;
     }
   }
 }

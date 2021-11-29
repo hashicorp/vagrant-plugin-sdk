@@ -279,6 +279,10 @@ func (s *capabilityServer) Capability(
 		return nil, err
 	}
 
+	if v == nil {
+		return &vagrant_plugin_sdk.Platform_Capability_Resp{}, nil
+	}
+
 	var val interface{}
 	val, err = dynamic.MapToWellKnownProto(v)
 	if err != nil {

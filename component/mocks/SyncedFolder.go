@@ -8,3 +8,99 @@ import mock "github.com/stretchr/testify/mock"
 type SyncedFolder struct {
 	mock.Mock
 }
+
+// CapabilityFunc provides a mock function with given fields: capName
+func (_m *SyncedFolder) CapabilityFunc(capName string) interface{} {
+	ret := _m.Called(capName)
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(string) interface{}); ok {
+		r0 = rf(capName)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// CleanupFunc provides a mock function with given fields:
+func (_m *SyncedFolder) CleanupFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// DisableFunc provides a mock function with given fields:
+func (_m *SyncedFolder) DisableFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// EnableFunc provides a mock function with given fields:
+func (_m *SyncedFolder) EnableFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// HasCapabilityFunc provides a mock function with given fields:
+func (_m *SyncedFolder) HasCapabilityFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// UsableFunc provides a mock function with given fields:
+func (_m *SyncedFolder) UsableFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}

@@ -533,15 +533,15 @@ func (_m *Machine) State() (core.State, error) {
 }
 
 // SyncedFolders provides a mock function with given fields:
-func (_m *Machine) SyncedFolders() ([]core.SyncedFolder, error) {
+func (_m *Machine) SyncedFolders() ([]core.MachineSyncedFolder, error) {
 	ret := _m.Called()
 
-	var r0 []core.SyncedFolder
-	if rf, ok := ret.Get(0).(func() []core.SyncedFolder); ok {
+	var r0 []core.MachineSyncedFolder
+	if rf, ok := ret.Get(0).(func() []core.MachineSyncedFolder); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]core.SyncedFolder)
+			r0 = ret.Get(0).([]core.MachineSyncedFolder)
 		}
 	}
 
