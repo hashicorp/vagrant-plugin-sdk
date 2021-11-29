@@ -1,8 +1,9 @@
 package core
 
 type Folder struct {
-	Name    string
-	Options interface{}
+	Source      string
+	Destination string
+	Options     map[string]interface{} `mapstructure:",remain"`
 }
 
 type SyncedFolder interface {
