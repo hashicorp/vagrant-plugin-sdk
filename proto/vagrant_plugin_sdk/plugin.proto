@@ -1011,7 +1011,11 @@ message Target {
       string user_id = 1;
     }
     message SyncedFoldersResponse {
-      repeated Args.SyncedFolder synced_folders = 1;
+      message MachineSyncedFolder {
+        Args.SyncedFolder plugin = 1;
+        Vagrantfile.SyncedFolder folder = 2;
+      }
+      repeated MachineSyncedFolder synced_folders = 1;
     }
   }
 }

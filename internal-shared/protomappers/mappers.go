@@ -127,6 +127,8 @@ var All = []interface{}{
 	StateBagProto,
 	SyncedFolder,
 	SyncedFolderProto,
+	VagrantfileSyncedFolderToFolder,
+	FolderToVagrantfileSyncedFolder,
 	Target,
 	TargetProto,
 	TargetIndex,
@@ -1248,6 +1250,20 @@ func Project(
 	internal.Cache.Register(cid, client)
 
 	return client.(core.Project), nil
+}
+
+func VagrantfileSyncedFolderToFolder(
+	f *vagrant_plugin_sdk.Vagrantfile_SyncedFolder,
+) (*core.Folder, error) {
+	var result *core.Folder
+	return result, mapstructure.Decode(f, &result)
+}
+
+func FolderToVagrantfileSyncedFolder(
+	f *core.Folder,
+) (*vagrant_plugin_sdk.Vagrantfile_SyncedFolder, error) {
+	var result *vagrant_plugin_sdk.Vagrantfile_SyncedFolder
+	return result, mapstructure.Decode(f, &result)
 }
 
 func SyncedFolderProto(
