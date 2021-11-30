@@ -4276,6 +4276,7 @@ type BasisServiceClient interface {
 	DataDir(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_DataDir_Basis, error)
 	UI(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Host(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Host, error)
+	Plugins(ctx context.Context, in *Basis_PluginsRequest, opts ...grpc.CallOption) (*Basis_PluginsResponse, error)
 }
 
 type basisServiceClient struct {
@@ -4313,6 +4314,15 @@ func (c *basisServiceClient) Host(ctx context.Context, in *empty.Empty, opts ...
 	return out, nil
 }
 
+func (c *basisServiceClient) Plugins(ctx context.Context, in *Basis_PluginsRequest, opts ...grpc.CallOption) (*Basis_PluginsResponse, error) {
+	out := new(Basis_PluginsResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Plugins", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BasisServiceServer is the server API for BasisService service.
 // All implementations should embed UnimplementedBasisServiceServer
 // for forward compatibility
@@ -4320,6 +4330,7 @@ type BasisServiceServer interface {
 	DataDir(context.Context, *empty.Empty) (*Args_DataDir_Basis, error)
 	UI(context.Context, *empty.Empty) (*Args_TerminalUI, error)
 	Host(context.Context, *empty.Empty) (*Args_Host, error)
+	Plugins(context.Context, *Basis_PluginsRequest) (*Basis_PluginsResponse, error)
 }
 
 // UnimplementedBasisServiceServer should be embedded to have forward compatible implementations.
@@ -4334,6 +4345,9 @@ func (UnimplementedBasisServiceServer) UI(context.Context, *empty.Empty) (*Args_
 }
 func (UnimplementedBasisServiceServer) Host(context.Context, *empty.Empty) (*Args_Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
+}
+func (UnimplementedBasisServiceServer) Plugins(context.Context, *Basis_PluginsRequest) (*Basis_PluginsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Plugins not implemented")
 }
 
 // UnsafeBasisServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4401,6 +4415,24 @@ func _BasisService_Host_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BasisService_Plugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Basis_PluginsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).Plugins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/Plugins",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).Plugins(ctx, req.(*Basis_PluginsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BasisService_ServiceDesc is the grpc.ServiceDesc for BasisService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4419,6 +4451,10 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Host",
 			Handler:    _BasisService_Host_Handler,
+		},
+		{
+			MethodName: "Plugins",
+			Handler:    _BasisService_Plugins_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

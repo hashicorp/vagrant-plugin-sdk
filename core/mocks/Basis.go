@@ -76,6 +76,35 @@ func (_m *Basis) Host() (core.Host, error) {
 	return r0, r1
 }
 
+// Plugins provides a mock function with given fields: types
+func (_m *Basis) Plugins(types ...string) ([]*core.NamedPlugin, error) {
+	_va := make([]interface{}, len(types))
+	for _i := range types {
+		_va[_i] = types[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 []*core.NamedPlugin
+	if rf, ok := ret.Get(0).(func(...string) []*core.NamedPlugin); ok {
+		r0 = rf(types...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*core.NamedPlugin)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(...string) error); ok {
+		r1 = rf(types...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UI provides a mock function with given fields:
 func (_m *Basis) UI() (terminal.UI, error) {
 	ret := _m.Called()
