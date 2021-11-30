@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
@@ -126,7 +125,7 @@ func (p *basisClient) Plugins(types ...string) (h []*core.NamedPlugin, err error
 
 func (p *basisServer) DataDir(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Basis, err error) {
 	d, err := p.Impl.DataDir()
 	if err != nil {
@@ -143,7 +142,7 @@ func (p *basisServer) DataDir(
 
 func (p *basisServer) Host(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	d, err := p.Impl.Host()
 	if err != nil {
@@ -161,7 +160,7 @@ func (p *basisServer) Host(
 
 func (t *basisServer) UI(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
 	d, err := t.Impl.UI()
 	if err != nil {
