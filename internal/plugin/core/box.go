@@ -27,14 +27,14 @@ func (p *BoxPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &boxClient{
 		client:     vagrant_plugin_sdk.NewBoxServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 
 func (p *BoxPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterBoxServiceServer(s, &boxServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }

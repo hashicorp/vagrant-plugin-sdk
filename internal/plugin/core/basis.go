@@ -32,14 +32,14 @@ func (p *BasisPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &basisClient{
 		client:     vagrant_plugin_sdk.NewBasisServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 
 func (p *BasisPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterBasisServiceServer(s, &basisServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }

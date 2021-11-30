@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
@@ -12,7 +11,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
-	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -23,8 +21,8 @@ type capabilityPlatform interface {
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 	Capability(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_Resp, error)
 	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Direct, error)
-	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Direct, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Seeds, error)
+	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type capabilityComponent interface {
@@ -37,37 +35,6 @@ type capabilityComponent interface {
 type capabilityClient struct {
 	*BaseClient
 	client capabilityPlatform
-}
-
-func (c *capabilityClient) Seed(args ...interface{}) error {
-	cb := func(d *vagrant_plugin_sdk.Args_Direct) error {
-		_, err := c.client.Seed(c.Ctx, d)
-		return err
-	}
-
-	_, err := c.CallDynamicFunc(cb, false,
-		argmapper.Typed(c.Ctx),
-		argmapper.Typed(&component.Direct{Arguments: args}),
-	)
-
-	return err
-}
-
-func (c *capabilityClient) Seeds() ([]interface{}, error) {
-	cb := func() (*vagrant_plugin_sdk.Args_Direct, error) {
-		return c.client.Seeds(c.Ctx, &emptypb.Empty{})
-	}
-
-	r, err := c.CallDynamicFunc(cb,
-		(**component.Direct)(nil),
-		argmapper.Typed(c.Ctx),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r.(*component.Direct).Arguments, nil
 }
 
 func (c *capabilityClient) HasCapabilityFunc() interface{} {
@@ -208,7 +175,7 @@ func (c *capabilityClient) Capability(name string, args ...interface{}) (interfa
 	return c.CallDynamicFunc(f, false,
 		argmapper.Typed(&component.Direct{Arguments: args}),
 		argmapper.Typed(args...),
-		argmapper.Typed(ex...),
+		argmapper.Typed(ex),
 		argmapper.Typed(c.Ctx),
 	)
 }
@@ -217,7 +184,6 @@ type capabilityServer struct {
 	*BaseServer
 	CapabilityImpl component.CapabilityPlatform
 	typ            string
-	seeds          []*anypb.Any
 }
 
 func (s *capabilityServer) HasCapabilitySpec(
@@ -318,82 +284,6 @@ func (s *capabilityServer) Capability(
 	return &vagrant_plugin_sdk.Platform_Capability_Resp{
 		Result: result,
 	}, nil
-}
-
-func (s *capabilityServer) Seed(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.Args_Direct,
-) (*emptypb.Empty, error) {
-	if !s.IsWrapped() {
-		s.seeds = args.Arguments
-		return &emptypb.Empty{}, nil
-	}
-
-	v, err := dynamic.Map(args, (**component.Direct)(nil),
-		argmapper.Typed(ctx, s.Internal(), s.Logger),
-		argmapper.ConverterFunc(s.Mappers...),
-	)
-
-	if err != nil {
-		s.Logger.Error("failed to store seed values",
-			"error", err,
-		)
-
-		return nil, err
-	}
-
-	if seeder, ok := s.CapabilityImpl.(core.Seeder); ok {
-		err = seeder.Seed(v.(*component.Direct).Arguments...)
-		return &emptypb.Empty{}, err
-	}
-
-	return nil, fmt.Errorf("failed to properly seed plugin")
-}
-
-func (s *capabilityServer) Seeds(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Args_Direct, error) {
-	if !s.IsWrapped() {
-		return &vagrant_plugin_sdk.Args_Direct{
-			Arguments: s.seeds,
-		}, nil
-	}
-
-	var seeder core.Seeder
-	var ok bool
-
-	if seeder, ok = s.CapabilityImpl.(core.Seeder); !ok {
-		s.Logger.Error("plugin implementation does not support seeding")
-		return nil, fmt.Errorf("plugin is not a valid seeder")
-	}
-
-	vals, err := seeder.Seeds()
-	if err != nil {
-		s.Logger.Error("failed to fetch seed values",
-			"error", err,
-		)
-
-		return nil, err
-	}
-
-	r, err := dynamic.Map(
-		&component.Direct{Arguments: vals},
-		(**vagrant_plugin_sdk.Args_Direct)(nil),
-		argmapper.Typed(ctx, s.Internal(), s.Logger),
-		argmapper.ConverterFunc(s.Mappers...),
-	)
-
-	if err != nil {
-		s.Logger.Error("failed to convert seed values into proto message",
-			"values", vals,
-			"error", err,
-		)
-
-		return nil, err
-	}
-
-	return r.(*vagrant_plugin_sdk.Args_Direct), nil
 }
 
 var (

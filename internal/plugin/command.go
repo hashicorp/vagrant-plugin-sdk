@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/LK4D4/joincontext"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -29,7 +29,7 @@ func (p *CommandPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 	vagrant_plugin_sdk.RegisterCommandServiceServer(s,
 		&commandServer{
 			Impl:       p.Impl,
-			BaseServer: p.NewServer(broker),
+			BaseServer: p.NewServer(broker, p.Impl),
 		},
 	)
 	return nil
@@ -40,9 +40,10 @@ func (p *CommandPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
+	cl := vagrant_plugin_sdk.NewCommandServiceClient(c)
 	return &commandClient{
-		client:     vagrant_plugin_sdk.NewCommandServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		client:     cl,
+		BaseClient: p.NewClient(ctx, broker, cl),
 	}, nil
 }
 
@@ -66,7 +67,7 @@ func (c *commandClient) Documentation() (*docs.Documentation, error) {
 }
 
 func (c *commandClient) CommandInfoFunc() interface{} {
-	spec, err := c.client.CommandInfoSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.CommandInfoSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -135,12 +136,12 @@ type commandServer struct {
 	*BaseServer
 
 	Impl component.Command
-	vagrant_plugin_sdk.UnimplementedCommandServiceServer
+	vagrant_plugin_sdk.UnsafeCommandServiceServer
 }
 
 func (s *commandServer) ConfigStruct(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
@@ -148,20 +149,20 @@ func (s *commandServer) ConfigStruct(
 func (s *commandServer) Configure(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	return configure(s.Impl, req)
 }
 
 func (s *commandServer) Documentation(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
 
 func (s *commandServer) CommandInfoSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "command"); err != nil {
 		return nil, err
@@ -225,4 +226,5 @@ var (
 	_ vagrant_plugin_sdk.CommandServiceServer = (*commandServer)(nil)
 	_ component.Command                       = (*commandClient)(nil)
 	_ core.Command                            = (*commandClient)(nil)
+	_ core.Seeder                             = (*commandClient)(nil)
 )

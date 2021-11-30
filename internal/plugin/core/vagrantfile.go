@@ -28,7 +28,7 @@ func (p *VagrantfilePlugin) GRPCClient(
 ) (interface{}, error) {
 	return &vagrantfileClient{
 		client:     vagrant_plugin_sdk.NewVagrantfileServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 
@@ -38,7 +38,7 @@ func (p *VagrantfilePlugin) GRPCServer(
 ) error {
 	vagrant_plugin_sdk.RegisterVagrantfileServiceServer(s, &vagrantfileServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }

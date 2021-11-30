@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -26,7 +27,7 @@ type SyncedFolderPlugin struct {
 }
 
 func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	bs := p.NewServer(broker)
+	bs := p.NewServer(broker, p.Impl)
 	vagrant_plugin_sdk.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
 		Impl:       p.Impl,
 		BaseServer: bs,
@@ -44,8 +45,9 @@ func (p *SyncedFolderPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	bc := p.NewClient(ctx, broker)
 	client := vagrant_plugin_sdk.NewSyncedFolderServiceClient(c)
+	bc := p.NewClient(ctx, broker, client.(SeederClient))
+
 	return &syncedFolderClient{
 		BaseClient: bc,
 		client:     client,
@@ -190,11 +192,12 @@ type syncedFolderServer struct {
 	*capabilityServer
 
 	Impl component.SyncedFolder
+	vagrant_plugin_sdk.UnsafeSyncedFolderServiceServer
 }
 
 func (s *syncedFolderServer) ConfigStruct(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
@@ -202,13 +205,13 @@ func (s *syncedFolderServer) ConfigStruct(
 func (s *syncedFolderServer) Configure(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	return configure(s.Impl, req)
 }
 
 func (s *syncedFolderServer) Documentation(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
@@ -321,4 +324,5 @@ var (
 	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
 	_ core.SyncedFolder                            = (*syncedFolderClient)(nil)
 	_ capabilityComponent                          = (*syncedFolderClient)(nil)
+	_ core.Seeder                                  = (*syncedFolderClient)(nil)
 )

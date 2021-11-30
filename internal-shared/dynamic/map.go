@@ -3,6 +3,7 @@ package dynamic
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/protobuf/proto"
@@ -42,7 +43,7 @@ func Map(
 		return nil
 	}
 
-	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb)
+	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb, argmapper.FuncName("Map -> "+strings.TrimPrefix(fmt.Sprintf("%T", expectedType), "*")))
 	if err != nil {
 		return nil, err
 	}

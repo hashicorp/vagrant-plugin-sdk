@@ -29,7 +29,7 @@ type MapperPlugin struct {
 
 func (p *MapperPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterMapperServer(s, &mapperServer{
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }
@@ -41,7 +41,7 @@ func (p *MapperPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &MapperClient{
 		client:     vagrant_plugin_sdk.NewMapperClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 

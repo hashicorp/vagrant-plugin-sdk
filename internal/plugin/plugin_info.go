@@ -34,7 +34,7 @@ type PluginInfoPlugin struct {
 func (p *PluginInfoPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterPluginInfoServiceServer(s, &pluginInfoServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }
@@ -46,7 +46,7 @@ func (p *PluginInfoPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &pluginInfoClient{
 		client:     vagrant_plugin_sdk.NewPluginInfoServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 

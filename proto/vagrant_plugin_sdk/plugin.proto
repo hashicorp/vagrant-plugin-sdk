@@ -19,6 +19,11 @@ import "protostructure.proto";
 // dynamic functions. The exact list of available argument types is available
 // on the Go interface docs.
 message Args {
+  message Seeds {
+    repeated google.protobuf.Any typed = 1;
+    map<string, google.protobuf.Any> named = 2;
+  }
+
   message DataDir {
     message Basis {
       string config_dir = 1;
@@ -56,7 +61,7 @@ message Args {
   message Path {
     string path = 1;
   }
-  
+
   message Folder {
     map<string, google.protobuf.Any> folders = 1;
   }
@@ -593,6 +598,8 @@ service ProviderService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 message Provider {
@@ -619,6 +626,8 @@ service ProvisionerService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 service CommandService {
@@ -629,6 +638,8 @@ service CommandService {
   rpc Execute(Command.ExecuteReq) returns (Command.ExecuteResp);
   rpc CommandInfoSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc CommandInfo(FuncSpec.Args) returns (Command.CommandInfoResp);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 message Command {
@@ -724,6 +735,8 @@ service CommunicatorService {
 
   rpc ResetSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Reset(FuncSpec.Args) returns (Communicator.ResetResp);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 message Communicator {
@@ -777,8 +790,8 @@ service HostService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parent(FuncSpec.Args) returns (Platform.ParentResp);
   rpc ParentSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
-  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 service GuestService {
@@ -795,8 +808,8 @@ service GuestService {
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Parent(FuncSpec.Args) returns (Platform.ParentResp);
   rpc ParentSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
-  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 message Platform {
@@ -824,7 +837,6 @@ service SyncedFolderService {
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
   rpc Usable(FuncSpec.Args) returns (SyncedFolder.UsableResp);
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Enable(FuncSpec.Args) returns (google.protobuf.Empty);
@@ -838,8 +850,8 @@ service SyncedFolderService {
   rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
   rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
   rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Seed(Args.Direct) returns (google.protobuf.Empty);
-  rpc Seeds(google.protobuf.Empty) returns (Args.Direct);
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 message SyncedFolder {
