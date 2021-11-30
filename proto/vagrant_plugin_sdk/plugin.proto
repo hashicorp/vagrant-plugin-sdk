@@ -893,6 +893,23 @@ service BasisService {
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
+  rpc Plugins(Basis.PluginsRequest) returns (Basis.PluginsResponse);
+}
+
+message Basis {
+  message PluginsRequest {
+    repeated string types = 1;
+  }
+
+  message PluginsResponse {
+    repeated Plugin plugins = 1;
+  }
+
+  message Plugin {
+    string name = 1;
+    string type = 2;
+    google.protobuf.Any plugin = 3;
+  }
 }
 
 /********************************************************************
