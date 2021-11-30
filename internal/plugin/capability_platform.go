@@ -172,7 +172,7 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 			// map it, log the mapping failure but then just return
 			// the decoded value
 			result, err = dynamic.BlindMap(val, c.Mappers,
-				argmapper.Typed(c.internal()),
+				argmapper.Typed(c.Internal()),
 				argmapper.Typed(c.Ctx),
 				argmapper.Typed(c.Logger),
 			)
@@ -287,7 +287,7 @@ func (s *capabilityServer) Capability(
 	val, err = dynamic.MapToWellKnownProto(v)
 	if err != nil {
 		val, err = dynamic.UnknownMap(v, (*proto.Message)(nil), s.Mappers,
-			argmapper.Typed(s.internal()),
+			argmapper.Typed(s.Internal()),
 			argmapper.Typed(ctx),
 			argmapper.Typed(s.Logger),
 		)
@@ -330,7 +330,7 @@ func (s *capabilityServer) Seed(
 	}
 
 	v, err := dynamic.Map(args, (**component.Direct)(nil),
-		argmapper.Typed(ctx, s.internal(), s.Logger),
+		argmapper.Typed(ctx, s.Internal(), s.Logger),
 		argmapper.ConverterFunc(s.Mappers...),
 	)
 
@@ -380,7 +380,7 @@ func (s *capabilityServer) Seeds(
 	r, err := dynamic.Map(
 		&component.Direct{Arguments: vals},
 		(**vagrant_plugin_sdk.Args_Direct)(nil),
-		argmapper.Typed(ctx, s.internal(), s.Logger),
+		argmapper.Typed(ctx, s.Internal(), s.Logger),
 		argmapper.ConverterFunc(s.Mappers...),
 	)
 

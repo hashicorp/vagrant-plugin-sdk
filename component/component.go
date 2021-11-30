@@ -54,6 +54,16 @@ var TypeMap = map[Type]interface{}{
 	SyncedFolderType:  (*SyncedFolder)(nil),
 }
 
+var StringTypeMap = map[string]interface{}{
+	"command":       (*Command)(nil),
+	"communicator":  (*Communicator)(nil),
+	"guest":         (*Guest)(nil),
+	"host":          (*Host)(nil),
+	"provider":      (*Provider)(nil),
+	"provisioner":   (*Provisioner)(nil),
+	"synced_folder": (*SyncedFolder)(nil),
+}
+
 type PluginInfo interface {
 	ComponentTypes() []Type
 	Name() string
