@@ -343,6 +343,9 @@ func ValueToStruct(
 
 // Custom mappers
 
+// NOTE: This does not convert the proto back to the Seeds fully. It
+// will only convert the base type, but the contents will remain as
+// any values to prevent large numbers of grpc service/client setups
 func Seeds(
 	input *vagrant_plugin_sdk.Args_Seeds,
 	log hclog.Logger,
@@ -355,6 +358,7 @@ func Seeds(
 		t[i] = v
 	}
 	result.Typed = t
+
 	for k, v := range input.Named {
 		result.Named[k] = v
 	}
@@ -363,6 +367,36 @@ func Seeds(
 }
 
 func SeedsProto(
+	input *core.Seeds,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Seeds, error) {
+	result := &vagrant_plugin_sdk.Args_Seeds{
+		Named: make(map[string]*anypb.Any),
+		Typed: make([]*anypb.Any, len(input.Typed)),
+	}
+
+	for i, v := range input.Typed {
+		a, ok := v.(*anypb.Any)
+		if !ok {
+			return SeedsProtoFull(input, log, internal, ctx)
+		}
+		result.Typed[i] = a
+	}
+
+	for k, v := range input.Named {
+		a, ok := v.(*anypb.Any)
+		if !ok {
+			return SeedsProtoFull(input, log, internal, ctx)
+		}
+		result.Named[k] = a
+	}
+
+	return result, nil
+}
+
+func SeedsProtoFull(
 	input *core.Seeds,
 	log hclog.Logger,
 	internal *pluginargs.Internal,
@@ -404,9 +438,7 @@ func SeedsProto(
 
 	i = 0
 	for k, _ := range input.Named {
-		if t.Arguments[i] != nil {
-			result.Named[k] = t.Arguments[i]
-		}
+		result.Named[k] = t.Arguments[i]
 	}
 
 	return result, nil
@@ -605,8 +637,10 @@ func DirectProto(
 		}
 
 		if v == nil {
-			list[i] = nil
-		} else if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
+			v = &vagrant_plugin_sdk.Args_Null{}
+		}
+
+		if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {
 			return nil, err
 		}
 	}
