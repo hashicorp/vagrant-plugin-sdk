@@ -79,16 +79,6 @@ func FindType(name string) (Type, error) {
 	return maxType, fmt.Errorf("failed to find component for name '%s'", name)
 }
 
-var StringTypeMap = map[string]interface{}{
-	"command":       (*Command)(nil),
-	"communicator":  (*Communicator)(nil),
-	"guest":         (*Guest)(nil),
-	"host":          (*Host)(nil),
-	"provider":      (*Provider)(nil),
-	"provisioner":   (*Provisioner)(nil),
-	"synced_folder": (*SyncedFolder)(nil),
-}
-
 type PluginInfo interface {
 	ComponentTypes() []Type
 	Name() string
