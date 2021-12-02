@@ -11,6 +11,9 @@
 package component
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/DavidGamba/go-getoptions/option"
 )
 
@@ -52,6 +55,28 @@ var TypeMap = map[Type]interface{}{
 	ProviderType:      (*Provider)(nil),
 	ProvisionerType:   (*Provisioner)(nil),
 	SyncedFolderType:  (*SyncedFolder)(nil),
+}
+
+func FindComponent(name string) (interface{}, error) {
+	for k, v := range TypeMap {
+		if k.String() == name ||
+			strings.ToLower(k.String()) == name ||
+			strings.ToLower(k.String()) == strings.ReplaceAll(name, "_", "") {
+			return v, nil
+		}
+	}
+	return nil, fmt.Errorf("failed to find component for name '%s'", name)
+}
+
+func FindType(name string) (Type, error) {
+	for k, _ := range TypeMap {
+		if k.String() == name ||
+			strings.ToLower(k.String()) == name ||
+			strings.ToLower(k.String()) == strings.ReplaceAll(name, "_", "") {
+			return k, nil
+		}
+	}
+	return maxType, fmt.Errorf("failed to find component for name '%s'", name)
 }
 
 var StringTypeMap = map[string]interface{}{
