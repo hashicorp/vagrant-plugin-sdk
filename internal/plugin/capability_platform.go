@@ -21,8 +21,6 @@ type capabilityPlatform interface {
 	HasCapabilitySpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 	Capability(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Platform_Capability_Resp, error)
 	CapabilitySpec(ctx context.Context, in *vagrant_plugin_sdk.Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Seeds, error)
-	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type capabilityComponent interface {
@@ -55,7 +53,6 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 		if !resp.HasCapability && c.parentPlugin != nil {
 			// Check the parent plugin for the capability
 			parentPlugin := c.parentPlugin.(capabilityComponent)
-			new_ctx, _ := joincontext.Join(ctx, c.Ctx)
 			f := parentPlugin.HasCapabilityFunc()
 			parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
 			for _, a := range args {
@@ -81,15 +78,33 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 		return false, err
 	}
 
+	c.Logger.Info("check for capability complete",
+		"capability_name", name,
+		"result", raw,
+	)
 	return raw.(bool), nil
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 	if c.parentPlugin != nil {
-		if ok, _ := c.parentPlugin.(capabilityComponent).HasCapability(name); ok {
+		ok, err := c.parentPlugin.(capabilityComponent).HasCapability(name)
+
+		if err != nil {
+			c.Logger.Error("parent capability check failed",
+				"error", err,
+				"capability_name", name,
+			)
+		}
+
+		if ok {
+			c.Logger.Trace("capability detected on parent plugin",
+				"capability_name", name,
+			)
+
 			return c.parentPlugin.(capabilityComponent).CapabilityFunc(name)
 		}
 	}
+
 	spec, err := c.client.CapabilitySpec(c.Ctx,
 		&vagrant_plugin_sdk.Platform_Capability_NamedRequest{Name: name})
 	if err != nil {
@@ -162,20 +177,9 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 func (c *capabilityClient) Capability(name string, args ...interface{}) (interface{}, error) {
 	f := c.CapabilityFunc(name)
 
-	ex, err := c.Seeds()
-	if err != nil {
-		c.Logger.Error("failed to fetch seed values for capability call",
-			"name", name,
-			"error", err,
-		)
-
-		return nil, err
-	}
-
 	return c.CallDynamicFunc(f, false,
 		argmapper.Typed(&component.Direct{Arguments: args}),
 		argmapper.Typed(args...),
-		argmapper.Typed(ex),
 		argmapper.Typed(c.Ctx),
 	)
 }
