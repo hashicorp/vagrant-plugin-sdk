@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -316,20 +317,40 @@ func (b *BaseClient) CallDynamicFunc(
 		}
 
 		for _, v := range s.Typed {
-			b.Logger.Info("seeding typed value into dynamic call",
-				"value", v,
-			)
+			if a, ok := v.(*anypb.Any); ok {
+				b.Logger.Info("seeding typed value into dynamic call",
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
 
-			callArgs = append(callArgs, argmapper.Typed(v))
+				callArgs = append(callArgs, argmapper.TypedSubtype(a, a.TypeUrl))
+			} else {
+				b.Logger.Info("seeding typed value into dynamic call",
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
+
+				callArgs = append(callArgs, argmapper.Typed(v))
+			}
 		}
 
 		for k, v := range s.Named {
-			b.Logger.Info("seeding named value into dynamic call",
-				"name", k,
-				"value", v,
-			)
+			if a, ok := v.(*anypb.Any); ok {
+				b.Logger.Info("seeding named value into dynamic call",
+					"name", k,
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
 
-			callArgs = append(callArgs, argmapper.Named(k, v))
+				callArgs = append(callArgs, argmapper.NamedSubtype(k, a, a.TypeUrl))
+			} else {
+				b.Logger.Info("seeding named value into dynamic call",
+					"name", k,
+					"type", hclog.Fmt("%T", v),
+				)
+
+				callArgs = append(callArgs, argmapper.Named(k, v))
+			}
 		}
 	}
 
