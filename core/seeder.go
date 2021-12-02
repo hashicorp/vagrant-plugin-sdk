@@ -12,8 +12,10 @@ type Seeds struct {
 	Typed []interface{}
 }
 
-func (s *Seeds) AddTyped(v interface{}) {
-	s.Typed = append(s.Typed, v)
+func (s *Seeds) AddTyped(v ...interface{}) {
+	for _, t := range v {
+		s.Typed = append(s.Typed, t)
+	}
 }
 
 func (s *Seeds) AddNamed(n string, v interface{}) {
