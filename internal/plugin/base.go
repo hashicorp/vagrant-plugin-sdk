@@ -443,7 +443,7 @@ func (b *BaseServer) Seed(
 	}
 
 	v, err := dynamic.Map(seeds, (**core.Seeds)(nil),
-		argmapper.Typed(ctx, b.internal(), b.Logger),
+		argmapper.Typed(ctx, b.Internal(), b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 	)
 
@@ -498,7 +498,7 @@ func (b *BaseServer) Seeds(
 
 	r, err := dynamic.Map(s,
 		(**vagrant_plugin_sdk.Args_Seeds)(nil),
-		argmapper.Typed(ctx, b.internal(), b.Logger),
+		argmapper.Typed(ctx, b.Internal(), b.Logger),
 		argmapper.ConverterFunc(b.Mappers...),
 	)
 
