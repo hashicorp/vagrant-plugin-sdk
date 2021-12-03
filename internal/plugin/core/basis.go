@@ -109,7 +109,10 @@ func (p *basisClient) Plugins(types ...string) (h []*core.NamedPlugin, err error
 
 	result := []*core.NamedPlugin{}
 	for _, plugin := range r.Plugins {
-		typ := component.StringTypeMap[plugin.Type]
+		typ, err := component.FindType(plugin.Type)
+		if err != nil {
+			return nil, err
+		}
 		plg, err := p.Map(r, typ, argmapper.Typed(p.Ctx))
 		if err != nil {
 			return nil, err
