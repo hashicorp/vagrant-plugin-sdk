@@ -26,7 +26,7 @@ type GuestPlugin struct {
 }
 
 func (p *GuestPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	bs := p.NewServer(broker)
+	bs := p.NewServer(broker, p.Impl)
 	vagrant_plugin_sdk.RegisterGuestServiceServer(s, &guestServer{
 		Impl:       p.Impl,
 		BaseServer: bs,
@@ -44,8 +44,8 @@ func (p *GuestPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
-	bc := p.NewClient(ctx, broker)
 	client := vagrant_plugin_sdk.NewGuestServiceClient(c)
+	bc := p.NewClient(ctx, broker, client.(SeederClient))
 	return &guestClient{
 		client:     client,
 		BaseClient: bc,
@@ -226,5 +226,6 @@ var (
 	_ vagrant_plugin_sdk.GuestServiceServer = (*guestServer)(nil)
 	_ component.Guest                       = (*guestClient)(nil)
 	_ core.Guest                            = (*guestClient)(nil)
+	_ core.Seeder                           = (*guestClient)(nil)
 	_ capabilityComponent                   = (*guestClient)(nil)
 )

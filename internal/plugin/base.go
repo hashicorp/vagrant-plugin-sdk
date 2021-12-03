@@ -2,16 +2,21 @@ package plugin
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
@@ -24,6 +29,11 @@ func isImplemented(t interface{}, name string) error {
 		return status.Errorf(codes.Unimplemented, "plugin does not implement: "+name)
 	}
 	return nil
+}
+
+type SeederClient interface {
+	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Seeds, error)
 }
 
 // BasePlugin contains the information which is common among
@@ -47,9 +57,11 @@ func (b *BasePlugin) Clone() *BasePlugin {
 func (b *BasePlugin) NewClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
+	s SeederClient,
 ) *BaseClient {
 	return &BaseClient{
-		Ctx: ctx,
+		Ctx:    ctx,
+		Seeder: s,
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
@@ -63,8 +75,11 @@ func (b *BasePlugin) NewClient(
 
 func (b *BasePlugin) NewServer(
 	broker *plugin.GRPCBroker,
+	impl interface{},
 ) *BaseServer {
 	return &BaseServer{
+		impl:       impl,
+		seedValues: &vagrant_plugin_sdk.Args_Seeds{},
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
@@ -107,6 +122,7 @@ type BaseClient struct {
 	*Base
 
 	Ctx          context.Context
+	Seeder       SeederClient
 	target       net.Addr
 	parentPlugin interface{}
 }
@@ -114,6 +130,9 @@ type BaseClient struct {
 // Base server type
 type BaseServer struct {
 	*Base
+
+	impl       interface{}
+	seedValues *vagrant_plugin_sdk.Args_Seeds
 }
 
 // internal returns a new pluginargs.Internal that can be used with
@@ -156,6 +175,58 @@ func (b *Base) Map(
 
 func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
+}
+
+type SeedClient interface {
+	Seeds(ctx context.Context, in *emptypb.Empty) (*vagrant_plugin_sdk.Args_Seeds, error)
+	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds) (*emptypb.Empty, error)
+}
+
+func (b *BaseClient) Seed(args *core.Seeds) error {
+	if b.Seeder == nil {
+		b.Logger.Trace("plugin does not implement seeder interface")
+		return nil
+	}
+
+	cb := func(d *vagrant_plugin_sdk.Args_Seeds) error {
+		_, err := b.Seeder.Seed(b.Ctx, d)
+		return err
+	}
+
+	_, err := b.CallDynamicFunc(cb, false,
+		argmapper.Typed(b.Ctx),
+		argmapper.Typed(args),
+	)
+
+	return err
+}
+
+func (b *BaseClient) Seeds() (*core.Seeds, error) {
+	if b.Seeder == nil {
+		b.Logger.Trace("plugin does not implement seeder interface")
+		return core.NewSeeds(), nil
+	}
+
+	r, err := b.Seeder.Seeds(b.Ctx, &emptypb.Empty{})
+	if err != nil {
+		b.Logger.Error("failed to get seed values",
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	s, err := b.Map(r, (**core.Seeds)(nil), argmapper.Typed(b.Ctx))
+	if err != nil {
+		b.Logger.Error("failed to convert seeds value response to proper type",
+			"value", r,
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	return s.(*core.Seeds), nil
 }
 
 // Sets the parent plugins
@@ -234,6 +305,55 @@ func (b *BaseClient) CallDynamicFunc(
 	// TODO(spox): We need to determine how to properly cleanup when connections
 	//             may still exist after the dynamic call is complete
 	//	defer internal.Cleanup.Close()
+
+	if b.Seeder != nil {
+		s, err := b.Seeds()
+		if err != nil {
+			b.Logger.Error("failed to fetch dynamic seed values",
+				"error", err,
+			)
+
+			return nil, err
+		}
+
+		for _, v := range s.Typed {
+			if a, ok := v.(*anypb.Any); ok {
+				b.Logger.Info("seeding typed value into dynamic call",
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
+
+				callArgs = append(callArgs, argmapper.TypedSubtype(a, a.TypeUrl))
+			} else {
+				b.Logger.Info("seeding typed value into dynamic call",
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
+
+				callArgs = append(callArgs, argmapper.Typed(v))
+			}
+		}
+
+		for k, v := range s.Named {
+			if a, ok := v.(*anypb.Any); ok {
+				b.Logger.Info("seeding named value into dynamic call",
+					"name", k,
+					"type", hclog.Fmt("%T", v),
+					"subtype", a.TypeUrl,
+				)
+
+				callArgs = append(callArgs, argmapper.NamedSubtype(k, a, a.TypeUrl))
+			} else {
+				b.Logger.Info("seeding named value into dynamic call",
+					"name", k,
+					"type", hclog.Fmt("%T", v),
+				)
+
+				callArgs = append(callArgs, argmapper.Named(k, v))
+			}
+		}
+	}
+
 	callArgs = append(callArgs,
 		argmapper.Typed(internal),
 		argmapper.Typed(b.Logger),
@@ -297,4 +417,99 @@ func (b *BaseServer) GenerateSpec(
 		return f, err
 	}
 	return f, err
+}
+
+func (b *BaseServer) Seed(
+	ctx context.Context,
+	seeds *vagrant_plugin_sdk.Args_Seeds,
+) (*emptypb.Empty, error) {
+	if b.impl == nil {
+		b.Logger.Trace("plugin does not implement seeder interface")
+		return &emptypb.Empty{}, nil
+	}
+
+	if !b.IsWrapped() {
+		b.seedValues = seeds
+		return &emptypb.Empty{}, nil
+	}
+
+	seeder, ok := b.impl.(core.Seeder)
+	if !ok {
+		b.Logger.Error("plugin implementation does not provide core.Seeder",
+			"impl", b.impl,
+		)
+
+		return nil, fmt.Errorf("implementation does not support value seeds")
+	}
+
+	v, err := dynamic.Map(seeds, (**core.Seeds)(nil),
+		argmapper.Typed(ctx, b.Internal(), b.Logger),
+		argmapper.ConverterFunc(b.Mappers...),
+	)
+
+	if err != nil {
+		b.Logger.Error("failed to store seed values",
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	err = seeder.Seed(v.(*core.Seeds))
+
+	if err != nil {
+		b.Logger.Error("failed to store seed values",
+			"error", err,
+		)
+	}
+	return &emptypb.Empty{}, err
+}
+
+func (b *BaseServer) Seeds(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Args_Seeds, error) {
+	if b.impl == nil {
+		b.Logger.Trace("plugin does not implement seeder interface")
+		return &vagrant_plugin_sdk.Args_Seeds{}, nil
+	}
+
+	if !b.IsWrapped() {
+		return b.seedValues, nil
+	}
+
+	seeder, ok := b.impl.(core.Seeder)
+	if !ok {
+		b.Logger.Error("plugin implementation does not provide core.Seeder",
+			"impl", b.impl,
+		)
+
+		return nil, fmt.Errorf("implementation does not support value seeds")
+	}
+
+	s, err := seeder.Seeds()
+	if err != nil {
+		b.Logger.Error("failed to fetch seed values",
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	r, err := dynamic.Map(s,
+		(**vagrant_plugin_sdk.Args_Seeds)(nil),
+		argmapper.Typed(ctx, b.Internal(), b.Logger),
+		argmapper.ConverterFunc(b.Mappers...),
+	)
+
+	if err != nil {
+		b.Logger.Error("failed to convert seed values into proto message",
+			"values", s,
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	return r.(*vagrant_plugin_sdk.Args_Seeds), nil
 }

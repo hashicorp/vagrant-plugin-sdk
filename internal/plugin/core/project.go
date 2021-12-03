@@ -33,7 +33,7 @@ func (p *ProjectPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &projectClient{
 		client:     vagrant_plugin_sdk.NewProjectServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 
@@ -43,7 +43,7 @@ func (p *ProjectPlugin) GRPCServer(
 ) error {
 	vagrant_plugin_sdk.RegisterProjectServiceServer(s, &projectServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }

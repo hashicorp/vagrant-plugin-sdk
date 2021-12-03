@@ -22,7 +22,7 @@ type StateBagPlugin struct {
 func (p *StateBagPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterStateBagServiceServer(s, &stateBagServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, nil),
 	})
 	return nil
 }
@@ -34,7 +34,7 @@ func (p *StateBagPlugin) GRPCClient(
 ) (interface{}, error) {
 	return &stateBagClient{
 		client:     vagrant_plugin_sdk.NewStateBagServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		BaseClient: p.NewClient(ctx, broker, nil),
 	}, nil
 }
 

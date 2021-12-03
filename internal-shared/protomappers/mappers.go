@@ -121,6 +121,8 @@ var All = []interface{}{
 	ProtoToMap,
 	Provider,
 	ProviderProto,
+	Seeds,
+	SeedsProto,
 	State,
 	StateProto,
 	StateBag,
@@ -341,6 +343,107 @@ func ValueToStruct(
 
 // Custom mappers
 
+// NOTE: This does not convert the proto back to the Seeds fully. It
+// will only convert the base type, but the contents will remain as
+// any values to prevent large numbers of grpc service/client setups
+func Seeds(
+	input *vagrant_plugin_sdk.Args_Seeds,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*core.Seeds, error) {
+	result := core.NewSeeds()
+	t := make([]interface{}, len(input.Typed))
+	for i, v := range input.Typed {
+		t[i] = v
+	}
+	result.Typed = t
+
+	for k, v := range input.Named {
+		result.Named[k] = v
+	}
+
+	return result, nil
+}
+
+func SeedsProto(
+	input *core.Seeds,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Seeds, error) {
+	result := &vagrant_plugin_sdk.Args_Seeds{
+		Named: make(map[string]*anypb.Any),
+		Typed: make([]*anypb.Any, len(input.Typed)),
+	}
+
+	for i, v := range input.Typed {
+		a, ok := v.(*anypb.Any)
+		if !ok {
+			return SeedsProtoFull(input, log, internal, ctx)
+		}
+		result.Typed[i] = a
+	}
+
+	for k, v := range input.Named {
+		a, ok := v.(*anypb.Any)
+		if !ok {
+			return SeedsProtoFull(input, log, internal, ctx)
+		}
+		result.Named[k] = a
+	}
+
+	return result, nil
+}
+
+func SeedsProtoFull(
+	input *core.Seeds,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Seeds, error) {
+	result := &vagrant_plugin_sdk.Args_Seeds{
+		Named: make(map[string]*anypb.Any),
+	}
+	t, err := DirectProto(
+		&component.Direct{
+			Arguments: input.Typed,
+		},
+		log, internal, ctx,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result.Typed = t.Arguments
+
+	nv := make([]interface{}, len(input.Named))
+
+	i := 0
+	for _, v := range input.Named {
+		nv[i] = v
+	}
+
+	t, err = DirectProto(
+		&component.Direct{
+			Arguments: nv,
+		},
+		log, internal, ctx,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	i = 0
+	for k, _ := range input.Named {
+		result.Named[k] = t.Arguments[i]
+	}
+
+	return result, nil
+}
+
 func Array(
 	input *vagrant_plugin_sdk.Args_Array,
 	log hclog.Logger,
@@ -531,6 +634,10 @@ func DirectProto(
 			if err != nil {
 				return nil, err
 			}
+		}
+
+		if v == nil {
+			v = &vagrant_plugin_sdk.Args_Null{}
 		}
 
 		if list[i], err = dynamic.EncodeAny(v.(proto.Message)); err != nil {

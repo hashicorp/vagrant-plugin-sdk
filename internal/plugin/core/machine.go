@@ -33,7 +33,7 @@ func (t *TargetMachinePlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	cl := vagrant_plugin_sdk.NewTargetMachineServiceClient(c)
-	bc := t.NewClient(ctx, broker)
+	bc := t.NewClient(ctx, broker, nil)
 	return &targetMachineClient{
 		client:     cl,
 		BaseClient: bc,
@@ -45,7 +45,7 @@ func (t *TargetMachinePlugin) GRPCClient(
 }
 
 func (t *TargetMachinePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	bs := t.NewServer(broker)
+	bs := t.NewServer(broker, nil)
 
 	vagrant_plugin_sdk.RegisterTargetMachineServiceServer(s, &targetMachineServer{
 		Impl:       t.Impl,

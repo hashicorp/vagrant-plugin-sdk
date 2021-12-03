@@ -43,9 +43,11 @@ func CallFunc(
 		}
 	}
 
-	args = append(args,
+	args = append([]argmapper.Arg{
+		argmapper.FuncName("Call -> " + strings.TrimPrefix(fmt.Sprintf("%T", expectedType), "*")),
 		argmapper.ConverterFunc(mappers...),
-		argmapper.Logger(Logger.Named("call")))
+		argmapper.Logger(Logger.Named("call")),
+	}, args...)
 
 	// Build the chain and call it
 	callResult := rawFunc.Call(args...)

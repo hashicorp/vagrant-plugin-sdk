@@ -3,11 +3,12 @@ package plugin
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -24,7 +25,7 @@ type ProvisionerPlugin struct {
 func (p *ProvisionerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterProvisionerServiceServer(s, &provisionerServer{
 		Impl:       p.Impl,
-		BaseServer: p.NewServer(broker),
+		BaseServer: p.NewServer(broker, p.Impl),
 	})
 	return nil
 }
@@ -34,9 +35,10 @@ func (p *ProvisionerPlugin) GRPCClient(
 	broker *plugin.GRPCBroker,
 	c *grpc.ClientConn,
 ) (interface{}, error) {
+	cl := vagrant_plugin_sdk.NewProvisionerServiceClient(c)
 	return &provisionerClient{
-		client:     vagrant_plugin_sdk.NewProvisionerServiceClient(c),
-		BaseClient: p.NewClient(ctx, broker),
+		client:     cl,
+		BaseClient: p.NewClient(ctx, broker, cl.(SeederClient)),
 	}, nil
 }
 
@@ -70,12 +72,12 @@ type provisionerServer struct {
 	*BaseServer
 
 	Impl component.Provisioner
-	vagrant_plugin_sdk.UnimplementedProvisionerServiceServer
+	vagrant_plugin_sdk.UnsafeProvisionerServiceServer
 }
 
 func (s *provisionerServer) ConfigStruct(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_StructResp, error) {
 	return configStruct(s.Impl)
 }
@@ -83,13 +85,13 @@ func (s *provisionerServer) ConfigStruct(
 func (s *provisionerServer) Configure(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	return configure(s.Impl, req)
 }
 
 func (s *provisionerServer) Documentation(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_Documentation, error) {
 	return documentation(s.Impl)
 }
@@ -99,4 +101,5 @@ var (
 	_ plugin.GRPCPlugin                           = (*ProvisionerPlugin)(nil)
 	_ vagrant_plugin_sdk.ProvisionerServiceServer = (*provisionerServer)(nil)
 	_ component.Provisioner                       = (*provisionerClient)(nil)
+	_ core.Seeder                                 = (*provisionerClient)(nil)
 )
