@@ -119,7 +119,7 @@ type BaseServer struct {
 // internal returns a new pluginargs.Internal that can be used with
 // dynamic calls. The Internal structure is an internal-only argument
 // that is used to perform cleanup.
-func (b *Base) internal() *pluginargs.Internal {
+func (b *Base) Internal() *pluginargs.Internal {
 	// if the cache isn't currently set, just create
 	// a new cache instance and set it now
 	if b.Cache == nil {
@@ -147,7 +147,7 @@ func (b *Base) Map(
 	args = append(args,
 		argmapper.ConverterFunc(MapperFns...),
 		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Typed(b.internal()),
+		argmapper.Typed(b.Internal()),
 		argmapper.Typed(b.Logger),
 	)
 
@@ -211,7 +211,7 @@ func (b *BaseClient) GenerateFunc(
 	args ...argmapper.Arg, // any extra argmapper args
 ) interface{} {
 	return funcspec.Func(spec, cbFn, append(args,
-		argmapper.Typed(b.internal()))...,
+		argmapper.Typed(b.Internal()))...,
 	)
 }
 
@@ -230,7 +230,7 @@ func (b *BaseClient) CallDynamicFunc(
 	expectedType interface{}, // nil pointer of expected return type
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
-	internal := b.internal()
+	internal := b.Internal()
 	// TODO(spox): We need to determine how to properly cleanup when connections
 	//             may still exist after the dynamic call is complete
 	//	defer internal.Cleanup.Close()
@@ -258,7 +258,7 @@ func (b *BaseServer) CallDynamicFunc(
 	args funcspec.Args, // funspec defined arguments
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
-	internal := b.internal()
+	internal := b.Internal()
 
 	// Decode our *any.Any values.
 	for _, arg := range args {
@@ -291,7 +291,7 @@ func (b *BaseServer) GenerateSpec(
 	}
 	f, err := funcspec.Spec(fn, append(args,
 		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Typed(b.internal()))...,
+		argmapper.Typed(b.Internal()))...,
 	)
 	if err != nil {
 		return f, err

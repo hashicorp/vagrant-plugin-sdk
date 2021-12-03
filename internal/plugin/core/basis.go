@@ -3,14 +3,16 @@ package core
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -97,9 +99,36 @@ func (p *basisClient) Host() (h core.Host, err error) {
 	return
 }
 
+func (p *basisClient) Plugins(types ...string) (h []*core.NamedPlugin, err error) {
+	r, err := p.client.Plugins(p.Ctx, &vagrant_plugin_sdk.Basis_PluginsRequest{
+		Types: types,
+	})
+	if err != nil {
+		return
+	}
+
+	result := []*core.NamedPlugin{}
+	for _, plugin := range r.Plugins {
+		typ, err := component.FindType(plugin.Type)
+		if err != nil {
+			return nil, err
+		}
+		plg, err := p.Map(r, typ, argmapper.Typed(p.Ctx))
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, &core.NamedPlugin{
+			Name:   plugin.Name,
+			Plugin: plg,
+		})
+	}
+
+	return result, nil
+}
+
 func (p *basisServer) DataDir(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Basis, err error) {
 	d, err := p.Impl.DataDir()
 	if err != nil {
@@ -116,7 +145,7 @@ func (p *basisServer) DataDir(
 
 func (p *basisServer) Host(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	d, err := p.Impl.Host()
 	if err != nil {
@@ -134,7 +163,7 @@ func (p *basisServer) Host(
 
 func (t *basisServer) UI(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
 	d, err := t.Impl.UI()
 	if err != nil {
@@ -148,6 +177,41 @@ func (t *basisServer) UI(
 	}
 
 	return
+}
+
+func (t *basisServer) Plugins(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Basis_PluginsRequest,
+) (r *vagrant_plugin_sdk.Basis_PluginsResponse, err error) {
+	plugins, err := t.Impl.Plugins(in.Types...)
+	if err != nil {
+		return
+	}
+
+	result := []*vagrant_plugin_sdk.Basis_Plugin{}
+	for _, plugin := range plugins {
+		val, err := dynamic.UnknownMap(plugin.Plugin, (*proto.Message)(nil), t.Mappers,
+			argmapper.Typed(t.Internal()),
+			argmapper.Typed(ctx),
+			argmapper.Typed(t.Logger),
+		)
+		if err != nil {
+			return nil, err
+		}
+		pluginProto, err := dynamic.EncodeAny(val.(proto.Message))
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, &vagrant_plugin_sdk.Basis_Plugin{
+			Name:   plugin.Name,
+			Type:   plugin.Type,
+			Plugin: pluginProto,
+		})
+	}
+
+	return &vagrant_plugin_sdk.Basis_PluginsResponse{
+		Plugins: result,
+	}, nil
 }
 
 var (

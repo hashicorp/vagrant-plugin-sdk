@@ -150,7 +150,7 @@ func (s *authenticatorServer) AuthSpec(
 	return funcspec.Spec(s.Impl.(component.Authenticator).AuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
 		argmapper.Logger(s.Logger),
-		argmapper.Typed(s.internal()),
+		argmapper.Typed(s.Internal()),
 
 		// We expect a auth result.
 		argmapper.FilterOutput(argmapper.FilterOr(
@@ -166,7 +166,7 @@ func (s *authenticatorServer) Auth(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Auth_AuthResponse, error) {
-	internal := s.internal()
+	internal := s.Internal()
 	defer internal.Cleanup.Close()
 	return nil, nil
 
@@ -198,7 +198,7 @@ func (s *authenticatorServer) ValidateAuthSpec(
 	return funcspec.Spec(s.Impl.(component.Authenticator).ValidateAuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
 		argmapper.Logger(s.Logger),
-		argmapper.Typed(s.internal()),
+		argmapper.Typed(s.Internal()),
 	)
 }
 
@@ -206,7 +206,7 @@ func (s *authenticatorServer) ValidateAuth(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*empty.Empty, error) {
-	internal := s.internal()
+	internal := s.Internal()
 	defer internal.Cleanup.Close()
 
 	return nil, nil
