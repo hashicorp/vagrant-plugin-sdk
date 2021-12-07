@@ -424,11 +424,11 @@ func (s *communicatorServer) InitSpec(
 func (s *communicatorServer) Init(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.InitFunc(), false, args.Args,
 		argmapper.Typed(ctx),
 	)
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 func (s *communicatorServer) ReadySpec(
@@ -497,7 +497,7 @@ func (s *communicatorServer) DownloadSpec(
 func (s *communicatorServer) Download(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.DownloadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -505,7 +505,7 @@ func (s *communicatorServer) Download(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *communicatorServer) UploadSpec(
@@ -522,7 +522,7 @@ func (s *communicatorServer) UploadSpec(
 func (s *communicatorServer) Upload(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.UploadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -530,7 +530,7 @@ func (s *communicatorServer) Upload(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *communicatorServer) ExecuteSpec(
@@ -622,7 +622,7 @@ func (s *communicatorServer) ResetSpec(
 func (s *communicatorServer) Reset(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.ResetFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -630,7 +630,7 @@ func (s *communicatorServer) Reset(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 var (
