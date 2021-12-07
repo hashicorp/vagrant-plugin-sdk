@@ -736,7 +736,7 @@ service CommunicatorService {
   rpc Test(FuncSpec.Args) returns (Communicator.TestResp);
 
   rpc ResetSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Reset(FuncSpec.Args) returns (Communicator.ResetResp);
+  rpc Reset(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
