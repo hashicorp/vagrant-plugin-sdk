@@ -66,6 +66,10 @@ message Args {
     map<string, google.protobuf.Any> folders = 1;
   }
 
+  message TimeDuration {
+    int32 duration = 1;
+  }
+
   message TerminalUI {
     uint32 stream_id = 1;
     string network = 2;
