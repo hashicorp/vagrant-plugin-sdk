@@ -1370,7 +1370,10 @@ func FolderToVagrantfileSyncedFolder(
 	f *core.Folder,
 ) (*vagrant_plugin_sdk.Vagrantfile_SyncedFolder, error) {
 	var result *vagrant_plugin_sdk.Vagrantfile_SyncedFolder
-	return result, mapstructure.Decode(f, &result)
+	err := mapstructure.Decode(f.Options, &result)
+	result.Source = f.Source
+	result.Destination = f.Destination
+	return result, err
 }
 
 func SyncedFolderProto(
