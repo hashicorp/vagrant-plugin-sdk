@@ -765,14 +765,6 @@ message Communicator {
   message Command {
     string command = 1;
   }
-
-  message Path {
-    string path = 1;
-  }
-
-  message RemotePath {
-    string path = 1;
-  }
 }
 
 service ConfigService {
