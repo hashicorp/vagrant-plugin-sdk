@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/DavidGamba/go-getoptions/option"
@@ -85,7 +86,8 @@ var All = []interface{}{
 	CommandInfo,
 	CommandInfoProto,
 	CommandInfoFromResponse,
-	CommunicatorCommandToString,
+	CommunicatorCommand,
+	CommunicatorCommandProto,
 	Communicator,
 	CommunicatorProto,
 	DatadirBasis,
@@ -1259,10 +1261,18 @@ func Basis(
 	return client.(core.Basis), nil
 }
 
-func CommunicatorCommandToString(
+func CommunicatorCommand(
 	c *vagrant_plugin_sdk.Communicator_Command,
 ) ([]string, error) {
 	return []string{c.Command}, nil
+}
+
+func CommunicatorCommandProto(
+	c []string,
+) (*vagrant_plugin_sdk.Communicator_Command, error) {
+	return &vagrant_plugin_sdk.Communicator_Command{
+		Command: strings.Join(c[:], " "),
+	}, nil
 }
 
 func CommunicatorProto(
