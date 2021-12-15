@@ -39,12 +39,22 @@ func anyConvGen(v argmapper.Value) (*argmapper.Func, error) {
 	}
 
 	return argmapper.BuildFunc(inputSet, outputSet, func(in, out *argmapper.ValueSet) error {
-		anyVal, err := ptypes.MarshalAny(inputSet.Typed(v.Type).Value.Interface().(proto.Message))
+		inputVal := inputSet.Typed(v.Type)
+		// If there is no typed input, check the named inputs
+		if inputVal == nil {
+			inputVal = inputSet.Named(v.Name)
+		}
+		anyVal, err := ptypes.MarshalAny(inputVal.Value.Interface().(proto.Message))
 		if err != nil {
 			return err
 		}
 
-		outputSet.Typed(anyType).Value = reflect.ValueOf(anyVal)
+		// If there is no typed output, check the named inputs
+		outputVal := outputSet.Typed(anyType)
+		if outputVal == nil {
+			outputVal = outputSet.Named(v.Name)
+		}
+		outputVal.Value = reflect.ValueOf(anyVal)
 		return nil
 	}, argmapper.FuncName(fmt.Sprintf("converter: %s -> *anypb.Any", v.Type)))
 

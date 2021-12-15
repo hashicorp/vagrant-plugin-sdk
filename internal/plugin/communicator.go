@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -50,18 +49,6 @@ type communicatorClient struct {
 	*BaseClient
 
 	client vagrant_plugin_sdk.CommunicatorServiceClient
-}
-
-func (c *communicatorClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
-}
-
-func (c *communicatorClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
-}
-
-func (c *communicatorClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *communicatorClient) MatchFunc() interface{} {
@@ -256,7 +243,7 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.ExecuteFunc()
 	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
@@ -289,7 +276,7 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (status int32, err error) {
+func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.PrivilegedExecuteFunc()
 	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
@@ -322,7 +309,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts *core.CommunicatorOptions) (valid bool, err error) {
+func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...interface{}) (valid bool, err error) {
 	f := c.TestFunc()
 	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
@@ -437,11 +424,11 @@ func (s *communicatorServer) InitSpec(
 func (s *communicatorServer) Init(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Communicator_InitResp, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.InitFunc(), false, args.Args,
 		argmapper.Typed(ctx),
 	)
-	return &vagrant_plugin_sdk.Communicator_InitResp{}, err
+	return &emptypb.Empty{}, err
 }
 
 func (s *communicatorServer) ReadySpec(
@@ -510,7 +497,7 @@ func (s *communicatorServer) DownloadSpec(
 func (s *communicatorServer) Download(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.DownloadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -518,7 +505,7 @@ func (s *communicatorServer) Download(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Communicator_FileTransferResp{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *communicatorServer) UploadSpec(
@@ -535,7 +522,7 @@ func (s *communicatorServer) UploadSpec(
 func (s *communicatorServer) Upload(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Communicator_FileTransferResp, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.UploadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -543,7 +530,7 @@ func (s *communicatorServer) Upload(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Communicator_FileTransferResp{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *communicatorServer) ExecuteSpec(
@@ -635,7 +622,7 @@ func (s *communicatorServer) ResetSpec(
 func (s *communicatorServer) Reset(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Communicator_ResetResp, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.ResetFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
@@ -643,7 +630,7 @@ func (s *communicatorServer) Reset(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Communicator_ResetResp{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 var (
