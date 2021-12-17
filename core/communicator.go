@@ -1,5 +1,11 @@
 package core
 
+type CommunicatorMessage struct {
+	ExitCode int32
+	Stdout   string
+	Stderr   string
+}
+
 type Communicator interface {
 	// Config() interface{}
 	// Documentation() (*docs.Documentation, error)
