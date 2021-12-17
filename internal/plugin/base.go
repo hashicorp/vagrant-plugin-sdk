@@ -145,9 +145,12 @@ func (b *Base) Internal() *pluginargs.Internal {
 		b.Cache = cacher.New()
 	}
 
+	m := make([]*argmapper.Func, len(b.Mappers)+len(MapperFns))
+	copy(m, b.Mappers)
+	copy(m[len(b.Mappers):], MapperFns)
 	return &pluginargs.Internal{
 		Broker:  b.Broker,
-		Mappers: b.Mappers,
+		Mappers: m,
 		Cleanup: b.Cleanup,
 		Cache:   b.Cache,
 		Logger:  b.Logger,
