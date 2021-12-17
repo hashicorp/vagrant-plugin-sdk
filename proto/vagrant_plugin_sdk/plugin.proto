@@ -92,6 +92,18 @@ message Args {
     string id = 4;
   }
 
+ message PluginManager {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
+  message Command {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message Basis {
     uint32 stream_id = 1;
     string network = 2;
@@ -559,6 +571,27 @@ message PluginInfo {
   }
 }
 
+service PluginManagerService {
+  rpc ListPlugins(PluginManager.PluginsRequest) returns (PluginManager.PluginsResponse);
+  rpc GetPlugin(PluginManager.Plugin) returns (PluginManager.Plugin);
+}
+
+message PluginManager {
+  message PluginsRequest {
+    repeated string types = 1;
+  }
+
+  message PluginsResponse {
+    repeated Plugin plugins = 1;
+  }
+
+  message Plugin {
+    string name = 1;
+    string type = 2;
+    google.protobuf.Any plugin = 3;
+  }
+}
+
 /********************************************************************
 * Provider Plugin Service
 ********************************************************************/
@@ -904,23 +937,6 @@ service BasisService {
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
-  rpc Plugins(Basis.PluginsRequest) returns (Basis.PluginsResponse);
-}
-
-message Basis {
-  message PluginsRequest {
-    repeated string types = 1;
-  }
-
-  message PluginsResponse {
-    repeated Plugin plugins = 1;
-  }
-
-  message Plugin {
-    string name = 1;
-    string type = 2;
-    google.protobuf.Any plugin = 3;
-  }
 }
 
 /********************************************************************
