@@ -273,7 +273,12 @@ func (b *BaseClient) Target() net.Addr {
 // This is here for internal usage on plugin setup
 // to provide extra information to ruby Based plugins
 func (b *BaseClient) SetRequestMetadata(key, value string) {
-	b.Ctx = metadata.AppendToOutgoingContext(b.Ctx, key, value)
+	md, ok := metadata.FromOutgoingContext(b.Ctx)
+	if !ok {
+		md = metadata.New(map[string]string{})
+	}
+	md[key] = []string{value}
+	b.Ctx = metadata.NewOutgoingContext(b.Ctx, md)
 	b.Logger.Trace("new metadata has been set for outgoing requests",
 		"key", key, "value", value)
 }
