@@ -756,6 +756,8 @@ message Communicator {
 
   message ExecuteResp {
     int32 exit_code = 1;
+    string stdout = 2;
+    string stderr = 3;
   }
 
   message TestResp {
