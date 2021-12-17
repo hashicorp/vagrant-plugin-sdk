@@ -121,10 +121,10 @@ func (b *Base) IsWrapped() bool {
 type BaseClient struct {
 	*Base
 
-	Ctx          context.Context
-	Seeder       SeederClient
-	target       net.Addr
-	parentPlugin interface{}
+	Ctx             context.Context
+	Seeder          SeederClient
+	target          net.Addr
+	parentComponent interface{}
 }
 
 // Base server type
@@ -229,13 +229,13 @@ func (b *BaseClient) Seeds() (*core.Seeds, error) {
 	return s.(*core.Seeds), nil
 }
 
-// Sets the parent plugins
-func (b *BaseClient) SetParentPlugin(plugin interface{}) {
-	b.parentPlugin = plugin
+// Sets the parent component
+func (b *BaseClient) SetParentComponent(c interface{}) {
+	b.parentComponent = c
 }
 
-func (b *BaseClient) GetParentPlugin() interface{} {
-	return b.parentPlugin
+func (b *BaseClient) GetParentComponent() interface{} {
+	return b.parentComponent
 }
 
 func (b *BaseClient) AppendMappers(mappers ...*argmapper.Func) {
