@@ -3,6 +3,7 @@
 package paths
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -32,6 +33,25 @@ func VagrantCache() (path.Path, error) {
 	}
 
 	return setupPath(val)
+}
+
+func VagrantCwd() (path.Path, error) {
+	var val path.Path
+	v, ok := os.LookupEnv("VAGRANT_CWD")
+	if ok {
+		if _, err := os.Stat(v); os.IsNotExist(err) {
+			return nil, fmt.Errorf("VAGRANT_CWD set to path (%s) that does not exist", v)
+		}
+		val = path.NewPath(v)
+	} else {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+		val = path.NewPath(cwd)
+	}
+
+	return val, nil
 }
 
 func VagrantData() (path.Path, error) {
