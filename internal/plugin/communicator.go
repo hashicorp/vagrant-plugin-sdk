@@ -232,13 +232,13 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*core.CommunicatorMessage, error) {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		result, err := c.client.Execute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
-			return -1, err
+			return nil, err
 		}
-		return result.ExitCode, nil
+		return &core.CommunicatorMessage{ExitCode: result.ExitCode, Stdout: result.Stdout, Stderr: result.Stderr}, nil
 	}
 	return c.GenerateFunc(spec, cb)
 }
@@ -265,13 +265,13 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*core.CommunicatorMessage, error) {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		result, err := c.client.PrivilegedExecute(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
-			return -1, err
+			return nil, err
 		}
-		return result.ExitCode, nil
+		return &core.CommunicatorMessage{ExitCode: result.ExitCode, Stdout: result.Stdout, Stderr: result.Stderr}, nil
 	}
 	return c.GenerateFunc(spec, cb)
 }
@@ -548,14 +548,18 @@ func (s *communicatorServer) Execute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.ExecuteFunc(), (*int32)(nil), args.Args,
+	raw, err := s.CallDynamicFunc(s.Impl.ExecuteFunc(), (**core.CommunicatorMessage)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
-
-	return &vagrant_plugin_sdk.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+	result := raw.(*core.CommunicatorMessage)
+	return &vagrant_plugin_sdk.Communicator_ExecuteResp{
+		ExitCode: result.ExitCode,
+		Stdout:   result.Stdout,
+		Stderr:   result.Stderr,
+	}, nil
 }
 
 func (s *communicatorServer) PrivilegedExecuteSpec(
@@ -573,14 +577,19 @@ func (s *communicatorServer) PrivilegedExecute(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_ExecuteResp, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.PrivilegedExecuteFunc(), (*int32)(nil), args.Args,
+	raw, err := s.CallDynamicFunc(s.Impl.PrivilegedExecuteFunc(), (**core.CommunicatorMessage)(nil), args.Args,
 		argmapper.Typed(ctx))
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Communicator_ExecuteResp{ExitCode: raw.(int32)}, nil
+	result := raw.(*core.CommunicatorMessage)
+	return &vagrant_plugin_sdk.Communicator_ExecuteResp{
+		ExitCode: result.ExitCode,
+		Stdout:   result.Stdout,
+		Stderr:   result.Stderr,
+	}, nil
 }
 
 func (s *communicatorServer) TestSpec(
@@ -639,5 +648,5 @@ var (
 	_ vagrant_plugin_sdk.CommunicatorServiceServer = (*communicatorServer)(nil)
 	_ component.Communicator                       = (*communicatorClient)(nil)
 	_ core.Seeder                                  = (*communicatorClient)(nil)
-	//	_ core.Communicator                            = (*communicatorClient)(nil)
+	_ core.Communicator                            = (*communicatorClient)(nil)
 )
