@@ -50,10 +50,10 @@ func (c *capabilityClient) HasCapabilityFunc() interface{} {
 			return false, err
 		}
 
-		if !resp.HasCapability && c.parentPlugin != nil {
+		if !resp.HasCapability && c.parentComponent != nil {
 			// Check the parent plugin for the capability
-			parentPlugin := c.parentPlugin.(capabilityComponent)
-			f := parentPlugin.HasCapabilityFunc()
+			parentComponent := c.parentComponent.(capabilityComponent)
+			f := parentComponent.HasCapabilityFunc()
 			parentRequestArgs := []argmapper.Arg{argmapper.Typed(new_ctx)}
 			for _, a := range args {
 				parentRequestArgs = append(parentRequestArgs, argmapper.Typed(a.Value))
@@ -86,8 +86,8 @@ func (c *capabilityClient) HasCapability(name string) (bool, error) {
 }
 
 func (c *capabilityClient) CapabilityFunc(name string) interface{} {
-	if c.parentPlugin != nil {
-		ok, err := c.parentPlugin.(capabilityComponent).HasCapability(name)
+	if c.parentComponent != nil {
+		ok, err := c.parentComponent.(capabilityComponent).HasCapability(name)
 
 		if err != nil {
 			c.Logger.Error("parent capability check failed",
@@ -101,7 +101,7 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 				"capability_name", name,
 			)
 
-			return c.parentPlugin.(capabilityComponent).CapabilityFunc(name)
+			return c.parentComponent.(capabilityComponent).CapabilityFunc(name)
 		}
 	}
 

@@ -121,10 +121,10 @@ func (b *Base) IsWrapped() bool {
 type BaseClient struct {
 	*Base
 
-	Ctx          context.Context
-	Seeder       SeederClient
-	target       net.Addr
-	parentPlugin interface{}
+	Ctx             context.Context
+	Seeder          SeederClient
+	target          net.Addr
+	parentComponent interface{}
 }
 
 // Base server type
@@ -145,9 +145,12 @@ func (b *Base) Internal() *pluginargs.Internal {
 		b.Cache = cacher.New()
 	}
 
+	m := make([]*argmapper.Func, len(b.Mappers)+len(MapperFns))
+	copy(m, b.Mappers)
+	copy(m[len(b.Mappers):], MapperFns)
 	return &pluginargs.Internal{
 		Broker:  b.Broker,
-		Mappers: b.Mappers,
+		Mappers: m,
 		Cleanup: b.Cleanup,
 		Cache:   b.Cache,
 		Logger:  b.Logger,
@@ -229,13 +232,13 @@ func (b *BaseClient) Seeds() (*core.Seeds, error) {
 	return s.(*core.Seeds), nil
 }
 
-// Sets the parent plugins
-func (b *BaseClient) SetParentPlugin(plugin interface{}) {
-	b.parentPlugin = plugin
+// Sets the parent component
+func (b *BaseClient) SetParentComponent(c interface{}) {
+	b.parentComponent = c
 }
 
-func (b *BaseClient) GetParentPlugin() interface{} {
-	return b.parentPlugin
+func (b *BaseClient) GetParentComponent() interface{} {
+	return b.parentComponent
 }
 
 func (b *BaseClient) AppendMappers(mappers ...*argmapper.Func) {
@@ -270,7 +273,12 @@ func (b *BaseClient) Target() net.Addr {
 // This is here for internal usage on plugin setup
 // to provide extra information to ruby Based plugins
 func (b *BaseClient) SetRequestMetadata(key, value string) {
-	b.Ctx = metadata.AppendToOutgoingContext(b.Ctx, key, value)
+	md, ok := metadata.FromOutgoingContext(b.Ctx)
+	if !ok {
+		md = metadata.New(map[string]string{})
+	}
+	md[key] = []string{value}
+	b.Ctx = metadata.NewOutgoingContext(b.Ctx, md)
 	b.Logger.Trace("new metadata has been set for outgoing requests",
 		"key", key, "value", value)
 }

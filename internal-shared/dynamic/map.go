@@ -98,7 +98,7 @@ func UnknownMap(
 	return v, nil
 }
 
-// This converts a value to another value using the provider mappers
+// This converts a value to another value using the provided mappers
 // without any required type information. It is similar to the UnknownMap
 // function but the expected type is not required. Due to this missing
 // information, however, this function will be slower as it iterates
