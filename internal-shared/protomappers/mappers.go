@@ -1253,7 +1253,7 @@ func PluginManagerProtoDirect(
 		},
 		Impl: input,
 	}
-	id, ep, closer, err := wrapClient2(input, p, broker, log)
+	id, ep, closer, err := wrapClientStandalone(input, p, broker, log)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1977,7 +1977,7 @@ func wrapConnect(
 
 // This takes a plugin (which generally uses a client as the plugin implementation)
 // and creates a new server for remote connections via the internal broker.
-func wrapClient2(
+func wrapClientStandalone(
 	impl interface{},
 	p plugin.GRPCPlugin,
 	broker *plugin.GRPCBroker,
@@ -2060,72 +2060,18 @@ func wrapClient(
 	p plugin.GRPCPlugin,
 	internal *pluginargs.Internal,
 ) (id uint32, target net.Addr, err error) {
-	// If an existing target exists for the implementation, use
-	// that value for where to connect
-	if iep, ok := impl.(hasTarget); ok {
-		if target = iep.Target(); target != nil {
-			internal.Logger.Trace("using preset wrapped plugin target",
-				"plugin", hclog.Fmt("%T", p),
-				"target", target)
+	id, target, closer, err := wrapClientStandalone(
+		impl,
+		p,
+		internal.Broker,
+		internal.Logger,
+	)
 
-			return
-		}
-	} else {
-		internal.Logger.Warn("implementation does not support direct targets for wrapped plugins",
-			"plugin", hclog.Fmt("%T", p),
-			"implementation", hclog.Fmt("%T", impl),
-		)
-	}
-
-	// Fetch the next available steam ID from the broker
-	id = internal.Broker.NextId()
-
-	// Since we want to register the target endpoint directly for
-	// access off the configured broker, we need to get the listener
-	// and setup the server directly instead of letting the plugin
-	// library handle it for us
-	l, err := internal.Broker.Accept(id)
 	if err != nil {
-		internal.Logger.Warn("failed to establish connection stream",
-			"error", err)
-
-		return
-	}
-	target = l.Addr()
-
-	// Grab the shared plugin configuration so the expected
-	// server configuration can be applied
-	config := pluginclient.ClientConfig(internal.Logger)
-	sopts := []grpc.ServerOption{}
-	if config.TLSConfig != nil {
-		sopts = append(sopts, grpc.Creds(credentials.NewTLS(config.TLSConfig)))
-	}
-
-	internal.Logger.Trace("starting listener for wrapped plugin",
-		"broker", hclog.Fmt("%p", internal.Broker),
-		"plugin", hclog.Fmt("%T", p),
-		"stream_id", id,
-		"target", target)
-
-	server := plugin.DefaultGRPCServer(sopts)
-	if err = p.GRPCServer(internal.Broker, server); err != nil {
 		return
 	}
 
-	// Register a shutdown of this wrapped plugin server in our
-	// cleanup so we don't leave it hanging around when closed
-	internal.Cleanup.Do(func() {
-		internal.Logger.Trace("shutting down listener for wrapped plugin",
-			"broker", hclog.Fmt("%p", internal.Broker),
-			"plugin", hclog.Fmt("%T", p),
-			"stream_id", id,
-			"target", target)
-
-		server.GracefulStop()
-	})
-
-	// Start serving
-	go server.Serve(l)
+	internal.Cleanup.Do(closer)
 
 	return
 }
