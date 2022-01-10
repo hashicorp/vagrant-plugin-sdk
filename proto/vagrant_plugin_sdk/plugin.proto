@@ -188,6 +188,12 @@ message Args {
     string target = 3;
   }
 
+  message Push {
+    uint32 stream_id = 1;
+    string network = 2;
+    string target = 3;
+  }
+
   message SyncedFolder {
     uint32 stream_id = 1;
     string network = 2;
@@ -1433,5 +1439,19 @@ message BoxCollection {
     string name = 1;
     string version = 2;
     repeated string providers = 3;
+  }
+}
+
+service PushService {
+  rpc PushSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Push(FuncSpec.Args) returns (Push.PushResponse);
+
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
+}
+
+message Push {
+  message PushResponse {
+    int32 exit_code = 1;
   }
 }

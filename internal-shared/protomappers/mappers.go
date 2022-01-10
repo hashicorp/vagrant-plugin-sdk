@@ -133,6 +133,8 @@ var All = []interface{}{
 	ProtoToMap,
 	Provider,
 	ProviderProto,
+	Push,
+	PushProto,
 	Seeds,
 	SeedsProto,
 	State,
@@ -1498,6 +1500,46 @@ func Communicator(
 	}
 
 	return client.(core.Communicator), nil
+}
+
+func PushProto(
+	c component.Push,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Push, error) {
+	cp := &plugincomponent.PushPlugin{
+		BasePlugin: basePlugin(c, internal),
+		Impl:       c,
+	}
+
+	id, ep, err := wrapClient(c, cp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Push{
+		StreamId: id,
+		Network:  ep.Network(),
+		Target:   ep.String(),
+	}, nil
+}
+
+func Push(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Push,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Push, error) {
+	p := &plugincomponent.PushPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Push), nil
 }
 
 func ProjectProto(

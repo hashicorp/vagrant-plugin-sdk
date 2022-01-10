@@ -37,6 +37,7 @@ const (
 	MapperType                    // Mapper
 	ConfigType                    // Config
 	PluginInfoType                // PluginInfo
+	PushType                      // Push
 	maxType
 )
 
@@ -55,6 +56,7 @@ var TypeMap = map[Type]interface{}{
 	ProviderType:      (*Provider)(nil),
 	ProvisionerType:   (*Provisioner)(nil),
 	SyncedFolderType:  (*SyncedFolder)(nil),
+	PushType:          (*Push)(nil),
 }
 
 func FindComponent(name string) (interface{}, error) {
@@ -175,6 +177,11 @@ type Provider interface {
 }
 
 type Provisioner interface {
+}
+
+type Push interface {
+	// Executes a named push strategy
+	PushFunc() interface{}
 }
 
 type SyncedFolder interface {
