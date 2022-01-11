@@ -91,7 +91,6 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 
 		if err != nil {
 			c.Logger.Error("parent capability check failed",
-				"error", err,
 				"capability_name", name,
 			)
 		}
@@ -123,7 +122,6 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 		if err != nil {
 			c.Logger.Error("failure encountered while running capability",
 				"name", name,
-				"error", err,
 			)
 
 			return nil, err
@@ -244,7 +242,7 @@ func (s *capabilityServer) Capability(
 
 	if err != nil {
 		s.Logger.Error("failed to call capability",
-			"error", err)
+			"name", args.Name)
 
 		return nil, err
 	}
