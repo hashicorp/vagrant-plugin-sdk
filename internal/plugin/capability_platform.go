@@ -226,7 +226,11 @@ func (s *capabilityServer) CapabilitySpec(
 		return nil, err
 	}
 
-	return s.GenerateSpec(s.CapabilityImpl.CapabilityFunc(req.Name))
+	function := s.CapabilityImpl.CapabilityFunc(req.Name)
+	if err, ok := function.(error); ok {
+		return nil, err
+	}
+	return s.GenerateSpec(function)
 }
 
 func (s *capabilityServer) Capability(
