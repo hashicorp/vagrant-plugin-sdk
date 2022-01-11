@@ -9,18 +9,12 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "google/rpc/status.proto";
+import "google/rpc/error_details.proto";
 import "protostructure.proto";
 
 /********************************************************************
 * Generic Args
 ********************************************************************/
-
-message Errors {
-  message LocalizedErrorMessage {
-    string locale = 1;
-    string message = 2;
-  }
-}
 
 // Args are the common argument types that are available to many of the
 // dynamic functions. The exact list of available argument types is available
