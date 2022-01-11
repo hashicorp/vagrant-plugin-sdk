@@ -2,10 +2,13 @@ package plugin
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -247,7 +250,15 @@ func (s *capabilityServer) Capability(
 	if err != nil {
 		s.Logger.Error("failed to call capability",
 			"name", args.Name)
-
+		if st, ok := status.FromError(err); ok {
+			// TODO: this should be an actual localized message
+			msg := &errdetails.LocalizedMessage{
+				Locale:  "en-US",
+				Message: fmt.Sprintf("could not run capability %s", args.Name),
+			}
+			statusDetails, _ := st.WithDetails(msg)
+			return nil, statusDetails.Err()
+		}
 		return nil, err
 	}
 
