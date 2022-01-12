@@ -299,6 +299,7 @@ func (c *communicatorClient) TestFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		c.Logger.Debug("got args for test func in the communicatorClient %w", args)
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		result, err := c.client.Test(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
@@ -306,19 +307,51 @@ func (c *communicatorClient) TestFunc() interface{} {
 		}
 		return result.Valid, nil
 	}
+	c.Logger.Debug("generated func")
 	return c.GenerateFunc(spec, cb)
 }
 
 func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...interface{}) (valid bool, err error) {
+	c.Logger.Debug("Running Test from communicatorClient")
 	f := c.TestFunc()
-	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
-		argmapper.Typed(machine),
-		argmapper.Typed(opts),
-		argmapper.Typed(cmd),
-		argmapper.Named("command", cmd),
-		argmapper.Typed(c.Ctx),
+	c.Logger.Debug("got test func from communicator client")
+	c.Logger.Debug("running with opts %w", opts)
+	c.Logger.Debug("running with cmd %w", cmd)
+	c.Logger.Debug("running function %w", f)
+
+	machineArg, err := c.Map(
+		machine,
+		(**vagrant_plugin_sdk.Args_Target_Machine)(nil),
+		argmapper.Typed(c.Logger, c.Internal, c.Ctx),
 	)
 	if err != nil {
+		c.Logger.Debug("got error mapping machine to proto",
+			"err", err)
+
+	}
+	cmdArgs, _ := c.Map(
+		cmd,
+		(**vagrant_plugin_sdk.Communicator_Command)(nil),
+		argmapper.Typed(c.Logger, c.Internal, c.Ctx),
+	)
+	if err != nil {
+		c.Logger.Debug("got error mapping cmd to proto",
+			"err", err)
+	}
+
+	c.Logger.Debug("running with machineARg %w", machineArg)
+	c.Logger.Debug("running with cmdArgs %w", cmdArgs)
+
+	c.Logger.Debug("here we go running")
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
+		argmapper.Typed(machineArg),
+		argmapper.Typed(&vagrant_plugin_sdk.Args_Hash{}),
+		argmapper.Typed(cmdArgs),
+		argmapper.Typed(c.Ctx),
+	)
+	c.Logger.Debug("result of running the dynamic function %w", raw)
+	if err != nil {
+		c.Logger.Debug("oh boy, there was an error %w", err)
 		return false, err
 	}
 
@@ -607,6 +640,7 @@ func (s *communicatorServer) Test(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_TestResp, error) {
+	s.Logger.Debug("Runnin Test from communicator server with args %w", args)
 	raw, err := s.CallDynamicFunc(s.Impl.TestFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx))
 
