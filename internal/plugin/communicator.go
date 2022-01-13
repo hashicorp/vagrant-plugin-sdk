@@ -315,39 +315,23 @@ func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...in
 	c.Logger.Debug("Running Test from communicatorClient")
 	f := c.TestFunc()
 	c.Logger.Debug("got test func from communicator client")
+
 	c.Logger.Debug("running with opts %w", opts)
-	c.Logger.Debug("running with cmd %w", cmd)
-	c.Logger.Debug("running function %w", f)
-
-	machineArg, err := c.Map(
-		machine,
-		(**vagrant_plugin_sdk.Args_Target_Machine)(nil),
-		argmapper.Typed(c.Logger, c.Internal, c.Ctx),
-	)
-	if err != nil {
-		c.Logger.Debug("got error mapping machine to proto",
-			"err", err)
-
-	}
-	cmdArgs, _ := c.Map(
-		cmd,
-		(**vagrant_plugin_sdk.Communicator_Command)(nil),
-		argmapper.Typed(c.Logger, c.Internal, c.Ctx),
-	)
-	if err != nil {
-		c.Logger.Debug("got error mapping cmd to proto",
-			"err", err)
+	var optsArgs []interface{}
+	if opts == nil {
+		// is the opts are empty then pass in an empty args hash
+		optsArgs = []interface{}{&vagrant_plugin_sdk.Args_Hash{}}
+	} else {
+		optsArgs = opts
 	}
 
-	c.Logger.Debug("running with machineARg %w", machineArg)
-	c.Logger.Debug("running with cmdArgs %w", cmdArgs)
-
+	c.Logger.Debug("running with optsArgs %w", optsArgs)
 	c.Logger.Debug("here we go running")
 	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(machineArg),
-		argmapper.Typed(&vagrant_plugin_sdk.Args_Hash{}),
-		argmapper.Typed(cmdArgs),
-		argmapper.Typed(c.Ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(optsArgs...),
+		argmapper.Typed(cmd),
+		argmapper.Typed(c.Ctx, c.Logger, c.Internal),
 	)
 	c.Logger.Debug("result of running the dynamic function %w", raw)
 	if err != nil {
