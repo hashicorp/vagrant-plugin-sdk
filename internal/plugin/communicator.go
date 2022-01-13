@@ -299,7 +299,6 @@ func (c *communicatorClient) TestFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		c.Logger.Debug("got args for test func in the communicatorClient %w", args)
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		result, err := c.client.Test(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
@@ -307,16 +306,11 @@ func (c *communicatorClient) TestFunc() interface{} {
 		}
 		return result.Valid, nil
 	}
-	c.Logger.Debug("generated func")
 	return c.GenerateFunc(spec, cb)
 }
 
 func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...interface{}) (valid bool, err error) {
-	c.Logger.Debug("Running Test from communicatorClient")
 	f := c.TestFunc()
-	c.Logger.Debug("got test func from communicator client")
-
-	c.Logger.Debug("running with opts %w", opts)
 	var optsArgs []interface{}
 	if opts == nil {
 		// is the opts are empty then pass in an empty args hash
@@ -325,17 +319,13 @@ func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...in
 		optsArgs = opts
 	}
 
-	c.Logger.Debug("running with optsArgs %w", optsArgs)
-	c.Logger.Debug("here we go running")
 	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(machine),
 		argmapper.Typed(optsArgs...),
 		argmapper.Typed(cmd),
-		argmapper.Typed(c.Ctx, c.Logger, c.Internal),
+		argmapper.Typed(c.Ctx),
 	)
-	c.Logger.Debug("result of running the dynamic function %w", raw)
 	if err != nil {
-		c.Logger.Debug("oh boy, there was an error %w", err)
 		return false, err
 	}
 
@@ -624,7 +614,6 @@ func (s *communicatorServer) Test(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Communicator_TestResp, error) {
-	s.Logger.Debug("Runnin Test from communicator server with args %w", args)
 	raw, err := s.CallDynamicFunc(s.Impl.TestFunc(), (*bool)(nil), args.Args,
 		argmapper.Typed(ctx))
 

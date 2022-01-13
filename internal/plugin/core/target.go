@@ -66,12 +66,10 @@ type targetServer struct {
 }
 
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
-	c.Logger.Debug("getting communicaot")
 	commArg, err := c.client.Communicate(c.Ctx, &empty.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to call communicator from client, %w", err)
 	}
-	c.Logger.Debug("mapping communicator from server to something that is usable")
 	result, err := c.Map(
 		commArg,
 		(*core.Communicator)(nil),
@@ -81,7 +79,6 @@ func (c *targetClient) Communicate() (comm core.Communicator, err error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to map communicator, %w", err)
 	}
-	c.Logger.Debug("got a result for the communicator")
 	comm = result.(core.Communicator)
 	return
 }
@@ -276,21 +273,16 @@ func (s *targetServer) Communicate(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
-	s.Logger.Debug("getting communicator")
 	c, err := s.Impl.Communicate()
 	if err != nil {
-		s.Logger.Debug("error getting communicator!")
 		return nil, fmt.Errorf("error getting the communicator, %w", err)
 	}
 
-	s.Logger.Debug("mapping communicator to proto!")
 	result, err := s.Map(c, (**vagrant_plugin_sdk.Args_Communicator)(nil), argmapper.Typed(ctx))
 	if err != nil {
-		s.Logger.Debug("error mapping communicator to proto!")
 		return nil, fmt.Errorf("failed to map communicator to proto, %w", err)
 	}
 
-	s.Logger.Debug("returning communicator as proto")
 	return result.(*vagrant_plugin_sdk.Args_Communicator), nil
 }
 
