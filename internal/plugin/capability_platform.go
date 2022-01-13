@@ -2,10 +2,13 @@ package plugin
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -91,7 +94,6 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 
 		if err != nil {
 			c.Logger.Error("parent capability check failed",
-				"error", err,
 				"capability_name", name,
 			)
 		}
@@ -123,7 +125,6 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 		if err != nil {
 			c.Logger.Error("failure encountered while running capability",
 				"name", name,
-				"error", err,
 			)
 
 			return nil, err
@@ -228,7 +229,11 @@ func (s *capabilityServer) CapabilitySpec(
 		return nil, err
 	}
 
-	return s.GenerateSpec(s.CapabilityImpl.CapabilityFunc(req.Name))
+	function := s.CapabilityImpl.CapabilityFunc(req.Name)
+	if err, ok := function.(error); ok {
+		return nil, err
+	}
+	return s.GenerateSpec(function)
 }
 
 func (s *capabilityServer) Capability(
@@ -244,8 +249,16 @@ func (s *capabilityServer) Capability(
 
 	if err != nil {
 		s.Logger.Error("failed to call capability",
-			"error", err)
-
+			"name", args.Name)
+		if st, ok := status.FromError(err); ok {
+			// TODO: this should be an actual localized message
+			msg := &errdetails.LocalizedMessage{
+				Locale:  "en-US",
+				Message: fmt.Sprintf("could not run capability %s", args.Name),
+			}
+			statusDetails, _ := st.WithDetails(msg)
+			return nil, statusDetails.Err()
+		}
 		return nil, err
 	}
 
