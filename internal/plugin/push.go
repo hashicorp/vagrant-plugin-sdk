@@ -24,9 +24,6 @@ type PushPlugin struct {
 	*BasePlugin
 }
 
-// TODO: for tomorrow, come back in here and rewire things based on the new simpler core interface
-//       then, ensure lib/vagrant/plugin/remote/manager has pushes uncommented
-//       and, get the ruby side client and server bits cargo culted
 func (p *PushPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
 	vagrant_plugin_sdk.RegisterPushServiceServer(s, &pushServer{
 		Impl:       p.Impl,
@@ -61,23 +58,22 @@ func (c *pushClient) PushFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (int32, error) {
+	cb := func(ctx context.Context, args funcspec.Args) error {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
-		result, err := c.client.Push(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		_, err := c.client.Push(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
-			return 1, err
+			return err
 		}
-		return result.ExitCode, nil
+		return nil
 	}
 	return c.GenerateFunc(spec, cb)
 }
 
 // this meets the core.Push interfacce
-func (c *pushClient) Push() (int32, error) {
+func (c *pushClient) Push() error {
 	f := c.PushFunc()
-	raw, err := c.CallDynamicFunc(f, (*int32)(nil), argmapper.Typed(c.Ctx))
-	exitCode := raw.(int32)
-	return exitCode, err
+	_, err := c.CallDynamicFunc(f, false, argmapper.Typed(c.Ctx))
+	return err
 }
 
 // pushServer is a gRPC server that the client talks to and calls a
@@ -103,17 +99,11 @@ func (s *pushServer) PushSpec(
 func (s *pushServer) Push(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.Push_PushResponse, error) {
-	raw, err := s.CallDynamicFunc(s.Impl.PushFunc(), (*int32)(nil), args.Args,
+) (*emptypb.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.PushFunc(), (*int32)(nil), args.Args,
 		argmapper.Typed(ctx))
 
-	if err != nil {
-		return nil, err
-	}
-	exitCode := raw.(int32)
-	return &vagrant_plugin_sdk.Push_PushResponse{
-		ExitCode: exitCode,
-	}, nil
+	return &emptypb.Empty{}, err
 }
 
 var (
@@ -121,5 +111,6 @@ var (
 	_ plugin.GRPCPlugin                    = (*PushPlugin)(nil)
 	_ vagrant_plugin_sdk.PushServiceServer = (*pushServer)(nil)
 	_ component.Push                       = (*pushClient)(nil)
+	_ core.Push                            = (*pushClient)(nil)
 	_ core.Seeder                          = (*pushClient)(nil)
 )

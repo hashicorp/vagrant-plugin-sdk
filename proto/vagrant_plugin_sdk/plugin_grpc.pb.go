@@ -8384,7 +8384,7 @@ var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PushServiceClient interface {
 	PushSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Push(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Push_PushResponse, error)
+	Push(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 }
@@ -8406,8 +8406,8 @@ func (c *pushServiceClient) PushSpec(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-func (c *pushServiceClient) Push(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Push_PushResponse, error) {
-	out := new(Push_PushResponse)
+func (c *pushServiceClient) Push(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PushService/Push", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8438,7 +8438,7 @@ func (c *pushServiceClient) Seeds(ctx context.Context, in *emptypb.Empty, opts .
 // for forward compatibility
 type PushServiceServer interface {
 	PushSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
-	Push(context.Context, *FuncSpec_Args) (*Push_PushResponse, error)
+	Push(context.Context, *FuncSpec_Args) (*emptypb.Empty, error)
 	Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error)
 	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
 }
@@ -8450,7 +8450,7 @@ type UnimplementedPushServiceServer struct {
 func (UnimplementedPushServiceServer) PushSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushSpec not implemented")
 }
-func (UnimplementedPushServiceServer) Push(context.Context, *FuncSpec_Args) (*Push_PushResponse, error) {
+func (UnimplementedPushServiceServer) Push(context.Context, *FuncSpec_Args) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Push not implemented")
 }
 func (UnimplementedPushServiceServer) Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error) {
