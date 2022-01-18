@@ -245,11 +245,17 @@ func (c *communicatorClient) ExecuteFunc() interface{} {
 
 func (c *communicatorClient) Execute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.ExecuteFunc()
+	var optsArgs []interface{}
+	if opts == nil {
+		// is the opts are empty then pass in an empty args hash
+		optsArgs = []interface{}{&vagrant_plugin_sdk.Args_Hash{}}
+	} else {
+		optsArgs = opts
+	}
 	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
-		argmapper.Typed(opts),
+		argmapper.Typed(optsArgs),
 		argmapper.Typed(cmd),
-		argmapper.Named("command", cmd),
 		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
@@ -278,11 +284,18 @@ func (c *communicatorClient) PrivilegedExecuteFunc() interface{} {
 
 func (c *communicatorClient) PrivilegedExecute(machine core.Machine, cmd []string, opts ...interface{}) (status int32, err error) {
 	f := c.PrivilegedExecuteFunc()
+	var optsArgs []interface{}
+	if opts == nil {
+		// is the opts are empty then pass in an empty args hash
+		optsArgs = []interface{}{&vagrant_plugin_sdk.Args_Hash{}}
+	} else {
+		optsArgs = opts
+	}
+
 	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
 		argmapper.Typed(machine),
-		argmapper.Typed(opts),
+		argmapper.Typed(optsArgs),
 		argmapper.Typed(cmd),
-		argmapper.Named("command", cmd),
 		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {
@@ -311,11 +324,18 @@ func (c *communicatorClient) TestFunc() interface{} {
 
 func (c *communicatorClient) Test(machine core.Machine, cmd []string, opts ...interface{}) (valid bool, err error) {
 	f := c.TestFunc()
-	raw, err := c.CallDynamicFunc(f, (*int32)(nil),
+	var optsArgs []interface{}
+	if opts == nil {
+		// is the opts are empty then pass in an empty args hash
+		optsArgs = []interface{}{&vagrant_plugin_sdk.Args_Hash{}}
+	} else {
+		optsArgs = opts
+	}
+
+	raw, err := c.CallDynamicFunc(f, (*bool)(nil),
 		argmapper.Typed(machine),
-		argmapper.Typed(opts),
+		argmapper.Typed(optsArgs...),
 		argmapper.Typed(cmd),
-		argmapper.Named("command", cmd),
 		argmapper.Typed(c.Ctx),
 	)
 	if err != nil {

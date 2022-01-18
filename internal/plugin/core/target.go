@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"google.golang.org/grpc"
@@ -66,9 +67,17 @@ type targetServer struct {
 
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
 	commArg, err := c.client.Communicate(c.Ctx, &empty.Empty{})
-	result, err := c.Map(commArg, (*core.Communicator)(nil))
 	if err != nil {
-		return
+		return nil, fmt.Errorf("failed to call communicator from client, %w", err)
+	}
+	result, err := c.Map(
+		commArg,
+		(*core.Communicator)(nil),
+		argmapper.Typed(c.Ctx),
+		argmapper.Typed(c.Logger),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to map communicator, %w", err)
 	}
 	comm = result.(core.Communicator)
 	return
@@ -266,12 +275,12 @@ func (s *targetServer) Communicate(
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
 	c, err := s.Impl.Communicate()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error getting the communicator, %w", err)
 	}
 
-	result, err := s.Map(c, (**vagrant_plugin_sdk.Args_Communicator)(nil))
+	result, err := s.Map(c, (**vagrant_plugin_sdk.Args_Communicator)(nil), argmapper.Typed(ctx))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to map communicator to proto, %w", err)
 	}
 
 	return result.(*vagrant_plugin_sdk.Args_Communicator), nil
