@@ -54,6 +54,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"mapper":       &MapperPlugin{BasePlugin: bp.Clone()},
 			"plugininfo":   info,
 			"provider":     &ProviderPlugin{BasePlugin: bp.Clone()},
+			"push":         &PushPlugin{BasePlugin: bp.Clone()},
 			"provisioner":  &ProvisionerPlugin{BasePlugin: bp.Clone()},
 			"syncedfolder": &SyncedFolderPlugin{BasePlugin: bp.Clone()},
 		},

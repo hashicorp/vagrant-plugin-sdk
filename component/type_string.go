@@ -22,12 +22,13 @@ func _() {
 	_ = x[MapperType-11]
 	_ = x[ConfigType-12]
 	_ = x[PluginInfoType-13]
-	_ = x[maxType-14]
+	_ = x[PushType-14]
+	_ = x[maxType-15]
 }
 
-const _Type_name = "InvalidCommandCommunicatorGuestHostProviderProvisionerSyncedFolderAuthenticatorLogPlatformLogViewerMapperConfigPluginInfomaxType"
+const _Type_name = "InvalidCommandCommunicatorGuestHostProviderProvisionerSyncedFolderAuthenticatorLogPlatformLogViewerMapperConfigPluginInfoPushmaxType"
 
-var _Type_index = [...]uint8{0, 7, 14, 26, 31, 35, 43, 54, 66, 79, 90, 99, 105, 111, 121, 128}
+var _Type_index = [...]uint8{0, 7, 14, 26, 31, 35, 43, 54, 66, 79, 90, 99, 105, 111, 121, 125, 132}
 
 func (i Type) String() string {
 	if i >= Type(len(_Type_index)-1) {
