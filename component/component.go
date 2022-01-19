@@ -13,8 +13,6 @@ package component
 import (
 	"fmt"
 	"strings"
-
-	"github.com/DavidGamba/go-getoptions/option"
 )
 
 // Type is an enum of all the types of components supported.
@@ -86,11 +84,60 @@ type PluginInfo interface {
 	Name() string
 }
 
+type CommandFlags []*CommandFlag
+
+func (c CommandFlags) Display() string {
+	var pad int
+	opts := make([]string, len(c))
+	desc := make([]string, len(c))
+
+	for i, f := range c {
+		if f.ShortName != "" {
+			opts[i] = "-" + f.ShortName + ","
+		} else {
+			opts[i] = "   "
+		}
+		if f.Type == FlagBool {
+			opts[i] = opts[i] + " --[no-]" + f.LongName
+		} else {
+			opts[i] = opts[i] + " --" + f.LongName + " VALUE"
+		}
+		desc[i] = f.Description
+		if len(opts[i]) > pad {
+			pad = len(opts[i])
+		}
+	}
+
+	pad += 11
+	var d string
+
+	for i := 0; i < len(opts); i++ {
+		d = d + fmt.Sprintf("%4s%-*s%s\n", "", pad, opts[i], desc[i])
+	}
+
+	return d
+}
+
+type FlagType uint
+
+const (
+	FlagString FlagType = 1 << iota // String
+	FlagBool                        // Bool
+)
+
+type CommandFlag struct {
+	LongName     string
+	ShortName    string
+	Description  string
+	DefaultValue string
+	Type         FlagType
+}
+
 type CommandInfo struct {
 	Name        string
 	Help        string
 	Synopsis    string
-	Flags       []*option.Option
+	Flags       []*CommandFlag
 	Subcommands []*CommandInfo
 }
 
