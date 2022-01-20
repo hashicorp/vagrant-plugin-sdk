@@ -208,19 +208,25 @@ type Host interface {
 }
 
 type Provider interface {
+	// Check if provider is usable
 	UsableFunc() interface{}
+	// Check if the provider is installed
 	InstalledFunc() interface{}
+	// Initialize provider
 	InitFunc() interface{}
-	ActionUpFunc() interface{}
-	// ActionHaltFunc() interface{}
-	// ActionSuspendFunc() interface{}
-	// ActionReloadFunc() interface{}
-	// ActionResumeFunc() interface{}
-	// ActionProvisionFunc() interface{}
-	// ActionSnapshotSaveFunc() interface{}
-	// ActionSnapshotRestoreFunc() interface{}
-	// ActionSnapshotDeleteFunc() interface{}
-	// ActionDestroyFunc() interface{}
+	// Run an action by name
+	ActionFunc(actionName string) interface{}
+	// Called when the machine id is changed
+	MachineIdChangedFunc() interface{}
+	// Get SSH info
+	SshInfoFunc() interface{}
+	// Get target state
+	StateFunc() interface{}
+
+	// Test if capability is available
+	HasCapabilityFunc() interface{}
+	// Run a capability
+	CapabilityFunc(capName string) interface{}
 }
 
 type Provisioner interface {
