@@ -112,6 +112,8 @@ var All = []interface{}{
 	MachineProject,
 	MachineState,
 	MachineStateProto,
+	SshInfo,
+	SshInfoProto,
 	MapToProto,
 	Metadata,
 	MetadataProto,
@@ -827,6 +829,16 @@ func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.Ma
 
 func MachineStateProto(input *core.MachineState) (*vagrant_plugin_sdk.Args_Target_Machine_State, error) {
 	var result vagrant_plugin_sdk.Args_Target_Machine_State
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func SshInfo(input *vagrant_plugin_sdk.SSHInfo) (*core.SshInfo, error) {
+	var result core.SshInfo
+	return &result, mapstructure.Decode(input, &result)
+}
+
+func SshInfoProto(input *core.SshInfo) (*vagrant_plugin_sdk.SSHInfo, error) {
+	var result vagrant_plugin_sdk.SSHInfo
 	return &result, mapstructure.Decode(input, &result)
 }
 
