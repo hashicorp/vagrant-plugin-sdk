@@ -1076,6 +1076,7 @@ service ProjectService {
   rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
   // rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
   rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
+  rpc Config(google.protobuf.Empty) returns (Project.ConfigResponse);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
   rpc VagrantfileName(google.protobuf.Empty) returns (Project.VagrantfileNameResponse);
   rpc VagrantfilePath(google.protobuf.Empty) returns (Project.VagrantfilePathResponse);
@@ -1120,6 +1121,9 @@ message Project {
   }
   message CwdResponse {
     string path = 1;
+  }
+  message ConfigResponse {
+    Vagrantfile.Vagrantfile vagrantfile = 1;
   }
   message VagrantfileNameResponse {
     string name = 1;
@@ -1299,6 +1303,12 @@ message Vagrantfile {
     string type = 10;
   }
 
+  message PushConfig {
+    string name = 1;
+    // Each push plugin defines its own config
+    GeneralConfig config = 2;
+  }
+
   // TODO: Review what needs to be sent here
   message Vagrantfile {
     // The full path the the Vagrantfile including the Vagrantfile name
@@ -1306,6 +1316,7 @@ message Vagrantfile {
     string raw = 2;
     string current_version = 3;
     repeated MachineConfig machine_configs = 4;
+    repeated PushConfig push_configs = 5;
   }
 }
 
