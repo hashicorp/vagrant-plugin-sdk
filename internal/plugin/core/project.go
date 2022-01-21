@@ -70,6 +70,15 @@ func (p *projectClient) CWD() (path string, err error) {
 	return
 }
 
+func (p *projectClient) Config() (*vagrant_plugin_sdk.Vagrantfile_Vagrantfile, error) {
+	r, err := p.client.Config(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Vagrantfile, nil
+}
+
 func (p *projectClient) ResourceId() (rid string, err error) {
 	r, err := p.client.ResourceId(p.Ctx, &emptypb.Empty{})
 	if err == nil {
@@ -251,6 +260,20 @@ func (p *projectServer) CWD(
 
 	return &vagrant_plugin_sdk.Project_CwdResponse{
 		Path: c,
+	}, nil
+}
+
+func (p *projectServer) Config(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_ConfigResponse, error) {
+	v, err := p.Impl.Config()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_ConfigResponse{
+		Vagrantfile: v,
 	}, nil
 }
 

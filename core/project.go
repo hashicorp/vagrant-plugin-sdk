@@ -5,12 +5,14 @@ import (
 	//	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type Project interface {
 	// accessors
 	CWD() (path string, err error)
+	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path string, err error)
 	Home() (path string, err error)
