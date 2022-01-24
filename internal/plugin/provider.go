@@ -32,7 +32,7 @@ func (p *ProviderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) e
 		capabilityServer: &capabilityServer{
 			BaseServer:     bs,
 			CapabilityImpl: p.Impl,
-			typ:            "guest",
+			typ:            "provider",
 		},
 	})
 	return nil

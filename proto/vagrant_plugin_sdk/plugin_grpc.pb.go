@@ -6881,6 +6881,7 @@ type ProjectServiceClient interface {
 	TargetIndex(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
 	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
 	CWD(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
+	Config(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error)
 	DataDir(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
 	VagrantfileName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfileNameResponse, error)
 	VagrantfilePath(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error)
@@ -6926,6 +6927,15 @@ func (c *projectServiceClient) TargetIndex(ctx context.Context, in *empty.Empty,
 func (c *projectServiceClient) CWD(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
 	out := new(Project_CwdResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) Config(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error) {
+	out := new(Project_ConfigResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Config", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -7066,6 +7076,7 @@ type ProjectServiceServer interface {
 	TargetIndex(context.Context, *empty.Empty) (*Args_TargetIndex, error)
 	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
 	CWD(context.Context, *empty.Empty) (*Project_CwdResponse, error)
+	Config(context.Context, *empty.Empty) (*Project_ConfigResponse, error)
 	DataDir(context.Context, *empty.Empty) (*Args_DataDir_Project, error)
 	VagrantfileName(context.Context, *empty.Empty) (*Project_VagrantfileNameResponse, error)
 	VagrantfilePath(context.Context, *empty.Empty) (*Project_VagrantfilePathResponse, error)
@@ -7094,6 +7105,9 @@ func (UnimplementedProjectServiceServer) TargetIndex(context.Context, *empty.Emp
 }
 func (UnimplementedProjectServiceServer) CWD(context.Context, *empty.Empty) (*Project_CwdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
+}
+func (UnimplementedProjectServiceServer) Config(context.Context, *empty.Empty) (*Project_ConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
 }
 func (UnimplementedProjectServiceServer) DataDir(context.Context, *empty.Empty) (*Args_DataDir_Project, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataDir not implemented")
@@ -7199,6 +7213,24 @@ func _ProjectService_CWD_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).CWD(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_Config_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Config(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Config",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Config(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -7473,6 +7505,10 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CWD",
 			Handler:    _ProjectService_CWD_Handler,
+		},
+		{
+			MethodName: "Config",
+			Handler:    _ProjectService_Config_Handler,
 		},
 		{
 			MethodName: "DataDir",
