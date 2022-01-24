@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -765,49 +764,52 @@ func Guest(
 }
 
 // Flags maps
-func Flags(input []*vagrant_plugin_sdk.Command_Flag) (opt []*option.Option, err error) {
-	opt = []*option.Option{}
-	// TODO: add short description as alias
-	// https://godoc.org/github.com/DavidGamba/go-getoptions#GetOpt.Alias
-	for _, f := range input {
-		var newOpt *option.Option
+
+func Flags(input []*vagrant_plugin_sdk.Command_Flag) (flags []*component.CommandFlag, err error) {
+	flags = make([]*component.CommandFlag, len(input))
+
+	for i, f := range input {
+		flags[i] = &component.CommandFlag{
+			LongName:     f.LongName,
+			ShortName:    f.ShortName,
+			Description:  f.Description,
+			DefaultValue: f.DefaultValue,
+		}
+
 		switch f.Type {
 		case vagrant_plugin_sdk.Command_Flag_STRING:
-			newOpt = option.New(f.LongName, option.StringType)
+			flags[i].Type = component.FlagString
 		case vagrant_plugin_sdk.Command_Flag_BOOL:
-			newOpt = option.New(f.LongName, option.BoolType)
+			flags[i].Type = component.FlagBool
 		}
-		newOpt.Description = f.Description
-		newOpt.DefaultStr = f.DefaultValue
-		opt = append(opt, newOpt)
 	}
-	return opt, err
+	return
 }
 
 // Flags maps
-func FlagsProto(input []*option.Option) (output []*vagrant_plugin_sdk.Command_Flag, err error) {
-	output = []*vagrant_plugin_sdk.Command_Flag{}
+func FlagsProto(input []*component.CommandFlag) (output []*vagrant_plugin_sdk.Command_Flag, err error) {
+	output = make([]*vagrant_plugin_sdk.Command_Flag, len(input))
 
-	for _, f := range input {
-		var flagType vagrant_plugin_sdk.Command_Flag_Type
-		switch f.OptType {
-		case option.StringType:
-			flagType = vagrant_plugin_sdk.Command_Flag_STRING
-		case option.BoolType:
-			flagType = vagrant_plugin_sdk.Command_Flag_BOOL
-		}
-
-		// TODO: get aliases
-		j := &vagrant_plugin_sdk.Command_Flag{
-			LongName:     f.Name,
-			ShortName:    f.Name,
+	for i, f := range input {
+		output[i] = &vagrant_plugin_sdk.Command_Flag{
+			LongName:     f.LongName,
+			ShortName:    f.ShortName,
 			Description:  f.Description,
-			DefaultValue: f.DefaultStr,
-			Type:         flagType,
+			DefaultValue: f.DefaultValue,
 		}
-		output = append(output, j)
+
+		switch f.Type {
+		case component.FlagString:
+			output[i].Type = vagrant_plugin_sdk.Command_Flag_STRING
+		case component.FlagBool:
+			output[i].Type = vagrant_plugin_sdk.Command_Flag_BOOL
+		default:
+			err = fmt.Errorf("invalid flag type - %s", f.Type.String())
+			return
+		}
 	}
-	return output, nil
+
+	return
 }
 
 func MapToProto(input map[string]interface{}) (*structpb.Struct, error) {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/DavidGamba/go-getoptions/option"
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/go-argmapper"
 	"google.golang.org/grpc/codes"
@@ -132,7 +131,7 @@ var (
 	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
 	stringType       = reflect.TypeOf((*string)(nil)).Elem()
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
-	cliOptType       = reflect.TypeOf((*[]*option.Option)(nil)).Elem()
+	cliOptType       = reflect.TypeOf((**component.CommandFlag)(nil)).Elem()
 	commandInfoType  = reflect.TypeOf((**component.CommandInfo)(nil)).Elem()
 	interfaceType    = reflect.TypeOf((*interface{})(nil)).Elem()
 )

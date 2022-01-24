@@ -26,7 +26,7 @@ import (
 //go:generate mockery --all --dir ./core --output ./core/mocks
 
 // String generation
-//go:generate stringer -type=Type -linecomment ./component
+//go:generate stringer -type=Type,FlagType -linecomment ./component
 
 // Main is the primary entrypoint for plugins serving components. This
 // function never returns; it blocks until the program is exited. This should

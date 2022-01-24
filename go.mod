@@ -3,7 +3,6 @@ module github.com/hashicorp/vagrant-plugin-sdk
 go 1.13
 
 require (
-	github.com/DavidGamba/go-getoptions v0.23.0
 	github.com/LK4D4/joincontext v0.0.0-20171026170139-1724345da6d5
 	github.com/adrg/xdg v0.2.1
 	github.com/bgentry/speakeasy v0.1.0
