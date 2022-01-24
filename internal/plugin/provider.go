@@ -106,35 +106,6 @@ func (c *providerClient) Usable() (bool, error) {
 	return raw.(bool), nil
 }
 
-func (c *providerClient) InitFunc() interface{} {
-	spec, err := c.client.InitSpec(c.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return funcErr(err)
-	}
-	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
-		_, err := c.client.Init(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
-		if err != nil {
-			return false, err
-		}
-		return true, nil
-	}
-	return c.GenerateFunc(spec, cb)
-}
-
-func (c *providerClient) Init(machine core.Machine) (bool, error) {
-	f := c.InitFunc()
-	_, err := c.CallDynamicFunc(f, (*bool)(nil),
-		argmapper.Typed(machine),
-		argmapper.Typed(c.Ctx),
-	)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
 func (c *providerClient) InstalledFunc() interface{} {
 	spec, err := c.client.InstalledSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
@@ -359,31 +330,6 @@ func (s *providerServer) Installed(
 
 	return &vagrant_plugin_sdk.Provider_InstalledResp{
 		IsInstalled: raw.(bool)}, nil
-}
-
-func (s *providerServer) InitSpec(
-	ctx context.Context,
-	args *emptypb.Empty,
-) (*vagrant_plugin_sdk.FuncSpec, error) {
-	if err := isImplemented(s, "provider"); err != nil {
-		return nil, err
-	}
-
-	return s.GenerateSpec(s.Impl.InitFunc())
-}
-
-func (s *providerServer) Init(
-	ctx context.Context,
-	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*emptypb.Empty, error) {
-	_, err := s.CallDynamicFunc(s.Impl.InitFunc(), false,
-		args.Args, argmapper.Typed(ctx))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &emptypb.Empty{}, nil
 }
 
 func (s *providerServer) ActionSpec(

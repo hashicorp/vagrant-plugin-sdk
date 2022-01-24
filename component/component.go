@@ -212,8 +212,6 @@ type Provider interface {
 	UsableFunc() interface{}
 	// Check if the provider is installed
 	InstalledFunc() interface{}
-	// Initialize provider
-	InitFunc() interface{}
 	// Run an action by name
 	ActionFunc(actionName string) interface{}
 	// Called when the machine id is changed

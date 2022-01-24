@@ -769,8 +769,6 @@ type ProviderServiceClient interface {
 	UsableSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Installed(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Provider_InstalledResp, error)
 	InstalledSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
-	InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Action(ctx context.Context, in *Provider_ActionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	ActionSpec(ctx context.Context, in *Provider_ActionRequest, opts ...grpc.CallOption) (*FuncSpec, error)
 	MachineIdChanged(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -828,24 +826,6 @@ func (c *providerServiceClient) Installed(ctx context.Context, in *FuncSpec_Args
 func (c *providerServiceClient) InstalledSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
 	out := new(FuncSpec)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/InstalledSpec", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *providerServiceClient) Init(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/Init", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *providerServiceClient) InitSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
-	out := new(FuncSpec)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/InitSpec", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1013,8 +993,6 @@ type ProviderServiceServer interface {
 	UsableSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Installed(context.Context, *FuncSpec_Args) (*Provider_InstalledResp, error)
 	InstalledSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	Init(context.Context, *FuncSpec_Args) (*empty.Empty, error)
-	InitSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Action(context.Context, *Provider_ActionRequest) (*empty.Empty, error)
 	ActionSpec(context.Context, *Provider_ActionRequest) (*FuncSpec, error)
 	MachineIdChanged(context.Context, *FuncSpec_Args) (*empty.Empty, error)
@@ -1049,12 +1027,6 @@ func (UnimplementedProviderServiceServer) Installed(context.Context, *FuncSpec_A
 }
 func (UnimplementedProviderServiceServer) InstalledSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InstalledSpec not implemented")
-}
-func (UnimplementedProviderServiceServer) Init(context.Context, *FuncSpec_Args) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
-}
-func (UnimplementedProviderServiceServer) InitSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitSpec not implemented")
 }
 func (UnimplementedProviderServiceServer) Action(context.Context, *Provider_ActionRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Action not implemented")
@@ -1187,42 +1159,6 @@ func _ProviderService_InstalledSpec_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProviderServiceServer).InstalledSpec(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProviderService_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FuncSpec_Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProviderServiceServer).Init(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/Init",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).Init(ctx, req.(*FuncSpec_Args))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProviderService_InitSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProviderServiceServer).InitSpec(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/InitSpec",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProviderServiceServer).InitSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1555,14 +1491,6 @@ var ProviderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InstalledSpec",
 			Handler:    _ProviderService_InstalledSpec_Handler,
-		},
-		{
-			MethodName: "Init",
-			Handler:    _ProviderService_Init_Handler,
-		},
-		{
-			MethodName: "InitSpec",
-			Handler:    _ProviderService_InitSpec_Handler,
 		},
 		{
 			MethodName: "Action",

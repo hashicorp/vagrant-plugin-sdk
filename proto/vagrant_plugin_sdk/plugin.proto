@@ -608,8 +608,6 @@ service ProviderService {
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Installed(FuncSpec.Args) returns (Provider.InstalledResp);
   rpc InstalledSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Init(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Action(Provider.ActionRequest) returns (google.protobuf.Empty);
   rpc ActionSpec(Provider.ActionRequest) returns (FuncSpec);
   rpc MachineIdChanged(FuncSpec.Args) returns (google.protobuf.Empty);
