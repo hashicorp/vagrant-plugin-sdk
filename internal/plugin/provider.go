@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
@@ -85,6 +86,7 @@ func (c *providerClient) UsableFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Usable(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -113,6 +115,7 @@ func (c *providerClient) InstalledFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (bool, error) {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.Installed(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return false, err
@@ -143,6 +146,7 @@ func (c *providerClient) ActionFunc(name string) interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		_, err := c.client.Action(ctx, &vagrant_plugin_sdk.Provider_ActionRequest{
 			Name:     name,
 			FuncArgs: &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -150,7 +154,6 @@ func (c *providerClient) ActionFunc(name string) interface{} {
 		return err
 	}
 	return c.GenerateFunc(spec, cb)
-	return nil
 }
 
 func (c *providerClient) Action(name string, args ...interface{}) error {
@@ -170,6 +173,7 @@ func (c *providerClient) MachineIdChangedFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		_, err := c.client.MachineIdChanged(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		return err
 	}
@@ -191,6 +195,7 @@ func (c *providerClient) SshInfoFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*core.SshInfo, error) {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.SshInfo(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
@@ -224,6 +229,7 @@ func (c *providerClient) StateFunc() interface{} {
 	}
 	spec.Result = nil
 	cb := func(ctx context.Context, args funcspec.Args) (*core.MachineState, error) {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.State(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
 		if err != nil {
 			return nil, err
