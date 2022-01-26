@@ -51,6 +51,14 @@ type pushClient struct {
 	client vagrant_plugin_sdk.PushServiceClient
 }
 
+func (c *pushClient) Config() (interface{}, error) {
+	return configStructCall(context.Background(), c.client)
+}
+
+func (c *pushClient) ConfigSet(v interface{}) error {
+	return configureCall(context.Background(), c.client, v)
+}
+
 // this meets the component.Push interface
 func (c *pushClient) PushFunc() interface{} {
 	spec, err := c.client.PushSpec(c.Ctx, &emptypb.Empty{})
@@ -83,6 +91,28 @@ type pushServer struct {
 
 	Impl component.Push
 	vagrant_plugin_sdk.UnsafePushServiceServer
+}
+
+func (s *pushServer) ConfigStruct(
+	ctx context.Context,
+	empty *emptypb.Empty,
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
+	return configStruct(s.Impl)
+}
+
+func (s *pushServer) Configure(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
+) (*emptypb.Empty, error) {
+	return configure(s.Impl, req)
+}
+
+func (s *pushServer) Documentation(
+	ctx context.Context,
+	empty *emptypb.Empty,
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
+	// return documentation(s.Impl)
+	return nil, nil
 }
 
 func (s *pushServer) PushSpec(

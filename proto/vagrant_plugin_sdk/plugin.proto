@@ -1457,4 +1457,8 @@ service PushService {
 
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
+
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
