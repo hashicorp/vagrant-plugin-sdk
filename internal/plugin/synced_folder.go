@@ -66,15 +66,18 @@ type syncedFolderClient struct {
 }
 
 func (c *syncedFolderClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
+	return nil, nil
+	// return configStructCall(c.Ctx, c.client)
 }
 
 func (c *syncedFolderClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
+	return nil
+	// return configureCall(c.Ctx, c.client, v)
 }
 
 func (c *syncedFolderClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
+	return nil, nil
+	// return documentationCall(c.Ctx, c.client)
 }
 
 func (c *syncedFolderClient) UsableFunc() interface{} {
@@ -199,14 +202,16 @@ func (s *syncedFolderServer) ConfigStruct(
 	ctx context.Context,
 	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
+	return nil, nil
+	// return configStruct(s.Impl)
 }
 
 func (s *syncedFolderServer) Configure(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Config_ConfigureRequest,
 ) (*emptypb.Empty, error) {
-	return configure(s.Impl, req)
+	return nil, nil
+	// return configure(s.Impl, req)
 }
 
 func (s *syncedFolderServer) Documentation(
