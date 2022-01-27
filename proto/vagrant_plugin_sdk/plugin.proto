@@ -814,10 +814,6 @@ service ConfigService {
 }
 
 service HostService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
   rpc Detect(FuncSpec.Args) returns (Platform.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
 
@@ -832,10 +828,6 @@ service HostService {
 }
 
 service GuestService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-
   rpc Detect(FuncSpec.Args) returns (Platform.DetectResp);
   rpc DetectSpec(google.protobuf.Empty) returns (FuncSpec);
 

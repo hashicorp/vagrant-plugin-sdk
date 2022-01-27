@@ -2989,9 +2989,6 @@ var ConfigService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HostServiceClient interface {
-	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error)
 	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error)
@@ -3010,33 +3007,6 @@ type hostServiceClient struct {
 
 func NewHostServiceClient(cc grpc.ClientConnInterface) HostServiceClient {
 	return &hostServiceClient{cc}
-}
-
-func (c *hostServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
-	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/ConfigStruct", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Configure", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
-	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/Documentation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *hostServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error) {
@@ -3133,9 +3103,6 @@ func (c *hostServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ...
 // All implementations should embed UnimplementedHostServiceServer
 // for forward compatibility
 type HostServiceServer interface {
-	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
-	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error)
 	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error)
@@ -3152,15 +3119,6 @@ type HostServiceServer interface {
 type UnimplementedHostServiceServer struct {
 }
 
-func (UnimplementedHostServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
-}
-func (UnimplementedHostServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
-}
-func (UnimplementedHostServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
-}
 func (UnimplementedHostServiceServer) Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
 }
@@ -3201,60 +3159,6 @@ type UnsafeHostServiceServer interface {
 
 func RegisterHostServiceServer(s grpc.ServiceRegistrar, srv HostServiceServer) {
 	s.RegisterService(&HostService_ServiceDesc, srv)
-}
-
-func _HostService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).ConfigStruct(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/ConfigStruct",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Config_ConfigureRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Configure(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Configure",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostServiceServer).Documentation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.HostService/Documentation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostServiceServer).Documentation(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _HostService_Detect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3445,18 +3349,6 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*HostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ConfigStruct",
-			Handler:    _HostService_ConfigStruct_Handler,
-		},
-		{
-			MethodName: "Configure",
-			Handler:    _HostService_Configure_Handler,
-		},
-		{
-			MethodName: "Documentation",
-			Handler:    _HostService_Documentation_Handler,
-		},
-		{
 			MethodName: "Detect",
 			Handler:    _HostService_Detect_Handler,
 		},
@@ -3505,9 +3397,6 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GuestServiceClient interface {
-	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 	Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error)
 	DetectSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Capability(ctx context.Context, in *Platform_Capability_NamedRequest, opts ...grpc.CallOption) (*Platform_Capability_Resp, error)
@@ -3526,33 +3415,6 @@ type guestServiceClient struct {
 
 func NewGuestServiceClient(cc grpc.ClientConnInterface) GuestServiceClient {
 	return &guestServiceClient{cc}
-}
-
-func (c *guestServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
-	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/ConfigStruct", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *guestServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Configure", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *guestServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
-	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Documentation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *guestServiceClient) Detect(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Platform_DetectResp, error) {
@@ -3649,9 +3511,6 @@ func (c *guestServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ..
 // All implementations should embed UnimplementedGuestServiceServer
 // for forward compatibility
 type GuestServiceServer interface {
-	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
-	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error)
 	DetectSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Capability(context.Context, *Platform_Capability_NamedRequest) (*Platform_Capability_Resp, error)
@@ -3668,15 +3527,6 @@ type GuestServiceServer interface {
 type UnimplementedGuestServiceServer struct {
 }
 
-func (UnimplementedGuestServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
-}
-func (UnimplementedGuestServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
-}
-func (UnimplementedGuestServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
-}
 func (UnimplementedGuestServiceServer) Detect(context.Context, *FuncSpec_Args) (*Platform_DetectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detect not implemented")
 }
@@ -3717,60 +3567,6 @@ type UnsafeGuestServiceServer interface {
 
 func RegisterGuestServiceServer(s grpc.ServiceRegistrar, srv GuestServiceServer) {
 	s.RegisterService(&GuestService_ServiceDesc, srv)
-}
-
-func _GuestService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GuestServiceServer).ConfigStruct(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/ConfigStruct",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GuestService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Config_ConfigureRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GuestServiceServer).Configure(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Configure",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GuestService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GuestServiceServer).Documentation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Documentation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).Documentation(ctx, req.(*empty.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _GuestService_Detect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3960,18 +3756,6 @@ var GuestService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.GuestService",
 	HandlerType: (*GuestServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ConfigStruct",
-			Handler:    _GuestService_ConfigStruct_Handler,
-		},
-		{
-			MethodName: "Configure",
-			Handler:    _GuestService_Configure_Handler,
-		},
-		{
-			MethodName: "Documentation",
-			Handler:    _GuestService_Documentation_Handler,
-		},
 		{
 			MethodName: "Detect",
 			Handler:    _GuestService_Detect_Handler,
