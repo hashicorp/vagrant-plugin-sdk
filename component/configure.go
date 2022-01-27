@@ -1,9 +1,11 @@
 package component
 
 import (
+	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/mitchellh/mapstructure"
 )
 
 // Configurable can be optionally implemented by any compontent to
@@ -86,6 +88,41 @@ func Configure(c interface{}, body hcl.Body, ctx *hcl.EvalContext) hcl.Diagnosti
 	// non-conformant to the schema.
 	_, diag := body.Content(&hcl.BodySchema{})
 	return diag
+}
+
+// func MachineState(input *vagrant_plugin_sdk.Args_Target_Machine_State) (*core.MachineState, error) {
+// 	var result core.MachineState
+// 	return &result, mapstructure.Decode(input, &result)
+// }
+
+// Configure configures c with the provided proto.
+func ConfigureFromProto(c interface{}, cfg proto.Message) error {
+	if c, ok := c.(Configurable); ok {
+		// Get the configuration value
+		v, err := c.Config()
+		if err != nil {
+			return err
+		}
+
+		// If the configuration structure is nil then we behave as if the
+		// component is not configurable.
+		if v == nil {
+			return nil
+		}
+
+		mapstructure.Decode(cfg, v)
+
+		// If decoding worked and we have a notification implementation, then
+		// notify with the value.
+		if cn, ok := c.(ConfigurableNotify); ok {
+			if err := cn.ConfigSet(v); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+	return nil
 }
 
 // Documentation returns the documentation for the given component.
