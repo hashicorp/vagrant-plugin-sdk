@@ -1,11 +1,11 @@
 package component
 
 import (
-	"github.com/golang/protobuf/proto"
+	"encoding/json"
+
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
-	"github.com/mitchellh/mapstructure"
 )
 
 // Configurable can be optionally implemented by any compontent to
@@ -95,8 +95,8 @@ func Configure(c interface{}, body hcl.Body, ctx *hcl.EvalContext) hcl.Diagnosti
 // 	return &result, mapstructure.Decode(input, &result)
 // }
 
-// Configure configures c with the provided proto.
-func ConfigureFromProto(c interface{}, cfg proto.Message) error {
+// Configure configures c with the provided json.
+func ConfigureFromJSON(c interface{}, cfg []byte) error {
 	if c, ok := c.(Configurable); ok {
 		// Get the configuration value
 		v, err := c.Config()
@@ -110,7 +110,7 @@ func ConfigureFromProto(c interface{}, cfg proto.Message) error {
 			return nil
 		}
 
-		mapstructure.Decode(cfg, v)
+		json.Unmarshal(cfg, v)
 
 		// If decoding worked and we have a notification implementation, then
 		// notify with the value.
