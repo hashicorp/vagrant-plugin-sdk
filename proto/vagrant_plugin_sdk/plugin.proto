@@ -224,7 +224,7 @@ message Args {
 }
 
 ///////
-    message SSHInfo {
+  message SSHInfo {
     string host = 1;
     string port = 2;
     string private_key_path = 3;
@@ -604,44 +604,27 @@ message PluginManager {
 // Provider service is a provider that takes some set of arguments changes
 // the state of a machine
 service ProviderService {
-  // rpc IsAuthenticator(google.protobuf.Empty) returns (ImplementsResp);
-  // rpc Auth(FuncSpec.Args) returns (Auth.AuthResponse);
-  // rpc AuthSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ValidateAuth(FuncSpec.Args) returns (google.protobuf.Empty);
-  // rpc ValidateAuthSpec(google.protobuf.Empty) returns (FuncSpec);
-
-  // rpc Usable(google.protobuf.Empty) returns (Provider.UsableResp);
-  // rpc Installed(google.protobuf.Empty) returns (Provider.InstalledResp);
   rpc Usable(FuncSpec.Args) returns (Provider.UsableResp);
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Installed(FuncSpec.Args) returns (Provider.InstalledResp);
   rpc InstalledSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Init(FuncSpec.Args) returns (google.protobuf.Empty);
-  rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc ActionUp(FuncSpec.Args) returns (Provider.ActionResp);
-  rpc ActionUpSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionHalt(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionHaltSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionSuspend(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionSuspendSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionReload(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionReloadSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionResume(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionResumeSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionProvision(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionProvisionSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionSnapshotSave(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionSnapshotSaveSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionSnapshotRestore(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionSnapshotRestoreSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionSnapshotDelete(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionSnapshotDeleteSpec(google.protobuf.Empty) returns (FuncSpec);
-  // rpc ActionDestroy(FuncSpec.Args) returns (Provider.Action.Resp);
-  // rpc ActionDestroySpec(google.protobuf.Empty) returns (FuncSpec);
-
+  rpc Action(Provider.ActionRequest) returns (google.protobuf.Empty);
+  rpc ActionSpec(Provider.ActionRequest) returns (FuncSpec);
+  rpc MachineIdChanged(FuncSpec.Args) returns (google.protobuf.Empty);
+  rpc MachineIdChangedSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc SshInfo(FuncSpec.Args) returns (SSHInfo);
+  rpc SshInfoSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc State(FuncSpec.Args) returns (Args.Target.Machine.State);
+  rpc StateSpec(google.protobuf.Empty) returns (FuncSpec);
+  
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  
+  rpc Capability(Platform.Capability.NamedRequest) returns (Platform.Capability.Resp);
+  rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
+  rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
+  rpc HasCapabilitySpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
@@ -650,14 +633,14 @@ message Provider {
   message UsableResp {
     bool is_usable = 1;
   }
+  
   message InstalledResp {
     bool is_installed = 1;
   }
-  message ActionResp {
-    google.protobuf.Any result = 1;
-    map<string, string> labels = 2;
-    bytes template_data = 3;
-    bool success = 4;
+
+  message ActionRequest {
+    string name = 1;
+    FuncSpec.Args func_args = 2;
   }
 }
 
