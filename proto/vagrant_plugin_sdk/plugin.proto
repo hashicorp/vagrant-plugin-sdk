@@ -72,7 +72,7 @@ message Args {
   message TerminalUI {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Logger {
@@ -94,38 +94,38 @@ message Args {
  message PluginManager {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Command {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Basis {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Project {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Provider {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Target {
     // Generic target
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
 
     message State {
       enum State {
@@ -146,62 +146,62 @@ message Args {
 
       uint32 stream_id = 1;
       string network = 2;
-      string target = 3;
+      string addr = 3;
     }
   }
 
   message Box {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message BoxCollection {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message StateBag {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Host {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Guest {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Communicator {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message Push {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message SyncedFolder {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message TargetIndex {
     uint32 stream_id = 1;
     string network = 2;
-    string target = 3;
+    string addr = 3;
   }
 
   message NamedCapability {
