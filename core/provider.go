@@ -8,14 +8,12 @@ type SshInfo struct {
 }
 
 type Provider interface {
+	CapabilityPlatform
+
 	Usable() (bool, error)
 	Installed() (bool, error)
 	Action(name string, args ...interface{}) error
 	MachineIdChanged() error
 	SshInfo() (*SshInfo, error)
 	State() (*MachineState, error)
-
-	// Capability functions
-	Capability(name string, args ...interface{}) (interface{}, error)
-	HasCapability(name string) (bool, error)
 }
