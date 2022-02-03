@@ -323,6 +323,7 @@ var (
 	_ vagrant_plugin_sdk.SyncedFolderServiceServer = (*syncedFolderServer)(nil)
 	_ component.SyncedFolder                       = (*syncedFolderClient)(nil)
 	_ core.SyncedFolder                            = (*syncedFolderClient)(nil)
-	_ capabilityComponent                          = (*syncedFolderClient)(nil)
+	_ component.CapabilityPlatform                 = (*syncedFolderClient)(nil)
+	_ core.CapabilityPlatform                      = (*syncedFolderClient)(nil)
 	_ core.Seeder                                  = (*syncedFolderClient)(nil)
 )
