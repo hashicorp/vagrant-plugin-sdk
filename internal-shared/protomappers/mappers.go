@@ -692,7 +692,7 @@ func HostProto(
 	}
 	proto := &vagrant_plugin_sdk.Args_Host{
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 		StreamId: id,
 	}
 	internal.Cache.Register(cid, proto)
@@ -741,7 +741,7 @@ func GuestProto(
 	}
 	return &vagrant_plugin_sdk.Args_Guest{
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 		StreamId: id,
 	}, nil
 }
@@ -900,7 +900,7 @@ func BoxProto(
 	proto := &vagrant_plugin_sdk.Args_Box{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}
+		Addr:     ep.String()}
 
 	log.Warn("registered box into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
@@ -954,7 +954,7 @@ func BoxCollectionProto(
 	proto := &vagrant_plugin_sdk.Args_BoxCollection{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}
+		Addr:     ep.String()}
 
 	log.Warn("registered box collection into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
@@ -1093,7 +1093,7 @@ func TerminalUIProto(
 	return &vagrant_plugin_sdk.Args_TerminalUI{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}, nil
+		Addr:     ep.String()}, nil
 }
 
 func MetadataSet(input *vagrant_plugin_sdk.Args_MetadataSet) *component.MetadataSet {
@@ -1251,7 +1251,7 @@ func PluginManagerProto(
 	proto := &vagrant_plugin_sdk.Args_PluginManager{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}
 
 	return proto, nil
@@ -1277,7 +1277,7 @@ func PluginManagerProtoDirect(
 	proto := &vagrant_plugin_sdk.Args_PluginManager{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}
 
 	return proto, closer, nil
@@ -1327,7 +1327,7 @@ func StateBagProto(
 	proto := &vagrant_plugin_sdk.Args_StateBag{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}
+		Addr:     ep.String()}
 
 	internal.Cache.Register(cid, proto)
 
@@ -1440,7 +1440,7 @@ func BasisProto(
 	return &vagrant_plugin_sdk.Args_Basis{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}, nil
 }
 
@@ -1494,7 +1494,7 @@ func CommunicatorProto(
 	return &vagrant_plugin_sdk.Args_Communicator{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}, nil
 }
 
@@ -1534,7 +1534,7 @@ func PushProto(
 	return &vagrant_plugin_sdk.Args_Push{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}, nil
 }
 
@@ -1584,7 +1584,7 @@ func ProjectProto(
 	proto := &vagrant_plugin_sdk.Args_Project{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}
+		Addr:     ep.String()}
 
 	internal.Cache.Register(cid, proto)
 
@@ -1597,7 +1597,7 @@ func Project(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (core.Project, error) {
-	cid := input.Target
+	cid := input.Addr
 	if cid != "" {
 		if ch := internal.Cache.Get(cid); ch != nil {
 			return ch.(core.Project), nil
@@ -1636,7 +1636,7 @@ func CommandProto(
 	proto := &vagrant_plugin_sdk.Args_Command{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String()}
+		Addr:     ep.String()}
 
 	return proto, nil
 }
@@ -1694,7 +1694,7 @@ func SyncedFolderProto(
 	return &vagrant_plugin_sdk.Args_SyncedFolder{
 		StreamId: id,
 		Network:  endpoint.Network(),
-		Target:   endpoint.String(),
+		Addr:     endpoint.String(),
 	}, nil
 }
 
@@ -1734,7 +1734,7 @@ func ProviderProto(
 	return &vagrant_plugin_sdk.Args_Provider{
 		StreamId: id,
 		Network:  endpoint.Network(),
-		Target:   endpoint.String(),
+		Addr:     endpoint.String(),
 	}, nil
 }
 
@@ -1809,7 +1809,7 @@ func TargetProto(
 	proto := &vagrant_plugin_sdk.Args_Target{
 		StreamId: id,
 		Network:  endpoint.Network(),
-		Target:   endpoint.String(),
+		Addr:     endpoint.String(),
 	}
 
 	log.Warn("registering target proto to cache",
@@ -1857,7 +1857,7 @@ func TargetMachineProto(
 	return &vagrant_plugin_sdk.Args_Target_Machine{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}, nil
 }
 
@@ -1897,7 +1897,7 @@ func TargetIndexProto(
 	return &vagrant_plugin_sdk.Args_TargetIndex{
 		StreamId: id,
 		Network:  ep.Network(),
-		Target:   ep.String(),
+		Addr:     ep.String(),
 	}, nil
 }
 
@@ -1922,7 +1922,7 @@ func TargetIndex(
 type connInfo interface {
 	GetStreamId() uint32
 	GetNetwork() string
-	GetTarget() string
+	GetAddr() string
 }
 
 type hasTarget interface {
@@ -1949,7 +1949,7 @@ func wrapConnect(
 	var err error
 	var conn *grpc.ClientConn
 	var addr net.Addr
-	if target := i.GetTarget(); target != "" {
+	if target := i.GetAddr(); target != "" {
 		switch i.GetNetwork() {
 		case "tcp":
 			addr, err = net.ResolveTCPAddr("tcp", target)

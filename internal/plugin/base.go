@@ -123,7 +123,7 @@ type BaseClient struct {
 
 	Ctx             context.Context
 	Seeder          SeederClient
-	target          net.Addr
+	addr            net.Addr
 	parentComponent interface{}
 }
 
@@ -258,16 +258,16 @@ func (b *BaseClient) GRPCBroker() *plugin.GRPCBroker {
 	return b.Broker
 }
 
-// Sets a direct target which can be connected
+// Sets a direct addr which can be connected
 // to when passing this client over proto.
-func (b *BaseClient) SetTarget(t net.Addr) {
-	b.target = t
+func (b *BaseClient) SetAddr(t net.Addr) {
+	b.addr = t
 }
 
-// Provides the direct target being used
+// Provides the direct addr being used
 // by this client.
-func (b *BaseClient) Target() net.Addr {
-	return b.target
+func (b *BaseClient) Addr() net.Addr {
+	return b.addr
 }
 
 // This is here for internal usage on plugin setup
