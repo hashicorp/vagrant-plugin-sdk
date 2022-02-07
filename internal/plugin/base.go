@@ -335,14 +335,14 @@ func (b *BaseClient) CallDynamicFunc(
 			} else {
 				b.Logger.Info("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", v),
-					"subtype", a.TypeUrl,
 				)
 
 				callArgs = append(callArgs, argmapper.Typed(v))
 			}
 		}
 
-		for k, v := range s.Named {
+		for k := range s.Named {
+			v := s.Named[k]
 			if a, ok := v.(*anypb.Any); ok {
 				b.Logger.Info("seeding named value into dynamic call",
 					"name", k,
