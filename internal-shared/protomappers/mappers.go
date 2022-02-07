@@ -369,13 +369,13 @@ func Seeds(
 ) (*core.Seeds, error) {
 	result := core.NewSeeds()
 	t := make([]interface{}, len(input.Typed))
-	for i, v := range input.Typed {
-		t[i] = v
+	for i := 0; i < len(input.Typed); i++ {
+		t[i] = input.Typed[i]
 	}
 	result.Typed = t
 
-	for k, v := range input.Named {
-		result.Named[k] = v
+	for k := range input.Named {
+		result.Named[k] = input.Named[k]
 	}
 
 	return result, nil
@@ -392,16 +392,16 @@ func SeedsProto(
 		Typed: make([]*anypb.Any, len(input.Typed)),
 	}
 
-	for i, v := range input.Typed {
-		a, ok := v.(*anypb.Any)
+	for i := 0; i < len(input.Typed); i++ {
+		a, ok := input.Typed[i].(*anypb.Any)
 		if !ok {
 			return SeedsProtoFull(input, log, internal, ctx)
 		}
 		result.Typed[i] = a
 	}
 
-	for k, v := range input.Named {
-		a, ok := v.(*anypb.Any)
+	for k := range input.Named {
+		a, ok := input.Named[k].(*anypb.Any)
 		if !ok {
 			return SeedsProtoFull(input, log, internal, ctx)
 		}
@@ -438,6 +438,7 @@ func SeedsProtoFull(
 	i := 0
 	for _, v := range input.Named {
 		nv[i] = v
+		i += 1
 	}
 
 	t, err = DirectProto(
@@ -454,6 +455,7 @@ func SeedsProtoFull(
 	i = 0
 	for k, _ := range input.Named {
 		result.Named[k] = t.Arguments[i]
+		i += 1
 	}
 
 	return result, nil
