@@ -186,6 +186,49 @@ message Args {
     string addr = 3;
   }
 
+  message Connection {
+    message SSHInfo {
+      string host = 1;
+      string port = 2;
+      string private_key_path = 3;
+      bool keys_only = 4;
+      bool verify_host_key = 5;
+      string username = 6;
+      string remote_user = 7;
+      bool compression = 8;
+      bool dsa_authentication = 9;
+      string config = 10;
+      repeated string extra_args = 11;
+      bool forward_agent = 12;
+      bool forward_x11 = 13;
+      repeated string forward_env = 14;
+      int64 connect_timeout = 15;
+      string ssh_command = 16;
+      string proxy_command = 17;
+    }
+
+    message WinrmInfo {
+      string username = 1;
+      string password = 2;
+      string host = 3;
+      int64 port = 4;
+      int64 guest_port = 5;
+      int64 max_tries = 6;
+      int64 retry_delay = 7;
+      int64 timeout = 8;
+      enum Transport {
+        NEGOTIATE = 0;  // default
+        SSL = 1;
+        PLAINTEXT = 2;
+      }
+      Transport transport = 9;
+      bool ssl_peer_verification = 10;
+      string execution_time_limit = 11;
+      bool basic_auth_only = 12;
+      string codepage = 13;
+    }
+  }
+
   message Push {
     uint32 stream_id = 1;
     string network = 2;
@@ -222,49 +265,6 @@ message Args {
 
   message Null {}
 }
-
-///////
-  message SSHInfo {
-    string host = 1;
-    string port = 2;
-    string private_key_path = 3;
-    bool keys_only = 4;
-    bool verify_host_key = 5;
-    string username = 6;
-    string remote_user = 7;
-    bool compression = 8;
-    bool dsa_authentication = 9;
-    string config = 10;
-    repeated string extra_args = 11;
-    bool forward_agent = 12;
-    bool forward_x11 = 13;
-    repeated string forward_env = 14;
-    int64 connect_timeout = 15;
-    string ssh_command = 16;
-    string proxy_command = 17;
-  }
-
-  message WinrmInfo {
-    string username = 1;
-    string password = 2;
-    string host = 3;
-    int64 port = 4;
-    int64 guest_port = 5;
-    int64 max_tries = 6;
-    int64 retry_delay = 7;
-    int64 timeout = 8;
-    enum Transport {
-      NEGOTIATE = 0;  // default
-      SSL = 1;
-      PLAINTEXT = 2;
-    }
-    Transport transport = 9;
-    bool ssl_peer_verification = 10;
-    string execution_time_limit = 11;
-    bool basic_auth_only = 12;
-    string codepage = 13;
-  }
-////////
 
 
 // FuncSpec describes a function and is used by the dependency-injection
@@ -612,15 +612,15 @@ service ProviderService {
   rpc ActionSpec(Provider.ActionRequest) returns (FuncSpec);
   rpc MachineIdChanged(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc MachineIdChangedSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc SshInfo(FuncSpec.Args) returns (SSHInfo);
+  rpc SshInfo(FuncSpec.Args) returns (Args.Connection.SSHInfo);
   rpc SshInfoSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc State(FuncSpec.Args) returns (Args.Target.Machine.State);
   rpc StateSpec(google.protobuf.Empty) returns (FuncSpec);
-  
+
   rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
   rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
   rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
-  
+
   rpc Capability(Platform.Capability.NamedRequest) returns (Platform.Capability.Resp);
   rpc CapabilitySpec(Platform.Capability.NamedRequest) returns (FuncSpec);
   rpc HasCapability(FuncSpec.Args) returns (Platform.Capability.CheckResp);
@@ -633,7 +633,7 @@ message Provider {
   message UsableResp {
     bool is_usable = 1;
   }
-  
+
   message InstalledResp {
     bool is_installed = 1;
   }
