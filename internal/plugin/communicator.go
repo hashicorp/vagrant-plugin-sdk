@@ -424,6 +424,9 @@ func (s *communicatorServer) Match(
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
+		s.Logger.Error("communicator match failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -448,6 +451,12 @@ func (s *communicatorServer) Init(
 	_, err := s.CallDynamicFunc(s.Impl.InitFunc(), false, args.Args,
 		argmapper.Typed(ctx),
 	)
+
+	if err != nil {
+		s.Logger.Error("communicator init failed",
+			"error", err,
+		)
+	}
 	return &emptypb.Empty{}, err
 }
 
@@ -471,6 +480,9 @@ func (s *communicatorServer) Ready(
 	)
 
 	if err != nil {
+		s.Logger.Error("communicator ready failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -497,6 +509,9 @@ func (s *communicatorServer) WaitForReady(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator wait for ready failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -522,6 +537,9 @@ func (s *communicatorServer) Download(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator download failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -547,6 +565,9 @@ func (s *communicatorServer) Upload(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator upload failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -572,6 +593,9 @@ func (s *communicatorServer) Execute(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator execute failed",
+			"error", err,
+		)
 		return nil, err
 	}
 	result := raw.(*core.CommunicatorMessage)
@@ -601,6 +625,9 @@ func (s *communicatorServer) PrivilegedExecute(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator privileged execute failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -631,6 +658,9 @@ func (s *communicatorServer) Test(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator test failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -656,6 +686,9 @@ func (s *communicatorServer) Reset(
 		argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("communicator reset failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
