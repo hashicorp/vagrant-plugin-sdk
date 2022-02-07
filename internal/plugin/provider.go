@@ -406,7 +406,7 @@ func (s *providerServer) SshInfoSpec(
 func (s *providerServer) SshInfo(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*vagrant_plugin_sdk.SSHInfo, error) {
+) (*vagrant_plugin_sdk.Args_Connection_SSHInfo, error) {
 	raw, err := s.CallDynamicFunc(s.Impl.SshInfoFunc(), (**core.SshInfo)(nil),
 		args.Args, argmapper.Typed(ctx))
 
@@ -416,14 +416,14 @@ func (s *providerServer) SshInfo(
 
 	result, err := s.Map(
 		raw,
-		(**vagrant_plugin_sdk.SSHInfo)(nil),
+		(**vagrant_plugin_sdk.Args_Connection_SSHInfo)(nil),
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return result.(*vagrant_plugin_sdk.SSHInfo), nil
+	return result.(*vagrant_plugin_sdk.Args_Connection_SSHInfo), nil
 }
 
 func (s *providerServer) StateSpec(
