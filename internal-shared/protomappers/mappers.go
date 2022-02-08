@@ -1703,7 +1703,7 @@ func SyncedFolderProto(
 		StreamId: id,
 		Network:  endpoint.Network(),
 		Addr:     endpoint.String(),
-	}, nil
+	}
 
 	internal.Cache.Register(rid, proto)
 
