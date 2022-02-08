@@ -101,6 +101,7 @@ type Base struct {
 	Cleanup *pluginargs.Cleanup
 	Cache   cacher.Cache
 	Wrapped bool
+	Name    string
 }
 
 func (b *Base) Wrap() *BasePlugin {

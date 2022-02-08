@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -226,6 +227,14 @@ func (s *guestServer) Parent(
 
 	return &vagrant_plugin_sdk.Platform_ParentResp{
 		Parent: raw.(string)}, nil
+}
+
+func (s *guestServer) PluginName(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Platform_Name, error) {
+	return &vagrant_plugin_sdk.Platform_Name{
+		Name: "notarealnamefromGUESTSERVER"}, nil
 }
 
 var (

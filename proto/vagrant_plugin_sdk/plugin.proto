@@ -830,9 +830,15 @@ service GuestService {
   rpc ParentSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
+
+  rpc Name(google.protobuf.Empty) returns (Platform.Name);
 }
 
 message Platform {
+  message Name {
+    string name = 1;
+  }
+
   message DetectResp {
     bool detected = 1;
   }
