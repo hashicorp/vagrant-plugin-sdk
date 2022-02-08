@@ -188,6 +188,10 @@ func (s *guestServer) Detect(
 	)
 
 	if err != nil {
+		s.Logger.Error("guest detect failed",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -213,6 +217,10 @@ func (s *guestServer) Parent(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("guest parent failed",
+			"error", err,
+		)
+
 		return nil, err
 	}
 

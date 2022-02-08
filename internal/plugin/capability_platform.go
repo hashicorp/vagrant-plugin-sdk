@@ -125,6 +125,7 @@ func (c *capabilityClient) CapabilityFunc(name string) interface{} {
 		if err != nil {
 			c.Logger.Error("failure encountered while running capability",
 				"name", name,
+				"error", err,
 			)
 
 			return nil, err
@@ -249,7 +250,9 @@ func (s *capabilityServer) Capability(
 
 	if err != nil {
 		s.Logger.Error("failed to call capability",
-			"name", args.Name)
+			"name", args.Name,
+			"error", err,
+		)
 		if st, ok := status.FromError(err); ok {
 			// TODO: this should be an actual localized message
 			msg := &errdetails.LocalizedMessage{
