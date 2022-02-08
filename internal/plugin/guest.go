@@ -234,7 +234,7 @@ func (s *guestServer) PluginName(
 	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Platform_Name, error) {
 	return &vagrant_plugin_sdk.Platform_Name{
-		Name: "notarealnamefromGUESTSERVER"}, nil
+		Name: s.Name}, nil
 }
 
 var (

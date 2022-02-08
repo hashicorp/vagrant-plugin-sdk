@@ -43,6 +43,7 @@ type BasePlugin struct {
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Wrapped bool              // Used to determine if wrapper
+	Name    string
 }
 
 func (b *BasePlugin) Clone() *BasePlugin {
@@ -51,6 +52,7 @@ func (b *BasePlugin) Clone() *BasePlugin {
 		Mappers: b.Mappers,
 		Logger:  b.Logger,
 		Wrapped: b.Wrapped,
+		Name:    b.Name,
 	}
 }
 
@@ -69,6 +71,7 @@ func (b *BasePlugin) NewClient(
 			Logger:  b.Logger,
 			Mappers: b.Mappers,
 			Wrapped: b.Wrapped,
+			Name:    b.Name,
 		},
 	}
 }
@@ -87,6 +90,7 @@ func (b *BasePlugin) NewServer(
 			Logger:  b.Logger,
 			Mappers: b.Mappers,
 			Wrapped: b.Wrapped,
+			Name:    b.Name,
 		},
 	}
 }
@@ -110,6 +114,7 @@ func (b *Base) Wrap() *BasePlugin {
 		Mappers: b.Mappers,
 		Cache:   b.Cache,
 		Wrapped: true,
+		Name:    b.Name,
 	}
 }
 
@@ -179,6 +184,11 @@ func (b *Base) Map(
 
 func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
+}
+
+// Sets the plugin name
+func (b *Base) SetName(name string) {
+	b.Name = name
 }
 
 type SeedClient interface {

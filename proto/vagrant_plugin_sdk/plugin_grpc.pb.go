@@ -3802,7 +3802,7 @@ type GuestServiceClient interface {
 	ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
-	Name(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error)
 }
 
 type guestServiceClient struct {
@@ -3930,9 +3930,9 @@ func (c *guestServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ..
 	return out, nil
 }
 
-func (c *guestServiceClient) Name(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error) {
+func (c *guestServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error) {
 	out := new(Platform_Name)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/Name", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/PluginName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3956,7 +3956,7 @@ type GuestServiceServer interface {
 	ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
-	Name(context.Context, *empty.Empty) (*Platform_Name, error)
+	PluginName(context.Context, *empty.Empty) (*Platform_Name, error)
 }
 
 // UnimplementedGuestServiceServer should be embedded to have forward compatible implementations.
@@ -4002,8 +4002,8 @@ func (UnimplementedGuestServiceServer) Seed(context.Context, *Args_Seeds) (*empt
 func (UnimplementedGuestServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
 }
-func (UnimplementedGuestServiceServer) Name(context.Context, *empty.Empty) (*Platform_Name, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
+func (UnimplementedGuestServiceServer) PluginName(context.Context, *empty.Empty) (*Platform_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeGuestServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4251,20 +4251,20 @@ func _GuestService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GuestService_Name_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GuestService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GuestServiceServer).Name(ctx, in)
+		return srv.(GuestServiceServer).PluginName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.GuestService/Name",
+		FullMethod: "/hashicorp.vagrant.sdk.GuestService/PluginName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestServiceServer).Name(ctx, req.(*empty.Empty))
+		return srv.(GuestServiceServer).PluginName(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4329,8 +4329,8 @@ var GuestService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GuestService_Seeds_Handler,
 		},
 		{
-			MethodName: "Name",
-			Handler:    _GuestService_Name_Handler,
+			MethodName: "PluginName",
+			Handler:    _GuestService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

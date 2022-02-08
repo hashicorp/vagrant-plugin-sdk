@@ -831,7 +831,7 @@ service GuestService {
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 
-  rpc Name(google.protobuf.Empty) returns (Platform.Name);
+  rpc PluginName(google.protobuf.Empty) returns (Platform.Name);
 }
 
 message Platform {
