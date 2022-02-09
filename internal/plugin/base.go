@@ -180,11 +180,6 @@ func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
 }
 
-type SeedClient interface {
-	Seeds(ctx context.Context, in *emptypb.Empty) (*vagrant_plugin_sdk.Args_Seeds, error)
-	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds) (*emptypb.Empty, error)
-}
-
 func (b *BaseClient) Seed(args *core.Seeds) error {
 	if b.Seeder == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
