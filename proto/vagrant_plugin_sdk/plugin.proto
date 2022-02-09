@@ -263,6 +263,10 @@ message Args {
     map<string, google.protobuf.Any> fields = 1;
   }
 
+  message Options {
+    Hash options = 1;
+  }
+
   message Null {}
 }
 
