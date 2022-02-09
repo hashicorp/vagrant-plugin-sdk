@@ -773,7 +773,7 @@ type ProviderServiceClient interface {
 	ActionSpec(ctx context.Context, in *Provider_ActionRequest, opts ...grpc.CallOption) (*FuncSpec, error)
 	MachineIdChanged(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
 	MachineIdChangedSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
-	SshInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*SSHInfo, error)
+	SshInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Args_Connection_SSHInfo, error)
 	SshInfoSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	State(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Args_Target_Machine_State, error)
 	StateSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
@@ -868,8 +868,8 @@ func (c *providerServiceClient) MachineIdChangedSpec(ctx context.Context, in *em
 	return out, nil
 }
 
-func (c *providerServiceClient) SshInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*SSHInfo, error) {
-	out := new(SSHInfo)
+func (c *providerServiceClient) SshInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Args_Connection_SSHInfo, error) {
+	out := new(Args_Connection_SSHInfo)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/SshInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -997,7 +997,7 @@ type ProviderServiceServer interface {
 	ActionSpec(context.Context, *Provider_ActionRequest) (*FuncSpec, error)
 	MachineIdChanged(context.Context, *FuncSpec_Args) (*empty.Empty, error)
 	MachineIdChangedSpec(context.Context, *empty.Empty) (*FuncSpec, error)
-	SshInfo(context.Context, *FuncSpec_Args) (*SSHInfo, error)
+	SshInfo(context.Context, *FuncSpec_Args) (*Args_Connection_SSHInfo, error)
 	SshInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	State(context.Context, *FuncSpec_Args) (*Args_Target_Machine_State, error)
 	StateSpec(context.Context, *empty.Empty) (*FuncSpec, error)
@@ -1040,7 +1040,7 @@ func (UnimplementedProviderServiceServer) MachineIdChanged(context.Context, *Fun
 func (UnimplementedProviderServiceServer) MachineIdChangedSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineIdChangedSpec not implemented")
 }
-func (UnimplementedProviderServiceServer) SshInfo(context.Context, *FuncSpec_Args) (*SSHInfo, error) {
+func (UnimplementedProviderServiceServer) SshInfo(context.Context, *FuncSpec_Args) (*Args_Connection_SSHInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SshInfo not implemented")
 }
 func (UnimplementedProviderServiceServer) SshInfoSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
