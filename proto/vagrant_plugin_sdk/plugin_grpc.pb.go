@@ -3802,7 +3802,7 @@ type GuestServiceClient interface {
 	ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
-	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type guestServiceClient struct {
@@ -3930,8 +3930,8 @@ func (c *guestServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ..
 	return out, nil
 }
 
-func (c *guestServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Platform_Name, error) {
-	out := new(Platform_Name)
+func (c *guestServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.GuestService/PluginName", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -3956,7 +3956,7 @@ type GuestServiceServer interface {
 	ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
-	PluginName(context.Context, *empty.Empty) (*Platform_Name, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedGuestServiceServer should be embedded to have forward compatible implementations.
@@ -4002,7 +4002,7 @@ func (UnimplementedGuestServiceServer) Seed(context.Context, *Args_Seeds) (*empt
 func (UnimplementedGuestServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
 }
-func (UnimplementedGuestServiceServer) PluginName(context.Context, *empty.Empty) (*Platform_Name, error) {
+func (UnimplementedGuestServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 

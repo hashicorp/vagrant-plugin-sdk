@@ -232,8 +232,8 @@ func (s *guestServer) Parent(
 func (s *guestServer) PluginName(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Platform_Name, error) {
-	return &vagrant_plugin_sdk.Platform_Name{
+) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
+	return &vagrant_plugin_sdk.PluginInfo_Name{
 		Name: s.Name}, nil
 }
 

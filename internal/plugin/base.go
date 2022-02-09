@@ -43,7 +43,7 @@ type BasePlugin struct {
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Wrapped bool              // Used to determine if wrapper
-	Name    string
+	Name    string            // Name assigned to the plugin
 }
 
 func (b *BasePlugin) Clone() *BasePlugin {
