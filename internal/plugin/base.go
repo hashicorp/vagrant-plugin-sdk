@@ -36,6 +36,11 @@ type SeederClient interface {
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Seeds, error)
 }
 
+type NamedPluginClient interface {
+	SetPluginName(ctx context.Context, in *vagrant_plugin_sdk.PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.PluginInfo_Name, error)
+}
+
 // BasePlugin contains the information which is common among
 // all plugins. It should be embedded in every plugin type.
 type BasePlugin struct {
@@ -57,11 +62,11 @@ func (b *BasePlugin) Clone() *BasePlugin {
 func (b *BasePlugin) NewClient(
 	ctx context.Context,
 	broker *plugin.GRPCBroker,
-	s SeederClient,
+	s interface{},
 ) *BaseClient {
 	return &BaseClient{
 		Ctx:    ctx,
-		Seeder: s,
+		Client: s,
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
@@ -122,7 +127,7 @@ type BaseClient struct {
 	*Base
 
 	Ctx             context.Context
-	Seeder          SeederClient
+	Client          interface{}
 	addr            net.Addr
 	parentComponent interface{}
 }
@@ -181,13 +186,13 @@ func (b *Base) SetCache(c cacher.Cache) {
 }
 
 func (b *BaseClient) Seed(args *core.Seeds) error {
-	if b.Seeder == nil {
+	if b.Client == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
 		return nil
 	}
 
 	cb := func(d *vagrant_plugin_sdk.Args_Seeds) error {
-		_, err := b.Seeder.Seed(b.Ctx, d)
+		_, err := b.Client.(SeederClient).Seed(b.Ctx, d)
 		return err
 	}
 
@@ -200,12 +205,12 @@ func (b *BaseClient) Seed(args *core.Seeds) error {
 }
 
 func (b *BaseClient) Seeds() (*core.Seeds, error) {
-	if b.Seeder == nil {
+	if b.Client.(SeederClient) == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
 		return core.NewSeeds(), nil
 	}
 
-	r, err := b.Seeder.Seeds(b.Ctx, &emptypb.Empty{})
+	r, err := b.Client.(SeederClient).Seeds(b.Ctx, &emptypb.Empty{})
 	if err != nil {
 		b.Logger.Error("failed to get seed values",
 			"error", err,
@@ -225,6 +230,26 @@ func (b *BaseClient) Seeds() (*core.Seeds, error) {
 	}
 
 	return s.(*core.Seeds), nil
+}
+
+func (b *BaseClient) SetPluginName(name string) (err error) {
+	if c, ok := b.Client.(NamedPluginClient); ok {
+		_, err = c.SetPluginName(
+			b.Ctx, &vagrant_plugin_sdk.PluginInfo_Name{Name: name},
+		)
+		return
+	}
+	return
+}
+
+func (b *BaseClient) PluginName() (name string, err error) {
+	pluginName, err := b.Client.(NamedPluginClient).PluginName(
+		b.Ctx, &emptypb.Empty{},
+	)
+	if err != nil {
+		return "", err
+	}
+	return pluginName.Name, nil
 }
 
 // Sets the parent component
@@ -309,7 +334,7 @@ func (b *BaseClient) CallDynamicFunc(
 	//             may still exist after the dynamic call is complete
 	//	defer internal.Cleanup.Close()
 
-	if b.Seeder != nil {
+	if b.Client != nil {
 		s, err := b.Seeds()
 		if err != nil {
 			b.Logger.Error("failed to fetch dynamic seed values",
@@ -516,3 +541,35 @@ func (b *BaseServer) Seeds(
 
 	return r.(*vagrant_plugin_sdk.Args_Seeds), nil
 }
+
+func (b *BaseServer) SetPluginName(
+	ctx context.Context,
+	name *vagrant_plugin_sdk.PluginInfo_Name,
+) (*emptypb.Empty, error) {
+	if namedPlugin, ok := b.impl.(core.Named); ok {
+		err := namedPlugin.SetPluginName(name.Name)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (b *BaseServer) PluginName(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
+	if namedPlugin, ok := b.impl.(core.Named); ok {
+		name, err := namedPlugin.PluginName()
+		if err != nil {
+			return nil, err
+		}
+		return &vagrant_plugin_sdk.PluginInfo_Name{Name: name}, nil
+	}
+	return &vagrant_plugin_sdk.PluginInfo_Name{Name: ""}, nil
+}
+
+var (
+	_ core.Named  = (*BaseClient)(nil)
+	_ core.Seeder = (*BaseClient)(nil)
+)
