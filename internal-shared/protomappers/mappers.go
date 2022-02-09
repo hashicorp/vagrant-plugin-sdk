@@ -563,6 +563,35 @@ func HashProto(
 	}, nil
 }
 
+func Options(
+	input *vagrant_plugin_sdk.Args_Options,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (result map[string]interface{}, err error) {
+	return Hash(
+		input.Options,
+		log,
+		internal,
+		ctx,
+	)
+}
+
+func OptionsProto(
+	input map[string]interface{},
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (opts *vagrant_plugin_sdk.Args_Options, err error) {
+	h, err := HashProto(input, log, internal, ctx)
+	if err != nil {
+		return
+	}
+	return &vagrant_plugin_sdk.Args_Options{
+		Options: h,
+	}, nil
+}
+
 func NamedCapability(
 	input *vagrant_plugin_sdk.Args_NamedCapability,
 ) *component.NamedCapability {

@@ -182,6 +182,10 @@ func (s *commandServer) CommandInfo(
 	)
 
 	if err != nil {
+		s.Logger.Error("command info failed",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -211,6 +215,10 @@ func (s *commandServer) Execute(
 	)
 
 	if err != nil {
+		s.Logger.Error("command execution failed",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
