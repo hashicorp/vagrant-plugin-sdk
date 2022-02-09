@@ -368,6 +368,15 @@ func (s *syncedFolderServer) Cleanup(
 	return &empty.Empty{}, nil
 }
 
+func (s *syncedFolderServer) PluginPriority(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.PluginInfo_Priority, error) {
+	return &vagrant_plugin_sdk.PluginInfo_Priority{
+		Priority: 0, // TODO
+	}, nil
+}
+
 var (
 	_ plugin.Plugin                                = (*SyncedFolderPlugin)(nil)
 	_ plugin.GRPCPlugin                            = (*SyncedFolderPlugin)(nil)

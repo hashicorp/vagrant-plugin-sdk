@@ -583,6 +583,10 @@ message PluginInfo {
   message Name {
     string name = 1;
   }
+
+  message Priority {
+    int32 priority = 1;
+  }
 }
 
 service PluginManagerService {
@@ -910,6 +914,7 @@ service SyncedFolderService {
 
   rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
   rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
+  rpc PluginPriority(google.protobuf.Empty) returns (PluginInfo.Priority);
 }
 
 message SyncedFolder {
