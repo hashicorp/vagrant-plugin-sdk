@@ -8,3 +8,51 @@ import mock "github.com/stretchr/testify/mock"
 type Provisioner struct {
 	mock.Mock
 }
+
+// CleanupFunc provides a mock function with given fields:
+func (_m *Provisioner) CleanupFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// ConfigureFunc provides a mock function with given fields:
+func (_m *Provisioner) ConfigureFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}
+
+// ProvisionFunc provides a mock function with given fields:
+func (_m *Provisioner) ProvisionFunc() interface{} {
+	ret := _m.Called()
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func() interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	return r0
+}

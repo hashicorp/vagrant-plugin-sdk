@@ -121,6 +121,12 @@ message Args {
     string addr = 3;
   }
 
+  message Provisioner {
+    uint32 stream_id = 1;
+    string network = 2;
+    string addr = 3;
+  }
+
   message Target {
     // Generic target
     uint32 stream_id = 1;
@@ -188,23 +194,23 @@ message Args {
 
   message Connection {
     message SSHInfo {
-      string host = 1;
-      string port = 2;
-      string private_key_path = 3;
-      bool keys_only = 4;
-      bool verify_host_key = 5;
-      string username = 6;
-      string remote_user = 7;
-      bool compression = 8;
-      bool dsa_authentication = 9;
-      string config = 10;
+      optional string host = 1;
+      optional string port = 2;
+      optional string private_key_path = 3;
+      optional bool keys_only = 4;
+      optional bool verify_host_key = 5;
+      optional string username = 6;
+      optional string remote_user = 7;
+      optional bool compression = 8;
+      optional bool dsa_authentication = 9;
+      optional string config = 10;
       repeated string extra_args = 11;
-      bool forward_agent = 12;
-      bool forward_x11 = 13;
+      optional bool forward_agent = 12;
+      optional bool forward_x11 = 13;
       repeated string forward_env = 14;
       int64 connect_timeout = 15;
-      string ssh_command = 16;
-      string proxy_command = 17;
+      optional string ssh_command = 16;
+      optional string proxy_command = 17;
     }
 
     message WinrmInfo {
@@ -269,7 +275,6 @@ message Args {
 
   message Null {}
 }
-
 
 // FuncSpec describes a function and is used by the dependency-injection
 // framework to provide the function with the proper values.
@@ -654,9 +659,15 @@ message Provider {
 
 // A Provisioner runs actions against a VM
 service ProvisionerService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  rpc ConfigureSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Configure(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc ProvisionSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Provision(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc CleanupSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Cleanup(FuncSpec.Args) returns (google.protobuf.Empty);
+
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
@@ -1304,6 +1315,7 @@ message Vagrantfile {
     string current_version = 3;
     repeated MachineConfig machine_configs = 4;
     repeated PushConfig push_configs = 5;
+    repeated Provisioner provisioners = 6;
   }
 }
 

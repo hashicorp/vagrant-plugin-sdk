@@ -1,10 +1,10 @@
 package core
 
 type SshInfo struct {
-	Host           string
-	Port           string
-	Username       string
-	PrivateKeyPath string
+	Host           *string
+	Port           *string
+	Username       *string
+	PrivateKeyPath *string
 }
 
 type Provider interface {
