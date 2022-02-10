@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 
@@ -205,7 +206,7 @@ func (b *BaseClient) Seed(args *core.Seeds) error {
 }
 
 func (b *BaseClient) Seeds() (*core.Seeds, error) {
-	if b.Client.(SeederClient) == nil {
+	if b.Client == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
 		return core.NewSeeds(), nil
 	}
@@ -233,23 +234,33 @@ func (b *BaseClient) Seeds() (*core.Seeds, error) {
 }
 
 func (b *BaseClient) SetPluginName(name string) (err error) {
+	if b.Client == nil {
+		return
+	}
 	if c, ok := b.Client.(NamedPluginClient); ok {
 		_, err = c.SetPluginName(
 			b.Ctx, &vagrant_plugin_sdk.PluginInfo_Name{Name: name},
 		)
 		return
 	}
-	return
+	return errors.New("plugin does not support naming")
 }
 
 func (b *BaseClient) PluginName() (name string, err error) {
-	pluginName, err := b.Client.(NamedPluginClient).PluginName(
-		b.Ctx, &emptypb.Empty{},
-	)
-	if err != nil {
-		return "", err
+	if b.Client == nil {
+		return
 	}
-	return pluginName.Name, nil
+	if c, ok := b.Client.(NamedPluginClient); ok {
+		pluginName, err := c.PluginName(
+			b.Ctx, &emptypb.Empty{},
+		)
+		if err != nil {
+			return "", err
+		}
+		return pluginName.Name, nil
+
+	}
+	return "", errors.New("plugin does not support naming")
 }
 
 // Sets the parent component
