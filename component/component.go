@@ -228,6 +228,9 @@ type Provider interface {
 }
 
 type Provisioner interface {
+	ConfigureFunc() interface{}
+	ProvisionFunc() interface{}
+	CleanupFunc() interface{}
 }
 
 type Push interface {

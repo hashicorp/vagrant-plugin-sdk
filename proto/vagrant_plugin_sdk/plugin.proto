@@ -121,6 +121,12 @@ message Args {
     string addr = 3;
   }
 
+  message Provisioner {
+    uint32 stream_id = 1;
+    string network = 2;
+    string addr = 3;
+  }
+
   message Target {
     // Generic target
     uint32 stream_id = 1;
@@ -269,7 +275,6 @@ message Args {
 
   message Null {}
 }
-
 
 // FuncSpec describes a function and is used by the dependency-injection
 // framework to provide the function with the proper values.
@@ -654,9 +659,15 @@ message Provider {
 
 // A Provisioner runs actions against a VM
 service ProvisionerService {
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  rpc ConfigureSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Configure(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc ProvisionSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Provision(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc CleanupSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Cleanup(FuncSpec.Args) returns (google.protobuf.Empty);
+
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
@@ -1304,6 +1315,7 @@ message Vagrantfile {
     string current_version = 3;
     repeated MachineConfig machine_configs = 4;
     repeated PushConfig push_configs = 5;
+    repeated Provisioner provisioners = 6;
   }
 }
 

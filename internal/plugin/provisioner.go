@@ -3,13 +3,15 @@ package plugin
 import (
 	"context"
 
+	"github.com/LK4D4/joincontext"
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -49,21 +51,92 @@ type provisionerClient struct {
 	client vagrant_plugin_sdk.ProvisionerServiceClient
 }
 
-func (c *provisionerClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
+func (c *provisionerClient) CleanupFunc() interface{} {
+	spec, err := c.client.CleanupSpec(c.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
+		_, err := c.client.Cleanup(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	return c.GenerateFunc(spec, cb)
 }
 
-func (c *provisionerClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
+func (c *provisionerClient) Cleanup(machine core.Machine, config core.ProvisionerConfig) error {
+	f := c.CleanupFunc()
+
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(config),
+	)
+
+	return err
 }
 
-func (c *provisionerClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
+func (c *provisionerClient) ConfigureFunc() interface{} {
+	spec, err := c.client.ConfigureSpec(c.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
+		_, err := c.client.Configure(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	return c.GenerateFunc(spec, cb)
 }
 
-func (c *provisionerClient) ProvisionerFunc() interface{} {
-	//TODO
-	return nil
+func (c *provisionerClient) Configure(machine core.Machine, config core.ProvisionerConfig, rootConfig core.Vagrantfile) error {
+	f := c.CleanupFunc()
+
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(config),
+		argmapper.Typed(rootConfig),
+	)
+
+	return err
+}
+
+func (c *provisionerClient) ProvisionFunc() interface{} {
+	spec, err := c.client.ProvisionSpec(c.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return funcErr(err)
+	}
+	spec.Result = nil
+	cb := func(ctx context.Context, args funcspec.Args) error {
+		ctx, _ = joincontext.Join(c.Ctx, ctx)
+		_, err := c.client.Provision(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	return c.GenerateFunc(spec, cb)
+}
+
+func (c *provisionerClient) Provision(machine core.Machine, config core.ProvisionerConfig) error {
+	f := c.ProvisionFunc()
+
+	_, err := c.CallDynamicFunc(f, false,
+		argmapper.Typed(c.Ctx),
+		argmapper.Typed(machine),
+		argmapper.Typed(config),
+	)
+
+	return err
 }
 
 // provisionerServer is a gRPC server that the client talks to and calls a
@@ -75,25 +148,79 @@ type provisionerServer struct {
 	vagrant_plugin_sdk.UnsafeProvisionerServiceServer
 }
 
-func (s *provisionerServer) ConfigStruct(
+func (s *provisionerServer) CleanupSpec(
 	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
+	args *emptypb.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "provisioner"); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.CleanupFunc())
+}
+
+func (s *provisionerServer) Cleanup(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*emptypb.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.CleanupFunc(), false, args.Args,
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		s.Logger.Error("Error while running Cleanup", "error", err)
+	}
+
+	return &emptypb.Empty{}, err
+}
+
+func (s *provisionerServer) ConfigureSpec(
+	ctx context.Context,
+	args *emptypb.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "provisioner"); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.ConfigureFunc())
 }
 
 func (s *provisionerServer) Configure(
 	ctx context.Context,
-	req *vagrant_plugin_sdk.Config_ConfigureRequest,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*emptypb.Empty, error) {
-	return configure(s.Impl, req)
+	_, err := s.CallDynamicFunc(s.Impl.ConfigureFunc(), false, args.Args,
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		s.Logger.Error("Error while running Configure", "error", err)
+	}
+
+	return &emptypb.Empty{}, err
 }
 
-func (s *provisionerServer) Documentation(
+func (s *provisionerServer) ProvisionSpec(
 	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
+	args *emptypb.Empty,
+) (*vagrant_plugin_sdk.FuncSpec, error) {
+	if err := isImplemented(s, "provisioner"); err != nil {
+		return nil, err
+	}
+
+	return s.GenerateSpec(s.Impl.ProvisionFunc())
+}
+
+func (s *provisionerServer) Provision(
+	ctx context.Context,
+	args *vagrant_plugin_sdk.FuncSpec_Args,
+) (*emptypb.Empty, error) {
+	_, err := s.CallDynamicFunc(s.Impl.ProvisionFunc(), false, args.Args,
+		argmapper.Typed(ctx))
+
+	if err != nil {
+		s.Logger.Error("Error while running Provision", "error", err)
+	}
+
+	return &emptypb.Empty{}, err
 }
 
 var (
@@ -102,4 +229,5 @@ var (
 	_ vagrant_plugin_sdk.ProvisionerServiceServer = (*provisionerServer)(nil)
 	_ component.Provisioner                       = (*provisionerClient)(nil)
 	_ core.Seeder                                 = (*provisionerClient)(nil)
+	_ core.Provisioner                            = (*provisionerClient)(nil)
 )

@@ -134,6 +134,8 @@ var All = []interface{}{
 	ProtoToMap,
 	Provider,
 	ProviderProto,
+	Provisioner,
+	ProvisionerProto,
 	Push,
 	PushProto,
 	Seeds,
@@ -1795,6 +1797,46 @@ func Provider(
 	}
 
 	return client.(core.Provider), nil
+}
+
+func ProvisionerProto(
+	t component.Provisioner,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Provisioner, error) {
+	tp := &plugincomponent.ProvisionerPlugin{
+		BasePlugin: basePlugin(t, internal),
+		Impl:       t,
+	}
+
+	id, endpoint, err := wrapClient(t, tp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Provisioner{
+		StreamId: id,
+		Network:  endpoint.Network(),
+		Addr:     endpoint.String(),
+	}, nil
+}
+
+func Provisioner(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Provisioner,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Provisioner, error) {
+	t := &plugincomponent.ProvisionerPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, t, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Provisioner), nil
 }
 
 func PathProto(
