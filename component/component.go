@@ -141,6 +141,11 @@ type CommandInfo struct {
 	Subcommands []*CommandInfo
 }
 
+type CommandParams struct {
+	Flags     map[string]interface{}
+	Arguments []string
+}
+
 type Direct struct {
 	Arguments []interface{}
 }
