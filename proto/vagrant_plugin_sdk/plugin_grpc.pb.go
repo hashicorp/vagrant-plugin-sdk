@@ -1641,9 +1641,12 @@ var ProviderService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProvisionerServiceClient interface {
-	ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
-	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
+	ConfigureSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Configure(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
+	ProvisionSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Provision(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
+	CleanupSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Cleanup(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -1658,16 +1661,16 @@ func NewProvisionerServiceClient(cc grpc.ClientConnInterface) ProvisionerService
 	return &provisionerServiceClient{cc}
 }
 
-func (c *provisionerServiceClient) ConfigStruct(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
-	out := new(Config_StructResp)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct", in, out, opts...)
+func (c *provisionerServiceClient) ConfigureSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/ConfigureSpec", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *provisionerServiceClient) Configure(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Configure", in, out, opts...)
 	if err != nil {
@@ -1676,9 +1679,36 @@ func (c *provisionerServiceClient) Configure(ctx context.Context, in *Config_Con
 	return out, nil
 }
 
-func (c *provisionerServiceClient) Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
-	out := new(Config_Documentation)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Documentation", in, out, opts...)
+func (c *provisionerServiceClient) ProvisionSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/ProvisionSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerServiceClient) Provision(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Provision", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerServiceClient) CleanupSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/CleanupSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerServiceClient) Cleanup(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/Cleanup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1725,9 +1755,12 @@ func (c *provisionerServiceClient) PluginName(ctx context.Context, in *empty.Emp
 // All implementations should embed UnimplementedProvisionerServiceServer
 // for forward compatibility
 type ProvisionerServiceServer interface {
-	ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error)
-	Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error)
-	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
+	ConfigureSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Configure(context.Context, *FuncSpec_Args) (*empty.Empty, error)
+	ProvisionSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Provision(context.Context, *FuncSpec_Args) (*empty.Empty, error)
+	CleanupSpec(context.Context, *empty.Empty) (*FuncSpec, error)
+	Cleanup(context.Context, *FuncSpec_Args) (*empty.Empty, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
 	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
@@ -1738,14 +1771,23 @@ type ProvisionerServiceServer interface {
 type UnimplementedProvisionerServiceServer struct {
 }
 
-func (UnimplementedProvisionerServiceServer) ConfigStruct(context.Context, *empty.Empty) (*Config_StructResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
+func (UnimplementedProvisionerServiceServer) ConfigureSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfigureSpec not implemented")
 }
-func (UnimplementedProvisionerServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*empty.Empty, error) {
+func (UnimplementedProvisionerServiceServer) Configure(context.Context, *FuncSpec_Args) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
 }
-func (UnimplementedProvisionerServiceServer) Documentation(context.Context, *empty.Empty) (*Config_Documentation, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
+func (UnimplementedProvisionerServiceServer) ProvisionSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProvisionSpec not implemented")
+}
+func (UnimplementedProvisionerServiceServer) Provision(context.Context, *FuncSpec_Args) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Provision not implemented")
+}
+func (UnimplementedProvisionerServiceServer) CleanupSpec(context.Context, *empty.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CleanupSpec not implemented")
+}
+func (UnimplementedProvisionerServiceServer) Cleanup(context.Context, *FuncSpec_Args) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Cleanup not implemented")
 }
 func (UnimplementedProvisionerServiceServer) Seed(context.Context, *Args_Seeds) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
@@ -1771,26 +1813,26 @@ func RegisterProvisionerServiceServer(s grpc.ServiceRegistrar, srv ProvisionerSe
 	s.RegisterService(&ProvisionerService_ServiceDesc, srv)
 }
 
-func _ProvisionerService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_ConfigureSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, in)
+		return srv.(ProvisionerServiceServer).ConfigureSpec(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/ConfigStruct",
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/ConfigureSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).ConfigStruct(ctx, req.(*empty.Empty))
+		return srv.(ProvisionerServiceServer).ConfigureSpec(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ProvisionerService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Config_ConfigureRequest)
+	in := new(FuncSpec_Args)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1802,25 +1844,79 @@ func _ProvisionerService_Configure_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Configure",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+		return srv.(ProvisionerServiceServer).Configure(ctx, req.(*FuncSpec_Args))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProvisionerService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProvisionerService_ProvisionSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProvisionerServiceServer).Documentation(ctx, in)
+		return srv.(ProvisionerServiceServer).ProvisionSpec(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Documentation",
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/ProvisionSpec",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProvisionerServiceServer).Documentation(ctx, req.(*empty.Empty))
+		return srv.(ProvisionerServiceServer).ProvisionSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProvisionerService_Provision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServiceServer).Provision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Provision",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServiceServer).Provision(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProvisionerService_CleanupSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServiceServer).CleanupSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/CleanupSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServiceServer).CleanupSpec(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProvisionerService_Cleanup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServiceServer).Cleanup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/Cleanup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServiceServer).Cleanup(ctx, req.(*FuncSpec_Args))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1905,16 +2001,28 @@ var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProvisionerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ConfigStruct",
-			Handler:    _ProvisionerService_ConfigStruct_Handler,
+			MethodName: "ConfigureSpec",
+			Handler:    _ProvisionerService_ConfigureSpec_Handler,
 		},
 		{
 			MethodName: "Configure",
 			Handler:    _ProvisionerService_Configure_Handler,
 		},
 		{
-			MethodName: "Documentation",
-			Handler:    _ProvisionerService_Documentation_Handler,
+			MethodName: "ProvisionSpec",
+			Handler:    _ProvisionerService_ProvisionSpec_Handler,
+		},
+		{
+			MethodName: "Provision",
+			Handler:    _ProvisionerService_Provision_Handler,
+		},
+		{
+			MethodName: "CleanupSpec",
+			Handler:    _ProvisionerService_CleanupSpec_Handler,
+		},
+		{
+			MethodName: "Cleanup",
+			Handler:    _ProvisionerService_Cleanup_Handler,
 		},
 		{
 			MethodName: "Seed",
