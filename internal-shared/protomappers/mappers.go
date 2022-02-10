@@ -86,6 +86,7 @@ var All = []interface{}{
 	CommandProto,
 	CommandInfo,
 	CommandInfoProto,
+	CommandParams,
 	CommandInfoFromResponse,
 	CommunicatorCommand,
 	CommunicatorCommandProto,
@@ -1363,6 +1364,26 @@ func StateBagProto(
 	internal.Cache.Register(cid, proto)
 
 	return proto, nil
+}
+
+func CommandParams(
+	input *vagrant_plugin_sdk.Command_Arguments,
+) (c *component.CommandParams) {
+	c = &component.CommandParams{
+		Arguments: input.Args,
+		Flags:     map[string]interface{}{},
+	}
+
+	for _, f := range input.Flags {
+		switch f.Type {
+		case vagrant_plugin_sdk.Command_Arguments_Flag_BOOL:
+			c.Flags[f.Name] = f.GetBool()
+		case vagrant_plugin_sdk.Command_Arguments_Flag_STRING:
+			c.Flags[f.Name] = f.GetString_()
+		}
+	}
+
+	return
 }
 
 func CommandInfoFromResponse(
