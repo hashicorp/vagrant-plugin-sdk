@@ -786,6 +786,8 @@ type ProviderServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type providerServiceClient struct {
@@ -985,6 +987,24 @@ func (c *providerServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts
 	return out, nil
 }
 
+func (c *providerServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *providerServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProviderService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProviderServiceServer is the server API for ProviderService service.
 // All implementations should embed UnimplementedProviderServiceServer
 // for forward compatibility
@@ -1010,6 +1030,8 @@ type ProviderServiceServer interface {
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedProviderServiceServer should be embedded to have forward compatible implementations.
@@ -1078,6 +1100,12 @@ func (UnimplementedProviderServiceServer) Seed(context.Context, *Args_Seeds) (*e
 }
 func (UnimplementedProviderServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedProviderServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedProviderServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeProviderServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -1469,6 +1497,42 @@ func _ProviderService_Seeds_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProviderService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProviderServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProviderServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProviderService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProviderServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProviderService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProviderServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProviderService_ServiceDesc is the grpc.ServiceDesc for ProviderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1560,6 +1624,14 @@ var ProviderService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Seeds",
 			Handler:    _ProviderService_Seeds_Handler,
 		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _ProviderService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _ProviderService_PluginName_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -1574,6 +1646,8 @@ type ProvisionerServiceClient interface {
 	Documentation(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type provisionerServiceClient struct {
@@ -1629,6 +1703,24 @@ func (c *provisionerServiceClient) Seeds(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *provisionerServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *provisionerServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProvisionerService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProvisionerServiceServer is the server API for ProvisionerService service.
 // All implementations should embed UnimplementedProvisionerServiceServer
 // for forward compatibility
@@ -1638,6 +1730,8 @@ type ProvisionerServiceServer interface {
 	Documentation(context.Context, *empty.Empty) (*Config_Documentation, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedProvisionerServiceServer should be embedded to have forward compatible implementations.
@@ -1658,6 +1752,12 @@ func (UnimplementedProvisionerServiceServer) Seed(context.Context, *Args_Seeds) 
 }
 func (UnimplementedProvisionerServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedProvisionerServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedProvisionerServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeProvisionerServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -1761,6 +1861,42 @@ func _ProvisionerService_Seeds_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProvisionerService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProvisionerService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProvisionerServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProvisionerService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProvisionerServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProvisionerService_ServiceDesc is the grpc.ServiceDesc for ProvisionerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1788,6 +1924,14 @@ var ProvisionerService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Seeds",
 			Handler:    _ProvisionerService_Seeds_Handler,
 		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _ProvisionerService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _ProvisionerService_PluginName_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -1806,6 +1950,8 @@ type CommandServiceClient interface {
 	CommandInfo(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*Command_CommandInfoResp, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type commandServiceClient struct {
@@ -1897,6 +2043,24 @@ func (c *commandServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts 
 	return out, nil
 }
 
+func (c *commandServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *commandServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommandService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommandServiceServer is the server API for CommandService service.
 // All implementations should embed UnimplementedCommandServiceServer
 // for forward compatibility
@@ -1910,6 +2074,8 @@ type CommandServiceServer interface {
 	CommandInfo(context.Context, *FuncSpec_Args) (*Command_CommandInfoResp, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedCommandServiceServer should be embedded to have forward compatible implementations.
@@ -1942,6 +2108,12 @@ func (UnimplementedCommandServiceServer) Seed(context.Context, *Args_Seeds) (*em
 }
 func (UnimplementedCommandServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedCommandServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedCommandServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeCommandServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -2117,6 +2289,42 @@ func _CommandService_Seeds_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommandService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommandService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommandServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommandService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommandService_ServiceDesc is the grpc.ServiceDesc for CommandService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2160,6 +2368,14 @@ var CommandService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Seeds",
 			Handler:    _CommandService_Seeds_Handler,
 		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _CommandService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _CommandService_PluginName_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
@@ -2194,6 +2410,8 @@ type CommunicatorServiceClient interface {
 	Reset(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type communicatorServiceClient struct {
@@ -2429,6 +2647,24 @@ func (c *communicatorServiceClient) Seeds(ctx context.Context, in *empty.Empty, 
 	return out, nil
 }
 
+func (c *communicatorServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *communicatorServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CommunicatorService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommunicatorServiceServer is the server API for CommunicatorService service.
 // All implementations should embed UnimplementedCommunicatorServiceServer
 // for forward compatibility
@@ -2458,6 +2694,8 @@ type CommunicatorServiceServer interface {
 	Reset(context.Context, *FuncSpec_Args) (*empty.Empty, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedCommunicatorServiceServer should be embedded to have forward compatible implementations.
@@ -2538,6 +2776,12 @@ func (UnimplementedCommunicatorServiceServer) Seed(context.Context, *Args_Seeds)
 }
 func (UnimplementedCommunicatorServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedCommunicatorServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedCommunicatorServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeCommunicatorServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -3001,6 +3245,42 @@ func _CommunicatorService_Seeds_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommunicatorService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CommunicatorService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommunicatorServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CommunicatorService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommunicatorServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommunicatorService_ServiceDesc is the grpc.ServiceDesc for CommunicatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3107,6 +3387,14 @@ var CommunicatorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Seeds",
 			Handler:    _CommunicatorService_Seeds_Handler,
+		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _CommunicatorService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _CommunicatorService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3286,6 +3574,8 @@ type HostServiceClient interface {
 	ParentSpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type hostServiceClient struct {
@@ -3413,6 +3703,24 @@ func (c *hostServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ...
 	return out, nil
 }
 
+func (c *hostServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hostServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.HostService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HostServiceServer is the server API for HostService service.
 // All implementations should embed UnimplementedHostServiceServer
 // for forward compatibility
@@ -3430,6 +3738,8 @@ type HostServiceServer interface {
 	ParentSpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedHostServiceServer should be embedded to have forward compatible implementations.
@@ -3474,6 +3784,12 @@ func (UnimplementedHostServiceServer) Seed(context.Context, *Args_Seeds) (*empty
 }
 func (UnimplementedHostServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedHostServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedHostServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeHostServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -3721,6 +4037,42 @@ func _HostService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HostService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HostService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HostServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.HostService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HostServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HostService_ServiceDesc is the grpc.ServiceDesc for HostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3779,6 +4131,14 @@ var HostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Seeds",
 			Handler:    _HostService_Seeds_Handler,
+		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _HostService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _HostService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -4394,6 +4754,8 @@ type SyncedFolderServiceClient interface {
 	HasCapabilitySpec(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type syncedFolderServiceClient struct {
@@ -4557,6 +4919,24 @@ func (c *syncedFolderServiceClient) Seeds(ctx context.Context, in *empty.Empty, 
 	return out, nil
 }
 
+func (c *syncedFolderServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncedFolderServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SyncedFolderServiceServer is the server API for SyncedFolderService service.
 // All implementations should embed UnimplementedSyncedFolderServiceServer
 // for forward compatibility
@@ -4578,6 +4958,8 @@ type SyncedFolderServiceServer interface {
 	HasCapabilitySpec(context.Context, *empty.Empty) (*FuncSpec, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedSyncedFolderServiceServer should be embedded to have forward compatible implementations.
@@ -4634,6 +5016,12 @@ func (UnimplementedSyncedFolderServiceServer) Seed(context.Context, *Args_Seeds)
 }
 func (UnimplementedSyncedFolderServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedSyncedFolderServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedSyncedFolderServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeSyncedFolderServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -4953,6 +5341,42 @@ func _SyncedFolderService_Seeds_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncedFolderService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncedFolderService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SyncedFolderService_ServiceDesc is the grpc.ServiceDesc for SyncedFolderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5027,6 +5451,14 @@ var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Seeds",
 			Handler:    _SyncedFolderService_Seeds_Handler,
+		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _SyncedFolderService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _SyncedFolderService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -8779,6 +9211,8 @@ type PushServiceClient interface {
 	Push(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*empty.Empty, error)
 	Seeds(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error)
+	PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type pushServiceClient struct {
@@ -8825,6 +9259,24 @@ func (c *pushServiceClient) Seeds(ctx context.Context, in *empty.Empty, opts ...
 	return out, nil
 }
 
+func (c *pushServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PushService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pushServiceClient) PluginName(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PushService/PluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PushServiceServer is the server API for PushService service.
 // All implementations should embed UnimplementedPushServiceServer
 // for forward compatibility
@@ -8833,6 +9285,8 @@ type PushServiceServer interface {
 	Push(context.Context, *FuncSpec_Args) (*empty.Empty, error)
 	Seed(context.Context, *Args_Seeds) (*empty.Empty, error)
 	Seeds(context.Context, *empty.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error)
+	PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedPushServiceServer should be embedded to have forward compatible implementations.
@@ -8850,6 +9304,12 @@ func (UnimplementedPushServiceServer) Seed(context.Context, *Args_Seeds) (*empty
 }
 func (UnimplementedPushServiceServer) Seeds(context.Context, *empty.Empty) (*Args_Seeds, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedPushServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedPushServiceServer) PluginName(context.Context, *empty.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafePushServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -8935,6 +9395,42 @@ func _PushService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PushService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PushServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.PushService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PushServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PushService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PushServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.PushService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PushServiceServer).PluginName(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PushService_ServiceDesc is the grpc.ServiceDesc for PushService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -8957,6 +9453,14 @@ var PushService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Seeds",
 			Handler:    _PushService_Seeds_Handler,
+		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _PushService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _PushService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
