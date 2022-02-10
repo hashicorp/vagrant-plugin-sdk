@@ -72,7 +72,7 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfoResp, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Command_CommandInfo, error) {
 		ctx, _ = joincontext.Join(c.Ctx, ctx)
 		resp, err := c.client.CommandInfo(
 			ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -80,7 +80,7 @@ func (c *commandClient) CommandInfoFunc() interface{} {
 		if err != nil {
 			return nil, err
 		}
-		return resp, nil
+		return resp.CommandInfo, nil
 	}
 	return c.GenerateFunc(spec, cb)
 }
