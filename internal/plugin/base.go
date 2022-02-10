@@ -86,6 +86,7 @@ func (b *BasePlugin) NewServer(
 	return &BaseServer{
 		impl:       impl,
 		seedValues: &vagrant_plugin_sdk.Args_Seeds{},
+		name:       "",
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
@@ -138,6 +139,7 @@ type BaseServer struct {
 	*Base
 
 	impl       interface{}
+	name       string
 	seedValues *vagrant_plugin_sdk.Args_Seeds
 }
 
@@ -557,6 +559,11 @@ func (b *BaseServer) SetPluginName(
 	ctx context.Context,
 	name *vagrant_plugin_sdk.PluginInfo_Name,
 ) (*emptypb.Empty, error) {
+	if !b.IsWrapped() {
+		b.name = name.Name
+		return &emptypb.Empty{}, nil
+	}
+
 	if namedPlugin, ok := b.impl.(core.Named); ok {
 		err := namedPlugin.SetPluginName(name.Name)
 		if err != nil {
@@ -570,6 +577,10 @@ func (b *BaseServer) PluginName(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
+	if !b.IsWrapped() {
+		return &vagrant_plugin_sdk.PluginInfo_Name{Name: b.name}, nil
+	}
+
 	if namedPlugin, ok := b.impl.(core.Named); ok {
 		name, err := namedPlugin.PluginName()
 		if err != nil {
