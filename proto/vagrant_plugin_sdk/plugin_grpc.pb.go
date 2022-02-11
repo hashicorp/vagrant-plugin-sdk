@@ -4866,6 +4866,7 @@ type SyncedFolderServiceClient interface {
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
+	SetPluginPriority(ctx context.Context, in *PluginInfo_Priority, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PluginPriority(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Priority, error)
 }
 
@@ -5066,6 +5067,15 @@ func (c *syncedFolderServiceClient) PluginName(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
+func (c *syncedFolderServiceClient) SetPluginPriority(ctx context.Context, in *PluginInfo_Priority, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/SetPluginPriority", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *syncedFolderServiceClient) PluginPriority(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Priority, error) {
 	out := new(PluginInfo_Priority)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.SyncedFolderService/PluginPriority", in, out, opts...)
@@ -5100,6 +5110,7 @@ type SyncedFolderServiceServer interface {
 	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
 	SetPluginName(context.Context, *PluginInfo_Name) (*emptypb.Empty, error)
 	PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error)
+	SetPluginPriority(context.Context, *PluginInfo_Priority) (*emptypb.Empty, error)
 	PluginPriority(context.Context, *emptypb.Empty) (*PluginInfo_Priority, error)
 }
 
@@ -5169,6 +5180,9 @@ func (UnimplementedSyncedFolderServiceServer) SetPluginName(context.Context, *Pl
 }
 func (UnimplementedSyncedFolderServiceServer) PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
+}
+func (UnimplementedSyncedFolderServiceServer) SetPluginPriority(context.Context, *PluginInfo_Priority) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginPriority not implemented")
 }
 func (UnimplementedSyncedFolderServiceServer) PluginPriority(context.Context, *emptypb.Empty) (*PluginInfo_Priority, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginPriority not implemented")
@@ -5563,6 +5577,24 @@ func _SyncedFolderService_PluginName_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncedFolderService_SetPluginPriority_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Priority)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncedFolderServiceServer).SetPluginPriority(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.SyncedFolderService/SetPluginPriority",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncedFolderServiceServer).SetPluginPriority(ctx, req.(*PluginInfo_Priority))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SyncedFolderService_PluginPriority_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -5671,6 +5703,10 @@ var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PluginName",
 			Handler:    _SyncedFolderService_PluginName_Handler,
+		},
+		{
+			MethodName: "SetPluginPriority",
+			Handler:    _SyncedFolderService_SetPluginPriority_Handler,
 		},
 		{
 			MethodName: "PluginPriority",

@@ -914,6 +914,8 @@ service SyncedFolderService {
 
   rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
   rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
+  
+  rpc SetPluginPriority(PluginInfo.Priority) returns (google.protobuf.Empty);
   rpc PluginPriority(google.protobuf.Empty) returns (PluginInfo.Priority);
 }
 
