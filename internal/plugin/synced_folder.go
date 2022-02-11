@@ -31,6 +31,9 @@ func (p *SyncedFolderPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Serve
 	vagrant_plugin_sdk.RegisterSyncedFolderServiceServer(s, &syncedFolderServer{
 		Impl:       p.Impl,
 		BaseServer: bs,
+		prioritizedPluginServer: &prioritizedPluginServer{
+			BaseServer: bs,
+		},
 		capabilityServer: &capabilityServer{
 			BaseServer:     bs,
 			CapabilityImpl: p.Impl,
@@ -211,11 +214,21 @@ func (c *syncedFolderClient) Cleanup(machine core.Machine, opts ...interface{}) 
 	return err
 }
 
+func (c *syncedFolderClient) Priority() int {
+	// TODO
+	return 0
+}
+
+func (c *syncedFolderClient) SetPriority(int) {
+	// TODO
+}
+
 // syncedFolderServer is a gRPC server that the client talks to and calls a
 // real implementation of the component.
 type syncedFolderServer struct {
 	*BaseServer
 	*capabilityServer
+	*prioritizedPluginServer
 
 	Impl component.SyncedFolder
 	vagrant_plugin_sdk.UnsafeSyncedFolderServiceServer
@@ -366,15 +379,6 @@ func (s *syncedFolderServer) Cleanup(
 	}
 
 	return &empty.Empty{}, nil
-}
-
-func (s *syncedFolderServer) PluginPriority(
-	ctx context.Context,
-	_ *empty.Empty,
-) (*vagrant_plugin_sdk.PluginInfo_Priority, error) {
-	return &vagrant_plugin_sdk.PluginInfo_Priority{
-		Priority: 0, // TODO
-	}, nil
 }
 
 var (

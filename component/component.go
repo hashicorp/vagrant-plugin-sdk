@@ -183,6 +183,11 @@ type Communicator interface {
 	ResetFunc() interface{}
 }
 
+type PrioritizedPlugin interface {
+	Priority() int
+	SetPriority(int)
+}
+
 type CapabilityPlatform interface {
 	// Test if capability is available
 	HasCapabilityFunc() interface{}
@@ -244,6 +249,8 @@ type Push interface {
 }
 
 type SyncedFolder interface {
+	PrioritizedPlugin
+
 	// Determines if an implementation is usable
 	UsableFunc() interface{}
 	// Called before the machine is booted and networks are setup
