@@ -12,8 +12,9 @@ import (
 )
 
 type pluginInfo struct {
-	types []component.Type
-	name  string
+	types    []component.Type
+	name     string
+	priority int
 }
 
 func (p *pluginInfo) ComponentTypes() []component.Type {
@@ -22,6 +23,10 @@ func (p *pluginInfo) ComponentTypes() []component.Type {
 
 func (p *pluginInfo) Name() string {
 	return p.name
+}
+
+func (p *pluginInfo) Priority() int {
+	return p.priority
 }
 
 type PluginInfoPlugin struct {
@@ -118,3 +123,10 @@ func (s *pluginInfoServer) Name(
 		Name: s.Impl.Name(),
 	}, nil
 }
+
+var (
+	_ plugin.Plugin                              = (*PluginInfoPlugin)(nil)
+	_ plugin.GRPCPlugin                          = (*PluginInfoPlugin)(nil)
+	_ vagrant_plugin_sdk.PluginInfoServiceServer = (*pluginInfoServer)(nil)
+	_ component.PluginInfo                       = (*pluginInfoClient)(nil)
+)
