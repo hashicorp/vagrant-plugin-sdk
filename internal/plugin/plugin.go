@@ -77,7 +77,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 	}
 
 	// Set plugin info before we finish
-	info.Impl = &pluginInfo{types: t, name: c.Name}
+	info.Impl = &pluginInfo{types: t, name: c.Name, priority: c.Priority}
 
 	return result
 }
@@ -85,6 +85,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 // pluginConfig is used to configure Plugins via Option calls.
 type pluginConfig struct {
 	Name       string
+	Priority   int
 	Components []interface{}
 	Mappers    []*argmapper.Func
 	Logger     hclog.Logger
@@ -114,6 +115,10 @@ func WithLogger(log hclog.Logger) Option {
 
 func WithName(n string) Option {
 	return func(c *pluginConfig) { c.Name = n }
+}
+
+func WithPriority(n int) Option {
+	return func(c *pluginConfig) { c.Priority = n }
 }
 
 // setFieldValue sets the given value c on any exported field of an available
