@@ -12,8 +12,9 @@ import (
 )
 
 type pluginInfo struct {
-	types []component.Type
-	name  string
+	types    []component.Type
+	name     string
+	priority int
 }
 
 func (p *pluginInfo) ComponentTypes() []component.Type {
@@ -22,6 +23,10 @@ func (p *pluginInfo) ComponentTypes() []component.Type {
 
 func (p *pluginInfo) Name() string {
 	return p.name
+}
+
+func (p *pluginInfo) Priority() int {
+	return p.priority
 }
 
 type PluginInfoPlugin struct {
@@ -89,6 +94,17 @@ func (c *pluginInfoClient) Name() string {
 	return resp.Name
 }
 
+func (c *pluginInfoClient) Priority() int {
+	resp, err := c.client.Priority(c.Ctx, &empty.Empty{})
+	if err != nil {
+		c.Logger.Error("unexpected error when requesting component name",
+			"error", err)
+
+		return 0
+	}
+	return int(resp.Priority)
+}
+
 func (s *pluginInfoServer) ComponentTypes(
 	ctx context.Context,
 	_ *empty.Empty,
@@ -118,3 +134,23 @@ func (s *pluginInfoServer) Name(
 		Name: s.Impl.Name(),
 	}, nil
 }
+
+func (s *pluginInfoServer) Priority(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.PluginInfo_Priority, error) {
+	if err := isImplemented(s, "plugin info"); err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.PluginInfo_Priority{
+		Priority: int32(s.Impl.Priority()),
+	}, nil
+}
+
+var (
+	_ plugin.Plugin                              = (*PluginInfoPlugin)(nil)
+	_ plugin.GRPCPlugin                          = (*PluginInfoPlugin)(nil)
+	_ vagrant_plugin_sdk.PluginInfoServiceServer = (*pluginInfoServer)(nil)
+	_ component.PluginInfo                       = (*pluginInfoClient)(nil)
+)

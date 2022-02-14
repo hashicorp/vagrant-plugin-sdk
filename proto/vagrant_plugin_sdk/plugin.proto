@@ -574,6 +574,7 @@ message StateBag {
 service PluginInfoService {
   rpc ComponentTypes(google.protobuf.Empty) returns (PluginInfo.ComponentList);
   rpc Name(google.protobuf.Empty) returns (PluginInfo.Name);
+  rpc Priority(google.protobuf.Empty) returns (PluginInfo.Priority);
 }
 
 message PluginInfo {
@@ -582,6 +583,9 @@ message PluginInfo {
   }
   message Name {
     string name = 1;
+  }
+  message Priority {
+    int32 priority = 1;
   }
 }
 

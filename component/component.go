@@ -82,6 +82,7 @@ func FindType(name string) (Type, error) {
 type PluginInfo interface {
 	ComponentTypes() []Type
 	Name() string
+	Priority() int
 }
 
 type CommandFlags []*CommandFlag

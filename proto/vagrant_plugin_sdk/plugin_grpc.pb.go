@@ -527,6 +527,7 @@ var StateBagService_ServiceDesc = grpc.ServiceDesc{
 type PluginInfoServiceClient interface {
 	ComponentTypes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_ComponentList, error)
 	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
+	Priority(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Priority, error)
 }
 
 type pluginInfoServiceClient struct {
@@ -555,12 +556,22 @@ func (c *pluginInfoServiceClient) Name(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
+func (c *pluginInfoServiceClient) Priority(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Priority, error) {
+	out := new(PluginInfo_Priority)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PluginInfoService/Priority", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PluginInfoServiceServer is the server API for PluginInfoService service.
 // All implementations should embed UnimplementedPluginInfoServiceServer
 // for forward compatibility
 type PluginInfoServiceServer interface {
 	ComponentTypes(context.Context, *emptypb.Empty) (*PluginInfo_ComponentList, error)
 	Name(context.Context, *emptypb.Empty) (*PluginInfo_Name, error)
+	Priority(context.Context, *emptypb.Empty) (*PluginInfo_Priority, error)
 }
 
 // UnimplementedPluginInfoServiceServer should be embedded to have forward compatible implementations.
@@ -572,6 +583,9 @@ func (UnimplementedPluginInfoServiceServer) ComponentTypes(context.Context, *emp
 }
 func (UnimplementedPluginInfoServiceServer) Name(context.Context, *emptypb.Empty) (*PluginInfo_Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
+}
+func (UnimplementedPluginInfoServiceServer) Priority(context.Context, *emptypb.Empty) (*PluginInfo_Priority, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Priority not implemented")
 }
 
 // UnsafePluginInfoServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -621,6 +635,24 @@ func _PluginInfoService_Name_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginInfoService_Priority_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginInfoServiceServer).Priority(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.PluginInfoService/Priority",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginInfoServiceServer).Priority(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PluginInfoService_ServiceDesc is the grpc.ServiceDesc for PluginInfoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -635,6 +667,10 @@ var PluginInfoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Name",
 			Handler:    _PluginInfoService_Name_Handler,
+		},
+		{
+			MethodName: "Priority",
+			Handler:    _PluginInfoService_Priority_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
