@@ -246,6 +246,8 @@ type Push interface {
 type SyncedFolder interface {
 	// Determines if an implementation is usable
 	UsableFunc() interface{}
+	// Called before the machine is booted and networks are setup
+	PrepareFunc() interface{}
 	// Called after the machine is booted and networks are setup
 	// Adds folders without removing any existing ones
 	EnableFunc() interface{}

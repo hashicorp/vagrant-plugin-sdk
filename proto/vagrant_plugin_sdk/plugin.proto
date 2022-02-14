@@ -894,6 +894,8 @@ service SyncedFolderService {
   rpc UsableSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Enable(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc EnableSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Prepare(FuncSpec.Args) returns (google.protobuf.Empty);
+  rpc PrepareSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Disable(FuncSpec.Args) returns (google.protobuf.Empty);
   rpc DisableSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Cleanup(FuncSpec.Args) returns (google.protobuf.Empty);
