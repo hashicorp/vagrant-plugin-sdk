@@ -122,6 +122,8 @@ var All = []interface{}{
 	MetadataSetProto,
 	NamedCapability,
 	NamedCapabilityProto,
+	Options,
+	OptionsProto,
 	Path,
 	PathProto,
 	Plugin,
