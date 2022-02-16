@@ -191,28 +191,26 @@ type CapabilityPlatform interface {
 }
 
 type Guest interface {
+	CapabilityPlatform
+
 	// Detect if machine is supported guest
 	GuestDetectFunc() interface{}
 	// List of parent host names
 	ParentFunc() interface{}
-	// Test if capability is available
-	HasCapabilityFunc() interface{}
-	// Run a capability
-	CapabilityFunc(capName string) interface{}
 }
 
 type Host interface {
+	CapabilityPlatform
+
 	// Detect if machine is supported host
 	HostDetectFunc() interface{}
 	// List of parent host names
 	ParentFunc() interface{}
-	// Test if capability is available
-	HasCapabilityFunc() interface{}
-	// Run a capability
-	CapabilityFunc(capName string) interface{}
 }
 
 type Provider interface {
+	CapabilityPlatform
+
 	// Check if provider is usable
 	UsableFunc() interface{}
 	// Check if the provider is installed
@@ -225,11 +223,6 @@ type Provider interface {
 	SshInfoFunc() interface{}
 	// Get target state
 	StateFunc() interface{}
-
-	// Test if capability is available
-	HasCapabilityFunc() interface{}
-	// Run a capability
-	CapabilityFunc(capName string) interface{}
 }
 
 type Provisioner interface {
@@ -244,6 +237,8 @@ type Push interface {
 }
 
 type SyncedFolder interface {
+	CapabilityPlatform
+
 	// Determines if an implementation is usable
 	UsableFunc() interface{}
 	// Called before the machine is booted and networks are setup
@@ -255,11 +250,6 @@ type SyncedFolder interface {
 	DisableFunc() interface{}
 	// Called after destroying a machine
 	CleanupFunc() interface{}
-
-	// Test if capability is available
-	HasCapabilityFunc() interface{}
-	// Run a capability
-	CapabilityFunc(capName string) interface{}
 }
 
 type MetadataSet struct {

@@ -7,8 +7,8 @@ type Folder struct {
 }
 
 type SyncedFolder interface {
-	Capability(name string, args ...interface{}) (interface{}, error)
-	HasCapability(name string) (bool, error)
+	CapabilityPlatform
+
 	Usable(machine Machine) (bool, error)
 	Enable(machine Machine, folders []*Folder, opts ...interface{}) error
 	Prepare(machine Machine, folders []*Folder, opts ...interface{}) error

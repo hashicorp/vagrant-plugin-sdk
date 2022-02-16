@@ -234,6 +234,7 @@ var (
 	_ vagrant_plugin_sdk.HostServiceServer = (*hostServer)(nil)
 	_ component.Host                       = (*hostClient)(nil)
 	_ core.Host                            = (*hostClient)(nil)
+	_ component.CapabilityPlatform         = (*hostClient)(nil)
+	_ core.CapabilityPlatform              = (*hostClient)(nil)
 	_ core.Seeder                          = (*hostClient)(nil)
-	_ capabilityComponent                  = (*hostClient)(nil)
 )

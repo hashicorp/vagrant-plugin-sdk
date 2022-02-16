@@ -14,6 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -308,4 +309,5 @@ func (s *capabilityServer) Capability(
 
 var (
 	_ component.CapabilityPlatform = (*capabilityClient)(nil)
+	_ core.CapabilityPlatform      = (*capabilityClient)(nil)
 )
