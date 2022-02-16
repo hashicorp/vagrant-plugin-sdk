@@ -104,6 +104,8 @@ var All = []interface{}{
 	DirectProto,
 	Flags,
 	FlagsProto,
+	Folders,
+	FoldersProto,
 	Hash,
 	HashProto,
 	JobInfo,
@@ -122,6 +124,8 @@ var All = []interface{}{
 	MetadataSetProto,
 	NamedCapability,
 	NamedCapabilityProto,
+	Options,
+	OptionsProto,
 	Path,
 	PathProto,
 	Plugin,
@@ -592,6 +596,35 @@ func OptionsProto(
 	}
 	return &vagrant_plugin_sdk.Args_Options{
 		Options: h,
+	}, nil
+}
+
+func Folders(
+	input *vagrant_plugin_sdk.Args_Folders,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (result map[string]interface{}, err error) {
+	return Hash(
+		input.Folders,
+		log,
+		internal,
+		ctx,
+	)
+}
+
+func FoldersProto(
+	input map[string]interface{},
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (opts *vagrant_plugin_sdk.Args_Folders, err error) {
+	h, err := HashProto(input, log, internal, ctx)
+	if err != nil {
+		return
+	}
+	return &vagrant_plugin_sdk.Args_Folders{
+		Folders: h,
 	}, nil
 }
 
