@@ -261,6 +261,9 @@ func (s *syncedFolderServer) Usable(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("synced folder usable check failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -287,6 +290,9 @@ func (s *syncedFolderServer) Enable(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("synced folder enable failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -312,6 +318,9 @@ func (s *syncedFolderServer) Prepare(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("synced folder prepare failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -337,6 +346,9 @@ func (s *syncedFolderServer) Disable(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("synced folder disable failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -362,6 +374,9 @@ func (s *syncedFolderServer) Cleanup(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("synced folder cleanup failed",
+			"error", err,
+		)
 		return nil, err
 	}
 
