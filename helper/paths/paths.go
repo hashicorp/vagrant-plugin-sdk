@@ -72,13 +72,13 @@ func VagrantTmp() (path.Path, error) {
 	if ok {
 		val = path.NewPath(v)
 	} else {
-		v = xdg.RuntimeDir
+		v = xdg.CacheHome
 		if _, err := os.Stat(v); err != nil {
 			if v, err = ioutil.TempDir("", "vagrant-tmp"); err != nil {
 				return nil, err
 			}
 		}
-		val = path.NewPath(v).Join("vagrant")
+		val = path.NewPath(v).Join("vagrant-tmp")
 	}
 
 	return setupPath(val)
