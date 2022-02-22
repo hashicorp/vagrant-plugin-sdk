@@ -425,44 +425,57 @@ func SeedsProtoFull(
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Seeds, error) {
 	result := &vagrant_plugin_sdk.Args_Seeds{
-		Named: make(map[string]*anypb.Any),
-	}
-	t, err := DirectProto(
-		&component.Direct{
-			Arguments: input.Typed,
-		},
-		log, internal, ctx,
-	)
-
-	if err != nil {
-		return nil, err
+		Typed: make([]*anypb.Any, 0, len(input.Typed)),
+		Named: make(map[string]*anypb.Any, len(input.Named)),
 	}
 
-	result.Typed = t.Arguments
-
-	nv := make([]interface{}, len(input.Named))
-
-	i := 0
-	for _, v := range input.Named {
-		nv[i] = v
-		i += 1
+	d := &component.Direct{Arguments: []interface{}{}}
+	for _, v := range input.Typed {
+		if a, ok := v.(*anypb.Any); ok {
+			result.Typed = append(result.Typed, a)
+			continue
+		}
+		d.Arguments = append(d.Arguments, v)
 	}
 
-	t, err = DirectProto(
-		&component.Direct{
-			Arguments: nv,
-		},
-		log, internal, ctx,
-	)
+	if len(d.Arguments) > 0 {
+		t, err := DirectProto(
+			d, log, internal, ctx,
+		)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range t.Arguments {
+			result.Typed = append(result.Typed, v)
+		}
 	}
 
-	i = 0
-	for k, _ := range input.Named {
-		result.Named[k] = t.Arguments[i]
-		i += 1
+	d = &component.Direct{Arguments: []interface{}{}}
+	names := []string{}
+
+	for k, v := range input.Named {
+		if a, ok := v.(*anypb.Any); ok {
+			result.Named[k] = a
+			continue
+		}
+		names = append(names, k)
+		d.Arguments = append(d.Arguments, v)
+	}
+
+	if len(d.Arguments) > 0 {
+		t, err := DirectProto(
+			d, log, internal, ctx,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(names); i++ {
+			result.Named[names[i]] = t.Arguments[i]
+		}
 	}
 
 	return result, nil
