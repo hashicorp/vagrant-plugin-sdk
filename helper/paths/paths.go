@@ -4,7 +4,6 @@ package paths
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/adrg/xdg"
@@ -72,13 +71,11 @@ func VagrantTmp() (path.Path, error) {
 	if ok {
 		val = path.NewPath(v)
 	} else {
-		v = xdg.CacheHome
-		if _, err := os.Stat(v); err != nil {
-			if v, err = ioutil.TempDir("", "vagrant-tmp"); err != nil {
-				return nil, err
-			}
+		var err error
+		if val, err = VagrantCache(); err != nil {
+			return nil, err
 		}
-		val = path.NewPath(v).Join("vagrant-tmp")
+		val = val.Join("tmp")
 	}
 
 	return setupPath(val)
