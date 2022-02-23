@@ -110,6 +110,23 @@ func (_m *SyncedFolder) HasCapability(name string) (bool, error) {
 	return r0, r1
 }
 
+// Prepare provides a mock function with given fields: machine, folders, opts
+func (_m *SyncedFolder) Prepare(machine core.Machine, folders []*core.Folder, opts ...interface{}) error {
+	var _ca []interface{}
+	_ca = append(_ca, machine, folders)
+	_ca = append(_ca, opts...)
+	ret := _m.Called(_ca...)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(core.Machine, []*core.Folder, ...interface{}) error); ok {
+		r0 = rf(machine, folders, opts...)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Usable provides a mock function with given fields: machine
 func (_m *SyncedFolder) Usable(machine core.Machine) (bool, error) {
 	ret := _m.Called(machine)
