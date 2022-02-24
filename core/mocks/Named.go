@@ -9,8 +9,8 @@ type Named struct {
 	mock.Mock
 }
 
-// GetPluginName provides a mock function with given fields:
-func (_m *Named) GetPluginName() (string, error) {
+// PluginName provides a mock function with given fields:
+func (_m *Named) PluginName() (string, error) {
 	ret := _m.Called()
 
 	var r0 string
