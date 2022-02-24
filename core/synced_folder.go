@@ -8,6 +8,7 @@ type Folder struct {
 
 type SyncedFolder interface {
 	CapabilityPlatform
+	Seeder
 
 	Usable(machine Machine) (bool, error)
 	Enable(machine Machine, folders []*Folder, opts ...interface{}) error
