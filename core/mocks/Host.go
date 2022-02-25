@@ -114,3 +114,75 @@ func (_m *Host) Parent() (string, error) {
 
 	return r0, r1
 }
+
+// PluginName provides a mock function with given fields:
+func (_m *Host) PluginName() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Seed provides a mock function with given fields: _a0
+func (_m *Host) Seed(_a0 *core.Seeds) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*core.Seeds) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Seeds provides a mock function with given fields:
+func (_m *Host) Seeds() (*core.Seeds, error) {
+	ret := _m.Called()
+
+	var r0 *core.Seeds
+	if rf, ok := ret.Get(0).(func() *core.Seeds); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*core.Seeds)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SetPluginName provides a mock function with given fields: _a0
+func (_m *Host) SetPluginName(_a0 string) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}

@@ -127,6 +127,43 @@ func (_m *SyncedFolder) Prepare(machine core.Machine, folders []*core.Folder, op
 	return r0
 }
 
+// Seed provides a mock function with given fields: _a0
+func (_m *SyncedFolder) Seed(_a0 *core.Seeds) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*core.Seeds) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Seeds provides a mock function with given fields:
+func (_m *SyncedFolder) Seeds() (*core.Seeds, error) {
+	ret := _m.Called()
+
+	var r0 *core.Seeds
+	if rf, ok := ret.Get(0).(func() *core.Seeds); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*core.Seeds)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Usable provides a mock function with given fields: machine
 func (_m *SyncedFolder) Usable(machine core.Machine) (bool, error) {
 	ret := _m.Called(machine)

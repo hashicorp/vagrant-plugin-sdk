@@ -7,6 +7,7 @@ import (
 type Guest interface {
 	CapabilityPlatform
 	Seeder
+	Named
 
 	Detect(Target) (bool, error)
 	Parent() (string, error)
