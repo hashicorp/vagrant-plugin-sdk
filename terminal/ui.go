@@ -133,6 +133,7 @@ const (
 	WarningStyle     = "warning"
 	WarningBoldStyle = "warning-bold"
 	InfoStyle        = "info"
+	InfoBoldStyle    = "info-bold"
 	SuccessStyle     = "success"
 	SuccessBoldStyle = "success-bold"
 )
@@ -172,6 +173,13 @@ func WithoutNewLine() Option {
 func WithInfoStyle() Option {
 	return func(c *config) {
 		c.Style = InfoStyle
+	}
+}
+
+// WithInfoStyle styles the output like it's formatted information.
+func WithInfoBoldStyle() Option {
+	return func(c *config) {
+		c.Style = InfoBoldStyle
 	}
 }
 
@@ -231,6 +239,7 @@ func WithWriter(w io.Writer) Option {
 var (
 	colorHeader      = color.New(color.Bold)
 	colorInfo        = color.New()
+	colorInfoBold    = color.New(color.Bold)
 	colorError       = color.New(color.FgRed)
 	colorErrorBold   = color.New(color.FgRed, color.Bold)
 	colorSuccess     = color.New(color.FgGreen)
