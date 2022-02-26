@@ -33,11 +33,11 @@ type UIPlugin struct {
 	addr net.Addr
 }
 
-func (b *UIPlugin) SetTarget(t net.Addr) {
+func (b *UIPlugin) SetAddr(t net.Addr) {
 	b.addr = t
 }
 
-func (b *UIPlugin) Target() net.Addr {
+func (b *UIPlugin) Addr() net.Addr {
 	return b.addr
 }
 
