@@ -162,6 +162,15 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 					},
 				},
 			})
+		case *vagrant_plugin_sdk.TerminalUI_Event_ClearLine_:
+			s.Impl.ClearLine()
+			stream.Send(&vagrant_plugin_sdk.TerminalUI_Response{
+				Event: &vagrant_plugin_sdk.TerminalUI_Response_Input{
+					Input: &vagrant_plugin_sdk.TerminalUI_Event_InputResp{
+						Input: "complete",
+					},
+				},
+			})
 		case *vagrant_plugin_sdk.TerminalUI_Event_NamedValues_:
 			var values []terminal.NamedValue
 
@@ -356,6 +365,22 @@ func (u *uiBridge) Input(input *terminal.Input) (string, error) {
 
 func (u *uiBridge) Interactive() bool {
 	return u.interactive
+}
+
+func (u *uiBridge) ClearLine() {
+	ev := &vagrant_plugin_sdk.TerminalUI_Event{
+		Event: &vagrant_plugin_sdk.TerminalUI_Event_ClearLine_{},
+	}
+
+	u.mu.Lock()
+	defer u.mu.Unlock()
+
+	if u.evc == nil {
+		return
+	}
+
+	u.evc.Send(ev)
+	u.evc.Recv()
 }
 
 // Output outputs a message directly to the terminal. The remaining
