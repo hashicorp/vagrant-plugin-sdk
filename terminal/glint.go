@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"strings"
 	"text/tabwriter"
 
@@ -15,14 +16,60 @@ import (
 )
 
 type glintUI struct {
-	d     *glint.Document
-	cache []string
+	d      *glint.Document
+	c      []glint.Component
+	last   *TextComponent
+	append bool
+}
+
+type TextComponent struct {
+	*glint.TextComponent
+	v     string
+	style []glint.StyleOption
+}
+
+func Text(v string, styles ...glint.StyleOption) *TextComponent {
+	return &TextComponent{
+		TextComponent: glint.Text(v),
+		v:             v,
+		style:         styles,
+	}
+}
+
+func (t *TextComponent) Body(ctx context.Context) glint.Component {
+	return t.TextComponent
+}
+
+func (t *TextComponent) Append(v string) {
+	t.TextComponent = glint.Text(t.v + v)
+	t.v = t.v + v
+}
+
+func (t *TextComponent) Clear() {
+	t.TextComponent = glint.Text("")
+	t.v = ""
+}
+
+func (t *TextComponent) StyleMatch(styles ...glint.StyleOption) bool {
+	for _, ts := range t.style {
+		found := false
+		for _, s := range styles {
+			if reflect.ValueOf(ts).Pointer() == reflect.ValueOf(s).Pointer() {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }
 
 func GlintUI(ctx context.Context) UI {
 	result := &glintUI{
-		d:     glint.New(),
-		cache: []string{},
+		d: glint.New(),
+		c: []glint.Component{},
 	}
 
 	go result.d.Render(ctx)
@@ -35,7 +82,7 @@ func (ui *glintUI) Close() error {
 }
 
 func (ui *glintUI) Input(input *Input) (string, error) {
-	ui.Output(input.Prompt)
+	ui.Output(input.Prompt, WithoutNewLine())
 	// Render the last frame
 	ui.d.RenderFrame()
 	// Pause so that input can be read
@@ -47,6 +94,11 @@ func (ui *glintUI) Input(input *Input) (string, error) {
 	// convert CRLF to LF
 	text = strings.TrimSpace(text)
 
+	if !input.Secret {
+		ui.Output(text + "\n")
+	} else {
+		ui.Output("")
+	}
 	return text, nil
 }
 
@@ -57,6 +109,7 @@ func (ui *glintUI) Interactive() bool {
 
 // Output implements UI
 func (ui *glintUI) Output(msg string, raw ...interface{}) {
+	defer ui.d.RenderFrame()
 	msg, style, disableNewline, _ := Interpret(msg, raw...)
 
 	var cs []glint.StyleOption
@@ -71,22 +124,15 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 		}
 
 		lines := strings.Split(msg, "\n")
-		if len(lines) > 0 {
-			ui.d.Append(glint.Finalize(
-				glint.Style(
-					glint.Text("! "+lines[0]),
-					cs...,
-				),
-			))
-
-			for _, line := range lines[1:] {
-				ui.d.Append(glint.Finalize(
-					glint.Text("  " + line),
-				))
+		for i, line := range lines {
+			if i == 0 {
+				lines[i] = "! " + line
+			} else {
+				lines[i] = "  " + line
 			}
 		}
 
-		return
+		msg = strings.Join(lines, "\n")
 
 	case WarningStyle, WarningBoldStyle:
 		cs = append(cs, glint.Color("lightYellow"))
@@ -105,45 +151,45 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 	case InfoStyle:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = colorInfo.Sprintf("  %s", line)
+			lines[i] = "  " + line
+		}
+
+		msg = strings.Join(lines, "\n")
+
+	case InfoBoldStyle:
+		cs = append(cs, glint.Bold())
+		lines := strings.Split(msg, "\n")
+		for i, line := range lines {
+			lines[i] = "  " + line
 		}
 
 		msg = strings.Join(lines, "\n")
 	}
 
-	// If the disable new line option is set, we want
-	// to cache output until we have the full line
-	// ready to display
-	if disableNewline {
-		// Since our message may contain multiple lines
-		// we want to allow any full lines to be output
-		// while only retaining the last line which should
-		// not include a new line at the end
-		if strings.Contains(msg, "\n") {
-			lines := strings.Split(msg, "\n")
-			ui.cache = append(ui.cache, lines[len(lines)-1])
-			msg = strings.Join(lines[0:len(lines)-1], "\n")
-		} else {
-			ui.cache = append(ui.cache, msg)
+	a := ui.append
+	ui.append = disableNewline
+
+	if a && ui.last != nil {
+		if ui.last.StyleMatch(cs...) {
+			ui.last.Append(msg)
 			return
-		}
-	} else {
-		// If any values have been cached previously
-		// we want to prepend them to the current message
-		// since we now have an end of line
-		if len(ui.cache) > 0 {
-			msg = strings.Join(ui.cache, "") + msg
-			ui.cache = []string{}
 		}
 	}
 
-	ui.d.Append(glint.Finalize(
-		glint.Style(
-			glint.Text(msg),
-			cs...,
-		),
-	))
-	ui.d.RenderFrame()
+	c := Text(msg, cs...)
+	ui.last = c
+
+	ui.d.Append(glint.Style(c, cs...))
+}
+
+// ClearLine implements UI
+func (ui *glintUI) ClearLine() {
+	defer ui.d.RenderFrame()
+	if ui.last == nil {
+		return
+	}
+	ui.last.Clear()
+	ui.append = true
 }
 
 // NamedValues implements UI
