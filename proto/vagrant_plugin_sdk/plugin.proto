@@ -435,6 +435,7 @@ message TerminalUI {
       StepGroup step_group = 6;
       Step step = 7;
       Input input = 8;
+      ClearLine clear_line = 9;
     }
 
     message Input {
@@ -499,6 +500,8 @@ message TerminalUI {
       string status = 4;
       bytes output = 5;
     }
+
+    message ClearLine {}
   }
 }
 /********************************************************************
