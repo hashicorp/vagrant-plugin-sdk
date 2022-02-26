@@ -65,6 +65,14 @@ func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 		}
 
 		msg = strings.Join(lines, "\n")
+
+	case InfoBoldStyle:
+		lines := strings.Split(msg, "\n")
+		for i, line := range lines {
+			lines[i] = colorInfoBold.Sprintf("  %s", line)
+		}
+
+		msg = strings.Join(lines, "\n")
 	}
 
 	if disableNewline {
@@ -72,6 +80,10 @@ func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 	} else {
 		fmt.Fprintln(w, msg)
 	}
+}
+
+func (ui *nonInteractiveUI) ClearLine() {
+	// NO-OP
 }
 
 // NamedValues implements UI
