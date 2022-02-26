@@ -38,6 +38,9 @@ type UI interface {
 	// interpolations you may add Options.
 	Output(string, ...interface{})
 
+	// ClearLine clears the content from the current line
+	ClearLine()
+
 	// Output data as a table of data. Each entry is a row which will be output
 	// with the columns lined up nicely.
 	NamedValues([]NamedValue, ...Option)
