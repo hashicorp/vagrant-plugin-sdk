@@ -38,6 +38,9 @@ type UI interface {
 	// interpolations you may add Options.
 	Output(string, ...interface{})
 
+	// ClearLine clears the content from the current line
+	ClearLine()
+
 	// Output data as a table of data. Each entry is a row which will be output
 	// with the columns lined up nicely.
 	NamedValues([]NamedValue, ...Option)
@@ -130,6 +133,7 @@ const (
 	WarningStyle     = "warning"
 	WarningBoldStyle = "warning-bold"
 	InfoStyle        = "info"
+	InfoBoldStyle    = "info-bold"
 	SuccessStyle     = "success"
 	SuccessBoldStyle = "success-bold"
 )
@@ -169,6 +173,13 @@ func WithoutNewLine() Option {
 func WithInfoStyle() Option {
 	return func(c *config) {
 		c.Style = InfoStyle
+	}
+}
+
+// WithInfoStyle styles the output like it's formatted information.
+func WithInfoBoldStyle() Option {
+	return func(c *config) {
+		c.Style = InfoBoldStyle
 	}
 }
 
@@ -228,6 +239,7 @@ func WithWriter(w io.Writer) Option {
 var (
 	colorHeader      = color.New(color.Bold)
 	colorInfo        = color.New()
+	colorInfoBold    = color.New(color.Bold)
 	colorError       = color.New(color.FgRed)
 	colorErrorBold   = color.New(color.FgRed, color.Bold)
 	colorSuccess     = color.New(color.FgGreen)

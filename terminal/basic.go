@@ -92,6 +92,12 @@ func (ui *basicUI) Interactive() bool {
 	return isatty.IsTerminal(os.Stdin.Fd())
 }
 
+// ClearLine implements UI
+func (ui *basicUI) ClearLine() {
+	_, _, _, w := Interpret("")
+	w.Write([]byte("\r\033[K"))
+}
+
 // Output implements UI
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
 	msg, style, disableNewline, w := Interpret(msg, raw...)
@@ -115,6 +121,13 @@ func (ui *basicUI) Output(msg string, raw ...interface{}) {
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
 			lines[i] = colorInfo.Sprintf("    %s", line)
+		}
+
+		msg = strings.Join(lines, "\n")
+	case InfoBoldStyle:
+		lines := strings.Split(msg, "\n")
+		for i, line := range lines {
+			lines[i] = colorInfoBold.Sprintf("    %s", line)
 		}
 
 		msg = strings.Join(lines, "\n")
