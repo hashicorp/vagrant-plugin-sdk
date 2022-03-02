@@ -1415,7 +1415,7 @@ message Box {
   }
 
   message MetadataUrlResponse {
-    string metadataUrl = 1;
+    string metadata_url = 1;
   }
 
   message NameResponse {
