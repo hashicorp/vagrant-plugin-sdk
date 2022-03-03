@@ -9,6 +9,7 @@ type Box interface {
 	Directory() (path string, err error)
 	HasUpdate(version string) (updateAvailable bool, err error)
 	InUse(index TargetIndex) (inUse bool, err error)
+	Machines(index TargetIndex) (machines []Machine, err error)
 	Metadata() (metadata BoxMetadataMap, err error)
 	MetadataURL() (url string, err error)
 	Name() (name string, err error)

@@ -8719,6 +8719,7 @@ type BoxServiceClient interface {
 	Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	HasUpdate(ctx context.Context, in *Box_HasUpdateRequest, opts ...grpc.CallOption) (*Box_HasUpdateResponse, error)
 	InUse(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_InUseResponse, error)
+	Machines(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_MachinesResponse, error)
 	Repackage(ctx context.Context, in *Args_Path, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Directory(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	Metadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_MetadataSet, error)
@@ -8767,6 +8768,15 @@ func (c *boxServiceClient) HasUpdate(ctx context.Context, in *Box_HasUpdateReque
 func (c *boxServiceClient) InUse(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_InUseResponse, error) {
 	out := new(Box_InUseResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/InUse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxServiceClient) Machines(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_MachinesResponse, error) {
+	out := new(Box_MachinesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/Machines", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8853,6 +8863,7 @@ type BoxServiceServer interface {
 	Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	HasUpdate(context.Context, *Box_HasUpdateRequest) (*Box_HasUpdateResponse, error)
 	InUse(context.Context, *Args_TargetIndex) (*Box_InUseResponse, error)
+	Machines(context.Context, *Args_TargetIndex) (*Box_MachinesResponse, error)
 	Repackage(context.Context, *Args_Path) (*emptypb.Empty, error)
 	Directory(context.Context, *emptypb.Empty) (*Args_Path, error)
 	Metadata(context.Context, *emptypb.Empty) (*Args_MetadataSet, error)
@@ -8878,6 +8889,9 @@ func (UnimplementedBoxServiceServer) HasUpdate(context.Context, *Box_HasUpdateRe
 }
 func (UnimplementedBoxServiceServer) InUse(context.Context, *Args_TargetIndex) (*Box_InUseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InUse not implemented")
+}
+func (UnimplementedBoxServiceServer) Machines(context.Context, *Args_TargetIndex) (*Box_MachinesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Machines not implemented")
 }
 func (UnimplementedBoxServiceServer) Repackage(context.Context, *Args_Path) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Repackage not implemented")
@@ -8983,6 +8997,24 @@ func _BoxService_InUse_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BoxServiceServer).InUse(ctx, req.(*Args_TargetIndex))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxService_Machines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Args_TargetIndex)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).Machines(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxService/Machines",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).Machines(ctx, req.(*Args_TargetIndex))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -9153,6 +9185,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InUse",
 			Handler:    _BoxService_InUse_Handler,
+		},
+		{
+			MethodName: "Machines",
+			Handler:    _BoxService_Machines_Handler,
 		},
 		{
 			MethodName: "Repackage",
