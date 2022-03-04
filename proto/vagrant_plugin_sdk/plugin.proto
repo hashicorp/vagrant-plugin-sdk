@@ -960,6 +960,13 @@ message Ref {
     Ref.Project project = 2;
     string name = 3;
   }
+
+   // References a Target (in vagrant-ruby this is a Machine)
+  message Machine {
+    string resource_id = 1;
+    Ref.Project project = 2;
+    string name = 3;
+  }
 }
 
 service BasisService {
