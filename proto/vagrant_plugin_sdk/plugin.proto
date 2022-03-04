@@ -1393,7 +1393,7 @@ service BoxService {
   rpc Repackage(Args.Path) returns (google.protobuf.Empty);
 
   rpc Directory(google.protobuf.Empty) returns (Args.Path);
-  rpc Metadata(google.protobuf.Empty) returns (Args.MetadataSet);
+  rpc Metadata(google.protobuf.Empty) returns (Box.MetadataResponse);
   rpc MetadataURL(google.protobuf.Empty) returns (Box.MetadataUrlResponse);
   rpc Name(google.protobuf.Empty) returns (Box.NameResponse);
   rpc Provider(google.protobuf.Empty) returns (Box.ProviderResponse);
@@ -1424,6 +1424,10 @@ message Box {
 
   message MachinesResponse {
     repeated Args.Target.Machine machines = 1;
+  }
+
+  message MetadataResponse {
+    Args.Hash metadata = 1;
   }
 
   message MetadataUrlResponse {
