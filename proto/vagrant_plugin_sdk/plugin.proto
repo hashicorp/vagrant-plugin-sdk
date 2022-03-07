@@ -1391,14 +1391,13 @@ service BoxService {
   rpc InUse(Args.TargetIndex) returns (Box.InUseResponse);
   rpc Machines(Args.TargetIndex) returns (Box.MachinesResponse);
   rpc Repackage(Args.Path) returns (google.protobuf.Empty);
-
   rpc Directory(google.protobuf.Empty) returns (Args.Path);
   rpc Metadata(google.protobuf.Empty) returns (Box.MetadataResponse);
+  rpc BoxMetadata(google.protobuf.Empty) returns (Box.BoxMetadataResponse);
   rpc MetadataURL(google.protobuf.Empty) returns (Box.MetadataUrlResponse);
   rpc Name(google.protobuf.Empty) returns (Box.NameResponse);
   rpc Provider(google.protobuf.Empty) returns (Box.ProviderResponse);
   rpc Version(google.protobuf.Empty) returns (Box.VersionResponse);
-
   rpc Compare(Args.Box) returns (Box.EqualityResponse);
 }
 
@@ -1427,6 +1426,10 @@ message Box {
   }
 
   message MetadataResponse {
+    Args.Hash metadata = 1;
+  }
+
+  message BoxMetadataResponse {
     Args.Hash metadata = 1;
   }
 
