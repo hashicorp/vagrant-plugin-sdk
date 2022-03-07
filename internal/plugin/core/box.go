@@ -92,6 +92,29 @@ func (b *boxClient) InUse(index core.TargetIndex) (inUse bool, err error) {
 	return result.InUse, nil
 }
 
+func (b *boxClient) Machines(index core.TargetIndex) (machines []core.Machine, err error) {
+	targetIndex, err := b.Map(index, (*vagrant_plugin_sdk.Args_TargetIndex)(nil), argmapper.Typed(b.Ctx))
+	if err != nil {
+		return
+	}
+	result, err := b.client.Machines(
+		b.Ctx,
+		targetIndex.(*vagrant_plugin_sdk.Args_TargetIndex),
+	)
+	if err != nil {
+		return
+	}
+	machines = []core.Machine{}
+	for _, m := range result.Machines {
+		coreMachine, err := b.Map(m, (*core.Machine)(nil), argmapper.Typed(b.Ctx))
+		if err != nil {
+			return nil, err
+		}
+		machines = append(machines, coreMachine.(core.Machine))
+	}
+	return machines, nil
+}
+
 func (b *boxClient) Metadata() (metadata core.BoxMetadataMap, err error) {
 	//  TODO
 	return nil, nil
@@ -200,6 +223,33 @@ func (b *boxServer) InUse(
 	}, nil
 }
 
+func (b *boxServer) Machines(
+	ctx context.Context, in *vagrant_plugin_sdk.Args_TargetIndex,
+) (r *vagrant_plugin_sdk.Box_MachinesResponse, err error) {
+	targetIndex, err := b.Map(in, (*core.TargetIndex)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return
+	}
+
+	result, err := b.Impl.Machines(targetIndex.(core.TargetIndex))
+	if err != nil {
+		return
+	}
+
+	machines := []*vagrant_plugin_sdk.Args_Target_Machine{}
+	for _, m := range result {
+		machineArg, err := b.Map(m, (**vagrant_plugin_sdk.Args_Target_Machine)(nil), argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		machines = append(machines, machineArg.(*vagrant_plugin_sdk.Args_Target_Machine))
+	}
+
+	return &vagrant_plugin_sdk.Box_MachinesResponse{
+		Machines: machines,
+	}, nil
+}
+
 func (b *boxServer) Repackage(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_Path,
 ) (*emptypb.Empty, error) {
@@ -298,7 +348,8 @@ func (b *boxServer) Compare(
 }
 
 var (
-	_ plugin.Plugin     = (*BoxPlugin)(nil)
-	_ plugin.GRPCPlugin = (*BoxPlugin)(nil)
-	_ core.Box          = (*boxClient)(nil)
+	_ plugin.Plugin                       = (*BoxPlugin)(nil)
+	_ plugin.GRPCPlugin                   = (*BoxPlugin)(nil)
+	_ core.Box                            = (*boxClient)(nil)
+	_ vagrant_plugin_sdk.BoxServiceServer = (*boxServer)(nil)
 )

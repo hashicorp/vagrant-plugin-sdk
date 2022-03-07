@@ -1993,22 +1993,40 @@ func TargetMachineProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
-	mp := &plugincore.TargetMachinePlugin{
+	mid, err := m.ResourceId()
+	if err != nil {
+		return nil, err
+	}
+	rid := fmt.Sprintf("%s-machine", mid)
+
+	if at := internal.Cache.Get(rid); at != nil {
+		log.Warn("using cached machine value", "value", at)
+		return at.(*vagrant_plugin_sdk.Args_Target_Machine), nil
+	}
+
+	tp := &plugincore.TargetMachinePlugin{
 		BasePlugin: basePlugin(m, internal),
 		Impl:       m,
 		TargetImpl: m,
 	}
 
-	id, ep, err := wrapClient(m, mp, internal)
+	id, endpoint, err := wrapClient(m, tp, internal)
 	if err != nil {
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Target_Machine{
+	proto := &vagrant_plugin_sdk.Args_Target_Machine{
 		StreamId: id,
-		Network:  ep.Network(),
-		Addr:     ep.String(),
-	}, nil
+		Network:  endpoint.Network(),
+		Addr:     endpoint.String(),
+	}
+
+	log.Warn("registering machine proto to cache",
+		"rid", rid,
+		"proto", proto,
+	)
+	internal.Cache.Register(rid, proto)
+	return proto, nil
 }
 
 func TargetMachine(

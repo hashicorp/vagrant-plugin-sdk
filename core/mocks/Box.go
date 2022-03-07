@@ -131,6 +131,29 @@ func (_m *Box) InUse(index core.TargetIndex) (bool, error) {
 	return r0, r1
 }
 
+// Machines provides a mock function with given fields: index
+func (_m *Box) Machines(index core.TargetIndex) ([]core.Machine, error) {
+	ret := _m.Called(index)
+
+	var r0 []core.Machine
+	if rf, ok := ret.Get(0).(func(core.TargetIndex) []core.Machine); ok {
+		r0 = rf(index)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Machine)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(core.TargetIndex) error); ok {
+		r1 = rf(index)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Metadata provides a mock function with given fields:
 func (_m *Box) Metadata() (core.BoxMetadataMap, error) {
 	ret := _m.Called()

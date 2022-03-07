@@ -960,6 +960,13 @@ message Ref {
     Ref.Project project = 2;
     string name = 3;
   }
+
+   // References a Target (in vagrant-ruby this is a Machine)
+  message Machine {
+    string resource_id = 1;
+    Ref.Project project = 2;
+    string name = 3;
+  }
 }
 
 service BasisService {
@@ -1382,6 +1389,7 @@ service BoxService {
   rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc HasUpdate(Box.HasUpdateRequest) returns (Box.HasUpdateResponse);
   rpc InUse(Args.TargetIndex) returns (Box.InUseResponse);
+  rpc Machines(Args.TargetIndex) returns (Box.MachinesResponse);
   rpc Repackage(Args.Path) returns (google.protobuf.Empty);
 
   rpc Directory(google.protobuf.Empty) returns (Args.Path);
@@ -1412,6 +1420,10 @@ message Box {
 
   message InUseResponse {
     bool in_use = 1;
+  }
+
+  message MachinesResponse {
+    repeated Args.Target.Machine machines = 1;
   }
 
   message MetadataUrlResponse {

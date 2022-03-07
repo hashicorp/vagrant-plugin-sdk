@@ -61,8 +61,7 @@ type targetServer struct {
 	*vplugin.BaseServer
 
 	Impl core.Target
-	vagrant_plugin_sdk.UnsafeTargetServiceServer
-	//vagrant_plugin_sdk.UnimplementedTargetServiceServer
+	vagrant_plugin_sdk.UnimplementedTargetServiceServer
 }
 
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
