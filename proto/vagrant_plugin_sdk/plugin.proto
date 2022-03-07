@@ -1430,6 +1430,7 @@ service BoxService {
   rpc AutomaticUpdateCheckAllowed(google.protobuf.Empty) returns (Box.AutomaticUpdateCheckAllowedResponse);
   rpc Destroy(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc HasUpdate(Box.HasUpdateRequest) returns (Box.HasUpdateResponse);
+  rpc UpdateInfo(Box.HasUpdateRequest) returns (Box.UpdateInfoResponse);
   rpc InUse(Args.TargetIndex) returns (Box.InUseResponse);
   rpc Machines(Args.TargetIndex) returns (Box.MachinesResponse);
   rpc Repackage(Args.Path) returns (google.protobuf.Empty);
@@ -1457,6 +1458,13 @@ message Box {
 
   message HasUpdateResponse {
     bool has_update = 1;
+  }
+
+  message UpdateInfoResponse {
+    bool has_update = 1;
+    Args.Hash metadata = 2;
+    string new_version = 3;
+    string new_provider = 4;
   }
 
   message InUseResponse {
