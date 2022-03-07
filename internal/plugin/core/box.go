@@ -115,9 +115,28 @@ func (b *boxClient) Machines(index core.TargetIndex) (machines []core.Machine, e
 	return machines, nil
 }
 
+func (b *boxClient) BoxMetadata() (metadata map[string]interface{}, err error) {
+	meta, err := b.client.BoxMetadata(b.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+	boxMetadataMap, err := b.Map(meta, (*map[string]interface{})(nil), argmapper.Typed(b.Ctx))
+	if err != nil {
+		return nil, err
+	}
+	return boxMetadataMap.(map[string]interface{}), nil
+}
+
 func (b *boxClient) Metadata() (metadata core.BoxMetadataMap, err error) {
-	//  TODO
-	return nil, nil
+	meta, err := b.client.Metadata(b.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+	boxMetadataMap, err := b.Map(meta, (*core.BoxMetadataMap)(nil), argmapper.Typed(b.Ctx))
+	if err != nil {
+		return nil, err
+	}
+	return boxMetadataMap.(core.BoxMetadataMap), nil
 }
 
 func (b *boxClient) MetadataURL() (url string, err error) {
@@ -270,11 +289,38 @@ func (b *boxServer) Directory(
 	}, nil
 }
 
+func (b *boxServer) BoxMetadata(
+	ctx context.Context, in *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Box_BoxMetadataResponse, err error) {
+	meta, err := b.Impl.BoxMetadata()
+	if err != nil {
+		return
+	}
+
+	metadataHash, err := b.Map(meta, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Box_BoxMetadataResponse{
+		Metadata: metadataHash.(*vagrant_plugin_sdk.Args_Hash),
+	}, nil
+}
+
 func (b *boxServer) Metadata(
 	ctx context.Context, in *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_MetadataSet, err error) {
-	// TODO
-	return
+) (r *vagrant_plugin_sdk.Box_MetadataResponse, err error) {
+	meta, err := b.Impl.Metadata()
+	if err != nil {
+		return
+	}
+
+	metadataHash, err := b.Map(meta, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Box_MetadataResponse{
+		Metadata: metadataHash.(*vagrant_plugin_sdk.Args_Hash),
+	}, nil
 }
 
 func (b *boxServer) MetadataURL(

@@ -8722,7 +8722,8 @@ type BoxServiceClient interface {
 	Machines(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_MachinesResponse, error)
 	Repackage(ctx context.Context, in *Args_Path, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Directory(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
-	Metadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_MetadataSet, error)
+	Metadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_MetadataResponse, error)
+	BoxMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_BoxMetadataResponse, error)
 	MetadataURL(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_MetadataUrlResponse, error)
 	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_NameResponse, error)
 	Provider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_ProviderResponse, error)
@@ -8801,9 +8802,18 @@ func (c *boxServiceClient) Directory(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-func (c *boxServiceClient) Metadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_MetadataSet, error) {
-	out := new(Args_MetadataSet)
+func (c *boxServiceClient) Metadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_MetadataResponse, error) {
+	out := new(Box_MetadataResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/Metadata", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxServiceClient) BoxMetadata(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_BoxMetadataResponse, error) {
+	out := new(Box_BoxMetadataResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/BoxMetadata", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8866,7 +8876,8 @@ type BoxServiceServer interface {
 	Machines(context.Context, *Args_TargetIndex) (*Box_MachinesResponse, error)
 	Repackage(context.Context, *Args_Path) (*emptypb.Empty, error)
 	Directory(context.Context, *emptypb.Empty) (*Args_Path, error)
-	Metadata(context.Context, *emptypb.Empty) (*Args_MetadataSet, error)
+	Metadata(context.Context, *emptypb.Empty) (*Box_MetadataResponse, error)
+	BoxMetadata(context.Context, *emptypb.Empty) (*Box_BoxMetadataResponse, error)
 	MetadataURL(context.Context, *emptypb.Empty) (*Box_MetadataUrlResponse, error)
 	Name(context.Context, *emptypb.Empty) (*Box_NameResponse, error)
 	Provider(context.Context, *emptypb.Empty) (*Box_ProviderResponse, error)
@@ -8899,8 +8910,11 @@ func (UnimplementedBoxServiceServer) Repackage(context.Context, *Args_Path) (*em
 func (UnimplementedBoxServiceServer) Directory(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Directory not implemented")
 }
-func (UnimplementedBoxServiceServer) Metadata(context.Context, *emptypb.Empty) (*Args_MetadataSet, error) {
+func (UnimplementedBoxServiceServer) Metadata(context.Context, *emptypb.Empty) (*Box_MetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Metadata not implemented")
+}
+func (UnimplementedBoxServiceServer) BoxMetadata(context.Context, *emptypb.Empty) (*Box_BoxMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BoxMetadata not implemented")
 }
 func (UnimplementedBoxServiceServer) MetadataURL(context.Context, *emptypb.Empty) (*Box_MetadataUrlResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MetadataURL not implemented")
@@ -9073,6 +9087,24 @@ func _BoxService_Metadata_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxService_BoxMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).BoxMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxService/BoxMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).BoxMetadata(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BoxService_MetadataURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -9201,6 +9233,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Metadata",
 			Handler:    _BoxService_Metadata_Handler,
+		},
+		{
+			MethodName: "BoxMetadata",
+			Handler:    _BoxService_BoxMetadata_Handler,
 		},
 		{
 			MethodName: "MetadataURL",
