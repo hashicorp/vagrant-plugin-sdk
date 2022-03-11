@@ -358,7 +358,9 @@ func (b *boxServer) UpdateInfo(
 
 	metadataHash := &vagrant_plugin_sdk.Args_Hash{}
 	if updateAvailable {
-		m, err := b.Map(meta, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
+		var metaMap map[string]interface{}
+		metaMap = meta
+		m, err := b.Map(metaMap, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
