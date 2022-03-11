@@ -5649,9 +5649,15 @@ var SyncedFolderService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BasisServiceClient interface {
+	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Basis, error)
+	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
+	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
+	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
+	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 }
 
 type basisServiceClient struct {
@@ -5662,9 +5668,27 @@ func NewBasisServiceClient(cc grpc.ClientConnInterface) BasisServiceClient {
 	return &basisServiceClient{cc}
 }
 
+func (c *basisServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/CWD", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *basisServiceClient) DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Basis, error) {
 	out := new(Args_DataDir_Basis)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/DataDir", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *basisServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/DefaultPrivateKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -5689,27 +5713,87 @@ func (c *basisServiceClient) Host(ctx context.Context, in *emptypb.Empty, opts .
 	return out, nil
 }
 
+func (c *basisServiceClient) Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error) {
+	out := new(Args_BoxCollection)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Boxes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *basisServiceClient) TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error) {
+	out := new(Args_TargetIndex)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/TargetIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *basisServiceClient) Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Seed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *basisServiceClient) Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error) {
+	out := new(Args_Seeds)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Seeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BasisServiceServer is the server API for BasisService service.
 // All implementations should embed UnimplementedBasisServiceServer
 // for forward compatibility
 type BasisServiceServer interface {
+	CWD(context.Context, *emptypb.Empty) (*Args_Path, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Basis, error)
+	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error)
 	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
+	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
+	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
+	Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error)
+	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
 }
 
 // UnimplementedBasisServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedBasisServiceServer struct {
 }
 
+func (UnimplementedBasisServiceServer) CWD(context.Context, *emptypb.Empty) (*Args_Path, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
+}
 func (UnimplementedBasisServiceServer) DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Basis, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataDir not implemented")
+}
+func (UnimplementedBasisServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
 }
 func (UnimplementedBasisServiceServer) UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UI not implemented")
 }
 func (UnimplementedBasisServiceServer) Host(context.Context, *emptypb.Empty) (*Args_Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
+}
+func (UnimplementedBasisServiceServer) Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
+}
+func (UnimplementedBasisServiceServer) TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
+}
+func (UnimplementedBasisServiceServer) Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
+}
+func (UnimplementedBasisServiceServer) Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
 }
 
 // UnsafeBasisServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -5721,6 +5805,24 @@ type UnsafeBasisServiceServer interface {
 
 func RegisterBasisServiceServer(s grpc.ServiceRegistrar, srv BasisServiceServer) {
 	s.RegisterService(&BasisService_ServiceDesc, srv)
+}
+
+func _BasisService_CWD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).CWD(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/CWD",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).CWD(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BasisService_DataDir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -5737,6 +5839,24 @@ func _BasisService_DataDir_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BasisServiceServer).DataDir(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BasisService_DefaultPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).DefaultPrivateKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/DefaultPrivateKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).DefaultPrivateKey(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5777,6 +5897,78 @@ func _BasisService_Host_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BasisService_Boxes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).Boxes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/Boxes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).Boxes(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BasisService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).TargetIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/TargetIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).TargetIndex(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BasisService_Seed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Args_Seeds)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).Seed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/Seed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).Seed(ctx, req.(*Args_Seeds))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BasisService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).Seeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/Seeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).Seeds(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BasisService_ServiceDesc is the grpc.ServiceDesc for BasisService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5785,8 +5977,16 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BasisServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "CWD",
+			Handler:    _BasisService_CWD_Handler,
+		},
+		{
 			MethodName: "DataDir",
 			Handler:    _BasisService_DataDir_Handler,
+		},
+		{
+			MethodName: "DefaultPrivateKey",
+			Handler:    _BasisService_DefaultPrivateKey_Handler,
 		},
 		{
 			MethodName: "UI",
@@ -5795,6 +5995,22 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Host",
 			Handler:    _BasisService_Host_Handler,
+		},
+		{
+			MethodName: "Boxes",
+			Handler:    _BasisService_Boxes_Handler,
+		},
+		{
+			MethodName: "TargetIndex",
+			Handler:    _BasisService_TargetIndex_Handler,
+		},
+		{
+			MethodName: "Seed",
+			Handler:    _BasisService_Seed_Handler,
+		},
+		{
+			MethodName: "Seeds",
+			Handler:    _BasisService_Seeds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -970,9 +970,16 @@ message Ref {
 }
 
 service BasisService {
+  rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
+  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Args.Path);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
+  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
+  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
 }
 
 /********************************************************************

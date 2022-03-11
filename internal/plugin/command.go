@@ -43,7 +43,7 @@ func (p *CommandPlugin) GRPCClient(
 	cl := vagrant_plugin_sdk.NewCommandServiceClient(c)
 	return &commandClient{
 		client:     cl,
-		BaseClient: p.NewClient(ctx, broker, cl),
+		BaseClient: p.NewClient(ctx, broker, cl.(SeederClient)),
 	}, nil
 }
 
