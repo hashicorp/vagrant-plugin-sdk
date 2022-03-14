@@ -28,17 +28,17 @@ func GetVagrantfileName() []string {
 
 // FindPath looks for our configuration file starting at "start" and
 // traversing parent directories until it is found. If it is found, the
-// path is returned. If it is not found, an empty string is returned.
-// Error will be non-nil only if an error occurred.
+// path is returned. If it is not found, nil is returned. Error will be
+// non-nil only if an error occurred.
 //
-// If start is empty, start will be the current working directory. If
-// filename is empty, it will default to the Filename constant.
+// If start is nil, start will be the current working directory. If
+// filenames are nil, it will default to the value(s) from GetVagrantfileName().
 func FindPath(
-	dir path.Path, // starting directory. defaults to vagrant CWD if nil
+	start path.Path, // starting directory. defaults to vagrant CWD if nil
 	filenames []string, // list of valid Vagrantfile names
 ) (p path.Path, err error) {
-	if dir == nil {
-		dir, err = paths.VagrantCwd()
+	if start == nil {
+		start, err = paths.VagrantCwd()
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +49,7 @@ func FindPath(
 	}
 
 	for _, f := range filenames {
-		p = dir
+		p = start
 		for {
 			p = p.Join(f)
 			if p.Exists() {

@@ -22,7 +22,7 @@ import (
 )
 
 type parser interface {
-	ParseVagrantfile(string) (*vagrant_plugin_sdk.Args_Hash, error)
+	ParseVagrantfile(string) (*vagrant_plugin_sdk.Vagrantfile_Serialized, error)
 }
 
 type VagrantfileFormat uint8
@@ -40,13 +40,12 @@ func LoadRubyVagrantfile(
 	p path.Path, // path to Ruby Vagrantfile
 	rubyRuntime parser, // ruby runtime plugin
 ) (*Vagrantfile, error) {
-	return nil, fmt.Errorf("not implemented")
-	// s, err := rubyRuntime.ParseVagrantfile(p.String())
-	// if err != nil {
-	// 	return nil, err
-	// }
+	s, err := rubyRuntime.ParseVagrantfile(p.String())
+	if err != nil {
+		return nil, err
+	}
 
-	// return LoadVagrantfile(s.Json, p.String(), JSON)
+	return LoadVagrantfile(s.Json, p.String(), JSON)
 }
 
 // Load Vagrant configuration using an HCL based Vagrantfile
@@ -98,7 +97,7 @@ func LoadVagrantfile(
 
 // Decode a proto encoded Vagrantfile
 func DecodeVagrantfile(
-	data *vagrant_plugin_sdk.Args_Hash,
+	data *vagrant_plugin_sdk.Args_ConfigData,
 	args ...argmapper.Arg,
 ) (v *Vagrantfile, err error) {
 	args = append(args, argmapper.ConverterFunc(Mappers...))
@@ -119,22 +118,22 @@ func DecodeVagrantfile(
 func EncodeVagrantfile(
 	v *Vagrantfile,
 	args ...argmapper.Arg,
-) (*vagrant_plugin_sdk.Args_Hash, error) {
+) (*vagrant_plugin_sdk.Args_ConfigData, error) {
 	args = append(args, argmapper.ConverterFunc(Mappers...))
 	mapped := structs.New(v)
 	raw, err := dynamic.Map(mapped,
-		(**vagrant_plugin_sdk.Args_Hash)(nil),
+		(**vagrant_plugin_sdk.Args_ConfigData)(nil),
 		args...,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return raw.(*vagrant_plugin_sdk.Args_Hash), nil
+	return raw.(*vagrant_plugin_sdk.Args_ConfigData), nil
 }
 
 func DecodeConfiguration(
-	data *vagrant_plugin_sdk.Args_Hash,
+	data *vagrant_plugin_sdk.Args_ConfigData,
 	i interface{},
 	args ...argmapper.Arg,
 ) (err error) {

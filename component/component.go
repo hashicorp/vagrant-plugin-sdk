@@ -262,7 +262,7 @@ type ConfigRegistration struct {
 }
 
 type ConfigData struct {
-	Source string                 // Only used within Ruby runtime
+	Source string                 // Root type name
 	Data   map[string]interface{} // Configuration data
 }
 
@@ -276,9 +276,12 @@ type ConfigFinalize struct {
 }
 
 type Config interface {
+	// Register a configuration namespace
 	Register() (*ConfigRegistration, error)
 	// Defines the structure of the supported configuration
 	StructFunc() interface{}
+	// Initialization of configuration data
+	InitFunc() interface{}
 	// Merge configuration
 	MergeFunc() interface{}
 	// Return finalized configuration data
