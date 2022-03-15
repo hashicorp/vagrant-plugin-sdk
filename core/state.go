@@ -4,7 +4,9 @@ type State uint
 
 const (
 	UNKNOWN State = iota
-	PENDING
 	CREATED
 	DESTROYED
+	HALTED
+	NOT_CREATED
+	PENDING
 )
