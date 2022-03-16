@@ -127,16 +127,16 @@ func (b *boxClient) BoxMetadata() (metadata map[string]interface{}, err error) {
 	return boxMetadataMap.(map[string]interface{}), nil
 }
 
-func (b *boxClient) Metadata() (metadata core.BoxMetadataMap, err error) {
+func (b *boxClient) Metadata() (metadata core.BoxMetadata, err error) {
 	meta, err := b.client.Metadata(b.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
-	boxMetadataMap, err := b.Map(meta, (*core.BoxMetadataMap)(nil), argmapper.Typed(b.Ctx))
+	boxMetadataMap, err := b.Map(meta, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
 	if err != nil {
 		return nil, err
 	}
-	return boxMetadataMap.(core.BoxMetadataMap), nil
+	return boxMetadataMap.(core.BoxMetadata), nil
 }
 
 func (b *boxClient) MetadataURL() (url string, err error) {

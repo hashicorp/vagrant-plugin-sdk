@@ -1,8 +1,5 @@
 package core
 
-// for boxes
-type BoxMetadataMap map[string]interface{}
-
 type Box interface {
 	// Check if a box is allowed
 	AutomaticUpdateCheckAllowed() (allowed bool, err error)
@@ -19,7 +16,7 @@ type Box interface {
 	// Returns the metadata associated with the box (metadata.json within the box file)
 	BoxMetadata() (metadata map[string]interface{}, err error)
 	// The metadata information for this box from the metadata url (given by the box repository)
-	Metadata() (metadata BoxMetadataMap, err error)
+	Metadata() (metadata BoxMetadata, err error)
 	// The URL to the version info and other metadata for this box
 	MetadataURL() (url string, err error)
 	// Box name
