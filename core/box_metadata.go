@@ -7,7 +7,7 @@ type BoxMetadataOpts struct {
 	ChecksumType string
 }
 
-type BoxVersionProviderData struct {
+type BoxProviderData struct {
 	Name         string
 	Url          string
 	Checksum     string
@@ -23,9 +23,11 @@ type BoxVersionData struct {
 }
 
 type BoxMetadata interface {
-	Version(version string, opts BoxMetadataOpts) (BoxVersionData, error)
-	ListVersions(opts ...BoxMetadataOpts) ([]string, error)
+	Name() string
 
-	Provider(version string, name string) (BoxVersionProviderData, error)
+	Version(version string, opts *BoxMetadataOpts) (*BoxVersionData, error)
+	ListVersions(opts ...*BoxMetadataOpts) ([]string, error)
+
+	Provider(version string, name string) (*BoxProviderData, error)
 	ListProviders(version string) ([]string, error)
 }

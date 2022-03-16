@@ -9759,6 +9759,7 @@ var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BoxMetadataServiceClient interface {
+	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error)
 	Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error)
 	ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(ctx context.Context, in *BoxMetadata_ProviderRequest, opts ...grpc.CallOption) (*BoxMetadata_ProviderResponse, error)
@@ -9771,6 +9772,15 @@ type boxMetadataServiceClient struct {
 
 func NewBoxMetadataServiceClient(cc grpc.ClientConnInterface) BoxMetadataServiceClient {
 	return &boxMetadataServiceClient{cc}
+}
+
+func (c *boxMetadataServiceClient) Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error) {
+	out := new(BoxMetadata_NameResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Name", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *boxMetadataServiceClient) Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error) {
@@ -9813,6 +9823,7 @@ func (c *boxMetadataServiceClient) ListProviders(ctx context.Context, in *BoxMet
 // All implementations should embed UnimplementedBoxMetadataServiceServer
 // for forward compatibility
 type BoxMetadataServiceServer interface {
+	Name(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error)
 	Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error)
 	ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error)
@@ -9823,6 +9834,9 @@ type BoxMetadataServiceServer interface {
 type UnimplementedBoxMetadataServiceServer struct {
 }
 
+func (UnimplementedBoxMetadataServiceServer) Name(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
+}
 func (UnimplementedBoxMetadataServiceServer) Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
@@ -9845,6 +9859,24 @@ type UnsafeBoxMetadataServiceServer interface {
 
 func RegisterBoxMetadataServiceServer(s grpc.ServiceRegistrar, srv BoxMetadataServiceServer) {
 	s.RegisterService(&BoxMetadataService_ServiceDesc, srv)
+}
+
+func _BoxMetadataService_Name_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).Name(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Name",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).Name(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BoxMetadataService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -9926,6 +9958,10 @@ var BoxMetadataService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.BoxMetadataService",
 	HandlerType: (*BoxMetadataServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Name",
+			Handler:    _BoxMetadataService_Name_Handler,
+		},
 		{
 			MethodName: "Version",
 			Handler:    _BoxMetadataService_Version_Handler,

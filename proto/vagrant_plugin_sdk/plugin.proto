@@ -1536,6 +1536,7 @@ message BoxCollection {
 * BoxMetadata services
 ********************************************************************/
 service BoxMetadataService {
+  rpc Name(google.protobuf.Empty) returns (BoxMetadata.NameResponse);
   rpc Version(BoxMetadata.VersionRequest) returns (BoxMetadata.VersionResponse);
   rpc ListVersions(BoxMetadata.BoxMetadataOpts) returns (BoxMetadata.ListVersionsResponse);
   rpc Provider(BoxMetadata.ProviderRequest) returns (BoxMetadata.ProviderResponse);
@@ -1551,6 +1552,10 @@ message BoxMetadata {
     string url = 2; 
     string checksum = 3;
     string checksum_type = 4;
+  }
+
+  message NameResponse {
+    string name = 1;
   }
 
   message VersionRequest {

@@ -64,6 +64,20 @@ func (_m *BoxMetadata) ListVersions(opts ...core.BoxMetadataOpts) ([]string, err
 	return r0, r1
 }
 
+// Name provides a mock function with given fields:
+func (_m *BoxMetadata) Name() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // Provider provides a mock function with given fields: version, name
 func (_m *BoxMetadata) Provider(version string, name string) (core.BoxVersionProviderData, error) {
 	ret := _m.Called(version, name)
