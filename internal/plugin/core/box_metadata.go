@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
@@ -70,9 +71,33 @@ type boxMetadataServer struct {
 	vagrant_plugin_sdk.UnimplementedBoxMetadataServiceServer
 }
 
+func (b *boxMetadataServer) Name(
+	ctx context.Context, in *emptypb.Empty,
+) (r *vagrant_plugin_sdk.BoxMetadata_NameResponse, err error) {
+	return
+}
+
 func (b *boxMetadataServer) Version(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_VersionRequest,
 ) (r *vagrant_plugin_sdk.BoxMetadata_VersionResponse, err error) {
+	return
+}
+
+func (b *boxMetadataServer) ListVersions(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts,
+) (r *vagrant_plugin_sdk.BoxMetadata_ListVersionsResponse, err error) {
+	return
+}
+
+func (b *boxMetadataServer) Provider(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ProviderRequest,
+) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
+	return
+}
+
+func (b *boxMetadataServer) ListProviders(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ListProvidersRequest,
+) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
 	return
 }
 
