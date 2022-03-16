@@ -80,6 +80,8 @@ var All = []interface{}{
 	BoxProto,
 	BoxCollection,
 	BoxCollectionProto,
+	BoxMetadata,
+	BoxMetadataProto,
 	Host,
 	HostProto,
 	Guest,
@@ -1123,6 +1125,61 @@ func BoxCollectionProto(
 		Addr:     ep.String()}
 
 	log.Warn("registered box collection into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
+	internal.Cache.Register(cid, proto)
+
+	return proto, nil
+}
+
+func BoxMetadata(ctx context.Context,
+	input *vagrant_plugin_sdk.Args_BoxMetadata,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.BoxMetadata, error) {
+	// Create our plugin
+	p := &plugincore.BoxMetadataPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.BoxMetadata), nil
+}
+
+func BoxMetadataProto(
+	boxMetadata core.BoxMetadata,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_BoxMetadata, error) {
+	n := boxMetadata.Name()
+	cid := "box_metadata" + n
+	if ch := internal.Cache.Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_BoxMetadata), nil
+	}
+
+	log.Warn("failed to locate cached box metadata", "cid", cid)
+
+	// Create our plugin
+	p := &plugincore.BoxMetadataPlugin{
+		BasePlugin: basePlugin(boxMetadata, internal),
+		Impl:       boxMetadata,
+	}
+
+	log.Warn("wrapping box metadata to generate proto", "cid", cid)
+
+	id, ep, err := wrapClient(boxMetadata, p, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	proto := &vagrant_plugin_sdk.Args_BoxMetadata{
+		StreamId: id,
+		Network:  ep.Network(),
+		Addr:     ep.String()}
+
+	log.Warn("registered box metadata into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
 	internal.Cache.Register(cid, proto)
 
 	return proto, nil
