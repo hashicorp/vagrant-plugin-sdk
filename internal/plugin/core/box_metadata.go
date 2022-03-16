@@ -48,15 +48,15 @@ func (b *boxMetadataClient) Name() (name string) {
 	return
 }
 
-func (b *boxMetadataClient) Version(version string, opts *core.BoxMetadataOpts) (ver *core.BoxVersionData, err error) {
+func (b *boxMetadataClient) Version(version string, opts *core.BoxProvider) (ver *core.BoxVersion, err error) {
 	return
 }
 
-func (b *boxMetadataClient) ListVersions(opts ...*core.BoxMetadataOpts) (versions []string, err error) {
+func (b *boxMetadataClient) ListVersions(opts ...*core.BoxProvider) (versions []string, err error) {
 	return
 }
 
-func (b *boxMetadataClient) Provider(version string, name string) (provider *core.BoxProviderData, err error) {
+func (b *boxMetadataClient) Provider(version string, name string) (provider *core.BoxProvider, err error) {
 	return
 }
 
@@ -91,7 +91,7 @@ func (b *boxMetadataServer) ListVersions(
 
 func (b *boxMetadataServer) Provider(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ProviderRequest,
-) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
+) (r *vagrant_plugin_sdk.BoxMetadata_ProviderResponse, err error) {
 	return
 }
 
