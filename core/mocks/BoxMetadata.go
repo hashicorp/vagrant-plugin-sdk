@@ -36,7 +36,7 @@ func (_m *BoxMetadata) ListProviders(version string) ([]string, error) {
 }
 
 // ListVersions provides a mock function with given fields: opts
-func (_m *BoxMetadata) ListVersions(opts ...core.BoxMetadataOpts) ([]string, error) {
+func (_m *BoxMetadata) ListVersions(opts ...*core.BoxProvider) ([]string, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -46,7 +46,7 @@ func (_m *BoxMetadata) ListVersions(opts ...core.BoxMetadataOpts) ([]string, err
 	ret := _m.Called(_ca...)
 
 	var r0 []string
-	if rf, ok := ret.Get(0).(func(...core.BoxMetadataOpts) []string); ok {
+	if rf, ok := ret.Get(0).(func(...*core.BoxProvider) []string); ok {
 		r0 = rf(opts...)
 	} else {
 		if ret.Get(0) != nil {
@@ -55,7 +55,7 @@ func (_m *BoxMetadata) ListVersions(opts ...core.BoxMetadataOpts) ([]string, err
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(...core.BoxMetadataOpts) error); ok {
+	if rf, ok := ret.Get(1).(func(...*core.BoxProvider) error); ok {
 		r1 = rf(opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -79,14 +79,16 @@ func (_m *BoxMetadata) Name() string {
 }
 
 // Provider provides a mock function with given fields: version, name
-func (_m *BoxMetadata) Provider(version string, name string) (core.BoxVersionProviderData, error) {
+func (_m *BoxMetadata) Provider(version string, name string) (*core.BoxProvider, error) {
 	ret := _m.Called(version, name)
 
-	var r0 core.BoxVersionProviderData
-	if rf, ok := ret.Get(0).(func(string, string) core.BoxVersionProviderData); ok {
+	var r0 *core.BoxProvider
+	if rf, ok := ret.Get(0).(func(string, string) *core.BoxProvider); ok {
 		r0 = rf(version, name)
 	} else {
-		r0 = ret.Get(0).(core.BoxVersionProviderData)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*core.BoxProvider)
+		}
 	}
 
 	var r1 error
@@ -100,18 +102,20 @@ func (_m *BoxMetadata) Provider(version string, name string) (core.BoxVersionPro
 }
 
 // Version provides a mock function with given fields: version, opts
-func (_m *BoxMetadata) Version(version string, opts core.BoxMetadataOpts) (core.BoxVersionData, error) {
+func (_m *BoxMetadata) Version(version string, opts *core.BoxProvider) (*core.BoxVersion, error) {
 	ret := _m.Called(version, opts)
 
-	var r0 core.BoxVersionData
-	if rf, ok := ret.Get(0).(func(string, core.BoxMetadataOpts) core.BoxVersionData); ok {
+	var r0 *core.BoxVersion
+	if rf, ok := ret.Get(0).(func(string, *core.BoxProvider) *core.BoxVersion); ok {
 		r0 = rf(version, opts)
 	} else {
-		r0 = ret.Get(0).(core.BoxVersionData)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*core.BoxVersion)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, core.BoxMetadataOpts) error); ok {
+	if rf, ok := ret.Get(1).(func(string, *core.BoxProvider) error); ok {
 		r1 = rf(version, opts)
 	} else {
 		r1 = ret.Error(1)
