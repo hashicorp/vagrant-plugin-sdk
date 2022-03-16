@@ -9755,6 +9755,198 @@ var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
 
+// BoxMetadataServiceClient is the client API for BoxMetadataService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BoxMetadataServiceClient interface {
+	Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error)
+	ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
+	Provider(ctx context.Context, in *BoxMetadata_ProviderRequest, opts ...grpc.CallOption) (*BoxMetadata_ProviderResponse, error)
+	ListProviders(ctx context.Context, in *BoxMetadata_ListProvidersRequest, opts ...grpc.CallOption) (*BoxMetadata_ListProvidersResponse, error)
+}
+
+type boxMetadataServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBoxMetadataServiceClient(cc grpc.ClientConnInterface) BoxMetadataServiceClient {
+	return &boxMetadataServiceClient{cc}
+}
+
+func (c *boxMetadataServiceClient) Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error) {
+	out := new(BoxMetadata_VersionResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Version", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxMetadataServiceClient) ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error) {
+	out := new(BoxMetadata_ListVersionsResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/ListVersions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxMetadataServiceClient) Provider(ctx context.Context, in *BoxMetadata_ProviderRequest, opts ...grpc.CallOption) (*BoxMetadata_ProviderResponse, error) {
+	out := new(BoxMetadata_ProviderResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Provider", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxMetadataServiceClient) ListProviders(ctx context.Context, in *BoxMetadata_ListProvidersRequest, opts ...grpc.CallOption) (*BoxMetadata_ListProvidersResponse, error) {
+	out := new(BoxMetadata_ListProvidersResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/ListProviders", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BoxMetadataServiceServer is the server API for BoxMetadataService service.
+// All implementations should embed UnimplementedBoxMetadataServiceServer
+// for forward compatibility
+type BoxMetadataServiceServer interface {
+	Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error)
+	ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error)
+	Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error)
+	ListProviders(context.Context, *BoxMetadata_ListProvidersRequest) (*BoxMetadata_ListProvidersResponse, error)
+}
+
+// UnimplementedBoxMetadataServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedBoxMetadataServiceServer struct {
+}
+
+func (UnimplementedBoxMetadataServiceServer) Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
+}
+func (UnimplementedBoxMetadataServiceServer) ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVersions not implemented")
+}
+func (UnimplementedBoxMetadataServiceServer) Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Provider not implemented")
+}
+func (UnimplementedBoxMetadataServiceServer) ListProviders(context.Context, *BoxMetadata_ListProvidersRequest) (*BoxMetadata_ListProvidersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListProviders not implemented")
+}
+
+// UnsafeBoxMetadataServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BoxMetadataServiceServer will
+// result in compilation errors.
+type UnsafeBoxMetadataServiceServer interface {
+	mustEmbedUnimplementedBoxMetadataServiceServer()
+}
+
+func RegisterBoxMetadataServiceServer(s grpc.ServiceRegistrar, srv BoxMetadataServiceServer) {
+	s.RegisterService(&BoxMetadataService_ServiceDesc, srv)
+}
+
+func _BoxMetadataService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_VersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).Version(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Version",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).Version(ctx, req.(*BoxMetadata_VersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxMetadataService_ListVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_BoxMetadataOpts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).ListVersions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/ListVersions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).ListVersions(ctx, req.(*BoxMetadata_BoxMetadataOpts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxMetadataService_Provider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_ProviderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).Provider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Provider",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).Provider(ctx, req.(*BoxMetadata_ProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxMetadataService_ListProviders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_ListProvidersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).ListProviders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/ListProviders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).ListProviders(ctx, req.(*BoxMetadata_ListProvidersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BoxMetadataService_ServiceDesc is the grpc.ServiceDesc for BoxMetadataService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BoxMetadataService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.BoxMetadataService",
+	HandlerType: (*BoxMetadataServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Version",
+			Handler:    _BoxMetadataService_Version_Handler,
+		},
+		{
+			MethodName: "ListVersions",
+			Handler:    _BoxMetadataService_ListVersions_Handler,
+		},
+		{
+			MethodName: "Provider",
+			Handler:    _BoxMetadataService_Provider_Handler,
+		},
+		{
+			MethodName: "ListProviders",
+			Handler:    _BoxMetadataService_ListProviders_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
+
 // PushServiceClient is the client API for PushService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
