@@ -44,7 +44,7 @@ type boxMetadataClient struct {
 	client vagrant_plugin_sdk.BoxMetadataServiceClient
 }
 
-func (b *boxMetadataClient) Name() (name string) {
+func (b *boxMetadataClient) BoxName() (name string) {
 	return
 }
 
@@ -79,7 +79,7 @@ type boxMetadataServer struct {
 	vagrant_plugin_sdk.UnimplementedBoxMetadataServiceServer
 }
 
-func (b *boxMetadataServer) Name(
+func (b *boxMetadataServer) BoxName(
 	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.BoxMetadata_NameResponse, err error) {
 	return

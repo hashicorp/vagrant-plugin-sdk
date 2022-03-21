@@ -16,7 +16,7 @@ type BoxVersion struct {
 }
 
 type BoxMetadata interface {
-	Name() string
+	BoxName() string
 
 	Version(version string, opts *BoxProvider) (*BoxVersion, error)
 	ListVersions(opts ...*BoxProvider) ([]string, error)

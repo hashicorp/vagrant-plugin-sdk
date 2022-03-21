@@ -1153,7 +1153,7 @@ func BoxMetadataProto(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_BoxMetadata, error) {
-	n := boxMetadata.Name()
+	n := boxMetadata.BoxName()
 	cid := "box_metadata" + n
 	if ch := internal.Cache.Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_BoxMetadata), nil
