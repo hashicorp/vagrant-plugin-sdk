@@ -1541,6 +1541,8 @@ service BoxMetadataService {
   rpc ListVersions(BoxMetadata.BoxMetadataOpts) returns (BoxMetadata.ListVersionsResponse);
   rpc Provider(BoxMetadata.ProviderRequest) returns (BoxMetadata.ProviderResponse);
   rpc ListProviders(BoxMetadata.ListProvidersRequest) returns (BoxMetadata.ListProvidersResponse);
+  rpc Matches(BoxMetadata.MatchesRequest) returns (BoxMetadata.MatchesResponse);
+  rpc MatchesAny(BoxMetadata.MatchesAnyRequest) returns (BoxMetadata.MatchesResponse);
 }
 
 /*******************************************************
@@ -1592,6 +1594,22 @@ message BoxMetadata {
 
   message ListProvidersResponse {
     repeated string providers = 1;
+  }
+
+  message MatchesRequest {
+    string version = 1;
+    string name = 2;
+    BoxMetadataOpts provider = 3;
+  }
+
+  message MatchesResponse {
+    bool matches = 1;
+  }
+
+   message MatchesAnyRequest {
+    string version = 1;
+    string name = 2;
+    repeated BoxMetadataOpts provider = 3;
   }
 }
 

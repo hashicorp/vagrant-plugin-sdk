@@ -64,6 +64,55 @@ func (_m *BoxMetadata) ListVersions(opts ...*core.BoxProvider) ([]string, error)
 	return r0, r1
 }
 
+// Matches provides a mock function with given fields: version, name, provider
+func (_m *BoxMetadata) Matches(version string, name string, provider *core.BoxProvider) (bool, error) {
+	ret := _m.Called(version, name, provider)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string, string, *core.BoxProvider) bool); ok {
+		r0 = rf(version, name, provider)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string, *core.BoxProvider) error); ok {
+		r1 = rf(version, name, provider)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MatchesAny provides a mock function with given fields: version, name, provider
+func (_m *BoxMetadata) MatchesAny(version string, name string, provider ...*core.BoxProvider) (bool, error) {
+	_va := make([]interface{}, len(provider))
+	for _i := range provider {
+		_va[_i] = provider[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, version, name)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string, string, ...*core.BoxProvider) bool); ok {
+		r0 = rf(version, name, provider...)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string, ...*core.BoxProvider) error); ok {
+		r1 = rf(version, name, provider...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Name provides a mock function with given fields:
 func (_m *BoxMetadata) Name() string {
 	ret := _m.Called()

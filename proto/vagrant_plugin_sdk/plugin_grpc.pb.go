@@ -9764,6 +9764,8 @@ type BoxMetadataServiceClient interface {
 	ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(ctx context.Context, in *BoxMetadata_ProviderRequest, opts ...grpc.CallOption) (*BoxMetadata_ProviderResponse, error)
 	ListProviders(ctx context.Context, in *BoxMetadata_ListProvidersRequest, opts ...grpc.CallOption) (*BoxMetadata_ListProvidersResponse, error)
+	Matches(ctx context.Context, in *BoxMetadata_MatchesRequest, opts ...grpc.CallOption) (*BoxMetadata_MatchesResponse, error)
+	MatchesAny(ctx context.Context, in *BoxMetadata_MatchesAnyRequest, opts ...grpc.CallOption) (*BoxMetadata_MatchesResponse, error)
 }
 
 type boxMetadataServiceClient struct {
@@ -9819,6 +9821,24 @@ func (c *boxMetadataServiceClient) ListProviders(ctx context.Context, in *BoxMet
 	return out, nil
 }
 
+func (c *boxMetadataServiceClient) Matches(ctx context.Context, in *BoxMetadata_MatchesRequest, opts ...grpc.CallOption) (*BoxMetadata_MatchesResponse, error) {
+	out := new(BoxMetadata_MatchesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Matches", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxMetadataServiceClient) MatchesAny(ctx context.Context, in *BoxMetadata_MatchesAnyRequest, opts ...grpc.CallOption) (*BoxMetadata_MatchesResponse, error) {
+	out := new(BoxMetadata_MatchesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/MatchesAny", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BoxMetadataServiceServer is the server API for BoxMetadataService service.
 // All implementations should embed UnimplementedBoxMetadataServiceServer
 // for forward compatibility
@@ -9828,6 +9848,8 @@ type BoxMetadataServiceServer interface {
 	ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error)
 	ListProviders(context.Context, *BoxMetadata_ListProvidersRequest) (*BoxMetadata_ListProvidersResponse, error)
+	Matches(context.Context, *BoxMetadata_MatchesRequest) (*BoxMetadata_MatchesResponse, error)
+	MatchesAny(context.Context, *BoxMetadata_MatchesAnyRequest) (*BoxMetadata_MatchesResponse, error)
 }
 
 // UnimplementedBoxMetadataServiceServer should be embedded to have forward compatible implementations.
@@ -9848,6 +9870,12 @@ func (UnimplementedBoxMetadataServiceServer) Provider(context.Context, *BoxMetad
 }
 func (UnimplementedBoxMetadataServiceServer) ListProviders(context.Context, *BoxMetadata_ListProvidersRequest) (*BoxMetadata_ListProvidersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProviders not implemented")
+}
+func (UnimplementedBoxMetadataServiceServer) Matches(context.Context, *BoxMetadata_MatchesRequest) (*BoxMetadata_MatchesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Matches not implemented")
+}
+func (UnimplementedBoxMetadataServiceServer) MatchesAny(context.Context, *BoxMetadata_MatchesAnyRequest) (*BoxMetadata_MatchesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MatchesAny not implemented")
 }
 
 // UnsafeBoxMetadataServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -9951,6 +9979,42 @@ func _BoxMetadataService_ListProviders_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoxMetadataService_Matches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_MatchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).Matches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Matches",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).Matches(ctx, req.(*BoxMetadata_MatchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxMetadataService_MatchesAny_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BoxMetadata_MatchesAnyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxMetadataServiceServer).MatchesAny(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/MatchesAny",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxMetadataServiceServer).MatchesAny(ctx, req.(*BoxMetadata_MatchesAnyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BoxMetadataService_ServiceDesc is the grpc.ServiceDesc for BoxMetadataService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -9977,6 +10041,14 @@ var BoxMetadataService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListProviders",
 			Handler:    _BoxMetadataService_ListProviders_Handler,
+		},
+		{
+			MethodName: "Matches",
+			Handler:    _BoxMetadataService_Matches_Handler,
+		},
+		{
+			MethodName: "MatchesAny",
+			Handler:    _BoxMetadataService_MatchesAny_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

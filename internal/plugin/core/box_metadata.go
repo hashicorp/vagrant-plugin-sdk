@@ -64,6 +64,14 @@ func (b *boxMetadataClient) ListProviders(version string) (providers []string, e
 	return
 }
 
+func (b *boxMetadataClient) Matches(version string, name string, provider *core.BoxProvider) (matches bool, err error) {
+	return
+}
+
+func (b *boxMetadataClient) MatchesAny(version string, name string, provider ...*core.BoxProvider) (matches bool, err error) {
+	return
+}
+
 type boxMetadataServer struct {
 	*vplugin.BaseServer
 
@@ -98,6 +106,18 @@ func (b *boxMetadataServer) Provider(
 func (b *boxMetadataServer) ListProviders(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ListProvidersRequest,
 ) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
+	return
+}
+
+func (b *boxMetadataServer) Matches(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_MatchesRequest,
+) (r *vagrant_plugin_sdk.BoxMetadata_MatchesResponse, err error) {
+	return
+}
+
+func (b *boxMetadataServer) MatchesAny(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_MatchesAnyRequest,
+) (r *vagrant_plugin_sdk.BoxMetadata_MatchesResponse, err error) {
 	return
 }
 

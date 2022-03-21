@@ -5,6 +5,8 @@ type BoxProvider struct {
 	Url          string
 	Checksum     string
 	ChecksumType string
+
+	Version *BoxVersion
 }
 
 type BoxVersion struct {
@@ -21,4 +23,7 @@ type BoxMetadata interface {
 
 	Provider(version string, name string) (*BoxProvider, error)
 	ListProviders(version string) ([]string, error)
+
+	Matches(version string, name string, provider *BoxProvider) (bool, error)
+	MatchesAny(version string, name string, provider ...*BoxProvider) (bool, error)
 }
