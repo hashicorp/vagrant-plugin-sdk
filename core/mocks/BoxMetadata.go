@@ -12,6 +12,20 @@ type BoxMetadata struct {
 	mock.Mock
 }
 
+// BoxName provides a mock function with given fields:
+func (_m *BoxMetadata) BoxName() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // ListProviders provides a mock function with given fields: version
 func (_m *BoxMetadata) ListProviders(version string) ([]string, error) {
 	ret := _m.Called(version)
@@ -111,20 +125,6 @@ func (_m *BoxMetadata) MatchesAny(version string, name string, provider ...*core
 	}
 
 	return r0, r1
-}
-
-// Name provides a mock function with given fields:
-func (_m *BoxMetadata) Name() string {
-	ret := _m.Called()
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
 }
 
 // Provider provides a mock function with given fields: version, name

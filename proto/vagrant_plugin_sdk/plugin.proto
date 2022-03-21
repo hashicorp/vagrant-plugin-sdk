@@ -1562,17 +1562,17 @@ message BoxMetadata {
 
   message VersionRequest {
     string version = 1;
+    BoxMetadataOpts opts = 2;
   }
 
   message VersionResponse {
     string version = 1;
     string status = 2;
     string description = 3;
-    Args.BoxMetadata box_metadata = 4;
   }
 
   message ListVersionsResponse {
-    repeated string version = 1;
+    repeated string versions = 1;
   }
 
   message ProviderRequest {
@@ -1585,7 +1585,6 @@ message BoxMetadata {
     string url = 2;
     string checksum = 3;
     string checksum_type = 4;
-    Args.BoxMetadata box_metadata = 5;
   }
 
    message ListProvidersRequest {
@@ -1609,7 +1608,7 @@ message BoxMetadata {
    message MatchesAnyRequest {
     string version = 1;
     string name = 2;
-    repeated BoxMetadataOpts provider = 3;
+    repeated BoxMetadataOpts providers = 3;
   }
 }
 

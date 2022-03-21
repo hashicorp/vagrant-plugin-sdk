@@ -25,5 +25,5 @@ type BoxMetadata interface {
 	ListProviders(version string) ([]string, error)
 
 	Matches(version string, name string, provider *BoxProvider) (bool, error)
-	MatchesAny(version string, name string, provider ...*BoxProvider) (bool, error)
+	MatchesAny(version string, name string, providers ...*BoxProvider) (bool, error)
 }
