@@ -17,13 +17,9 @@ type BoxVersion struct {
 
 type BoxMetadata interface {
 	BoxName() string
-
+	LoadMetadata(url string) error
 	Version(version string, opts *BoxProvider) (*BoxVersion, error)
 	ListVersions(opts ...*BoxProvider) ([]string, error)
-
 	Provider(version string, name string) (*BoxProvider, error)
 	ListProviders(version string) ([]string, error)
-
-	Matches(version string, name string, provider *BoxProvider) (bool, error)
-	MatchesAny(version string, name string, providers ...*BoxProvider) (bool, error)
 }

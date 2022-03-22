@@ -53,6 +53,11 @@ func (b *boxMetadataClient) BoxName() (name string) {
 	return n.Name
 }
 
+func (b *boxMetadataClient) LoadMetadata(url string) (err error) {
+	_, err = b.client.LoadMetadata(b.Ctx, &vagrant_plugin_sdk.BoxMetadata_LoadMetadataRequest{Url: url})
+	return
+}
+
 func (b *boxMetadataClient) Version(version string, opts *core.BoxProvider) (ver *core.BoxVersion, err error) {
 	var boxMetadataOpts *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
 	err = mapstructure.Decode(opts, &boxMetadataOpts)
@@ -108,46 +113,6 @@ func (b *boxMetadataClient) ListProviders(version string) (providers []string, e
 	return p.Providers, nil
 }
 
-func (b *boxMetadataClient) Matches(version string, name string, provider *core.BoxProvider) (matches bool, err error) {
-	var boxMetadataOpts *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
-	err = mapstructure.Decode(provider, &boxMetadataOpts)
-	if err != nil {
-		return false, err
-	}
-	m, err := b.client.Matches(
-		b.Ctx,
-		&vagrant_plugin_sdk.BoxMetadata_MatchesRequest{
-			Version: version, Name: name, Provider: boxMetadataOpts,
-		},
-	)
-	if err != nil {
-		return false, err
-	}
-	return m.Matches, nil
-}
-
-func (b *boxMetadataClient) MatchesAny(version string, name string, provider ...*core.BoxProvider) (matches bool, err error) {
-	opts := []*vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts{}
-	var boxMetadataOpts *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
-	for _, p := range provider {
-		err = mapstructure.Decode(p, &boxMetadataOpts)
-		if err != nil {
-			return false, err
-		}
-		opts = append(opts, boxMetadataOpts)
-	}
-	m, err := b.client.MatchesAny(
-		b.Ctx,
-		&vagrant_plugin_sdk.BoxMetadata_MatchesAnyRequest{
-			Version: version, Name: name, Providers: opts,
-		},
-	)
-	if err != nil {
-		return false, err
-	}
-	return m.Matches, nil
-}
-
 type boxMetadataServer struct {
 	*vplugin.BaseServer
 
@@ -159,6 +124,14 @@ func (b *boxMetadataServer) BoxName(
 	ctx context.Context, in *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.BoxMetadata_NameResponse, err error) {
 	return &vagrant_plugin_sdk.BoxMetadata_NameResponse{Name: b.Impl.BoxName()}, nil
+}
+
+func (b *boxMetadataServer) LoadMetadata(
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_LoadMetadataRequest,
+) (r *emptypb.Empty, err error) {
+	err = b.Impl.LoadMetadata(in.Url)
+	r = &emptypb.Empty{}
+	return
 }
 
 func (b *boxMetadataServer) Version(
@@ -207,44 +180,6 @@ func (b *boxMetadataServer) ListProviders(
 ) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
 	p, err := b.Impl.ListProviders(in.Version)
 	return &vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse{Providers: p}, nil
-}
-
-func (b *boxMetadataServer) Matches(
-	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_MatchesRequest,
-) (r *vagrant_plugin_sdk.BoxMetadata_MatchesResponse, err error) {
-	var provider *core.BoxProvider
-	err = mapstructure.Decode(in, &provider)
-	if err != nil {
-		return nil, err
-	}
-	m, err := b.Impl.Matches(in.Version, in.Name, provider)
-	if err != nil {
-		return nil, err
-	}
-	return &vagrant_plugin_sdk.BoxMetadata_MatchesResponse{
-		Matches: m,
-	}, nil
-}
-
-func (b *boxMetadataServer) MatchesAny(
-	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_MatchesAnyRequest,
-) (r *vagrant_plugin_sdk.BoxMetadata_MatchesResponse, err error) {
-	providers := []*core.BoxProvider{}
-	var provider *core.BoxProvider
-	for _, p := range in.Providers {
-		err = mapstructure.Decode(p, &provider)
-		if err != nil {
-			return nil, err
-		}
-		providers = append(providers, provider)
-	}
-	m, err := b.Impl.MatchesAny(in.Version, in.Name, providers...)
-	if err != nil {
-		return nil, err
-	}
-	return &vagrant_plugin_sdk.BoxMetadata_MatchesResponse{
-		Matches: m,
-	}, nil
 }
 
 var (
