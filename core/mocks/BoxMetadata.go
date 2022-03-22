@@ -99,11 +99,11 @@ func (_m *BoxMetadata) Matches(version string, name string, provider *core.BoxPr
 	return r0, r1
 }
 
-// MatchesAny provides a mock function with given fields: version, name, provider
-func (_m *BoxMetadata) MatchesAny(version string, name string, provider ...*core.BoxProvider) (bool, error) {
-	_va := make([]interface{}, len(provider))
-	for _i := range provider {
-		_va[_i] = provider[_i]
+// MatchesAny provides a mock function with given fields: version, name, providers
+func (_m *BoxMetadata) MatchesAny(version string, name string, providers ...*core.BoxProvider) (bool, error) {
+	_va := make([]interface{}, len(providers))
+	for _i := range providers {
+		_va[_i] = providers[_i]
 	}
 	var _ca []interface{}
 	_ca = append(_ca, version, name)
@@ -112,14 +112,14 @@ func (_m *BoxMetadata) MatchesAny(version string, name string, provider ...*core
 
 	var r0 bool
 	if rf, ok := ret.Get(0).(func(string, string, ...*core.BoxProvider) bool); ok {
-		r0 = rf(version, name, provider...)
+		r0 = rf(version, name, providers...)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(string, string, ...*core.BoxProvider) error); ok {
-		r1 = rf(version, name, provider...)
+		r1 = rf(version, name, providers...)
 	} else {
 		r1 = ret.Error(1)
 	}

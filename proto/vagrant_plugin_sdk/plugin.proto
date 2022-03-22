@@ -174,7 +174,7 @@ message Args {
     string addr = 3;
   }
 
-   message BoxMetadata {
+  message BoxMetadata {
     uint32 stream_id = 1;
     string network = 2;
     string addr = 3;
@@ -1429,7 +1429,7 @@ service BoxService {
   rpc Machines(Args.TargetIndex) returns (Box.MachinesResponse);
   rpc Repackage(Args.Path) returns (google.protobuf.Empty);
   rpc Directory(google.protobuf.Empty) returns (Args.Path);
-  rpc Metadata(google.protobuf.Empty) returns (Box.MetadataResponse);
+  rpc Metadata(google.protobuf.Empty) returns (Args.BoxMetadata);
   rpc BoxMetadata(google.protobuf.Empty) returns (Box.BoxMetadataResponse);
   rpc MetadataURL(google.protobuf.Empty) returns (Box.MetadataUrlResponse);
   rpc Name(google.protobuf.Empty) returns (Box.NameResponse);
@@ -1460,10 +1460,6 @@ message Box {
 
   message MachinesResponse {
     repeated Args.Target.Machine machines = 1;
-  }
-
-  message MetadataResponse {
-    Args.Hash metadata = 1;
   }
 
   message BoxMetadataResponse {
