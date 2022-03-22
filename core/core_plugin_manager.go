@@ -23,7 +23,6 @@ const (
 var TypeMap = map[Type]interface{}{
 	BasisType:         (*Basis)(nil),
 	BoxCollectionType: (*BoxCollection)(nil),
-	BoxMetadataType:   (*BoxMetadata)(nil),
 	BoxType:           (*Box)(nil),
 	MachineType:       (*Machine)(nil),
 	PluginManagerType: (*PluginManager)(nil),
