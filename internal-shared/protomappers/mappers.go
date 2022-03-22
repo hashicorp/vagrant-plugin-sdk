@@ -117,6 +117,8 @@ var All = []interface{}{
 	MachineStateProto,
 	SshInfo,
 	SshInfoProto,
+	CorePluginManager,
+	CorePluginManagerProto,
 	MapToProto,
 	Metadata,
 	MetadataProto,
@@ -920,6 +922,48 @@ func SshInfo(input *vagrant_plugin_sdk.Args_Connection_SSHInfo) (*core.SshInfo, 
 func SshInfoProto(input *core.SshInfo) (*vagrant_plugin_sdk.Args_Connection_SSHInfo, error) {
 	var result vagrant_plugin_sdk.Args_Connection_SSHInfo
 	return &result, mapstructure.Decode(input, &result)
+}
+
+func CorePluginManager(ctx context.Context,
+	input *vagrant_plugin_sdk.Args_CorePluginManager,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.CorePluginManager, error) {
+	// Create our plugin
+	p := &plugincore.CorePluginManagerPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.CorePluginManager), nil
+}
+
+func CorePluginManagerProto(
+	impl core.CorePluginManager,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_CorePluginManager, error) {
+	// Create our plugin
+	p := &plugincore.CorePluginManagerPlugin{
+		BasePlugin: basePlugin(impl, internal),
+		Impl:       impl,
+	}
+
+	id, ep, err := wrapClient(impl, p, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	proto := &vagrant_plugin_sdk.Args_CorePluginManager{
+		StreamId: id,
+		Network:  ep.Network(),
+		Addr:     ep.String()}
+
+	return proto, nil
 }
 
 func Box(ctx context.Context,

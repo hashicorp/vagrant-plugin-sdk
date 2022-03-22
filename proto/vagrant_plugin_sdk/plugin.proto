@@ -91,6 +91,12 @@ message Args {
     string id = 4;
   }
 
+ message CorePluginManager {
+    uint32 stream_id = 1;
+    string network = 2;
+    string addr = 3;
+  }
+
  message PluginManager {
     uint32 stream_id = 1;
     string network = 2;
