@@ -32,6 +32,19 @@ var TypeMap = map[Type]interface{}{
 	TargetType:        (*Target)(nil),
 }
 
+var TypeStringMap = map[Type]string{
+	BasisType:         "basis",
+	BoxCollectionType: "boxcollection",
+	BoxMetadataType:   "boxmetadata",
+	BoxType:           "box",
+	MachineType:       "machine",
+	PluginManagerType: "pluginmanager",
+	ProjectType:       "project",
+	StateBagType:      "statebag",
+	TargetIndexType:   "targetindex",
+	TargetType:        "target",
+}
+
 type CorePluginManager interface {
 	GetPlugin(pluginType Type) (interface{}, error)
 }
