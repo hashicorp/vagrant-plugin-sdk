@@ -615,6 +615,20 @@ message PluginManager {
   }
 }
 
+service CorePluginManagerService {
+  rpc GetPlugin(CorePluginManager.GetPluginRequest) returns (CorePluginManager.GetPluginResponse);
+}
+
+message CorePluginManager {
+  message GetPluginRequest {
+    string type = 1;
+  }
+
+  message GetPluginResponse {
+    google.protobuf.Any plugin = 1;
+  }
+}
+
 /********************************************************************
 * Provider Plugin Service
 ********************************************************************/
