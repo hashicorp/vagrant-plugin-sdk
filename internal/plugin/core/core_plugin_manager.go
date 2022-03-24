@@ -5,12 +5,12 @@ import (
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
-	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/anypb"
-
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 type CorePluginManagerPlugin struct {
@@ -78,13 +78,22 @@ func (p *corePluginManagerServer) GetPlugin(
 		return nil, err
 	}
 
-	pluginProto, err := p.Map(plugin, (**anypb.Any)(nil),
-		argmapper.Typed(ctx))
+	raw, err := dynamic.UnknownMap(plugin,
+		(*proto.Message)(nil),
+		p.Mappers,
+		argmapper.Typed(p.Logger, p.Internal()),
+	)
 	if err != nil {
+		panic(err)
+		return nil, err
+	}
+	v, err := dynamic.EncodeAny(raw.(proto.Message))
+	if err != nil {
+		panic(err)
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.CorePluginManager_GetPluginResponse{Plugin: pluginProto.(*anypb.Any)}, nil
+	return &vagrant_plugin_sdk.CorePluginManager_GetPluginResponse{Plugin: v}, nil
 }
 
 var (
