@@ -305,6 +305,7 @@ func (s *providerServer) Usable(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("Error while running Usable", "error", err)
 		return nil, err
 	}
 
@@ -331,6 +332,7 @@ func (s *providerServer) Installed(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("Error while running Installed", "error", err)
 		return nil, err
 	}
 
@@ -361,6 +363,7 @@ func (s *providerServer) Action(
 	)
 
 	if err != nil {
+		s.Logger.Error("Error while running Action", "error", err)
 		return nil, err
 	}
 
@@ -386,6 +389,7 @@ func (s *providerServer) MachineIdChanged(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("Error while running MachineIdChanged", "error", err)
 		return nil, err
 	}
 
@@ -420,6 +424,7 @@ func (s *providerServer) SshInfo(
 		argmapper.Typed(ctx),
 	)
 	if err != nil {
+		s.Logger.Error("Error while running SshInfo", "error", err)
 		return nil, err
 	}
 
@@ -445,6 +450,7 @@ func (s *providerServer) State(
 		args.Args, argmapper.Typed(ctx))
 
 	if err != nil {
+		s.Logger.Error("Error while running State", "error", err)
 		return nil, err
 	}
 
