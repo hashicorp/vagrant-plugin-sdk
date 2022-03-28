@@ -46,5 +46,6 @@ var TypeStringMap = map[Type]string{
 }
 
 type CorePluginManager interface {
+	// Get a fresh instance of a core plugin
 	GetPlugin(pluginType Type) (interface{}, error)
 }

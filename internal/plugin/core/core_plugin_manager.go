@@ -70,6 +70,7 @@ func (p *corePluginManagerServer) GetPlugin(
 	for k, v := range core.TypeStringMap {
 		if v == in.Type {
 			pluginType = k
+			break
 		}
 	}
 
