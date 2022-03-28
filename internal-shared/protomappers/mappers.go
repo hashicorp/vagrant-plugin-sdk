@@ -966,6 +966,32 @@ func CorePluginManagerProto(
 	return proto, nil
 }
 
+func CorePluginManagerProtoDirect(
+	input core.CorePluginManager,
+	log hclog.Logger,
+	broker *plugin.GRPCBroker,
+) (*vagrant_plugin_sdk.Args_CorePluginManager, func(), error) {
+	p := &plugincore.CorePluginManagerPlugin{
+		BasePlugin: &plugincomponent.BasePlugin{
+			Logger:  log,
+			Wrapped: true,
+		},
+		Impl: input,
+	}
+	id, ep, closer, err := wrapClientStandalone(input, p, broker, log)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	proto := &vagrant_plugin_sdk.Args_CorePluginManager{
+		StreamId: id,
+		Network:  ep.Network(),
+		Addr:     ep.String(),
+	}
+
+	return proto, closer, nil
+}
+
 func Box(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Box,
 	log hclog.Logger,
