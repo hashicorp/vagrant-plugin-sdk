@@ -78,18 +78,17 @@ func (p *corePluginManagerServer) GetPlugin(
 		return nil, err
 	}
 
+	internal := p.Internal()
 	raw, err := dynamic.UnknownMap(plugin,
 		(*proto.Message)(nil),
-		p.Mappers,
-		argmapper.Typed(p.Logger, p.Internal()),
+		internal.Mappers,
+		argmapper.Typed(p.Logger, internal),
 	)
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 	v, err := dynamic.EncodeAny(raw.(proto.Message))
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 
