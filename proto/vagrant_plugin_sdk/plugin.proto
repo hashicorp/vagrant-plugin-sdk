@@ -91,6 +91,12 @@ message Args {
     string id = 4;
   }
 
+ message CorePluginManager {
+    uint32 stream_id = 1;
+    string network = 2;
+    string addr = 3;
+  }
+
  message PluginManager {
     uint32 stream_id = 1;
     string network = 2;
@@ -606,6 +612,20 @@ message PluginManager {
     string name = 1;
     string type = 2;
     google.protobuf.Any plugin = 3;
+  }
+}
+
+service CorePluginManagerService {
+  rpc GetPlugin(CorePluginManager.GetPluginRequest) returns (CorePluginManager.GetPluginResponse);
+}
+
+message CorePluginManager {
+  message GetPluginRequest {
+    string type = 1;
+  }
+
+  message GetPluginResponse {
+    google.protobuf.Any plugin = 1;
   }
 }
 

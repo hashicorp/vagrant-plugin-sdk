@@ -761,6 +761,90 @@ var PluginManagerService_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "vagrant_plugin_sdk/plugin.proto",
 }
 
+// CorePluginManagerServiceClient is the client API for CorePluginManagerService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CorePluginManagerServiceClient interface {
+	GetPlugin(ctx context.Context, in *CorePluginManager_GetPluginRequest, opts ...grpc.CallOption) (*CorePluginManager_GetPluginResponse, error)
+}
+
+type corePluginManagerServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCorePluginManagerServiceClient(cc grpc.ClientConnInterface) CorePluginManagerServiceClient {
+	return &corePluginManagerServiceClient{cc}
+}
+
+func (c *corePluginManagerServiceClient) GetPlugin(ctx context.Context, in *CorePluginManager_GetPluginRequest, opts ...grpc.CallOption) (*CorePluginManager_GetPluginResponse, error) {
+	out := new(CorePluginManager_GetPluginResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.CorePluginManagerService/GetPlugin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CorePluginManagerServiceServer is the server API for CorePluginManagerService service.
+// All implementations should embed UnimplementedCorePluginManagerServiceServer
+// for forward compatibility
+type CorePluginManagerServiceServer interface {
+	GetPlugin(context.Context, *CorePluginManager_GetPluginRequest) (*CorePluginManager_GetPluginResponse, error)
+}
+
+// UnimplementedCorePluginManagerServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedCorePluginManagerServiceServer struct {
+}
+
+func (UnimplementedCorePluginManagerServiceServer) GetPlugin(context.Context, *CorePluginManager_GetPluginRequest) (*CorePluginManager_GetPluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlugin not implemented")
+}
+
+// UnsafeCorePluginManagerServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CorePluginManagerServiceServer will
+// result in compilation errors.
+type UnsafeCorePluginManagerServiceServer interface {
+	mustEmbedUnimplementedCorePluginManagerServiceServer()
+}
+
+func RegisterCorePluginManagerServiceServer(s grpc.ServiceRegistrar, srv CorePluginManagerServiceServer) {
+	s.RegisterService(&CorePluginManagerService_ServiceDesc, srv)
+}
+
+func _CorePluginManagerService_GetPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CorePluginManager_GetPluginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CorePluginManagerServiceServer).GetPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.CorePluginManagerService/GetPlugin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CorePluginManagerServiceServer).GetPlugin(ctx, req.(*CorePluginManager_GetPluginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// CorePluginManagerService_ServiceDesc is the grpc.ServiceDesc for CorePluginManagerService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CorePluginManagerService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "hashicorp.vagrant.sdk.CorePluginManagerService",
+	HandlerType: (*CorePluginManagerServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetPlugin",
+			Handler:    _CorePluginManagerService_GetPlugin_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vagrant_plugin_sdk/plugin.proto",
+}
+
 // ProviderServiceClient is the client API for ProviderService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
