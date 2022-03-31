@@ -9761,8 +9761,8 @@ var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
 type BoxMetadataServiceClient interface {
 	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error)
 	LoadMetadata(ctx context.Context, in *BoxMetadata_LoadMetadataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error)
-	ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
+	Version(ctx context.Context, in *BoxMetadata_VersionQuery, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error)
+	ListVersions(ctx context.Context, in *BoxMetadata_ListVersionsQuery, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(ctx context.Context, in *BoxMetadata_ProviderRequest, opts ...grpc.CallOption) (*BoxMetadata_ProviderResponse, error)
 	ListProviders(ctx context.Context, in *BoxMetadata_ListProvidersRequest, opts ...grpc.CallOption) (*BoxMetadata_ListProvidersResponse, error)
 }
@@ -9793,7 +9793,7 @@ func (c *boxMetadataServiceClient) LoadMetadata(ctx context.Context, in *BoxMeta
 	return out, nil
 }
 
-func (c *boxMetadataServiceClient) Version(ctx context.Context, in *BoxMetadata_VersionRequest, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error) {
+func (c *boxMetadataServiceClient) Version(ctx context.Context, in *BoxMetadata_VersionQuery, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error) {
 	out := new(BoxMetadata_VersionResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Version", in, out, opts...)
 	if err != nil {
@@ -9802,7 +9802,7 @@ func (c *boxMetadataServiceClient) Version(ctx context.Context, in *BoxMetadata_
 	return out, nil
 }
 
-func (c *boxMetadataServiceClient) ListVersions(ctx context.Context, in *BoxMetadata_BoxMetadataOpts, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error) {
+func (c *boxMetadataServiceClient) ListVersions(ctx context.Context, in *BoxMetadata_ListVersionsQuery, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error) {
 	out := new(BoxMetadata_ListVersionsResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/ListVersions", in, out, opts...)
 	if err != nil {
@@ -9835,8 +9835,8 @@ func (c *boxMetadataServiceClient) ListProviders(ctx context.Context, in *BoxMet
 type BoxMetadataServiceServer interface {
 	Name(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error)
 	LoadMetadata(context.Context, *BoxMetadata_LoadMetadataRequest) (*emptypb.Empty, error)
-	Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error)
-	ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error)
+	Version(context.Context, *BoxMetadata_VersionQuery) (*BoxMetadata_VersionResponse, error)
+	ListVersions(context.Context, *BoxMetadata_ListVersionsQuery) (*BoxMetadata_ListVersionsResponse, error)
 	Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error)
 	ListProviders(context.Context, *BoxMetadata_ListProvidersRequest) (*BoxMetadata_ListProvidersResponse, error)
 }
@@ -9851,10 +9851,10 @@ func (UnimplementedBoxMetadataServiceServer) Name(context.Context, *emptypb.Empt
 func (UnimplementedBoxMetadataServiceServer) LoadMetadata(context.Context, *BoxMetadata_LoadMetadataRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadMetadata not implemented")
 }
-func (UnimplementedBoxMetadataServiceServer) Version(context.Context, *BoxMetadata_VersionRequest) (*BoxMetadata_VersionResponse, error) {
+func (UnimplementedBoxMetadataServiceServer) Version(context.Context, *BoxMetadata_VersionQuery) (*BoxMetadata_VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
-func (UnimplementedBoxMetadataServiceServer) ListVersions(context.Context, *BoxMetadata_BoxMetadataOpts) (*BoxMetadata_ListVersionsResponse, error) {
+func (UnimplementedBoxMetadataServiceServer) ListVersions(context.Context, *BoxMetadata_ListVersionsQuery) (*BoxMetadata_ListVersionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVersions not implemented")
 }
 func (UnimplementedBoxMetadataServiceServer) Provider(context.Context, *BoxMetadata_ProviderRequest) (*BoxMetadata_ProviderResponse, error) {
@@ -9912,7 +9912,7 @@ func _BoxMetadataService_LoadMetadata_Handler(srv interface{}, ctx context.Conte
 }
 
 func _BoxMetadataService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BoxMetadata_VersionRequest)
+	in := new(BoxMetadata_VersionQuery)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -9924,13 +9924,13 @@ func _BoxMetadataService_Version_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Version",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxMetadataServiceServer).Version(ctx, req.(*BoxMetadata_VersionRequest))
+		return srv.(BoxMetadataServiceServer).Version(ctx, req.(*BoxMetadata_VersionQuery))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _BoxMetadataService_ListVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BoxMetadata_BoxMetadataOpts)
+	in := new(BoxMetadata_ListVersionsQuery)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -9942,7 +9942,7 @@ func _BoxMetadataService_ListVersions_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/ListVersions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxMetadataServiceServer).ListVersions(ctx, req.(*BoxMetadata_BoxMetadataOpts))
+		return srv.(BoxMetadataServiceServer).ListVersions(ctx, req.(*BoxMetadata_ListVersionsQuery))
 	}
 	return interceptor(ctx, in, info, handler)
 }

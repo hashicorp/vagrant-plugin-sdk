@@ -58,15 +58,20 @@ func (b *boxMetadataClient) LoadMetadata(url string) (err error) {
 	return
 }
 
-func (b *boxMetadataClient) Version(version string, opts *core.BoxProvider) (ver *core.BoxVersion, err error) {
-	var boxMetadataOpts *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
-	err = mapstructure.Decode(opts, &boxMetadataOpts)
-	if err != nil {
-		return nil, err
+func (b *boxMetadataClient) Version(version string, opts ...*core.BoxProvider) (ver *core.BoxVersion, err error) {
+	boxMetadataOpts := []*vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts{}
+	for _, o := range opts {
+		var bmo *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
+		err = mapstructure.Decode(o, &bmo)
+		if err != nil {
+			return nil, err
+		}
+		boxMetadataOpts = append(boxMetadataOpts, bmo)
 	}
+
 	v, err := b.client.Version(
 		b.Ctx,
-		&vagrant_plugin_sdk.BoxMetadata_VersionRequest{
+		&vagrant_plugin_sdk.BoxMetadata_VersionQuery{
 			Version: version, Opts: boxMetadataOpts,
 		},
 	)
@@ -78,12 +83,22 @@ func (b *boxMetadataClient) Version(version string, opts *core.BoxProvider) (ver
 }
 
 func (b *boxMetadataClient) ListVersions(opts ...*core.BoxProvider) (versions []string, err error) {
-	var boxMetadataOpts *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
-	err = mapstructure.Decode(opts, &boxMetadataOpts)
-	if err != nil {
-		return nil, err
+	boxMetadataOpts := []*vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts{}
+	for _, o := range opts {
+		var bmo *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
+		err = mapstructure.Decode(o, &bmo)
+		if err != nil {
+			return nil, err
+		}
+		boxMetadataOpts = append(boxMetadataOpts, bmo)
 	}
-	v, err := b.client.ListVersions(b.Ctx, boxMetadataOpts)
+
+	v, err := b.client.ListVersions(
+		b.Ctx,
+		&vagrant_plugin_sdk.BoxMetadata_ListVersionsQuery{
+			Opts: boxMetadataOpts,
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -135,14 +150,19 @@ func (b *boxMetadataServer) LoadMetadata(
 }
 
 func (b *boxMetadataServer) Version(
-	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_VersionRequest,
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_VersionQuery,
 ) (r *vagrant_plugin_sdk.BoxMetadata_VersionResponse, err error) {
-	var opts *core.BoxProvider
-	err = mapstructure.Decode(in.Opts, &opts)
-	if err != nil {
-		return nil, err
+	opts := []*core.BoxProvider{}
+	for _, o := range in.Opts {
+		var decodedOpts *core.BoxProvider
+		err = mapstructure.Decode(o, &decodedOpts)
+		if err != nil {
+			return nil, err
+		}
+		opts = append(opts, decodedOpts)
 	}
-	v, err := b.Impl.Version(in.Version, opts)
+
+	v, err := b.Impl.Version(in.Version, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -152,14 +172,18 @@ func (b *boxMetadataServer) Version(
 }
 
 func (b *boxMetadataServer) ListVersions(
-	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts,
+	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ListVersionsQuery,
 ) (r *vagrant_plugin_sdk.BoxMetadata_ListVersionsResponse, err error) {
-	var opts *core.BoxProvider
-	err = mapstructure.Decode(in, &opts)
-	if err != nil {
-		return nil, err
+	opts := []*core.BoxProvider{}
+	for _, o := range in.Opts {
+		var decodedOpts *core.BoxProvider
+		err = mapstructure.Decode(o, &decodedOpts)
+		if err != nil {
+			return nil, err
+		}
+		opts = append(opts, decodedOpts)
 	}
-	v, err := b.Impl.ListVersions(opts)
+	v, err := b.Impl.ListVersions(opts...)
 	return &vagrant_plugin_sdk.BoxMetadata_ListVersionsResponse{Versions: v}, nil
 }
 

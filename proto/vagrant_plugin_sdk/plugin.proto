@@ -1534,8 +1534,8 @@ message BoxCollection {
 service BoxMetadataService {
   rpc Name(google.protobuf.Empty) returns (BoxMetadata.NameResponse);
   rpc LoadMetadata(BoxMetadata.LoadMetadataRequest) returns (google.protobuf.Empty);
-  rpc Version(BoxMetadata.VersionRequest) returns (BoxMetadata.VersionResponse);
-  rpc ListVersions(BoxMetadata.BoxMetadataOpts) returns (BoxMetadata.ListVersionsResponse);
+  rpc Version(BoxMetadata.VersionQuery) returns (BoxMetadata.VersionResponse);
+  rpc ListVersions(BoxMetadata.ListVersionsQuery) returns (BoxMetadata.ListVersionsResponse);
   rpc Provider(BoxMetadata.ProviderRequest) returns (BoxMetadata.ProviderResponse);
   rpc ListProviders(BoxMetadata.ListProvidersRequest) returns (BoxMetadata.ListProvidersResponse);
 }
@@ -1544,10 +1544,6 @@ service BoxMetadataService {
  * BoxMetadata messages used with BoxMetadata service
  *******************************************************/
 message BoxMetadata {
-  message LoadMetadataRequest {
-    string url = 1;
-  }
-
   message BoxMetadataOpts {
     string name = 1;
     string url = 2; 
@@ -1555,19 +1551,27 @@ message BoxMetadata {
     string checksum_type = 4;
   }
 
+  message LoadMetadataRequest {
+    string url = 1;
+  }
+
   message NameResponse {
     string name = 1;
   }
 
-  message VersionRequest {
+  message VersionQuery {
     string version = 1;
-    BoxMetadataOpts opts = 2;
+    repeated BoxMetadataOpts opts = 2;
   }
 
   message VersionResponse {
     string version = 1;
     string status = 2;
     string description = 3;
+  }
+
+  message ListVersionsQuery {
+    repeated BoxMetadataOpts opts = 1;
   }
 
   message ListVersionsResponse {
@@ -1592,22 +1596,6 @@ message BoxMetadata {
 
   message ListProvidersResponse {
     repeated string providers = 1;
-  }
-
-  message MatchesRequest {
-    string version = 1;
-    string name = 2;
-    BoxMetadataOpts provider = 3;
-  }
-
-  message MatchesResponse {
-    bool matches = 1;
-  }
-
-   message MatchesAnyRequest {
-    string version = 1;
-    string name = 2;
-    repeated BoxMetadataOpts providers = 3;
   }
 }
 

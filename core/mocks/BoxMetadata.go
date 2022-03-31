@@ -116,12 +116,19 @@ func (_m *BoxMetadata) Provider(version string, name string) (*core.BoxProvider,
 }
 
 // Version provides a mock function with given fields: version, opts
-func (_m *BoxMetadata) Version(version string, opts *core.BoxProvider) (*core.BoxVersion, error) {
-	ret := _m.Called(version, opts)
+func (_m *BoxMetadata) Version(version string, opts ...*core.BoxProvider) (*core.BoxVersion, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, version)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	var r0 *core.BoxVersion
-	if rf, ok := ret.Get(0).(func(string, *core.BoxProvider) *core.BoxVersion); ok {
-		r0 = rf(version, opts)
+	if rf, ok := ret.Get(0).(func(string, ...*core.BoxProvider) *core.BoxVersion); ok {
+		r0 = rf(version, opts...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*core.BoxVersion)
@@ -129,8 +136,8 @@ func (_m *BoxMetadata) Version(version string, opts *core.BoxProvider) (*core.Bo
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *core.BoxProvider) error); ok {
-		r1 = rf(version, opts)
+	if rf, ok := ret.Get(1).(func(string, ...*core.BoxProvider) error); ok {
+		r1 = rf(version, opts...)
 	} else {
 		r1 = ret.Error(1)
 	}
