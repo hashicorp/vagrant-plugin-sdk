@@ -46,7 +46,7 @@ type boxMetadataClient struct {
 }
 
 func (b *boxMetadataClient) BoxName() (name string) {
-	n, err := b.client.Name(b.Ctx, &emptypb.Empty{})
+	n, err := b.client.BoxName(b.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}

@@ -9759,7 +9759,7 @@ var BoxCollectionService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BoxMetadataServiceClient interface {
-	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error)
+	BoxName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error)
 	LoadMetadata(ctx context.Context, in *BoxMetadata_LoadMetadataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Version(ctx context.Context, in *BoxMetadata_VersionQuery, opts ...grpc.CallOption) (*BoxMetadata_VersionResponse, error)
 	ListVersions(ctx context.Context, in *BoxMetadata_ListVersionsQuery, opts ...grpc.CallOption) (*BoxMetadata_ListVersionsResponse, error)
@@ -9775,9 +9775,9 @@ func NewBoxMetadataServiceClient(cc grpc.ClientConnInterface) BoxMetadataService
 	return &boxMetadataServiceClient{cc}
 }
 
-func (c *boxMetadataServiceClient) Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error) {
+func (c *boxMetadataServiceClient) BoxName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BoxMetadata_NameResponse, error) {
 	out := new(BoxMetadata_NameResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/Name", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxMetadataService/BoxName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -9833,7 +9833,7 @@ func (c *boxMetadataServiceClient) ListProviders(ctx context.Context, in *BoxMet
 // All implementations should embed UnimplementedBoxMetadataServiceServer
 // for forward compatibility
 type BoxMetadataServiceServer interface {
-	Name(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error)
+	BoxName(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error)
 	LoadMetadata(context.Context, *BoxMetadata_LoadMetadataRequest) (*emptypb.Empty, error)
 	Version(context.Context, *BoxMetadata_VersionQuery) (*BoxMetadata_VersionResponse, error)
 	ListVersions(context.Context, *BoxMetadata_ListVersionsQuery) (*BoxMetadata_ListVersionsResponse, error)
@@ -9845,8 +9845,8 @@ type BoxMetadataServiceServer interface {
 type UnimplementedBoxMetadataServiceServer struct {
 }
 
-func (UnimplementedBoxMetadataServiceServer) Name(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
+func (UnimplementedBoxMetadataServiceServer) BoxName(context.Context, *emptypb.Empty) (*BoxMetadata_NameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BoxName not implemented")
 }
 func (UnimplementedBoxMetadataServiceServer) LoadMetadata(context.Context, *BoxMetadata_LoadMetadataRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadMetadata not implemented")
@@ -9875,20 +9875,20 @@ func RegisterBoxMetadataServiceServer(s grpc.ServiceRegistrar, srv BoxMetadataSe
 	s.RegisterService(&BoxMetadataService_ServiceDesc, srv)
 }
 
-func _BoxMetadataService_Name_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BoxMetadataService_BoxName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BoxMetadataServiceServer).Name(ctx, in)
+		return srv.(BoxMetadataServiceServer).BoxName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/Name",
+		FullMethod: "/hashicorp.vagrant.sdk.BoxMetadataService/BoxName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BoxMetadataServiceServer).Name(ctx, req.(*emptypb.Empty))
+		return srv.(BoxMetadataServiceServer).BoxName(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -9991,8 +9991,8 @@ var BoxMetadataService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BoxMetadataServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Name",
-			Handler:    _BoxMetadataService_Name_Handler,
+			MethodName: "BoxName",
+			Handler:    _BoxMetadataService_BoxName_Handler,
 		},
 		{
 			MethodName: "LoadMetadata",

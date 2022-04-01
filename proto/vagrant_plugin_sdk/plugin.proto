@@ -1532,7 +1532,7 @@ message BoxCollection {
 * BoxMetadata services
 ********************************************************************/
 service BoxMetadataService {
-  rpc Name(google.protobuf.Empty) returns (BoxMetadata.NameResponse);
+  rpc BoxName(google.protobuf.Empty) returns (BoxMetadata.NameResponse);
   rpc LoadMetadata(BoxMetadata.LoadMetadataRequest) returns (google.protobuf.Empty);
   rpc Version(BoxMetadata.VersionQuery) returns (BoxMetadata.VersionResponse);
   rpc ListVersions(BoxMetadata.ListVersionsQuery) returns (BoxMetadata.ListVersionsResponse);
