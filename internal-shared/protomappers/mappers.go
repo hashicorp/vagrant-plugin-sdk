@@ -71,6 +71,8 @@ var WellKnownTypes = []interface{}{
 var All = []interface{}{
 	Array,
 	ArrayProto,
+	Symbol,
+	SymbolProto,
 	ValueToString,
 	Basis,
 	BasisProto,
@@ -481,6 +483,20 @@ func SeedsProtoFull(
 	}
 
 	return result, nil
+}
+
+func Symbol(
+	input *vagrant_plugin_sdk.Args_Symbol,
+) core.Symbol {
+	return core.Symbol(input.Str)
+}
+
+func SymbolProto(
+	input core.Symbol,
+) *vagrant_plugin_sdk.Args_Symbol {
+	return &vagrant_plugin_sdk.Args_Symbol{
+		Str: string(input),
+	}
 }
 
 func Array(

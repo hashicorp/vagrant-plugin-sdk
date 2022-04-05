@@ -9,3 +9,10 @@
 // making porting plugins less time consuming.
 
 package core
+
+// This Symbol type represents a Symbol type in Ruby.
+// It is required for interoperability between legacy
+// Vagrant and Go Vagrant. It's primary function is to
+// allow config maps from Ruby that contain Symbols to
+// be interpreted in Go while retaining type information
+type Symbol string
