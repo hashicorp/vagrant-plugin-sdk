@@ -11,7 +11,7 @@ type Box interface {
 	HasUpdate(version string) (updateAvailable bool, err error)
 	// Checks if the box has an update and returns the metadata (from the metadata url),
 	// the newer version, and newer provider.
-	UpdateInfo(version string) (updateAvailable bool, meta BoxMetadataMap, newVersion string, newProvider string, err error)
+	UpdateInfo(version string) (updateAvailable bool, meta BoxMetadata, newVersion string, newProvider string, err error)
 	// Checks if this box is in use according to the given machine index
 	InUse(index TargetIndex) (inUse bool, err error)
 	// Returns the machines from the machine index that are using the box

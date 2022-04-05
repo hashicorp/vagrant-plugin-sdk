@@ -278,7 +278,7 @@ func (_m *Box) Repackage(path string) error {
 }
 
 // UpdateInfo provides a mock function with given fields: version
-func (_m *Box) UpdateInfo(version string) (bool, core.BoxMetadataMap, string, string, error) {
+func (_m *Box) UpdateInfo(version string) (bool, core.BoxMetadata, string, string, error) {
 	ret := _m.Called(version)
 
 	var r0 bool
@@ -288,12 +288,12 @@ func (_m *Box) UpdateInfo(version string) (bool, core.BoxMetadataMap, string, st
 		r0 = ret.Get(0).(bool)
 	}
 
-	var r1 core.BoxMetadataMap
-	if rf, ok := ret.Get(1).(func(string) core.BoxMetadataMap); ok {
+	var r1 core.BoxMetadata
+	if rf, ok := ret.Get(1).(func(string) core.BoxMetadata); ok {
 		r1 = rf(version)
 	} else {
 		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(core.BoxMetadataMap)
+			r1 = ret.Get(1).(core.BoxMetadata)
 		}
 	}
 

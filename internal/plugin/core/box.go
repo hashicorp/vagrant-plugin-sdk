@@ -109,7 +109,7 @@ func (b *boxClient) HasUpdate(version string) (updateAvailable bool, err error) 
 	return result.HasUpdate, nil
 }
 
-func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.BoxMetadataMap, newVersion string, newProvider string, err error) {
+func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.BoxMetadata, newVersion string, newProvider string, err error) {
 	result, err := b.client.UpdateInfo(
 		b.Ctx,
 		&vagrant_plugin_sdk.Box_HasUpdateRequest{Version: version},
@@ -117,11 +117,11 @@ func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.
 	if err != nil {
 		return
 	}
-	boxMetadataMap, err := b.Map(result.Metadata, (*core.BoxMetadataMap)(nil), argmapper.Typed(b.Ctx))
+	boxMetadataMap, err := b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
 	if err != nil {
 		return false, nil, "", "", err
 	}
-	return result.HasUpdate, boxMetadataMap.(core.BoxMetadataMap), result.NewVersion, result.NewProvider, nil
+	return result.HasUpdate, boxMetadataMap.(core.BoxMetadata), result.NewVersion, result.NewProvider, nil
 }
 
 func (b *boxClient) InUse(index core.TargetIndex) (inUse bool, err error) {
@@ -356,19 +356,14 @@ func (b *boxServer) UpdateInfo(
 		return
 	}
 
-	metadataHash := &vagrant_plugin_sdk.Args_Hash{}
-	if updateAvailable {
-		var metaMap map[string]interface{}
-		metaMap = meta
-		m, err := b.Map(metaMap, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
-		if err != nil {
-			return nil, err
-		}
-		metadataHash = m.(*vagrant_plugin_sdk.Args_Hash)
+	m, err := b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
 	}
 
 	return &vagrant_plugin_sdk.Box_UpdateInfoResponse{
-		HasUpdate: updateAvailable, Metadata: metadataHash, NewVersion: version, NewProvider: provider,
+		HasUpdate: updateAvailable, Metadata: m.(*vagrant_plugin_sdk.Args_BoxMetadata),
+		NewVersion: version, NewProvider: provider,
 	}, nil
 }
 

@@ -1462,7 +1462,7 @@ message Box {
 
   message UpdateInfoResponse {
     bool has_update = 1;
-    Args.Hash metadata = 2;
+    Args.BoxMetadata metadata = 2;
     string new_version = 3;
     string new_provider = 4;
   }
