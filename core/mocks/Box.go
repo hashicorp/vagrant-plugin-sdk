@@ -178,15 +178,15 @@ func (_m *Box) Machines(index core.TargetIndex) ([]core.Machine, error) {
 }
 
 // Metadata provides a mock function with given fields:
-func (_m *Box) Metadata() (core.BoxMetadataMap, error) {
+func (_m *Box) Metadata() (core.BoxMetadata, error) {
 	ret := _m.Called()
 
-	var r0 core.BoxMetadataMap
-	if rf, ok := ret.Get(0).(func() core.BoxMetadataMap); ok {
+	var r0 core.BoxMetadata
+	if rf, ok := ret.Get(0).(func() core.BoxMetadata); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(core.BoxMetadataMap)
+			r0 = ret.Get(0).(core.BoxMetadata)
 		}
 	}
 

@@ -127,16 +127,16 @@ func (b *boxClient) BoxMetadata() (metadata map[string]interface{}, err error) {
 	return boxMetadataMap.(map[string]interface{}), nil
 }
 
-func (b *boxClient) Metadata() (metadata core.BoxMetadataMap, err error) {
+func (b *boxClient) Metadata() (metadata core.BoxMetadata, err error) {
 	meta, err := b.client.Metadata(b.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
-	boxMetadataMap, err := b.Map(meta, (*core.BoxMetadataMap)(nil), argmapper.Typed(b.Ctx))
+	boxMetadataMap, err := b.Map(meta, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
 	if err != nil {
 		return nil, err
 	}
-	return boxMetadataMap.(core.BoxMetadataMap), nil
+	return boxMetadataMap.(core.BoxMetadata), nil
 }
 
 func (b *boxClient) MetadataURL() (url string, err error) {
@@ -308,19 +308,17 @@ func (b *boxServer) BoxMetadata(
 
 func (b *boxServer) Metadata(
 	ctx context.Context, in *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Box_MetadataResponse, err error) {
+) (r *vagrant_plugin_sdk.Args_BoxMetadata, err error) {
 	meta, err := b.Impl.Metadata()
 	if err != nil {
 		return
 	}
 
-	metadataHash, err := b.Map(meta, (**vagrant_plugin_sdk.Args_Hash)(nil), argmapper.Typed(ctx))
+	metadataService, err := b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
 	if err != nil {
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Box_MetadataResponse{
-		Metadata: metadataHash.(*vagrant_plugin_sdk.Args_Hash),
-	}, nil
+	return metadataService.(*vagrant_plugin_sdk.Args_BoxMetadata), nil
 }
 
 func (b *boxServer) MetadataURL(
