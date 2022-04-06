@@ -117,11 +117,16 @@ func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.
 	if err != nil {
 		return
 	}
-	boxMetadataMap, err := b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
-	if err != nil {
-		return false, nil, "", "", err
+
+	if result.HasUpdate {
+		boxMetadata, err := b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
+		if err != nil {
+			return false, nil, "", "", err
+		}
+		return result.HasUpdate, boxMetadata.(core.BoxMetadata), result.NewVersion, result.NewProvider, nil
+
 	}
-	return result.HasUpdate, boxMetadataMap.(core.BoxMetadata), result.NewVersion, result.NewProvider, nil
+	return result.HasUpdate, nil, "", "", nil
 }
 
 func (b *boxClient) InUse(index core.TargetIndex) (inUse bool, err error) {
@@ -356,13 +361,19 @@ func (b *boxServer) UpdateInfo(
 		return
 	}
 
-	m, err := b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
-	if err != nil {
-		return nil, err
+	if updateAvailable {
+		m, err := b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		return &vagrant_plugin_sdk.Box_UpdateInfoResponse{
+			HasUpdate: updateAvailable, Metadata: m.(*vagrant_plugin_sdk.Args_BoxMetadata),
+			NewVersion: version, NewProvider: provider,
+		}, nil
 	}
 
 	return &vagrant_plugin_sdk.Box_UpdateInfoResponse{
-		HasUpdate: updateAvailable, Metadata: m.(*vagrant_plugin_sdk.Args_BoxMetadata),
+		HasUpdate: updateAvailable, Metadata: nil,
 		NewVersion: version, NewProvider: provider,
 	}, nil
 }
