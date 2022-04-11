@@ -275,20 +275,6 @@ func (_m *Project) PrimaryTargetName() (string, error) {
 	return r0, r1
 }
 
-// Push provides a mock function with given fields: name
-func (_m *Project) Push(name string) error {
-	ret := _m.Called(name)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
-		r0 = rf(name)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 // ResourceId provides a mock function with given fields:
 func (_m *Project) ResourceId() (string, error) {
 	ret := _m.Called()

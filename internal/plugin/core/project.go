@@ -267,20 +267,6 @@ func (p *projectClient) PrimaryTargetName() (t string, err error) {
 	return
 }
 
-func (p *projectClient) Push(name string) (err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to push",
-				"error", err,
-			)
-		}
-	}()
-	_, err = p.client.Push(p.Ctx,
-		&vagrant_plugin_sdk.Project_PushRequest{Name: name},
-	)
-	return
-}
-
 func (p *projectClient) ResourceId() (rid string, err error) {
 	defer func() {
 		if err != nil {
@@ -630,14 +616,6 @@ func (p *projectServer) PrimaryTargetName(
 	return &vagrant_plugin_sdk.Project_PrimaryTargetNameResponse{
 		Name: name,
 	}, nil
-}
-
-func (p *projectServer) Push(
-	ctx context.Context,
-	in *vagrant_plugin_sdk.Project_PushRequest,
-) (*emptypb.Empty, error) {
-	err := p.Impl.Push(in.Name)
-	return &emptypb.Empty{}, err
 }
 
 func (p *projectServer) ResourceId(

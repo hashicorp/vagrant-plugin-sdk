@@ -21,7 +21,6 @@ type Project interface {
 	Host() (h Host, err error)
 	LocalData() (path string, err error)
 	PrimaryTargetName() (name string, err error)
-	Push(name string) error
 	ResourceId() (string, error)
 	RootPath() (path string, err error)
 	Target(name string) (t Target, err error)

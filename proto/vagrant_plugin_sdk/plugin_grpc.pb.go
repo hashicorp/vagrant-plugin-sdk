@@ -7872,7 +7872,6 @@ type ProjectServiceClient interface {
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
 	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error)
 	PrimaryTargetName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_PrimaryTargetNameResponse, error)
-	Push(ctx context.Context, in *Project_PushRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error)
 	RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_RootPathResponse, error)
 	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
@@ -7992,15 +7991,6 @@ func (c *projectServiceClient) PrimaryTargetName(ctx context.Context, in *emptyp
 	return out, nil
 }
 
-func (c *projectServiceClient) Push(ctx context.Context, in *Project_PushRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Push", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *projectServiceClient) ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error) {
 	out := new(Project_ResourceIdResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/ResourceId", in, out, opts...)
@@ -8106,7 +8096,6 @@ type ProjectServiceServer interface {
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
 	LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error)
 	PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error)
-	Push(context.Context, *Project_PushRequest) (*emptypb.Empty, error)
 	ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error)
 	RootPath(context.Context, *emptypb.Empty) (*Project_RootPathResponse, error)
 	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
@@ -8155,9 +8144,6 @@ func (UnimplementedProjectServiceServer) LocalData(context.Context, *emptypb.Emp
 }
 func (UnimplementedProjectServiceServer) PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PrimaryTargetName not implemented")
-}
-func (UnimplementedProjectServiceServer) Push(context.Context, *Project_PushRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Push not implemented")
 }
 func (UnimplementedProjectServiceServer) ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResourceId not implemented")
@@ -8399,24 +8385,6 @@ func _ProjectService_PrimaryTargetName_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Project_PushRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Push(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Push",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Push(ctx, req.(*Project_PushRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ProjectService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -8647,10 +8615,6 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PrimaryTargetName",
 			Handler:    _ProjectService_PrimaryTargetName_Handler,
-		},
-		{
-			MethodName: "Push",
-			Handler:    _ProjectService_Push_Handler,
 		},
 		{
 			MethodName: "ResourceId",

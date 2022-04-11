@@ -1162,7 +1162,6 @@ service ProjectService {
   rpc Host(google.protobuf.Empty) returns (Args.Host);
   rpc LocalData(google.protobuf.Empty) returns (Project.LocalDataResponse);
   rpc PrimaryTargetName(google.protobuf.Empty) returns (Project.PrimaryTargetNameResponse);
-  rpc Push(Project.PushRequest) returns (google.protobuf.Empty);
   rpc ResourceId(google.protobuf.Empty) returns (Project.ResourceIdResponse);
   rpc RootPath(google.protobuf.Empty) returns (Project.RootPathResponse);
   rpc Target(Project.TargetRequest) returns (Args.Target);
@@ -1201,9 +1200,6 @@ message Project {
     string path = 1;
   }
   message PrimaryTargetNameResponse {
-    string name = 1;
-  }
-  message PushRequest {
     string name = 1;
   }
   message ResourceIdResponse {
