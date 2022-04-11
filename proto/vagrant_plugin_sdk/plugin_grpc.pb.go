@@ -7863,8 +7863,8 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 type ProjectServiceClient interface {
 	ActiveTargets(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ActiveTargetsResponse, error)
 	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
-	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error)
+	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error)
 	DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error)
@@ -7911,18 +7911,18 @@ func (c *projectServiceClient) Boxes(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
-	out := new(Project_CwdResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
+func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error) {
+	out := new(Args_Vagrantfile)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Config", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error) {
-	out := new(Args_Vagrantfile)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Config", in, out, opts...)
+func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
+	out := new(Project_CwdResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8097,8 +8097,8 @@ func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *emptypb.
 type ProjectServiceServer interface {
 	ActiveTargets(context.Context, *emptypb.Empty) (*Project_ActiveTargetsResponse, error)
 	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
-	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
 	Config(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error)
+	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error)
 	DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error)
@@ -8129,11 +8129,11 @@ func (UnimplementedProjectServiceServer) ActiveTargets(context.Context, *emptypb
 func (UnimplementedProjectServiceServer) Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
 }
-func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
-}
 func (UnimplementedProjectServiceServer) Config(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
+}
+func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
 }
 func (UnimplementedProjectServiceServer) DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataDir not implemented")
@@ -8237,24 +8237,6 @@ func _ProjectService_Boxes_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_CWD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).CWD(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/CWD",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).CWD(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ProjectService_Config_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -8269,6 +8251,24 @@ func _ProjectService_Config_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).Config(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_CWD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).CWD(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/CWD",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).CWD(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -8613,12 +8613,12 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProjectService_Boxes_Handler,
 		},
 		{
-			MethodName: "CWD",
-			Handler:    _ProjectService_CWD_Handler,
-		},
-		{
 			MethodName: "Config",
 			Handler:    _ProjectService_Config_Handler,
+		},
+		{
+			MethodName: "CWD",
+			Handler:    _ProjectService_CWD_Handler,
 		},
 		{
 			MethodName: "DataDir",

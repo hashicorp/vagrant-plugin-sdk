@@ -466,6 +466,64 @@ func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
 	return
 }
 
+// Project server
+
+func (p *projectServer) ActiveTargets(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Project_ActiveTargetsResponse, err error) {
+	targets, err := p.Impl.ActiveTargets()
+	if err != nil {
+		return
+	}
+
+	targetProtos := []*vagrant_plugin_sdk.Args_Target{}
+	for _, t := range targets {
+		tp, err := p.Map(t, (**vagrant_plugin_sdk.Args_Target)(nil))
+		if err != nil {
+			return nil, err
+		}
+		targetProtos = append(targetProtos, tp.(*vagrant_plugin_sdk.Args_Target))
+	}
+	r = &vagrant_plugin_sdk.Project_ActiveTargetsResponse{
+		Targets: targetProtos,
+	}
+	return
+}
+
+func (p *projectServer) Boxes(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
+	boxCollection, err := p.Impl.Boxes()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(boxCollection, (**vagrant_plugin_sdk.Args_BoxCollection)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_BoxCollection)
+	}
+
+	return
+}
+
+func (p *projectServer) Config(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Args_Vagrantfile, err error) {
+	v, err := p.Impl.Config()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := p.Map(v, (**vagrant_plugin_sdk.Args_Vagrantfile)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Vagrantfile)
+	}
+	return
+}
+
 func (p *projectServer) CWD(
 	ctx context.Context,
 	_ *emptypb.Empty,
@@ -480,20 +538,6 @@ func (p *projectServer) CWD(
 	}, nil
 }
 
-func (p *projectServer) Config(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_ConfigResponse, error) {
-	v, err := p.Impl.Config()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_ConfigResponse{
-		Vagrantfile: v,
-	}, nil
-}
-
 func (p *projectServer) DataDir(
 	ctx context.Context,
 	_ *emptypb.Empty,
@@ -505,6 +549,222 @@ func (p *projectServer) DataDir(
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Project)(nil))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_DataDir_Project)
+	}
+
+	return
+}
+
+func (p *projectServer) DefaultPrivateKey(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
+	key, err := p.Impl.DefaultPrivateKey()
+	p.Logger.Warn("private key on project server", "key", key)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse{
+		Key: key,
+	}, nil
+}
+
+func (p *projectServer) DefaultProvider(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_DefaultProviderResponse, error) {
+	provider, err := p.Impl.DefaultProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_DefaultProviderResponse{
+		ProviderName: provider,
+	}, nil
+}
+
+func (p *projectServer) Home(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
+	path, err := p.Impl.Home()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_HomeResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) Host(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Args_Host, err error) {
+	d, err := p.Impl.Host()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Host)
+	}
+
+	return
+}
+
+func (p *projectServer) LocalData(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
+	path, err := p.Impl.LocalData()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Project_LocalDataResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) PrimaryTargetName(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_PrimaryTargetNameResponse, error) {
+	name, err := p.Impl.PrimaryTargetName()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Project_PrimaryTargetNameResponse{
+		Name: name,
+	}, nil
+}
+
+func (p *projectServer) Push(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Project_PushRequest,
+) (*emptypb.Empty, error) {
+	err := p.Impl.Push(in.Name)
+	return &emptypb.Empty{}, err
+}
+
+func (p *projectServer) ResourceId(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_ResourceIdResponse, error) {
+	rid, err := p.Impl.ResourceId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_ResourceIdResponse{
+		ResourceId: rid,
+	}, nil
+}
+
+func (p *projectServer) RootPath(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_RootPathResponse, error) {
+	path, err := p.Impl.RootPath()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_RootPathResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) Target(
+	ctx context.Context,
+	in *vagrant_plugin_sdk.Project_TargetRequest,
+) (r *vagrant_plugin_sdk.Args_Target, err error) {
+	d, err := p.Impl.Target(in.Name)
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Target)(nil))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_Target)
+	}
+
+	return
+}
+
+func (p *projectServer) TargetIds(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_TargetIdsResponse, error) {
+	ids, err := p.Impl.TargetIds()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_TargetIdsResponse{
+		Ids: ids}, nil
+}
+
+func (p *projectServer) TargetIndex(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
+	idx, err := p.Impl.TargetIndex()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := p.Map(idx, (**vagrant_plugin_sdk.Args_TargetIndex)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_TargetIndex)
+	}
+	return
+}
+
+func (p *projectServer) TargetNames(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_TargetNamesResponse, error) {
+	n, err := p.Impl.TargetNames()
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Project_TargetNamesResponse{
+		Names: n}, nil
+}
+
+func (p *projectServer) Tmp(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
+	path, err := p.Impl.Tmp()
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Project_TmpResponse{
+		Path: path,
+	}, nil
+}
+
+func (p *projectServer) UI(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
+	d, err := p.Impl.UI()
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
+		argmapper.Typed(ctx))
+	if err == nil {
+		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
 	}
 
 	return
@@ -535,189 +795,6 @@ func (p *projectServer) VagrantfilePath(
 
 	return &vagrant_plugin_sdk.Project_VagrantfilePathResponse{
 		Path: path.String(),
-	}, nil
-}
-
-func (p *projectServer) UI(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
-	d, err := p.Impl.UI()
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
-		argmapper.Typed(ctx))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
-	}
-
-	return
-}
-
-func (p *projectServer) Home(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
-	path, err := p.Impl.Home()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_HomeResponse{
-		Path: path,
-	}, nil
-}
-
-func (p *projectServer) LocalData(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
-	path, err := p.Impl.LocalData()
-	if err != nil {
-		return nil, err
-	}
-	return &vagrant_plugin_sdk.Project_LocalDataResponse{
-		Path: path,
-	}, nil
-}
-
-func (p *projectServer) Tmp(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
-	path, err := p.Impl.Tmp()
-	if err != nil {
-		return nil, err
-	}
-	return &vagrant_plugin_sdk.Project_TmpResponse{
-		Path: path,
-	}, nil
-}
-
-func (p *projectServer) DefaultPrivateKey(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
-	key, err := p.Impl.DefaultPrivateKey()
-	p.Logger.Warn("private key on project server", "key", key)
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse{
-		Key: key,
-	}, nil
-}
-
-func (p *projectServer) Host(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_Host, err error) {
-	d, err := p.Impl.Host()
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
-		argmapper.Typed(ctx))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Host)
-	}
-
-	return
-}
-
-func (p *projectServer) TargetIndex(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
-	idx, err := p.Impl.TargetIndex()
-	if err != nil {
-		return nil, err
-	}
-
-	result, err := p.Map(idx, (**vagrant_plugin_sdk.Args_TargetIndex)(nil),
-		argmapper.Typed(ctx))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_TargetIndex)
-	}
-	return
-}
-
-func (p *projectServer) Target(
-	ctx context.Context,
-	in *vagrant_plugin_sdk.Project_TargetRequest,
-) (r *vagrant_plugin_sdk.Args_Target, err error) {
-	d, err := p.Impl.Target(in.Name)
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Target)(nil))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Target)
-	}
-
-	return
-}
-
-func (p *projectServer) TargetNames(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_TargetNamesResponse, error) {
-	n, err := p.Impl.TargetNames()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_TargetNamesResponse{
-		Names: n}, nil
-}
-
-func (p *projectServer) TargetIds(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_TargetIdsResponse, error) {
-	ids, err := p.Impl.TargetIds()
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_TargetIdsResponse{
-		Ids: ids}, nil
-}
-
-func (p *projectServer) Boxes(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
-	boxCollection, err := p.Impl.Boxes()
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(boxCollection, (**vagrant_plugin_sdk.Args_BoxCollection)(nil))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_BoxCollection)
-	}
-
-	return
-}
-
-func (p *projectServer) ResourceId(
-	ctx context.Context,
-	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_ResourceIdResponse, error) {
-	rid, err := p.Impl.ResourceId()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &vagrant_plugin_sdk.Project_ResourceIdResponse{
-		ResourceId: rid,
 	}, nil
 }
 

@@ -11,8 +11,8 @@ import (
 type Project interface {
 	ActiveTargets() (targets []Target, err error)
 	Boxes() (boxes BoxCollection, err error)
-	CWD() (path string, err error)
 	Config() (v Vagrantfile, err error)
+	CWD() (path string, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path string, err error)
 	DefaultProvider() (name string, err error)

@@ -1153,8 +1153,8 @@ message Target {
 service ProjectService {
   rpc ActiveTargets(google.protobuf.Empty) returns (Project.ActiveTargetsResponse);
   rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
-  rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
   rpc Config(google.protobuf.Empty) returns (Args.Vagrantfile);
+  rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
   rpc DefaultProvider(google.protobuf.Empty) returns (Project.DefaultProviderResponse);

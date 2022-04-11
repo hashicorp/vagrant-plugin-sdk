@@ -253,14 +253,14 @@ func (_m *Project) LocalData() (string, error) {
 }
 
 // PrimaryTargetName provides a mock function with given fields:
-func (_m *Project) PrimaryTargetName() (error, error) {
+func (_m *Project) PrimaryTargetName() (string, error) {
 	ret := _m.Called()
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func() error); ok {
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
