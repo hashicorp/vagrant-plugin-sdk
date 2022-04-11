@@ -1153,7 +1153,7 @@ message Target {
 service ProjectService {
   rpc ActiveTargets(google.protobuf.Empty) returns (Project.ActiveTargetsResponse);
   rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
-  rpc Config(google.protobuf.Empty) returns (Args.Vagrantfile);
+  rpc Config(google.protobuf.Empty) returns (Project.ConfigResponse);
   rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
@@ -1181,6 +1181,9 @@ service ProjectService {
 message Project {
   message ActiveTargetsResponse {
     repeated Args.Target targets = 1;
+  }
+  message ConfigResponse {
+    Vagrantfile.Vagrantfile vagrantfile = 1;
   }
   message CwdResponse {
     string path = 1;

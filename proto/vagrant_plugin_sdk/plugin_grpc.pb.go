@@ -7863,7 +7863,7 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 type ProjectServiceClient interface {
 	ActiveTargets(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ActiveTargetsResponse, error)
 	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
-	Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error)
+	Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error)
 	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error)
@@ -7911,8 +7911,8 @@ func (c *projectServiceClient) Boxes(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
-func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error) {
-	out := new(Args_Vagrantfile)
+func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error) {
+	out := new(Project_ConfigResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Config", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8097,7 +8097,7 @@ func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *emptypb.
 type ProjectServiceServer interface {
 	ActiveTargets(context.Context, *emptypb.Empty) (*Project_ActiveTargetsResponse, error)
 	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
-	Config(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error)
+	Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error)
 	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error)
@@ -8129,7 +8129,7 @@ func (UnimplementedProjectServiceServer) ActiveTargets(context.Context, *emptypb
 func (UnimplementedProjectServiceServer) Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
 }
-func (UnimplementedProjectServiceServer) Config(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error) {
+func (UnimplementedProjectServiceServer) Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
 }
 func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {

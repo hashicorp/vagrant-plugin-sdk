@@ -5,13 +5,14 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 type Project interface {
 	ActiveTargets() (targets []Target, err error)
 	Boxes() (boxes BoxCollection, err error)
-	Config() (v Vagrantfile, err error)
+	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
 	CWD() (path string, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path string, err error)

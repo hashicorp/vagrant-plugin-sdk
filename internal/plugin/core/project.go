@@ -127,7 +127,7 @@ func (p *projectClient) CWD() (path string, err error) {
 	return
 }
 
-func (p *projectClient) Config() (v core.Vagrantfile, err error) {
+func (p *projectClient) Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get config",
@@ -140,14 +140,7 @@ func (p *projectClient) Config() (v core.Vagrantfile, err error) {
 		return nil, err
 	}
 
-	result, err := p.Map(r, (*core.Vagrantfile)(nil),
-		argmapper.Typed(p.Ctx),
-	)
-	if err == nil {
-		v = result.(core.Vagrantfile)
-	}
-
-	return
+	return r.Vagrantfile, nil
 }
 
 func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
@@ -511,17 +504,15 @@ func (p *projectServer) Boxes(
 func (p *projectServer) Config(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (r *vagrant_plugin_sdk.Args_Vagrantfile, err error) {
+) (*vagrant_plugin_sdk.Project_ConfigResponse, error) {
 	v, err := p.Impl.Config()
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := p.Map(v, (**vagrant_plugin_sdk.Args_Vagrantfile)(nil))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Vagrantfile)
-	}
-	return
+	return &vagrant_plugin_sdk.Project_ConfigResponse{
+		Vagrantfile: v,
+	}, nil
 }
 
 func (p *projectServer) CWD(
