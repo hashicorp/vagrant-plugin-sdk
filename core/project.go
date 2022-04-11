@@ -2,10 +2,9 @@ package core
 
 import (
 	"io"
-	//	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -13,14 +12,14 @@ type Project interface {
 	ActiveTargets() (targets []Target, err error)
 	Boxes() (boxes BoxCollection, err error)
 	CWD() (path string, err error)
-	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
+	Config() (v Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path string, err error)
 	DefaultProvider() (name string, err error)
 	Home() (path string, err error)
 	Host() (h Host, err error)
 	LocalData() (path string, err error)
-	PrimaryTargetName() string
+	PrimaryTargetName() (string, err error)
 	Push(name string) error
 	ResourceId() (string, error)
 	RootPath() (path string, err error)
@@ -32,7 +31,6 @@ type Project interface {
 	UI() (ui terminal.UI, err error)
 	VagrantfileName() (name string, err error)
 	VagrantfilePath() (p path.Path, err error)
-	Vagrantfile() (v Vagrantfile, err error)
 
 	// Not entirely sure if these are needed yet
 	// Lock(name string) (err error)

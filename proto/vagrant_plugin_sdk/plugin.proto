@@ -204,6 +204,12 @@ message Args {
     string addr = 3;
   }
 
+  message Vagrantfile {
+    uint32 stream_id = 1;
+    string network = 2;
+    string addr = 3;
+  }
+
   message Connection {
     message SSHInfo {
       optional string host = 1;
@@ -1145,33 +1151,63 @@ message Target {
 * Project services
 ********************************************************************/
 service ProjectService {
-  rpc MachineNames(google.protobuf.Empty) returns (Project.MachineNamesResponse);
-  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
-  // rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
+  rpc ActiveTargets(google.protobuf.Empty) returns (Project.ActiveTargetsResponse);
+  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
   rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
-  rpc Config(google.protobuf.Empty) returns (Project.ConfigResponse);
+  rpc Config(google.protobuf.Empty) returns (Args.Vagrantfile);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
+  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
+  rpc DefaultProvider(google.protobuf.Empty) returns (Project.DefaultProviderResponse);
+  rpc Home(google.protobuf.Empty) returns (Project.HomeResponse);
+  rpc Host(google.protobuf.Empty) returns (Args.Host);
+  rpc LocalData(google.protobuf.Empty) returns (Project.LocalDataResponse);
+  rpc PrimaryTargetName(google.protobuf.Empty) returns (Project.PrimaryTargetNameResponse);
+  rpc Push(Project.PushRequest) returns (google.protobuf.Empty);
+  rpc ResourceId(google.protobuf.Empty) returns (Project.ResourceIdResponse);
+  rpc RootPath(google.protobuf.Empty) returns (Project.RootPathResponse);
+  rpc Target(Project.TargetRequest) returns (Args.Target);
+  rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
+  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+  rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
+  rpc Tmp(google.protobuf.Empty) returns (Project.TmpResponse);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc VagrantfileName(google.protobuf.Empty) returns (Project.VagrantfileNameResponse);
   rpc VagrantfilePath(google.protobuf.Empty) returns (Project.VagrantfilePathResponse);
-  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
-  rpc Home(google.protobuf.Empty) returns (Project.HomeResponse);
-  rpc LocalData(google.protobuf.Empty) returns (Project.LocalDataResponse);
-  rpc Tmp(google.protobuf.Empty) returns (Project.TmpResponse);
-  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
-  rpc Host(google.protobuf.Empty) returns (Args.Host);
-  rpc Target(Project.TargetRequest) returns (Args.Target);
-  rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
-  rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
-  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
-  rpc ResourceId(google.protobuf.Empty) returns (Project.ResourceIdResponse);
 }
 
 /*******************************************************
  * Project message used with Project service
  *******************************************************/
 message Project {
+  message ActiveTargetsResponse {
+    repeated Args.Target targets = 1;
+  }
+  message CwdResponse {
+    string path = 1;
+  }
+  message DefaultPrivateKeyResponse {
+    string key = 1;
+  }
+  message DefaultProviderResponse {
+    string provider_name = 1;
+  }
+  message HomeResponse {
+    string path = 1;
+  }
+  message LocalDataResponse {
+    string path = 1;
+  }
+  message PrimaryTargetNameResponse {
+    string name = 1;
+  }
+  message PushRequest {
+    string name = 1;
+  }
   message ResourceIdResponse {
     string resource_id = 1;
+  }
+  message RootPathResponse {
+    string path = 1;
   }
   message TargetRequest {
     string name = 1;
@@ -1182,39 +1218,14 @@ message Project {
   message TargetIdsResponse {
     repeated string ids = 1;
   }
-  message MachineAndProvider {
-    string name = 1;
-    string provider = 2;
-  }
-  message MachineNamesResponse {
-    repeated string names = 1;
-  }
-  message ActiveMachinesResponse {
-    repeated MachineAndProvider machines = 1;
-  }
-  message CwdResponse {
+  message TmpResponse {
     string path = 1;
-  }
-  message ConfigResponse {
-    Vagrantfile.Vagrantfile vagrantfile = 1;
   }
   message VagrantfileNameResponse {
     string name = 1;
   }
   message VagrantfilePathResponse {
     string path = 1;
-  }
-  message HomeResponse {
-    string path = 1;
-  }
-  message LocalDataResponse {
-    string path = 1;
-  }
-  message TmpResponse {
-    string path = 1;
-  }
-  message DefaultPrivateKeyResponse {
-    string key = 1;
   }
 }
 
