@@ -10,15 +10,20 @@ import (
 )
 
 type Project interface {
-	// accessors
+	ActiveTargets() (targets []Target, err error)
+	Boxes() (boxes BoxCollection, err error)
 	CWD() (path string, err error)
 	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path string, err error)
+	DefaultProvider() (name string, err error)
 	Home() (path string, err error)
 	Host() (h Host, err error)
 	LocalData() (path string, err error)
+	PrimaryTargetName() string
+	Push(name string) error
 	ResourceId() (string, error)
+	RootPath() (path string, err error)
 	Target(name string) (t Target, err error)
 	TargetIds() (ids []string, err error)
 	TargetIndex() (index TargetIndex, err error)
@@ -27,28 +32,12 @@ type Project interface {
 	UI() (ui terminal.UI, err error)
 	VagrantfileName() (name string, err error)
 	VagrantfilePath() (p path.Path, err error)
+	Vagrantfile() (v Vagrantfile, err error)
 
-	// actual workers
-	// Inspect() (printable string, err error)
-	// ActiveMachines() (machines []Machine, err error)
-	// DefaultProvider() (name string, err error)
-	// CanInstallProvider() (can bool, err error)
-	// InstallProvider() (err error)
-	Boxes() (boxes BoxCollection, err error)
-	// Project(v Vagrantfile) (env Project, err error)
-	// Hook(name string) (err error)
-
+	// Not entirely sure if these are needed yet
 	// Lock(name string) (err error)
 	// Unlock(name string) (err error)
-	// Push ?
-	// Machine(name, provider string, refresh bool) (machine Machine, err error)
-
-	// PrimaryMachineName() (name string, err error)
-	// RootPath() (path string, err error)
 	// Unload() (err error)
-	// Vagrantfile() (v Vagrantfile, err error)
-	// SetupHomePath() (homePath string, err error) // TODO(spox): do we need this? probably not
-	// SetupLocalDataPath(force bool) (err error)   // TODO(spox): do we need this? - probably not
 
 	io.Closer
 }

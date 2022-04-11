@@ -20,6 +20,29 @@ type Project struct {
 	mock.Mock
 }
 
+// ActiveTargets provides a mock function with given fields:
+func (_m *Project) ActiveTargets() ([]core.Target, error) {
+	ret := _m.Called()
+
+	var r0 []core.Target
+	if rf, ok := ret.Get(0).(func() []core.Target); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Target)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Boxes provides a mock function with given fields:
 func (_m *Project) Boxes() (core.BoxCollection, error) {
 	ret := _m.Called()
@@ -145,6 +168,27 @@ func (_m *Project) DefaultPrivateKey() (string, error) {
 	return r0, r1
 }
 
+// DefaultProvider provides a mock function with given fields:
+func (_m *Project) DefaultProvider() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Home provides a mock function with given fields:
 func (_m *Project) Home() (string, error) {
 	ret := _m.Called()
@@ -210,8 +254,57 @@ func (_m *Project) LocalData() (string, error) {
 	return r0, r1
 }
 
+// PrimaryTargetName provides a mock function with given fields:
+func (_m *Project) PrimaryTargetName() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
+// Push provides a mock function with given fields: name
+func (_m *Project) Push(name string) error {
+	ret := _m.Called(name)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(name)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // ResourceId provides a mock function with given fields:
 func (_m *Project) ResourceId() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RootPath provides a mock function with given fields:
+func (_m *Project) RootPath() (string, error) {
 	ret := _m.Called()
 
 	var r0 string
@@ -354,6 +447,29 @@ func (_m *Project) UI() (terminal.UI, error) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(terminal.UI)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Vagrantfile provides a mock function with given fields:
+func (_m *Project) Vagrantfile() (core.Vagrantfile, error) {
+	ret := _m.Called()
+
+	var r0 core.Vagrantfile
+	if rf, ok := ret.Get(0).(func() core.Vagrantfile); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.Vagrantfile)
 		}
 	}
 
