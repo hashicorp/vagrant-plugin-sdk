@@ -61,297 +61,28 @@ type projectServer struct {
 	vagrant_plugin_sdk.UnimplementedProjectServiceServer
 }
 
-func (p *projectClient) CWD() (path string, err error) {
+func (p *projectClient) ActiveTargets() (targets []core.Target, err error) {
 	defer func() {
 		if err != nil {
-			p.Logger.Error("failed to get current working directory",
+			p.Logger.Error("failed to get active targets",
 				"error", err,
 			)
 		}
 	}()
-
-	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		path = r.Path
+	resp, err := p.client.ActiveTargets(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
 	}
 
-	return
-}
-
-func (p *projectClient) Config() (*vagrant_plugin_sdk.Vagrantfile_Vagrantfile, error) {
-	r, err := p.client.Config(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		p.Logger.Error("failed to config",
-			"error", err,
+	targets = []core.Target{}
+	for _, t := range resp.Targets {
+		coreTarget, err := p.Map(t, (*core.Target)(nil),
+			argmapper.Typed(p.Ctx),
 		)
-
-		return nil, err
-	}
-
-	return r.Vagrantfile, nil
-}
-
-func (p *projectClient) ResourceId() (rid string, err error) {
-	defer func() {
 		if err != nil {
-			p.Logger.Error("failed to get resource id",
-				"error", err,
-			)
+			return nil, err
 		}
-	}()
-
-	r, err := p.client.ResourceId(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		rid = r.ResourceId
-	}
-
-	return
-}
-
-func (p *projectClient) Target(name string) (t core.Target, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get target",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
-		Name: name,
-	})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*core.Target)(nil),
-		argmapper.Typed(p.Ctx))
-	if err == nil {
-		t = result.(core.Target)
-	}
-	return
-}
-
-func (p *projectClient) TargetNames() (names []string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get target names",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.TargetNames(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		names = r.Names
-	}
-
-	return
-}
-
-func (p *projectClient) TargetIds() (ids []string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get target ids",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.TargetIds(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		ids = r.Ids
-	}
-
-	return
-}
-
-func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get data directory",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.DataDir(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (**datadir.Project)(nil))
-	if err == nil {
-		dir = result.(*datadir.Project)
-	}
-
-	return
-}
-
-func (p *projectClient) VagrantfileName() (name string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get vagrantfile name",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.VagrantfileName(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		name = r.Name
-	}
-
-	return
-}
-
-func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get vagrantfile path",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.VagrantfilePath(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		pp = path.NewPath(r.Path)
-	}
-	return
-}
-
-func (p *projectClient) UI() (ui terminal.UI, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get ui",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.UI(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*terminal.UI)(nil),
-		argmapper.Typed(p.Ctx))
-	if err == nil {
-		ui = result.(terminal.UI)
-	}
-
-	return
-}
-
-func (p *projectClient) Home() (path string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get home directory",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.Home(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		path = r.Path
-	}
-
-	return
-}
-func (p *projectClient) LocalData() (path string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get local data directory",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.LocalData(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		path = r.Path
-	}
-
-	return
-}
-
-func (p *projectClient) Tmp() (path string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get temporary directory",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.Tmp(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		path = r.Path
-	}
-
-	return
-}
-
-func (p *projectClient) DefaultPrivateKey() (path string, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get default private key",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
-	if err == nil {
-		path = r.Key
-	}
-
-	return
-}
-
-func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get target index",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.TargetIndex(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*core.TargetIndex)(nil),
-		argmapper.Typed(p.Ctx))
-	if err == nil {
-		index = result.(core.TargetIndex)
-	}
-	return
-}
-
-func (p *projectClient) Host() (h core.Host, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get host",
-				"error", err,
-			)
-		}
-	}()
-
-	r, err := p.client.Host(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return
-	}
-
-	result, err := p.Map(r, (*core.Host)(nil),
-		argmapper.Typed(p.Ctx),
-	)
-	if err == nil {
-		h = result.(core.Host)
+		targets = append(targets, coreTarget.(core.Target))
 	}
 
 	return
@@ -365,7 +96,6 @@ func (p *projectClient) Boxes() (b core.BoxCollection, err error) {
 			)
 		}
 	}()
-
 	r, err := p.client.Boxes(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -381,16 +111,367 @@ func (p *projectClient) Boxes() (b core.BoxCollection, err error) {
 	return
 }
 
+func (p *projectClient) CWD() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get cwd",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Path
+	}
+
+	return
+}
+
+func (p *projectClient) Config() (v core.Vagrantfile, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get config",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.Config(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := p.Map(r, (*core.Vagrantfile)(nil),
+		argmapper.Typed(p.Ctx),
+	)
+	if err == nil {
+		v = result.(core.Vagrantfile)
+	}
+
+	return
+}
+
+func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get datadir",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.DataDir(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (**datadir.Project)(nil))
+	if err == nil {
+		dir = result.(*datadir.Project)
+	}
+
+	return
+}
+
+func (p *projectClient) DefaultPrivateKey() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get default private key",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Key
+	}
+
+	return
+}
+
+func (p *projectClient) DefaultProvider() (name string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get default provider",
+				"error", err,
+			)
+		}
+	}()
+	d, err := p.client.DefaultProvider(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		name = d.ProviderName
+	}
+
+	return
+}
+
+func (p *projectClient) Home() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get home path",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.Home(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Path
+	}
+
+	return
+}
+
+func (p *projectClient) Host() (h core.Host, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get host",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.Host(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.Host)(nil),
+		argmapper.Typed(p.Ctx),
+	)
+	if err == nil {
+		h = result.(core.Host)
+	}
+
+	return
+}
+
+func (p *projectClient) LocalData() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get local data path",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.LocalData(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Path
+	}
+
+	return
+}
+
+func (p *projectClient) PrimaryTargetName() (t string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get primary target name",
+				"error", err,
+			)
+		}
+	}()
+	resp, err := p.client.PrimaryTargetName(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		t = resp.Name
+	}
+
+	return
+}
+
+func (p *projectClient) Push(name string) (err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to push",
+				"error", err,
+			)
+		}
+	}()
+	_, err = p.client.Push(p.Ctx,
+		&vagrant_plugin_sdk.Project_PushRequest{Name: name},
+	)
+	return
+}
+
+func (p *projectClient) ResourceId() (rid string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get resource id",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.ResourceId(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		rid = r.ResourceId
+	}
+
+	return
+}
+
+func (p *projectClient) RootPath() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get root path",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.RootPath(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Path
+	}
+
+	return
+}
+
+func (p *projectClient) Target(name string) (t core.Target, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target",
+				name,
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
+		Name: name,
+	})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.Target)(nil),
+		argmapper.Typed(p.Ctx))
+	if err == nil {
+		t = result.(core.Target)
+	}
+	return
+}
+
+func (p *projectClient) TargetIds() (ids []string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target ids",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.TargetIds(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		ids = r.Ids
+	}
+
+	return
+}
+
+func (p *projectClient) TargetIndex() (index core.TargetIndex, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target index",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.TargetIndex(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*core.TargetIndex)(nil),
+		argmapper.Typed(p.Ctx))
+	if err == nil {
+		index = result.(core.TargetIndex)
+	}
+	return
+}
+
+func (p *projectClient) TargetNames() (names []string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target names",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.TargetNames(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		names = r.Names
+	}
+
+	return
+}
+
+func (p *projectClient) Tmp() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get temp path",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.Tmp(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		path = r.Path
+	}
+
+	return
+}
+
+func (p *projectClient) UI() (ui terminal.UI, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get ui",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.UI(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return
+	}
+
+	result, err := p.Map(r, (*terminal.UI)(nil),
+		argmapper.Typed(p.Ctx))
+	if err == nil {
+		ui = result.(terminal.UI)
+	}
+
+	return
+}
+
+func (p *projectClient) VagrantfileName() (name string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get Vagrantfile name",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.VagrantfileName(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		name = r.Name
+	}
+
+	return
+}
+
+func (p *projectClient) VagrantfilePath() (pp path.Path, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get Vagrantfile path",
+				"error", err,
+			)
+		}
+	}()
+	r, err := p.client.VagrantfilePath(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		pp = path.NewPath(r.Path)
+	}
+	return
+}
+
 func (p *projectServer) CWD(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_CwdResponse, error) {
 	c, err := p.Impl.CWD()
 	if err != nil {
-		p.Logger.Error("failed to get current working directory",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -405,10 +486,6 @@ func (p *projectServer) Config(
 ) (*vagrant_plugin_sdk.Project_ConfigResponse, error) {
 	v, err := p.Impl.Config()
 	if err != nil {
-		p.Logger.Error("failed to get config",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -421,19 +498,10 @@ func (p *projectServer) DataDir(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Project, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get data directory",
-				"error", err,
-			)
-		}
-	}()
-
 	d, err := p.Impl.DataDir()
 	if err != nil {
 		return
 	}
-
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Project)(nil))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_DataDir_Project)
@@ -448,10 +516,6 @@ func (p *projectServer) VagrantfileName(
 ) (*vagrant_plugin_sdk.Project_VagrantfileNameResponse, error) {
 	name, err := p.Impl.VagrantfileName()
 	if err != nil {
-		p.Logger.Error("failed to get vagrantfile name",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -466,10 +530,6 @@ func (p *projectServer) VagrantfilePath(
 ) (*vagrant_plugin_sdk.Project_VagrantfilePathResponse, error) {
 	path, err := p.Impl.VagrantfilePath()
 	if err != nil {
-		p.Logger.Error("failed to get vagrantfile path",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -484,10 +544,6 @@ func (p *projectServer) UI(
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
 	d, err := p.Impl.UI()
 	if err != nil {
-		p.Logger.Error("failed to get ui",
-			"error", err,
-		)
-
 		return
 	}
 
@@ -506,10 +562,6 @@ func (p *projectServer) Home(
 ) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
 	path, err := p.Impl.Home()
 	if err != nil {
-		p.Logger.Error("failed to get home directory",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -524,13 +576,8 @@ func (p *projectServer) LocalData(
 ) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
 	path, err := p.Impl.LocalData()
 	if err != nil {
-		p.Logger.Error("failed to get local data directory",
-			"error", err,
-		)
-
 		return nil, err
 	}
-
 	return &vagrant_plugin_sdk.Project_LocalDataResponse{
 		Path: path,
 	}, nil
@@ -542,13 +589,8 @@ func (p *projectServer) Tmp(
 ) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
 	path, err := p.Impl.Tmp()
 	if err != nil {
-		p.Logger.Error("failed to get tmp directory",
-			"error", err,
-		)
-
 		return nil, err
 	}
-
 	return &vagrant_plugin_sdk.Project_TmpResponse{
 		Path: path,
 	}, nil
@@ -559,11 +601,8 @@ func (p *projectServer) DefaultPrivateKey(
 	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
 	key, err := p.Impl.DefaultPrivateKey()
+	p.Logger.Warn("private key on project server", "key", key)
 	if err != nil {
-		p.Logger.Error("failed to get default private key",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -578,10 +617,6 @@ func (p *projectServer) Host(
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	d, err := p.Impl.Host()
 	if err != nil {
-		p.Logger.Error("failed to get host",
-			"error", err,
-		)
-
 		return
 	}
 
@@ -600,10 +635,6 @@ func (p *projectServer) TargetIndex(
 ) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
 	idx, err := p.Impl.TargetIndex()
 	if err != nil {
-		p.Logger.Error("failed to get target index",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -621,10 +652,6 @@ func (p *projectServer) Target(
 ) (r *vagrant_plugin_sdk.Args_Target, err error) {
 	d, err := p.Impl.Target(in.Name)
 	if err != nil {
-		p.Logger.Error("failed to get target",
-			"error", err,
-		)
-
 		return
 	}
 
@@ -642,10 +669,6 @@ func (p *projectServer) TargetNames(
 ) (*vagrant_plugin_sdk.Project_TargetNamesResponse, error) {
 	n, err := p.Impl.TargetNames()
 	if err != nil {
-		p.Logger.Error("failed to get target names",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -659,10 +682,6 @@ func (p *projectServer) TargetIds(
 ) (*vagrant_plugin_sdk.Project_TargetIdsResponse, error) {
 	ids, err := p.Impl.TargetIds()
 	if err != nil {
-		p.Logger.Error("failed to get target ids",
-			"error", err,
-		)
-
 		return nil, err
 	}
 
@@ -676,10 +695,6 @@ func (p *projectServer) Boxes(
 ) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
 	boxCollection, err := p.Impl.Boxes()
 	if err != nil {
-		p.Logger.Error("failed to get boxes",
-			"error", err,
-		)
-
 		return
 	}
 
@@ -698,10 +713,6 @@ func (p *projectServer) ResourceId(
 	rid, err := p.Impl.ResourceId()
 
 	if err != nil {
-		p.Logger.Error("resource id lookup failed",
-			"error", err,
-		)
-
 		return nil, err
 	}
 

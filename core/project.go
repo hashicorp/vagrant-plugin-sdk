@@ -19,7 +19,7 @@ type Project interface {
 	Home() (path string, err error)
 	Host() (h Host, err error)
 	LocalData() (path string, err error)
-	PrimaryTargetName() (string, err error)
+	PrimaryTargetName() (name string, err error)
 	Push(name string) error
 	ResourceId() (string, error)
 	RootPath() (path string, err error)
