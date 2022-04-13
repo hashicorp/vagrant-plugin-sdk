@@ -131,6 +131,14 @@ func (t *targetIndexServer) Delete(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (empty *empty.Empty, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to delete target from index",
+				"error", err,
+			)
+		}
+	}()
+
 	err = t.Impl.Delete(in.Id)
 	return
 }
@@ -139,6 +147,14 @@ func (t *targetIndexServer) Get(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (target *vagrant_plugin_sdk.Args_Target, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get target from index",
+				"error", err,
+			)
+		}
+	}()
+
 	tar, err := t.Impl.Get(in.Id)
 	if err != nil {
 		return nil, err
@@ -155,6 +171,14 @@ func (t *targetIndexServer) Includes(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (result *vagrant_plugin_sdk.TargetIndex_IncludesResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to check inclusion in index",
+				"error", err,
+			)
+		}
+	}()
+
 	resp, err := t.Impl.Includes(in.Id)
 	if err != nil {
 		return nil, err
@@ -169,6 +193,14 @@ func (t *targetIndexServer) Set(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Args_Target,
 ) (target *vagrant_plugin_sdk.Args_Target, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to set target index",
+				"error", err,
+			)
+		}
+	}()
+
 	targetIn, err := t.Map(in, (*core.Target)(nil),
 		argmapper.Typed(ctx))
 
@@ -188,10 +220,19 @@ func (t *targetIndexServer) All(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.TargetIndex_AllResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get target index list",
+				"error", err,
+			)
+		}
+	}()
+
 	targets, err := t.Impl.All()
 	argsTargets := []*vagrant_plugin_sdk.Args_Target{}
 	for _, target := range targets {
-		result, err := t.Map(target, (**vagrant_plugin_sdk.Args_Target)(nil))
+		var result interface{}
+		result, err = t.Map(target, (**vagrant_plugin_sdk.Args_Target)(nil))
 		if err != nil {
 			return nil, err
 		}

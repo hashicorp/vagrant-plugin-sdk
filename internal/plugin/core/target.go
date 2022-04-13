@@ -271,7 +271,15 @@ func (t *targetClient) Destroy() (err error) {
 func (s *targetServer) Communicate(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Args_Communicator, error) {
+) (_ *vagrant_plugin_sdk.Args_Communicator, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target communicator",
+				"error", err,
+			)
+		}
+	}()
+
 	c, err := s.Impl.Communicate()
 	if err != nil {
 		return nil, fmt.Errorf("error getting the communicator, %w", err)
@@ -289,6 +297,14 @@ func (s *targetServer) Name(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target name",
+				"error", err,
+			)
+		}
+	}()
+
 	n, err := s.Impl.Name()
 	if err == nil {
 		r = &vagrant_plugin_sdk.Target_NameResponse{Name: n}
@@ -302,6 +318,10 @@ func (t *targetServer) SetName(
 	in *vagrant_plugin_sdk.Target_SetNameRequest,
 ) (*empty.Empty, error) {
 	if err := t.Impl.SetName(in.Name); err != nil {
+		t.Logger.Error("failed to set target name",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -312,6 +332,14 @@ func (t *targetServer) Provider(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_Provider, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get target provider",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := t.Impl.Provider()
 	if err != nil {
 		return
@@ -330,6 +358,14 @@ func (t *targetServer) ProviderName(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get target provider name",
+				"error", err,
+			)
+		}
+	}()
+
 	pn, err := t.Impl.ProviderName()
 	if err == nil {
 		r = &vagrant_plugin_sdk.Target_NameResponse{Name: pn}
@@ -344,6 +380,10 @@ func (t *targetServer) UpdatedAt(
 ) (*vagrant_plugin_sdk.Target_UpdatedAtResponse, error) {
 	u, err := t.Impl.UpdatedAt()
 	if err != nil {
+		t.Logger.Error("failed to get target updated at time",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -355,6 +395,14 @@ func (s *targetServer) ResourceId(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Target_ResourceIdResponse, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target resource id",
+				"error", err,
+			)
+		}
+	}()
+
 	rid, err := s.Impl.ResourceId()
 	if err == nil {
 		r = &vagrant_plugin_sdk.Target_ResourceIdResponse{ResourceId: rid}
@@ -366,7 +414,15 @@ func (s *targetServer) ResourceId(
 func (s *targetServer) Project(
 	ctx context.Context,
 	_ *empty.Empty,
-) (*vagrant_plugin_sdk.Args_Project, error) {
+) (_ *vagrant_plugin_sdk.Args_Project, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target project",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := s.Impl.Project()
 	if err != nil {
 		return nil, err
@@ -384,6 +440,14 @@ func (s *targetServer) Metadata(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_MetadataSet, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target metadata",
+				"error", err,
+			)
+		}
+	}()
+
 	m, err := s.Impl.Metadata()
 	if err != nil {
 		return
@@ -401,12 +465,21 @@ func (s *targetServer) DataDir(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Target, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target data directory",
+				"error", err,
+			)
+		}
+	}()
+
 	d, err := s.Impl.DataDir()
 	if err != nil {
 		return
 	}
 	if d != nil {
-		result, err := s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
+		var result interface{}
+		result, err = s.Map(d, (**vagrant_plugin_sdk.Args_DataDir_Target)(nil))
 		if err != nil {
 			return nil, err
 		}
@@ -421,6 +494,14 @@ func (s *targetServer) State(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_Target_State, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target state",
+				"error", err,
+			)
+		}
+	}()
+
 	st, err := s.Impl.State()
 	if err != nil {
 		return
@@ -438,6 +519,14 @@ func (s *targetServer) Record(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Target_RecordResponse, err error) {
+	defer func() {
+		if err != nil {
+			s.Logger.Error("failed to get target ui",
+				"error", err,
+			)
+		}
+	}()
+
 	record, err := s.Impl.Record()
 	if err == nil {
 		r = &vagrant_plugin_sdk.Target_RecordResponse{Record: record}
@@ -450,6 +539,14 @@ func (t *targetServer) UI(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get target ui",
+				"error", err,
+			)
+		}
+	}()
+
 	d, err := t.Impl.UI()
 	if err != nil {
 		return
@@ -469,6 +566,11 @@ func (t *targetServer) SetUUID(
 	in *vagrant_plugin_sdk.Target_SetUUIDRequest,
 ) (*empty.Empty, error) {
 	err := t.Impl.SetUUID(in.Uuid)
+	if err != nil {
+		t.Logger.Error("failed to set target uuid",
+			"error", err,
+		)
+	}
 	return &empty.Empty{}, err
 }
 
@@ -478,6 +580,10 @@ func (t *targetServer) GetUUID(
 ) (*vagrant_plugin_sdk.Target_GetUUIDResponse, error) {
 	uuid, err := t.Impl.GetUUID()
 	if err != nil {
+		t.Logger.Error("failed to get target uuid",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -489,9 +595,18 @@ func (t *targetServer) Specialize(
 	ctx context.Context,
 	in *any.Any,
 ) (r *any.Any, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to specialize target",
+				"error", err,
+			)
+		}
+	}()
+
 	mc, ok := t.Impl.(interface{ Machine() core.Machine })
 	if !ok {
-		return nil, errors.New("could not specialize to machine")
+		err = errors.New("could not specialize to machine")
+		return
 	}
 
 	result, err := t.Map(mc.Machine(), (**vagrant_plugin_sdk.Args_Target_Machine)(nil),

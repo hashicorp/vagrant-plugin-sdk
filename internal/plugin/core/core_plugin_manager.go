@@ -46,6 +46,14 @@ type corePluginManagerClient struct {
 }
 
 func (p *corePluginManagerClient) GetPlugin(pluginType core.Type) (plg interface{}, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get plugin",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.GetPlugin(p.Ctx, &vagrant_plugin_sdk.CorePluginManager_GetPluginRequest{
 		Type: core.TypeStringMap[pluginType],
 	})
@@ -66,6 +74,14 @@ type corePluginManagerServer struct {
 func (p *corePluginManagerServer) GetPlugin(
 	ctx context.Context, in *vagrant_plugin_sdk.CorePluginManager_GetPluginRequest,
 ) (plg *vagrant_plugin_sdk.CorePluginManager_GetPluginResponse, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get plugin",
+				"error", err,
+			)
+		}
+	}()
+
 	var pluginType core.Type
 	for k, v := range core.TypeStringMap {
 		if v == in.Type {

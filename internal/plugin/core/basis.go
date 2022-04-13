@@ -55,6 +55,14 @@ type basisServer struct {
 }
 
 func (p *basisClient) Boxes() (b core.BoxCollection, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get boxes",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.Boxes(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -71,6 +79,14 @@ func (p *basisClient) Boxes() (b core.BoxCollection, err error) {
 }
 
 func (p *basisClient) CWD() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get current working directory",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
@@ -80,6 +96,14 @@ func (p *basisClient) CWD() (path string, err error) {
 }
 
 func (p *basisClient) DefaultPrivateKey() (path string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get default private key",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		path = r.Path
@@ -89,6 +113,14 @@ func (p *basisClient) DefaultPrivateKey() (path string, err error) {
 }
 
 func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get data directory",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.DataDir(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -103,6 +135,14 @@ func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
 }
 
 func (p *basisClient) Host() (h core.Host, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get host",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.Host(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -117,6 +157,14 @@ func (p *basisClient) Host() (h core.Host, err error) {
 }
 
 func (p *basisClient) TargetIndex() (index core.TargetIndex, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target index",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.TargetIndex(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -131,6 +179,14 @@ func (p *basisClient) TargetIndex() (index core.TargetIndex, err error) {
 }
 
 func (p *basisClient) UI() (ui terminal.UI, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get ui",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := p.client.UI(p.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
@@ -148,6 +204,14 @@ func (p *basisServer) Boxes(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_BoxCollection, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get boxes",
+				"error", err,
+			)
+		}
+	}()
+
 	boxCollection, err := p.Impl.Boxes()
 	if err != nil {
 		return
@@ -167,6 +231,10 @@ func (p *basisServer) CWD(
 ) (*vagrant_plugin_sdk.Args_Path, error) {
 	c, err := p.Impl.CWD()
 	if err != nil {
+		p.Logger.Error("failed to get current working directory",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -179,6 +247,14 @@ func (p *basisServer) DataDir(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Basis, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get data directory",
+				"error", err,
+			)
+		}
+	}()
+
 	d, err := p.Impl.DataDir()
 	if err != nil {
 		return
@@ -198,6 +274,10 @@ func (p *basisServer) DefaultPrivateKey(
 ) (*vagrant_plugin_sdk.Args_Path, error) {
 	c, err := p.Impl.DefaultPrivateKey()
 	if err != nil {
+		p.Logger.Error("failed to get default private key",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -210,6 +290,14 @@ func (p *basisServer) Host(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get host",
+				"error", err,
+			)
+		}
+	}()
+
 	d, err := p.Impl.Host()
 	if err != nil {
 		return
@@ -228,9 +316,17 @@ func (p *basisServer) TargetIndex(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TargetIndex, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get target index",
+				"error", err,
+			)
+		}
+	}()
+
 	idx, err := p.Impl.TargetIndex()
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	result, err := p.Map(idx, (**vagrant_plugin_sdk.Args_TargetIndex)(nil),
@@ -241,16 +337,24 @@ func (p *basisServer) TargetIndex(
 	return
 }
 
-func (t *basisServer) UI(
+func (p *basisServer) UI(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
-	d, err := t.Impl.UI()
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get ui",
+				"error", err,
+			)
+		}
+	}()
+
+	d, err := p.Impl.UI()
 	if err != nil {
 		return
 	}
 
-	result, err := t.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
+	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_TerminalUI)(nil),
 		argmapper.Typed(ctx))
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_TerminalUI)
