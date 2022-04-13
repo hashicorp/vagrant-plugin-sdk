@@ -48,6 +48,9 @@ type boxMetadataClient struct {
 func (b *boxMetadataClient) BoxName() (name string) {
 	n, err := b.client.BoxName(b.Ctx, &emptypb.Empty{})
 	if err != nil {
+		b.Logger.Error("failed to get box name",
+			"error", err,
+		)
 		return
 	}
 	return n.Name
@@ -55,10 +58,24 @@ func (b *boxMetadataClient) BoxName() (name string) {
 
 func (b *boxMetadataClient) LoadMetadata(url string) (err error) {
 	_, err = b.client.LoadMetadata(b.Ctx, &vagrant_plugin_sdk.BoxMetadata_LoadMetadataRequest{Url: url})
+	if err != nil {
+		b.Logger.Error("failed to load metadata",
+			"error", err,
+		)
+	}
+
 	return
 }
 
 func (b *boxMetadataClient) Version(version string, opts ...*core.BoxProvider) (ver *core.BoxVersion, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box version",
+				"error", err,
+			)
+		}
+	}()
+
 	boxMetadataOpts := []*vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts{}
 	for _, o := range opts {
 		var bmo *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
@@ -83,6 +100,14 @@ func (b *boxMetadataClient) Version(version string, opts ...*core.BoxProvider) (
 }
 
 func (b *boxMetadataClient) ListVersions(opts ...*core.BoxProvider) (versions []string, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to list box versions",
+				"error", err,
+			)
+		}
+	}()
+
 	boxMetadataOpts := []*vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts{}
 	for _, o := range opts {
 		var bmo *vagrant_plugin_sdk.BoxMetadata_BoxMetadataOpts
@@ -106,6 +131,14 @@ func (b *boxMetadataClient) ListVersions(opts ...*core.BoxProvider) (versions []
 }
 
 func (b *boxMetadataClient) Provider(version string, name string) (provider *core.BoxProvider, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box provider",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := b.client.Provider(
 		b.Ctx,
 		&vagrant_plugin_sdk.BoxMetadata_ProviderRequest{Version: version, Name: name},
@@ -118,6 +151,14 @@ func (b *boxMetadataClient) Provider(version string, name string) (provider *cor
 }
 
 func (b *boxMetadataClient) ListProviders(version string) (providers []string, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box provider list",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := b.client.ListProviders(
 		b.Ctx,
 		&vagrant_plugin_sdk.BoxMetadata_ListProvidersRequest{Version: version},
@@ -144,6 +185,14 @@ func (b *boxMetadataServer) BoxName(
 func (b *boxMetadataServer) LoadMetadata(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_LoadMetadataRequest,
 ) (r *emptypb.Empty, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to load box metadata",
+				"error", err,
+			)
+		}
+	}()
+
 	err = b.Impl.LoadMetadata(in.Url)
 	r = &emptypb.Empty{}
 	return
@@ -152,6 +201,14 @@ func (b *boxMetadataServer) LoadMetadata(
 func (b *boxMetadataServer) Version(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_VersionQuery,
 ) (r *vagrant_plugin_sdk.BoxMetadata_VersionResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box version",
+				"error", err,
+			)
+		}
+	}()
+
 	opts := []*core.BoxProvider{}
 	for _, o := range in.Opts {
 		var decodedOpts *core.BoxProvider
@@ -174,6 +231,14 @@ func (b *boxMetadataServer) Version(
 func (b *boxMetadataServer) ListVersions(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ListVersionsQuery,
 ) (r *vagrant_plugin_sdk.BoxMetadata_ListVersionsResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box version list",
+				"error", err,
+			)
+		}
+	}()
+
 	opts := []*core.BoxProvider{}
 	for _, o := range in.Opts {
 		var decodedOpts *core.BoxProvider
@@ -190,6 +255,14 @@ func (b *boxMetadataServer) ListVersions(
 func (b *boxMetadataServer) Provider(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ProviderRequest,
 ) (r *vagrant_plugin_sdk.BoxMetadata_ProviderResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box provider",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := b.Impl.Provider(in.Version, in.Name)
 	if err != nil {
 		return nil, err
@@ -202,6 +275,14 @@ func (b *boxMetadataServer) Provider(
 func (b *boxMetadataServer) ListProviders(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxMetadata_ListProvidersRequest,
 ) (r *vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get box provider list",
+				"error", err,
+			)
+		}
+	}()
+
 	p, err := b.Impl.ListProviders(in.Version)
 	return &vagrant_plugin_sdk.BoxMetadata_ListProvidersResponse{Providers: p}, nil
 }

@@ -76,6 +76,14 @@ type targetMachineServer struct {
 }
 
 func (t *targetMachineClient) Guest() (g core.Guest, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get guest",
+				"error", err,
+			)
+		}
+	}()
+
 	guestResp, err := t.client.Guest(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -91,6 +99,14 @@ func (t *targetMachineClient) Guest() (g core.Guest, err error) {
 }
 
 func (t *targetMachineClient) MachineState() (state *core.MachineState, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine state",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := t.client.GetState(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -106,6 +122,14 @@ func (t *targetMachineClient) MachineState() (state *core.MachineState, err erro
 }
 
 func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to set machine state",
+				"error", err,
+			)
+		}
+	}()
+
 	stateArg, err := t.Map(
 		state,
 		(*vagrant_plugin_sdk.Args_Target_Machine_State)(nil),
@@ -121,6 +145,14 @@ func (t *targetMachineClient) SetMachineState(state *core.MachineState) (err err
 }
 
 func (t *targetMachineClient) Inspect() (printable string, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to inspect machine",
+				"error", err,
+			)
+		}
+	}()
+
 	name, err := t.Name()
 	provider, err := t.Provider()
 	printable = "#<" + reflect.TypeOf(t).String() + ": " + name + " (" + reflect.TypeOf(provider).String() + ")>"
@@ -128,30 +160,63 @@ func (t *targetMachineClient) Inspect() (printable string, err error) {
 }
 
 func (t *targetMachineClient) Reload() (err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to reload machine",
+				"error", err,
+			)
+		}
+	}()
+
 	_, err = t.client.Reload(t.Ctx, &empty.Empty{})
 	return
 }
 
 func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine connection info",
+				"error", err,
+			)
+		}
+	}()
+
 	connResp, err := t.client.ConnectionInfo(t.Ctx, &empty.Empty{})
 	return info, mapstructure.Decode(connResp, &info)
 }
 
 func (t *targetMachineClient) UID() (id string, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine uid",
+				"error", err,
+			)
+		}
+	}()
+
 	uidResp, err := t.client.UID(t.Ctx, &empty.Empty{})
 	id = uidResp.UserId
 	return
 }
 
 func (t *targetMachineClient) SyncedFolders() (folders []*core.MachineSyncedFolder, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine synced folders",
+				"error", err,
+			)
+		}
+	}()
+
 	sfResp, err := t.client.SyncedFolders(t.Ctx, &empty.Empty{})
 	folders = []*core.MachineSyncedFolder{}
 	for _, folder := range sfResp.SyncedFolders {
-		fp, err := t.Map(folder.Plugin, (*core.SyncedFolder)(nil), argmapper.Typed(t.Ctx))
+		var fp, f interface{}
+		fp, err = t.Map(folder.Plugin, (*core.SyncedFolder)(nil), argmapper.Typed(t.Ctx))
 		if err != nil {
 			return nil, err
 		}
-		f, err := t.Map(folder.Folder, (*core.Folder)(nil), argmapper.Typed(t.Ctx))
+		f, err = t.Map(folder.Folder, (*core.Folder)(nil), argmapper.Typed(t.Ctx))
 		if err != nil {
 			return nil, err
 		}
@@ -165,6 +230,14 @@ func (t *targetMachineClient) SyncedFolders() (folders []*core.MachineSyncedFold
 }
 
 func (t *targetMachineClient) ID() (id string, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine id",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := t.client.GetID(t.Ctx, &empty.Empty{})
 	if err == nil {
 		id = r.Id
@@ -174,12 +247,28 @@ func (t *targetMachineClient) ID() (id string, err error) {
 }
 
 func (t *targetMachineClient) SetID(id string) (err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to set machine id",
+				"error", err,
+			)
+		}
+	}()
+
 	_, err = t.client.SetID(t.Ctx, &vagrant_plugin_sdk.Target_Machine_SetIDRequest{
 		Id: id})
 	return
 }
 
 func (t *targetMachineClient) Box() (b core.Box, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine box",
+				"error", err,
+			)
+		}
+	}()
+
 	r, err := t.client.Box(t.Ctx, &empty.Empty{})
 	if err != nil {
 		return
@@ -200,6 +289,14 @@ func (t *targetMachineServer) ConnectionInfo(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine connnection info",
+				"error", err,
+			)
+		}
+	}()
+
 	connInfo, err := t.Impl.ConnectionInfo()
 	if err != nil {
 		return nil, err
@@ -218,13 +315,30 @@ func (t *targetMachineServer) Reload(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (e *empty.Empty, err error) {
-	return &empty.Empty{}, t.Impl.Reload()
+	err = t.Impl.Reload()
+	if err != nil {
+		t.Logger.Error("failed to reload machine",
+			"error", err,
+		)
+
+		return
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (t *targetMachineServer) SyncedFolders(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine synced folders",
+				"error", err,
+			)
+		}
+	}()
+
 	syncedFolders, err := t.Impl.SyncedFolders()
 	if err != nil {
 		return nil, err
@@ -232,11 +346,12 @@ func (t *targetMachineServer) SyncedFolders(
 
 	sf := []*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_MachineSyncedFolder{}
 	for _, folder := range syncedFolders {
-		plg, err := t.Map(folder.Plugin, (**vagrant_plugin_sdk.Args_SyncedFolder)(nil), argmapper.Typed(ctx))
+		var plg, f interface{}
+		plg, err = t.Map(folder.Plugin, (**vagrant_plugin_sdk.Args_SyncedFolder)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
-		f, err := t.Map(folder.Folder, (**vagrant_plugin_sdk.Vagrantfile_SyncedFolder)(nil), argmapper.Typed(ctx))
+		f, err = t.Map(folder.Folder, (**vagrant_plugin_sdk.Vagrantfile_SyncedFolder)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
@@ -256,6 +371,14 @@ func (t *targetMachineServer) UID(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (resp *vagrant_plugin_sdk.Target_Machine_UIDResponse, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine uid",
+				"error", err,
+			)
+		}
+	}()
+
 	uid, err := t.Impl.UID()
 	if err != nil {
 		return nil, err
@@ -272,6 +395,14 @@ func (t *targetMachineServer) Guest(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_Guest, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get guest",
+				"error", err,
+			)
+		}
+	}()
+
 	guest, err := t.Impl.Guest()
 	if err != nil {
 		return nil, err
@@ -292,6 +423,10 @@ func (t *targetMachineServer) GetID(
 ) (*vagrant_plugin_sdk.Target_Machine_GetIDResponse, error) {
 	id, err := t.Impl.ID()
 	if err != nil {
+		t.Logger.Error("failed to get machine id",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -304,6 +439,10 @@ func (t *targetMachineServer) SetID(
 	in *vagrant_plugin_sdk.Target_Machine_SetIDRequest,
 ) (*empty.Empty, error) {
 	if err := t.Impl.SetID(in.Id); err != nil {
+		t.Logger.Error("failed to get machine id",
+			"error", err,
+		)
+
 		return nil, err
 	}
 
@@ -314,6 +453,14 @@ func (t *targetMachineServer) GetState(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_Target_Machine_State, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine state",
+				"error", err,
+			)
+		}
+	}()
+
 	s, err := t.Impl.MachineState()
 	if err != nil {
 		return
@@ -332,6 +479,14 @@ func (t *targetMachineServer) SetState(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Target_Machine_SetStateRequest,
 ) (e *empty.Empty, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to set machine state",
+				"error", err,
+			)
+		}
+	}()
+
 	e = &empty.Empty{}
 	s, err := t.Map(in.State, (**core.MachineState)(nil))
 	if err != nil {
@@ -346,6 +501,14 @@ func (t *targetMachineServer) Box(
 	ctx context.Context,
 	_ *empty.Empty,
 ) (r *vagrant_plugin_sdk.Args_Box, err error) {
+	defer func() {
+		if err != nil {
+			t.Logger.Error("failed to get machine box",
+				"error", err,
+			)
+		}
+	}()
+
 	b, err := t.Impl.Box()
 	if err != nil {
 		return
