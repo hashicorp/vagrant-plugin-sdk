@@ -13,8 +13,17 @@ type Seeds struct {
 }
 
 func (s *Seeds) AddTyped(v ...interface{}) {
+	// Generate map of existing values for quick filtering
+	exist := make(map[interface{}]struct{})
+	for _, t := range s.Typed {
+		exist[t] = struct{}{}
+	}
+
 	for _, t := range v {
-		s.Typed = append(s.Typed, t)
+		if _, ok := exist[t]; !ok {
+			s.Typed = append(s.Typed, t)
+			exist[t] = struct{}{}
+		}
 	}
 }
 
