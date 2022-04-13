@@ -123,7 +123,13 @@ var All = []interface{}{
 	SshInfoProto,
 	CorePluginManager,
 	CorePluginManagerProto,
-	MapToProto,
+	MapKeyInterface,
+	MapKeyString,
+	// TODO: This has been disabled since we want to
+	//       have map values converted into Args.Hash
+	//       messages. Delete this and function once
+	//       confirmed we aren't relying on it for anything
+	// MapToProto,
 	Metadata,
 	MetadataProto,
 	MetadataSet,
@@ -168,6 +174,31 @@ var All = []interface{}{
 	TargetProject,
 	TerminalUI,
 	TerminalUIProto,
+}
+
+func MapKeyInterface(
+	input map[string]interface{},
+) map[interface{}]interface{} {
+	r := make(map[interface{}]interface{}, len(input))
+	for k, v := range input {
+		r[k] = v
+	}
+	return r
+}
+
+func MapKeyString(
+	input map[interface{}]interface{},
+) (map[string]interface{}, error) {
+	r := make(map[string]interface{}, len(input))
+	for ik, v := range input {
+		k, ok := ik.(string)
+		if !ok {
+			return nil, fmt.Errorf("key value is not a string (%#v)", ik)
+		}
+		r[k] = v
+	}
+
+	return r, nil
 }
 
 // Known type mappers
@@ -552,39 +583,16 @@ func Hash(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
-) (result map[string]interface{}, err error) {
-	result = make(map[string]interface{}, len(input.Fields))
+) (result map[interface{}]interface{}, err error) {
+	result = make(map[interface{}]interface{}, len(input.Entries))
 
-	for k, v := range input.Fields {
+	for _, e := range input.Entries {
 		r, err := Direct(
-			&vagrant_plugin_sdk.Args_Direct{Arguments: []*anypb.Any{v}},
-			log,
-			internal,
-			ctx,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		result[k] = r.Arguments[0]
-	}
-
-	return
-}
-
-func HashProto(
-	input map[string]interface{},
-	log hclog.Logger,
-	internal *pluginargs.Internal,
-	ctx context.Context,
-) (*vagrant_plugin_sdk.Args_Hash, error) {
-	content := make(map[string]*anypb.Any, len(input))
-
-	for k, v := range input {
-		r, err := DirectProto(
-			&component.Direct{
-				Arguments: []interface{}{v},
+			&vagrant_plugin_sdk.Args_Direct{
+				Arguments: []*anypb.Any{
+					e.Key,
+					e.Value,
+				},
 			},
 			log,
 			internal,
@@ -595,11 +603,42 @@ func HashProto(
 			return nil, err
 		}
 
-		content[k] = r.Arguments[0]
+		result[r.Arguments[0]] = r.Arguments[1]
+	}
+
+	return
+}
+
+func HashProto(
+	input map[interface{}]interface{},
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_Hash, error) {
+	content := make([]*vagrant_plugin_sdk.Args_HashEntry, 0, len(input))
+
+	for k, v := range input {
+		r, err := DirectProto(
+			&component.Direct{
+				Arguments: []interface{}{k, v},
+			},
+			log,
+			internal,
+			ctx,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		content = append(content, &vagrant_plugin_sdk.Args_HashEntry{
+			Key:   r.Arguments[0],
+			Value: r.Arguments[1],
+		})
 	}
 
 	return &vagrant_plugin_sdk.Args_Hash{
-		Fields: content,
+		Entries: content,
 	}, nil
 }
 
@@ -608,7 +647,7 @@ func Options(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
-) (result map[string]interface{}, err error) {
+) (result map[interface{}]interface{}, err error) {
 	return Hash(
 		input.Options,
 		log,
@@ -618,7 +657,7 @@ func Options(
 }
 
 func OptionsProto(
-	input map[string]interface{},
+	input map[interface{}]interface{},
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
@@ -637,7 +676,7 @@ func Folders(
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
-) (result map[string]interface{}, err error) {
+) (result map[interface{}]interface{}, err error) {
 	return Hash(
 		input.Folders,
 		log,
@@ -647,7 +686,7 @@ func Folders(
 }
 
 func FoldersProto(
-	input map[string]interface{},
+	input map[interface{}]interface{},
 	log hclog.Logger,
 	internal *pluginargs.Internal,
 	ctx context.Context,
