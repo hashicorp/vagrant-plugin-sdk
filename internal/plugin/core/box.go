@@ -110,6 +110,13 @@ func (b *boxClient) HasUpdate(version string) (updateAvailable bool, err error) 
 }
 
 func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.BoxMetadata, newVersion string, newProvider string, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get update info",
+				"error", err,
+			)
+		}
+	}()
 	result, err := b.client.UpdateInfo(
 		b.Ctx,
 		&vagrant_plugin_sdk.Box_HasUpdateRequest{Version: version},
@@ -119,7 +126,8 @@ func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.
 	}
 
 	if result.HasUpdate {
-		boxMetadata, err := b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
+		var boxMetadata interface{}
+		boxMetadata, err = b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
 		if err != nil {
 			return false, nil, "", "", err
 		}
@@ -356,13 +364,22 @@ func (b *boxServer) HasUpdate(
 func (b *boxServer) UpdateInfo(
 	ctx context.Context, in *vagrant_plugin_sdk.Box_HasUpdateRequest,
 ) (r *vagrant_plugin_sdk.Box_UpdateInfoResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get aupdate info",
+				"error", err,
+			)
+		}
+	}()
+
 	updateAvailable, meta, version, provider, err := b.Impl.UpdateInfo(in.Version)
 	if err != nil {
 		return
 	}
 
 	if updateAvailable {
-		m, err := b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
+		var m interface{}
+		m, err = b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
