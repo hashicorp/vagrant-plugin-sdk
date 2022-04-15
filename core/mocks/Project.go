@@ -67,14 +67,16 @@ func (_m *Project) Boxes() (core.BoxCollection, error) {
 }
 
 // CWD provides a mock function with given fields:
-func (_m *Project) CWD() (string, error) {
+func (_m *Project) CWD() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -148,14 +150,16 @@ func (_m *Project) DataDir() (*datadir.Project, error) {
 }
 
 // DefaultPrivateKey provides a mock function with given fields:
-func (_m *Project) DefaultPrivateKey() (string, error) {
+func (_m *Project) DefaultPrivateKey() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -190,14 +194,16 @@ func (_m *Project) DefaultProvider() (string, error) {
 }
 
 // Home provides a mock function with given fields:
-func (_m *Project) Home() (string, error) {
+func (_m *Project) Home() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -234,14 +240,16 @@ func (_m *Project) Host() (core.Host, error) {
 }
 
 // LocalData provides a mock function with given fields:
-func (_m *Project) LocalData() (string, error) {
+func (_m *Project) LocalData() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -297,14 +305,16 @@ func (_m *Project) ResourceId() (string, error) {
 }
 
 // RootPath provides a mock function with given fields:
-func (_m *Project) RootPath() (string, error) {
+func (_m *Project) RootPath() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -410,14 +420,16 @@ func (_m *Project) TargetNames() ([]string, error) {
 }
 
 // Tmp provides a mock function with given fields:
-func (_m *Project) Tmp() (string, error) {
+func (_m *Project) Tmp() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error

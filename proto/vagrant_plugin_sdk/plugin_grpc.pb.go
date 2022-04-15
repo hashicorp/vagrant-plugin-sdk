@@ -7864,24 +7864,24 @@ type ProjectServiceClient interface {
 	ActiveTargets(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ActiveTargetsResponse, error)
 	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
 	Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error)
-	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
+	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
-	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error)
+	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error)
-	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error)
+	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
-	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error)
+	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	PrimaryTargetName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_PrimaryTargetNameResponse, error)
 	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error)
-	RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_RootPathResponse, error)
+	RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetIds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
 	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
 	TargetNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
-	Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error)
+	Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	VagrantfileName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_VagrantfileNameResponse, error)
-	VagrantfilePath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error)
+	VagrantfilePath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 }
 
 type projectServiceClient struct {
@@ -7919,8 +7919,8 @@ func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
-func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
-	out := new(Project_CwdResponse)
+func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -7937,8 +7937,8 @@ func (c *projectServiceClient) DataDir(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
-func (c *projectServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error) {
-	out := new(Project_DefaultPrivateKeyResponse)
+func (c *projectServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DefaultPrivateKey", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -7955,8 +7955,8 @@ func (c *projectServiceClient) DefaultProvider(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
-func (c *projectServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error) {
-	out := new(Project_HomeResponse)
+func (c *projectServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Home", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -7973,8 +7973,8 @@ func (c *projectServiceClient) Host(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
-func (c *projectServiceClient) LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error) {
-	out := new(Project_LocalDataResponse)
+func (c *projectServiceClient) LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/LocalData", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8000,8 +8000,8 @@ func (c *projectServiceClient) ResourceId(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
-func (c *projectServiceClient) RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_RootPathResponse, error) {
-	out := new(Project_RootPathResponse)
+func (c *projectServiceClient) RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/RootPath", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8045,8 +8045,8 @@ func (c *projectServiceClient) TargetNames(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *projectServiceClient) Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error) {
-	out := new(Project_TmpResponse)
+func (c *projectServiceClient) Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Tmp", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8072,8 +8072,8 @@ func (c *projectServiceClient) VagrantfileName(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
-func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error) {
-	out := new(Project_VagrantfilePathResponse)
+func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
+	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/VagrantfilePath", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -8088,24 +8088,24 @@ type ProjectServiceServer interface {
 	ActiveTargets(context.Context, *emptypb.Empty) (*Project_ActiveTargetsResponse, error)
 	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
 	Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error)
-	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
+	CWD(context.Context, *emptypb.Empty) (*Args_Path, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error)
-	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error)
+	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error)
 	DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error)
-	Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error)
+	Home(context.Context, *emptypb.Empty) (*Args_Path, error)
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
-	LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error)
+	LocalData(context.Context, *emptypb.Empty) (*Args_Path, error)
 	PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error)
 	ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error)
-	RootPath(context.Context, *emptypb.Empty) (*Project_RootPathResponse, error)
+	RootPath(context.Context, *emptypb.Empty) (*Args_Path, error)
 	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
 	TargetIds(context.Context, *emptypb.Empty) (*Project_TargetIdsResponse, error)
 	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
 	TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error)
-	Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error)
+	Tmp(context.Context, *emptypb.Empty) (*Args_Path, error)
 	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	VagrantfileName(context.Context, *emptypb.Empty) (*Project_VagrantfileNameResponse, error)
-	VagrantfilePath(context.Context, *emptypb.Empty) (*Project_VagrantfilePathResponse, error)
+	VagrantfilePath(context.Context, *emptypb.Empty) (*Args_Path, error)
 }
 
 // UnimplementedProjectServiceServer should be embedded to have forward compatible implementations.
@@ -8121,25 +8121,25 @@ func (UnimplementedProjectServiceServer) Boxes(context.Context, *emptypb.Empty) 
 func (UnimplementedProjectServiceServer) Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
 }
-func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {
+func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
 }
 func (UnimplementedProjectServiceServer) DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataDir not implemented")
 }
-func (UnimplementedProjectServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error) {
+func (UnimplementedProjectServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
 }
 func (UnimplementedProjectServiceServer) DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DefaultProvider not implemented")
 }
-func (UnimplementedProjectServiceServer) Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error) {
+func (UnimplementedProjectServiceServer) Home(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Home not implemented")
 }
 func (UnimplementedProjectServiceServer) Host(context.Context, *emptypb.Empty) (*Args_Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
 }
-func (UnimplementedProjectServiceServer) LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error) {
+func (UnimplementedProjectServiceServer) LocalData(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LocalData not implemented")
 }
 func (UnimplementedProjectServiceServer) PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error) {
@@ -8148,7 +8148,7 @@ func (UnimplementedProjectServiceServer) PrimaryTargetName(context.Context, *emp
 func (UnimplementedProjectServiceServer) ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResourceId not implemented")
 }
-func (UnimplementedProjectServiceServer) RootPath(context.Context, *emptypb.Empty) (*Project_RootPathResponse, error) {
+func (UnimplementedProjectServiceServer) RootPath(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RootPath not implemented")
 }
 func (UnimplementedProjectServiceServer) Target(context.Context, *Project_TargetRequest) (*Args_Target, error) {
@@ -8163,7 +8163,7 @@ func (UnimplementedProjectServiceServer) TargetIndex(context.Context, *emptypb.E
 func (UnimplementedProjectServiceServer) TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetNames not implemented")
 }
-func (UnimplementedProjectServiceServer) Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error) {
+func (UnimplementedProjectServiceServer) Tmp(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tmp not implemented")
 }
 func (UnimplementedProjectServiceServer) UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error) {
@@ -8172,7 +8172,7 @@ func (UnimplementedProjectServiceServer) UI(context.Context, *emptypb.Empty) (*A
 func (UnimplementedProjectServiceServer) VagrantfileName(context.Context, *emptypb.Empty) (*Project_VagrantfileNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VagrantfileName not implemented")
 }
-func (UnimplementedProjectServiceServer) VagrantfilePath(context.Context, *emptypb.Empty) (*Project_VagrantfilePathResponse, error) {
+func (UnimplementedProjectServiceServer) VagrantfilePath(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VagrantfilePath not implemented")
 }
 

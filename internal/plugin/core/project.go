@@ -174,7 +174,7 @@ func (p *projectClient) DefaultPrivateKey() (dir path.Path, err error) {
 	}()
 	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		dir = path.NewPath(r.Key)
+		dir = path.NewPath(r.Path)
 	}
 
 	return
