@@ -1,8 +1,10 @@
 package core
 
+import "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+
 type Folder struct {
-	Source      string
-	Destination string
+	Source      path.Path
+	Destination path.Path
 	Options     map[string]interface{} `mapstructure:",remain"`
 }
 

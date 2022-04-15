@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -56,11 +57,11 @@ type vagrantfileServer struct {
 	vagrant_plugin_sdk.UnimplementedVagrantfileServiceServer
 }
 
-func (v *vagrantfileClient) Target(name, provider string, boxes core.BoxCollection, dataPath string, project core.Project) (machine core.Machine, err error) {
+func (v *vagrantfileClient) Target(name, provider string, boxes core.BoxCollection, dataPath path.Path, project core.Project) (machine core.Machine, err error) {
 	return
 }
 
-func (v *vagrantfileClient) TargetConfig(name, provider string, boxes core.BoxCollection, dataPath string, validateProvider bool) (config core.MachineConfig, err error) {
+func (v *vagrantfileClient) TargetConfig(name, provider string, boxes core.BoxCollection, dataPath path.Path, validateProvider bool) (config core.MachineConfig, err error) {
 	return
 }
 

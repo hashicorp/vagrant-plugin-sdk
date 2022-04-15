@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -46,9 +47,9 @@ type boxCollectionClient struct {
 	client vagrant_plugin_sdk.BoxCollectionServiceClient
 }
 
-func (b *boxCollectionClient) Add(path, name, version, metadataURL string, force bool, providers ...string) (box core.Box, err error) {
+func (b *boxCollectionClient) Add(p path.Path, name, version, metadataURL string, force bool, providers ...string) (box core.Box, err error) {
 	r, err := b.client.Add(b.Ctx, &vagrant_plugin_sdk.BoxCollection_AddRequest{
-		Path: path, Name: name, Version: version, MetadataUrl: metadataURL, Force: force, Providers: providers,
+		Path: p.String(), Name: name, Version: version, MetadataUrl: metadataURL, Force: force, Providers: providers,
 	})
 	if err != nil {
 		b.Logger.Error("failed to add box",
@@ -150,8 +151,9 @@ func (b *boxCollectionServer) Add(
 		}
 	}()
 
+	addPath := path.NewPath(in.Path)
 	box, err := b.Impl.Add(
-		in.Path, in.Name, in.Version, in.MetadataUrl, in.Force, in.Providers...,
+		addPath, in.Name, in.Version, in.MetadataUrl, in.Force, in.Providers...,
 	)
 	if err != nil {
 		return

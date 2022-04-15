@@ -1,5 +1,7 @@
 package core
 
+import "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+
 type MachineConfig struct {
 	Box            Box
 	Config         map[string]interface{}
@@ -22,7 +24,7 @@ type Vagrantfile interface {
 
 	// Returns a {Target} for the given name and provider that
 	// is represented by this Vagrantfile.
-	Target(name, provider string, boxes BoxCollection, dataPath string, env Project) (machine Machine, err error)
+	Target(name, provider string, boxes BoxCollection, dataPath path.Path, env Project) (machine Machine, err error)
 
 	// Returns the configuration for a single machine.
 	//
@@ -35,7 +37,7 @@ type Vagrantfile interface {
 	// - keys specified for #initialize
 	// - sub-machine
 	// - provider
-	TargetConfig(name, provider string, boxes BoxCollection, dataPath string, validateProvider bool) (config MachineConfig, err error)
+	TargetConfig(name, provider string, boxes BoxCollection, dataPath path.Path, validateProvider bool) (config MachineConfig, err error)
 
 	// Returns a list of the machines that are defined within this
 	// Vagrantfile.
