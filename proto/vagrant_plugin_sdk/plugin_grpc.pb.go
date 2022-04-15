@@ -9018,6 +9018,7 @@ type BoxServiceClient interface {
 	AutomaticUpdateCheckAllowed(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Box_AutomaticUpdateCheckAllowedResponse, error)
 	Destroy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	HasUpdate(ctx context.Context, in *Box_HasUpdateRequest, opts ...grpc.CallOption) (*Box_HasUpdateResponse, error)
+	UpdateInfo(ctx context.Context, in *Box_HasUpdateRequest, opts ...grpc.CallOption) (*Box_UpdateInfoResponse, error)
 	InUse(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_InUseResponse, error)
 	Machines(ctx context.Context, in *Args_TargetIndex, opts ...grpc.CallOption) (*Box_MachinesResponse, error)
 	Repackage(ctx context.Context, in *Args_Path, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -9060,6 +9061,15 @@ func (c *boxServiceClient) Destroy(ctx context.Context, in *emptypb.Empty, opts 
 func (c *boxServiceClient) HasUpdate(ctx context.Context, in *Box_HasUpdateRequest, opts ...grpc.CallOption) (*Box_HasUpdateResponse, error) {
 	out := new(Box_HasUpdateResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/HasUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *boxServiceClient) UpdateInfo(ctx context.Context, in *Box_HasUpdateRequest, opts ...grpc.CallOption) (*Box_UpdateInfoResponse, error) {
+	out := new(Box_UpdateInfoResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BoxService/UpdateInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -9172,6 +9182,7 @@ type BoxServiceServer interface {
 	AutomaticUpdateCheckAllowed(context.Context, *emptypb.Empty) (*Box_AutomaticUpdateCheckAllowedResponse, error)
 	Destroy(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	HasUpdate(context.Context, *Box_HasUpdateRequest) (*Box_HasUpdateResponse, error)
+	UpdateInfo(context.Context, *Box_HasUpdateRequest) (*Box_UpdateInfoResponse, error)
 	InUse(context.Context, *Args_TargetIndex) (*Box_InUseResponse, error)
 	Machines(context.Context, *Args_TargetIndex) (*Box_MachinesResponse, error)
 	Repackage(context.Context, *Args_Path) (*emptypb.Empty, error)
@@ -9197,6 +9208,9 @@ func (UnimplementedBoxServiceServer) Destroy(context.Context, *emptypb.Empty) (*
 }
 func (UnimplementedBoxServiceServer) HasUpdate(context.Context, *Box_HasUpdateRequest) (*Box_HasUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasUpdate not implemented")
+}
+func (UnimplementedBoxServiceServer) UpdateInfo(context.Context, *Box_HasUpdateRequest) (*Box_UpdateInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateInfo not implemented")
 }
 func (UnimplementedBoxServiceServer) InUse(context.Context, *Args_TargetIndex) (*Box_InUseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InUse not implemented")
@@ -9293,6 +9307,24 @@ func _BoxService_HasUpdate_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BoxServiceServer).HasUpdate(ctx, req.(*Box_HasUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BoxService_UpdateInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Box_HasUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoxServiceServer).UpdateInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BoxService/UpdateInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoxServiceServer).UpdateInfo(ctx, req.(*Box_HasUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -9513,6 +9545,10 @@ var BoxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HasUpdate",
 			Handler:    _BoxService_HasUpdate_Handler,
+		},
+		{
+			MethodName: "UpdateInfo",
+			Handler:    _BoxService_UpdateInfo_Handler,
 		},
 		{
 			MethodName: "InUse",

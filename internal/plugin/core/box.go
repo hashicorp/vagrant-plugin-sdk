@@ -109,6 +109,34 @@ func (b *boxClient) HasUpdate(version string) (updateAvailable bool, err error) 
 	return result.HasUpdate, nil
 }
 
+func (b *boxClient) UpdateInfo(version string) (updateAvailable bool, meta core.BoxMetadata, newVersion string, newProvider string, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get update info",
+				"error", err,
+			)
+		}
+	}()
+	result, err := b.client.UpdateInfo(
+		b.Ctx,
+		&vagrant_plugin_sdk.Box_HasUpdateRequest{Version: version},
+	)
+	if err != nil {
+		return
+	}
+
+	if result.HasUpdate {
+		var boxMetadata interface{}
+		boxMetadata, err = b.Map(result.Metadata, (*core.BoxMetadata)(nil), argmapper.Typed(b.Ctx))
+		if err != nil {
+			return false, nil, "", "", err
+		}
+		return result.HasUpdate, boxMetadata.(core.BoxMetadata), result.NewVersion, result.NewProvider, nil
+
+	}
+	return result.HasUpdate, nil, "", "", nil
+}
+
 func (b *boxClient) InUse(index core.TargetIndex) (inUse bool, err error) {
 	defer func() {
 		if err != nil {
@@ -330,6 +358,40 @@ func (b *boxServer) HasUpdate(
 
 	return &vagrant_plugin_sdk.Box_HasUpdateResponse{
 		HasUpdate: result,
+	}, nil
+}
+
+func (b *boxServer) UpdateInfo(
+	ctx context.Context, in *vagrant_plugin_sdk.Box_HasUpdateRequest,
+) (r *vagrant_plugin_sdk.Box_UpdateInfoResponse, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get aupdate info",
+				"error", err,
+			)
+		}
+	}()
+
+	updateAvailable, meta, version, provider, err := b.Impl.UpdateInfo(in.Version)
+	if err != nil {
+		return
+	}
+
+	if updateAvailable {
+		var m interface{}
+		m, err = b.Map(meta, (**vagrant_plugin_sdk.Args_BoxMetadata)(nil), argmapper.Typed(ctx))
+		if err != nil {
+			return nil, err
+		}
+		return &vagrant_plugin_sdk.Box_UpdateInfoResponse{
+			HasUpdate: updateAvailable, Metadata: m.(*vagrant_plugin_sdk.Args_BoxMetadata),
+			NewVersion: version, NewProvider: provider,
+		}, nil
+	}
+
+	return &vagrant_plugin_sdk.Box_UpdateInfoResponse{
+		HasUpdate: updateAvailable, Metadata: nil,
+		NewVersion: version, NewProvider: provider,
 	}, nil
 }
 

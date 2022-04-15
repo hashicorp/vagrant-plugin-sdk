@@ -277,6 +277,50 @@ func (_m *Box) Repackage(path string) error {
 	return r0
 }
 
+// UpdateInfo provides a mock function with given fields: version
+func (_m *Box) UpdateInfo(version string) (bool, core.BoxMetadata, string, string, error) {
+	ret := _m.Called(version)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(version)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 core.BoxMetadata
+	if rf, ok := ret.Get(1).(func(string) core.BoxMetadata); ok {
+		r1 = rf(version)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(core.BoxMetadata)
+		}
+	}
+
+	var r2 string
+	if rf, ok := ret.Get(2).(func(string) string); ok {
+		r2 = rf(version)
+	} else {
+		r2 = ret.Get(2).(string)
+	}
+
+	var r3 string
+	if rf, ok := ret.Get(3).(func(string) string); ok {
+		r3 = rf(version)
+	} else {
+		r3 = ret.Get(3).(string)
+	}
+
+	var r4 error
+	if rf, ok := ret.Get(4).(func(string) error); ok {
+		r4 = rf(version)
+	} else {
+		r4 = ret.Error(4)
+	}
+
+	return r0, r1, r2, r3, r4
+}
+
 // Version provides a mock function with given fields:
 func (_m *Box) Version() (string, error) {
 	ret := _m.Called()
