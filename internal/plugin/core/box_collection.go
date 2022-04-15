@@ -48,8 +48,11 @@ type boxCollectionClient struct {
 }
 
 func (b *boxCollectionClient) Add(p path.Path, name, version, metadataURL string, force bool, providers ...string) (box core.Box, err error) {
+	boxPath := &vagrant_plugin_sdk.Args_Path{
+		Path: p.String(),
+	}
 	r, err := b.client.Add(b.Ctx, &vagrant_plugin_sdk.BoxCollection_AddRequest{
-		Path: p.String(), Name: name, Version: version, MetadataUrl: metadataURL, Force: force, Providers: providers,
+		Path: boxPath, Name: name, Version: version, MetadataUrl: metadataURL, Force: force, Providers: providers,
 	})
 	if err != nil {
 		b.Logger.Error("failed to add box",
@@ -151,7 +154,7 @@ func (b *boxCollectionServer) Add(
 		}
 	}()
 
-	addPath := path.NewPath(in.Path)
+	addPath := path.NewPath(in.Path.Path)
 	box, err := b.Impl.Add(
 		addPath, in.Name, in.Version, in.MetadataUrl, in.Force, in.Providers...,
 	)

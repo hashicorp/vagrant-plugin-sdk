@@ -8,6 +8,8 @@ import (
 
 	mock "github.com/stretchr/testify/mock"
 
+	path "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+
 	terminal "github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -40,14 +42,16 @@ func (_m *Basis) Boxes() (core.BoxCollection, error) {
 }
 
 // CWD provides a mock function with given fields:
-func (_m *Basis) CWD() (string, error) {
+func (_m *Basis) CWD() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
@@ -98,14 +102,16 @@ func (_m *Basis) DataDir() (*datadir.Basis, error) {
 }
 
 // DefaultPrivateKey provides a mock function with given fields:
-func (_m *Basis) DefaultPrivateKey() (string, error) {
+func (_m *Basis) DefaultPrivateKey() (path.Path, error) {
 	ret := _m.Called()
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
+	var r0 path.Path
+	if rf, ok := ret.Get(0).(func() path.Path); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(string)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(path.Path)
+		}
 	}
 
 	var r1 error
