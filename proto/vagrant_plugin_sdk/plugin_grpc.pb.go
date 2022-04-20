@@ -5740,6 +5740,7 @@ type BasisServiceClient interface {
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
 	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
 	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
+	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_ResourceIdResponse, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 }
@@ -5815,6 +5816,15 @@ func (c *basisServiceClient) TargetIndex(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
+func (c *basisServiceClient) ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_ResourceIdResponse, error) {
+	out := new(Basis_ResourceIdResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/ResourceId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *basisServiceClient) Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Seed", in, out, opts...)
@@ -5844,6 +5854,7 @@ type BasisServiceServer interface {
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
 	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
 	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
+	ResourceId(context.Context, *emptypb.Empty) (*Basis_ResourceIdResponse, error)
 	Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error)
 	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
 }
@@ -5872,6 +5883,9 @@ func (UnimplementedBasisServiceServer) Boxes(context.Context, *emptypb.Empty) (*
 }
 func (UnimplementedBasisServiceServer) TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
+}
+func (UnimplementedBasisServiceServer) ResourceId(context.Context, *emptypb.Empty) (*Basis_ResourceIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResourceId not implemented")
 }
 func (UnimplementedBasisServiceServer) Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
@@ -6017,6 +6031,24 @@ func _BasisService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BasisService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).ResourceId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/ResourceId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).ResourceId(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BasisService_Seed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Args_Seeds)
 	if err := dec(in); err != nil {
@@ -6087,6 +6119,10 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TargetIndex",
 			Handler:    _BasisService_TargetIndex_Handler,
+		},
+		{
+			MethodName: "ResourceId",
+			Handler:    _BasisService_ResourceId_Handler,
 		},
 		{
 			MethodName: "Seed",
