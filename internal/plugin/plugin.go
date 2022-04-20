@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/go-plugin"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cleanup"
 )
 
 // Handshake is a common handshake that is shared by plugin and host.
@@ -35,6 +37,8 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 	}
 
 	bp := &BasePlugin{
+		Cache:   cacher.New(),
+		Cleanup: cleanup.New(),
 		Mappers: c.Mappers,
 		Logger:  c.Logger,
 		Wrapped: false,
