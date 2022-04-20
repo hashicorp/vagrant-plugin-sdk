@@ -19,6 +19,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cleanup"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
@@ -46,6 +47,7 @@ type NamedPluginClient interface {
 // all plugins. It should be embedded in every plugin type.
 type BasePlugin struct {
 	Cache   cacher.Cache      // Cache for mappers
+	Cleanup cleanup.Cleanup   // Used to register cleanup tasks
 	Mappers []*argmapper.Func // Mappers
 	Logger  hclog.Logger      // Logger
 	Wrapped bool              // Used to determine if wrapper
@@ -54,6 +56,7 @@ type BasePlugin struct {
 func (b *BasePlugin) Clone() *BasePlugin {
 	return &BasePlugin{
 		Cache:   b.Cache,
+		Cleanup: cleanup.New(),
 		Mappers: b.Mappers,
 		Logger:  b.Logger,
 		Wrapped: b.Wrapped,
@@ -71,7 +74,7 @@ func (b *BasePlugin) NewClient(
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
-			Cleanup: &pluginargs.Cleanup{},
+			Cleanup: b.Cleanup,
 			Logger:  b.Logger,
 			Mappers: b.Mappers,
 			Wrapped: b.Wrapped,
@@ -90,7 +93,7 @@ func (b *BasePlugin) NewServer(
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
-			Cleanup: &pluginargs.Cleanup{},
+			Cleanup: b.Cleanup,
 			Logger:  b.Logger,
 			Mappers: b.Mappers,
 			Wrapped: b.Wrapped,
@@ -105,16 +108,17 @@ type Base struct {
 	Broker  *plugin.GRPCBroker
 	Logger  hclog.Logger
 	Mappers []*argmapper.Func
-	Cleanup *pluginargs.Cleanup
+	Cleanup cleanup.Cleanup
 	Cache   cacher.Cache
 	Wrapped bool
 }
 
 func (b *Base) Wrap() *BasePlugin {
 	return &BasePlugin{
+		Cache:   b.Cache,
+		Cleanup: b.Cleanup,
 		Logger:  b.Logger,
 		Mappers: b.Mappers,
-		Cache:   b.Cache,
 		Wrapped: true,
 	}
 }
@@ -146,23 +150,20 @@ type BaseServer struct {
 // internal returns a new pluginargs.Internal that can be used with
 // dynamic calls. The Internal structure is an internal-only argument
 // that is used to perform cleanup.
-func (b *Base) Internal() *pluginargs.Internal {
+func (b *Base) Internal() pluginargs.Internal {
 	// if the cache isn't currently set, just create
 	// a new cache instance and set it now
 	if b.Cache == nil {
 		b.Cache = cacher.New()
 	}
 
-	m := make([]*argmapper.Func, len(b.Mappers)+len(MapperFns))
-	copy(m, b.Mappers)
-	copy(m[len(b.Mappers):], MapperFns)
-	return &pluginargs.Internal{
-		Broker:  b.Broker,
-		Mappers: m,
-		Cleanup: b.Cleanup,
-		Cache:   b.Cache,
-		Logger:  b.Logger,
-	}
+	return pluginargs.New(
+		b.Broker,
+		b.Cache,
+		b.Cleanup,
+		b.Logger,
+		mappers(b.Mappers),
+	)
 }
 
 // Map a value to the expected type using registered mappers
@@ -282,6 +283,7 @@ func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, cont
 }
 
 func (b *BaseClient) Close() error {
+	b.Logger.Warn("received close request for plugin client")
 	return b.Cleanup.Close()
 }
 
