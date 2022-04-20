@@ -14,6 +14,7 @@ type Basis interface {
 	DataDir() (dir *datadir.Basis, err error)
 	DefaultPrivateKey() (path path.Path, err error)
 	Host() (host Host, err error)
+	ResourceId() (string, error)
 	TargetIndex() (index TargetIndex, err error)
 	UI() (ui terminal.UI, err error)
 
