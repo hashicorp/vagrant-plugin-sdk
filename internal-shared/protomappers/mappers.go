@@ -2326,7 +2326,7 @@ func TargetIndex(
 func VagrantfileProto(
 	v core.Vagrantfile,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
 	bp := &plugincore.VagrantfilePlugin{
 		BasePlugin: basePlugin(v, internal),
@@ -2349,7 +2349,7 @@ func Vagrantfile(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Vagrantfile,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Vagrantfile, error) {
 	b := &plugincore.VagrantfilePlugin{
 		BasePlugin: basePlugin(nil, internal),

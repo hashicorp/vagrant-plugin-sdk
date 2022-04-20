@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
+	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cleanup"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pluginargs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/testproto"
@@ -63,11 +65,13 @@ func (c *authenticatorClient) AuthFunc() interface{} {
 
 	return funcspec.Func(spec, c.auth,
 		argmapper.Logger(c.Logger),
-		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.Broker,
-			Mappers: c.Mappers,
-			Cleanup: &pluginargs.Cleanup{},
-		}),
+		argmapper.Typed(pluginargs.New(
+			c.Broker,
+			cacher.New(),
+			cleanup.New(),
+			c.Logger,
+			c.Mappers,
+		)),
 	)
 }
 
@@ -89,21 +93,23 @@ func (c *authenticatorClient) ValidateAuthFunc() interface{} {
 
 	return funcspec.Func(spec, c.validateAuth,
 		argmapper.Logger(c.Logger),
-		argmapper.Typed(&pluginargs.Internal{
-			Broker:  c.Broker,
-			Mappers: c.Mappers,
-			Cleanup: &pluginargs.Cleanup{},
-		}),
+		argmapper.Typed(pluginargs.New(
+			c.Broker,
+			cacher.New(),
+			cleanup.New(),
+			c.Logger,
+			c.Mappers,
+		)),
 	)
 }
 
 func (c *authenticatorClient) auth(
 	ctx context.Context,
 	args funcspec.Args,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*component.AuthResult, error) {
 	// Run the cleanup
-	defer internal.Cleanup.Close()
+	defer internal.Cleanup().Close()
 
 	// Call our function
 	resp, err := c.Client.Auth(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
@@ -119,10 +125,10 @@ func (c *authenticatorClient) auth(
 func (c *authenticatorClient) validateAuth(
 	ctx context.Context,
 	args funcspec.Args,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) error {
 	// Run the cleanup
-	defer internal.Cleanup.Close()
+	defer internal.Cleanup().Close()
 
 	// Call our function
 	_, err := c.Client.ValidateAuth(ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args})
@@ -167,7 +173,7 @@ func (s *authenticatorServer) Auth(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*vagrant_plugin_sdk.Auth_AuthResponse, error) {
 	internal := s.Internal()
-	defer internal.Cleanup.Close()
+	defer internal.Cleanup().Close()
 	return nil, nil
 
 	// raw, err := callDynamicFunc2(s.Impl.(component.Authenticator).AuthFunc(), args.Args,
@@ -207,7 +213,7 @@ func (s *authenticatorServer) ValidateAuth(
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*empty.Empty, error) {
 	internal := s.Internal()
-	defer internal.Cleanup.Close()
+	defer internal.Cleanup().Close()
 
 	return nil, nil
 
