@@ -175,8 +175,7 @@ func (b *Base) Map(
 	args ...argmapper.Arg, // list of argmapper arguments
 ) (interface{}, error) {
 	args = append(args,
-		argmapper.ConverterFunc(MapperFns...),
-		argmapper.ConverterFunc(b.Mappers...),
+		argmapper.ConverterFunc(mappers(b.Mappers)...),
 		argmapper.Typed(b.Internal()),
 		argmapper.Typed(b.Logger),
 	)
@@ -589,6 +588,29 @@ func (b *BaseServer) PluginName(
 		return &vagrant_plugin_sdk.PluginInfo_Name{Name: name}, nil
 	}
 	return &vagrant_plugin_sdk.PluginInfo_Name{Name: ""}, nil
+}
+
+// Generate full mapper list. This will add our locally
+// defined mappers to the given list, ensuring duplicates
+// aren't added.
+func mappers(base []*argmapper.Func) []*argmapper.Func {
+	result := make([]*argmapper.Func, 0, len(base))
+	copy(result, base)
+	for _, m := range MapperFns {
+		found := false
+		for _, e := range result {
+			if m == e {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+		result = append(result, m)
+	}
+
+	return result
 }
 
 var (
