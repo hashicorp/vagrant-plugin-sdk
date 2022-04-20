@@ -1010,6 +1010,12 @@ message Ref {
   }
 }
 
+message Basis {
+  message ResourceIdResponse {
+    string resource_id = 1;
+  }
+}
+
 service BasisService {
   rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
@@ -1018,6 +1024,7 @@ service BasisService {
   rpc Host(google.protobuf.Empty) returns (Args.Host);
   rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
   rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+  rpc ResourceId(google.protobuf.Empty) returns (Basis.ResourceIdResponse);
 
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
