@@ -157,6 +157,23 @@ func (p *basisClient) Host() (h core.Host, err error) {
 	return
 }
 
+func (p *basisClient) ResourceId() (rid string, err error) {
+	defer func() {
+		if err != nil {
+			p.Logger.Error("failed to get resource id",
+				"error", err,
+			)
+		}
+	}()
+
+	r, err := p.client.ResourceId(p.Ctx, &emptypb.Empty{})
+	if err == nil {
+		rid = r.ResourceId
+	}
+
+	return
+}
+
 func (p *basisClient) TargetIndex() (index core.TargetIndex, err error) {
 	defer func() {
 		if err != nil {
@@ -311,6 +328,25 @@ func (p *basisServer) Host(
 	}
 
 	return
+}
+
+func (p *basisServer) ResourceId(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Basis_ResourceIdResponse, error) {
+	rid, err := p.Impl.ResourceId()
+
+	if err != nil {
+		p.Logger.Error("resource id lookup failed",
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Basis_ResourceIdResponse{
+		ResourceId: rid,
+	}, nil
 }
 
 func (p *basisServer) TargetIndex(
