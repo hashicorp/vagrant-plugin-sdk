@@ -159,19 +159,6 @@ func (t *targetMachineClient) Inspect() (printable string, err error) {
 	return
 }
 
-func (t *targetMachineClient) Reload() (err error) {
-	defer func() {
-		if err != nil {
-			t.Logger.Error("failed to reload machine",
-				"error", err,
-			)
-		}
-	}()
-
-	_, err = t.client.Reload(t.Ctx, &empty.Empty{})
-	return
-}
-
 func (t *targetMachineClient) ConnectionInfo() (info *core.ConnectionInfo, err error) {
 	defer func() {
 		if err != nil {
@@ -309,22 +296,6 @@ func (t *targetMachineServer) ConnectionInfo(
 	}
 
 	return
-}
-
-func (t *targetMachineServer) Reload(
-	ctx context.Context,
-	_ *empty.Empty,
-) (e *empty.Empty, err error) {
-	err = t.Impl.Reload()
-	if err != nil {
-		t.Logger.Error("failed to reload machine",
-			"error", err,
-		)
-
-		return
-	}
-
-	return &empty.Empty{}, nil
 }
 
 func (t *targetMachineServer) SyncedFolders(

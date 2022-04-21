@@ -26,7 +26,6 @@ type Machine interface {
 	ID() (id string, err error)
 	Inspect() (printable string, err error)
 	MachineState() (state *MachineState, err error)
-	Reload() (err error)
 	SetID(value string) (err error)
 	SetMachineState(state *MachineState) (err error)
 	SyncedFolders() (folders []*MachineSyncedFolder, err error)

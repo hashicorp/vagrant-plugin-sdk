@@ -6863,7 +6863,6 @@ type TargetMachineServiceClient interface {
 	GetState(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Target_Machine_State, error)
 	Box(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Box, error)
 	Guest(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Guest, error)
-	Reload(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ConnectionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_ConnectionInfoResponse, error)
 	UID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_SyncedFoldersResponse, error)
@@ -7093,15 +7092,6 @@ func (c *targetMachineServiceClient) Guest(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *targetMachineServiceClient) Reload(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/Reload", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *targetMachineServiceClient) ConnectionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_ConnectionInfoResponse, error) {
 	out := new(Target_Machine_ConnectionInfoResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/ConnectionInfo", in, out, opts...)
@@ -7159,7 +7149,6 @@ type TargetMachineServiceServer interface {
 	GetState(context.Context, *emptypb.Empty) (*Args_Target_Machine_State, error)
 	Box(context.Context, *emptypb.Empty) (*Args_Box, error)
 	Guest(context.Context, *emptypb.Empty) (*Args_Guest, error)
-	Reload(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	ConnectionInfo(context.Context, *emptypb.Empty) (*Target_Machine_ConnectionInfoResponse, error)
 	UID(context.Context, *emptypb.Empty) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(context.Context, *emptypb.Empty) (*Target_Machine_SyncedFoldersResponse, error)
@@ -7240,9 +7229,6 @@ func (UnimplementedTargetMachineServiceServer) Box(context.Context, *emptypb.Emp
 }
 func (UnimplementedTargetMachineServiceServer) Guest(context.Context, *emptypb.Empty) (*Args_Guest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Guest not implemented")
-}
-func (UnimplementedTargetMachineServiceServer) Reload(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Reload not implemented")
 }
 func (UnimplementedTargetMachineServiceServer) ConnectionInfo(context.Context, *emptypb.Empty) (*Target_Machine_ConnectionInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConnectionInfo not implemented")
@@ -7697,24 +7683,6 @@ func _TargetMachineService_Guest_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TargetMachineService_Reload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TargetMachineServiceServer).Reload(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/Reload",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TargetMachineServiceServer).Reload(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TargetMachineService_ConnectionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -7871,10 +7839,6 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Guest",
 			Handler:    _TargetMachineService_Guest_Handler,
-		},
-		{
-			MethodName: "Reload",
-			Handler:    _TargetMachineService_Reload_Handler,
 		},
 		{
 			MethodName: "ConnectionInfo",

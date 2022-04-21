@@ -1082,7 +1082,6 @@ service TargetMachineService {
   rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
   rpc Box(google.protobuf.Empty) returns (Args.Box);
   rpc Guest(google.protobuf.Empty) returns (Args.Guest);
-  rpc Reload(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc ConnectionInfo(google.protobuf.Empty) returns(Target.Machine.ConnectionInfoResponse);
   rpc UID(google.protobuf.Empty) returns(Target.Machine.UIDResponse);
   rpc SyncedFolders(google.protobuf.Empty) returns (Target.Machine.SyncedFoldersResponse);
