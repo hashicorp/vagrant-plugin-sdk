@@ -174,6 +174,8 @@ var All = []interface{}{
 	TargetProject,
 	TerminalUI,
 	TerminalUIProto,
+	Vagrantfile,
+	VagrantfileProto,
 }
 
 func MapKeyInterface(
@@ -2267,6 +2269,46 @@ func TargetIndex(
 	}
 
 	return client.(core.TargetIndex), nil
+}
+
+func VagrantfileProto(
+	v core.Vagrantfile,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
+	bp := &plugincore.VagrantfilePlugin{
+		BasePlugin: basePlugin(v, internal),
+		Impl:       v,
+	}
+
+	id, ep, err := wrapClient(v, bp, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Args_Vagrantfile{
+		StreamId: id,
+		Network:  ep.Network(),
+		Addr:     ep.String(),
+	}, nil
+}
+
+func Vagrantfile(
+	ctx context.Context,
+	input *vagrant_plugin_sdk.Args_Vagrantfile,
+	log hclog.Logger,
+	internal *pluginargs.Internal,
+) (core.Vagrantfile, error) {
+	b := &plugincore.VagrantfilePlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, b, input, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Vagrantfile), nil
 }
 
 type connInfo interface {

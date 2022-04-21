@@ -7861,25 +7861,27 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectServiceClient interface {
-	MachineNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error)
-	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
-	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
-	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
+	ActiveTargets(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ActiveTargetsResponse, error)
+	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
 	Config(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ConfigResponse, error)
+	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
+	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error)
+	DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error)
+	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error)
+	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
+	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error)
+	PrimaryTargetName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_PrimaryTargetNameResponse, error)
+	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error)
+	RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_RootPathResponse, error)
+	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
+	TargetIds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
+	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
+	TargetNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
+	Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error)
+	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	VagrantfileName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_VagrantfileNameResponse, error)
 	VagrantfilePath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_VagrantfilePathResponse, error)
-	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
-	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error)
-	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error)
-	Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error)
-	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error)
-	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
-	Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
-	TargetNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error)
-	TargetIds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error)
-	Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error)
-	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error)
 }
 
 type projectServiceClient struct {
@@ -7890,27 +7892,18 @@ func NewProjectServiceClient(cc grpc.ClientConnInterface) ProjectServiceClient {
 	return &projectServiceClient{cc}
 }
 
-func (c *projectServiceClient) MachineNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_MachineNamesResponse, error) {
-	out := new(Project_MachineNamesResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/MachineNames", in, out, opts...)
+func (c *projectServiceClient) ActiveTargets(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ActiveTargetsResponse, error) {
+	out := new(Project_ActiveTargetsResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/ActiveTargets", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *projectServiceClient) TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error) {
-	out := new(Args_TargetIndex)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetIndex", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
-	out := new(Project_CwdResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
+func (c *projectServiceClient) Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error) {
+	out := new(Args_BoxCollection)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Boxes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -7926,9 +7919,144 @@ func (c *projectServiceClient) Config(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *projectServiceClient) CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_CwdResponse, error) {
+	out := new(Project_CwdResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/CWD", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *projectServiceClient) DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error) {
 	out := new(Args_DataDir_Project)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DataDir", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error) {
+	out := new(Project_DefaultPrivateKeyResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DefaultPrivateKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error) {
+	out := new(Project_DefaultProviderResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DefaultProvider", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error) {
+	out := new(Project_HomeResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Home", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error) {
+	out := new(Args_Host)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Host", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error) {
+	out := new(Project_LocalDataResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/LocalData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) PrimaryTargetName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_PrimaryTargetNameResponse, error) {
+	out := new(Project_PrimaryTargetNameResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/PrimaryTargetName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error) {
+	out := new(Project_ResourceIdResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/ResourceId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) RootPath(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_RootPathResponse, error) {
+	out := new(Project_RootPathResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/RootPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error) {
+	out := new(Args_Target)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Target", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) TargetIds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error) {
+	out := new(Project_TargetIdsResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error) {
+	out := new(Args_TargetIndex)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) TargetNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error) {
+	out := new(Project_TargetNamesResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetNames", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error) {
+	out := new(Project_TmpResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Tmp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectServiceClient) UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error) {
+	out := new(Args_TerminalUI)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/UI", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -7953,187 +8081,99 @@ func (c *projectServiceClient) VagrantfilePath(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
-func (c *projectServiceClient) UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error) {
-	out := new(Args_TerminalUI)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/UI", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_HomeResponse, error) {
-	out := new(Project_HomeResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Home", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_LocalDataResponse, error) {
-	out := new(Project_LocalDataResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/LocalData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) Tmp(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TmpResponse, error) {
-	out := new(Project_TmpResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Tmp", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultPrivateKeyResponse, error) {
-	out := new(Project_DefaultPrivateKeyResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DefaultPrivateKey", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error) {
-	out := new(Args_Host)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Host", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) Target(ctx context.Context, in *Project_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error) {
-	out := new(Args_Target)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Target", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) TargetNames(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetNamesResponse, error) {
-	out := new(Project_TargetNamesResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetNames", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) TargetIds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_TargetIdsResponse, error) {
-	out := new(Project_TargetIdsResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/TargetIds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) Boxes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_BoxCollection, error) {
-	out := new(Args_BoxCollection)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/Boxes", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectServiceClient) ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_ResourceIdResponse, error) {
-	out := new(Project_ResourceIdResponse)
-	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/ResourceId", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations should embed UnimplementedProjectServiceServer
 // for forward compatibility
 type ProjectServiceServer interface {
-	MachineNames(context.Context, *emptypb.Empty) (*Project_MachineNamesResponse, error)
-	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
-	// rpc ActiveMachines(google.protobuf.Empty) returns (Project.ActiveMachinesResponse);
-	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
+	ActiveTargets(context.Context, *emptypb.Empty) (*Project_ActiveTargetsResponse, error)
+	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
 	Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error)
+	CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error)
+	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error)
+	DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error)
+	Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error)
+	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
+	LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error)
+	PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error)
+	ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error)
+	RootPath(context.Context, *emptypb.Empty) (*Project_RootPathResponse, error)
+	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
+	TargetIds(context.Context, *emptypb.Empty) (*Project_TargetIdsResponse, error)
+	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
+	TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error)
+	Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error)
+	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	VagrantfileName(context.Context, *emptypb.Empty) (*Project_VagrantfileNameResponse, error)
 	VagrantfilePath(context.Context, *emptypb.Empty) (*Project_VagrantfilePathResponse, error)
-	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
-	Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error)
-	LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error)
-	Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error)
-	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error)
-	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
-	Target(context.Context, *Project_TargetRequest) (*Args_Target, error)
-	TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error)
-	TargetIds(context.Context, *emptypb.Empty) (*Project_TargetIdsResponse, error)
-	Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error)
-	ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error)
 }
 
 // UnimplementedProjectServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedProjectServiceServer struct {
 }
 
-func (UnimplementedProjectServiceServer) MachineNames(context.Context, *emptypb.Empty) (*Project_MachineNamesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MachineNames not implemented")
+func (UnimplementedProjectServiceServer) ActiveTargets(context.Context, *emptypb.Empty) (*Project_ActiveTargetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActiveTargets not implemented")
 }
-func (UnimplementedProjectServiceServer) TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
-}
-func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
+func (UnimplementedProjectServiceServer) Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
 }
 func (UnimplementedProjectServiceServer) Config(context.Context, *emptypb.Empty) (*Project_ConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
 }
+func (UnimplementedProjectServiceServer) CWD(context.Context, *emptypb.Empty) (*Project_CwdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CWD not implemented")
+}
 func (UnimplementedProjectServiceServer) DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataDir not implemented")
+}
+func (UnimplementedProjectServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
+}
+func (UnimplementedProjectServiceServer) DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DefaultProvider not implemented")
+}
+func (UnimplementedProjectServiceServer) Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Home not implemented")
+}
+func (UnimplementedProjectServiceServer) Host(context.Context, *emptypb.Empty) (*Args_Host, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
+}
+func (UnimplementedProjectServiceServer) LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LocalData not implemented")
+}
+func (UnimplementedProjectServiceServer) PrimaryTargetName(context.Context, *emptypb.Empty) (*Project_PrimaryTargetNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PrimaryTargetName not implemented")
+}
+func (UnimplementedProjectServiceServer) ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResourceId not implemented")
+}
+func (UnimplementedProjectServiceServer) RootPath(context.Context, *emptypb.Empty) (*Project_RootPathResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RootPath not implemented")
+}
+func (UnimplementedProjectServiceServer) Target(context.Context, *Project_TargetRequest) (*Args_Target, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Target not implemented")
+}
+func (UnimplementedProjectServiceServer) TargetIds(context.Context, *emptypb.Empty) (*Project_TargetIdsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetIds not implemented")
+}
+func (UnimplementedProjectServiceServer) TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
+}
+func (UnimplementedProjectServiceServer) TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TargetNames not implemented")
+}
+func (UnimplementedProjectServiceServer) Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Tmp not implemented")
+}
+func (UnimplementedProjectServiceServer) UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UI not implemented")
 }
 func (UnimplementedProjectServiceServer) VagrantfileName(context.Context, *emptypb.Empty) (*Project_VagrantfileNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VagrantfileName not implemented")
 }
 func (UnimplementedProjectServiceServer) VagrantfilePath(context.Context, *emptypb.Empty) (*Project_VagrantfilePathResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VagrantfilePath not implemented")
-}
-func (UnimplementedProjectServiceServer) UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UI not implemented")
-}
-func (UnimplementedProjectServiceServer) Home(context.Context, *emptypb.Empty) (*Project_HomeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Home not implemented")
-}
-func (UnimplementedProjectServiceServer) LocalData(context.Context, *emptypb.Empty) (*Project_LocalDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LocalData not implemented")
-}
-func (UnimplementedProjectServiceServer) Tmp(context.Context, *emptypb.Empty) (*Project_TmpResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Tmp not implemented")
-}
-func (UnimplementedProjectServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Project_DefaultPrivateKeyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
-}
-func (UnimplementedProjectServiceServer) Host(context.Context, *emptypb.Empty) (*Args_Host, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
-}
-func (UnimplementedProjectServiceServer) Target(context.Context, *Project_TargetRequest) (*Args_Target, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Target not implemented")
-}
-func (UnimplementedProjectServiceServer) TargetNames(context.Context, *emptypb.Empty) (*Project_TargetNamesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TargetNames not implemented")
-}
-func (UnimplementedProjectServiceServer) TargetIds(context.Context, *emptypb.Empty) (*Project_TargetIdsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TargetIds not implemented")
-}
-func (UnimplementedProjectServiceServer) Boxes(context.Context, *emptypb.Empty) (*Args_BoxCollection, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Boxes not implemented")
-}
-func (UnimplementedProjectServiceServer) ResourceId(context.Context, *emptypb.Empty) (*Project_ResourceIdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResourceId not implemented")
 }
 
 // UnsafeProjectServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -8147,56 +8187,38 @@ func RegisterProjectServiceServer(s grpc.ServiceRegistrar, srv ProjectServiceSer
 	s.RegisterService(&ProjectService_ServiceDesc, srv)
 }
 
-func _ProjectService_MachineNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProjectService_ActiveTargets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProjectServiceServer).MachineNames(ctx, in)
+		return srv.(ProjectServiceServer).ActiveTargets(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/MachineNames",
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/ActiveTargets",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).MachineNames(ctx, req.(*emptypb.Empty))
+		return srv.(ProjectServiceServer).ActiveTargets(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ProjectService_Boxes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProjectServiceServer).TargetIndex(ctx, in)
+		return srv.(ProjectServiceServer).Boxes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetIndex",
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Boxes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).TargetIndex(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_CWD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).CWD(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/CWD",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).CWD(ctx, req.(*emptypb.Empty))
+		return srv.(ProjectServiceServer).Boxes(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -8219,6 +8241,24 @@ func _ProjectService_Config_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectService_CWD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).CWD(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/CWD",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).CWD(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectService_DataDir_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -8233,6 +8273,258 @@ func _ProjectService_DataDir_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).DataDir(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_DefaultPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).DefaultPrivateKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/DefaultPrivateKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).DefaultPrivateKey(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_DefaultProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).DefaultProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/DefaultProvider",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).DefaultProvider(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_Home_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Home(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Home",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Home(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_Host_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Host(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Host",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Host(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_LocalData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).LocalData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/LocalData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).LocalData(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_PrimaryTargetName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).PrimaryTargetName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/PrimaryTargetName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).PrimaryTargetName(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).ResourceId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/ResourceId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).ResourceId(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_RootPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).RootPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/RootPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).RootPath(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_Target_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Project_TargetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Target(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Target",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Target(ctx, req.(*Project_TargetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_TargetIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).TargetIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).TargetIds(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).TargetIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).TargetIndex(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_TargetNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).TargetNames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetNames",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).TargetNames(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_Tmp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).Tmp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Tmp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).Tmp(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectService_UI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).UI(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/UI",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).UI(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -8273,204 +8565,6 @@ func _ProjectService_VagrantfilePath_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectService_UI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).UI(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/UI",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).UI(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_Home_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Home(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Home",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Home(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_LocalData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).LocalData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/LocalData",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).LocalData(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_Tmp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Tmp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Tmp",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Tmp(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_DefaultPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).DefaultPrivateKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/DefaultPrivateKey",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).DefaultPrivateKey(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_Host_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Host(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Host",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Host(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_Target_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Project_TargetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Target(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Target",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Target(ctx, req.(*Project_TargetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_TargetNames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).TargetNames(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetNames",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).TargetNames(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_TargetIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).TargetIds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/TargetIds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).TargetIds(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_Boxes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).Boxes(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/Boxes",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).Boxes(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectService_ResourceId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServiceServer).ResourceId(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/ResourceId",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).ResourceId(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -8479,24 +8573,80 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "MachineNames",
-			Handler:    _ProjectService_MachineNames_Handler,
+			MethodName: "ActiveTargets",
+			Handler:    _ProjectService_ActiveTargets_Handler,
 		},
 		{
-			MethodName: "TargetIndex",
-			Handler:    _ProjectService_TargetIndex_Handler,
-		},
-		{
-			MethodName: "CWD",
-			Handler:    _ProjectService_CWD_Handler,
+			MethodName: "Boxes",
+			Handler:    _ProjectService_Boxes_Handler,
 		},
 		{
 			MethodName: "Config",
 			Handler:    _ProjectService_Config_Handler,
 		},
 		{
+			MethodName: "CWD",
+			Handler:    _ProjectService_CWD_Handler,
+		},
+		{
 			MethodName: "DataDir",
 			Handler:    _ProjectService_DataDir_Handler,
+		},
+		{
+			MethodName: "DefaultPrivateKey",
+			Handler:    _ProjectService_DefaultPrivateKey_Handler,
+		},
+		{
+			MethodName: "DefaultProvider",
+			Handler:    _ProjectService_DefaultProvider_Handler,
+		},
+		{
+			MethodName: "Home",
+			Handler:    _ProjectService_Home_Handler,
+		},
+		{
+			MethodName: "Host",
+			Handler:    _ProjectService_Host_Handler,
+		},
+		{
+			MethodName: "LocalData",
+			Handler:    _ProjectService_LocalData_Handler,
+		},
+		{
+			MethodName: "PrimaryTargetName",
+			Handler:    _ProjectService_PrimaryTargetName_Handler,
+		},
+		{
+			MethodName: "ResourceId",
+			Handler:    _ProjectService_ResourceId_Handler,
+		},
+		{
+			MethodName: "RootPath",
+			Handler:    _ProjectService_RootPath_Handler,
+		},
+		{
+			MethodName: "Target",
+			Handler:    _ProjectService_Target_Handler,
+		},
+		{
+			MethodName: "TargetIds",
+			Handler:    _ProjectService_TargetIds_Handler,
+		},
+		{
+			MethodName: "TargetIndex",
+			Handler:    _ProjectService_TargetIndex_Handler,
+		},
+		{
+			MethodName: "TargetNames",
+			Handler:    _ProjectService_TargetNames_Handler,
+		},
+		{
+			MethodName: "Tmp",
+			Handler:    _ProjectService_Tmp_Handler,
+		},
+		{
+			MethodName: "UI",
+			Handler:    _ProjectService_UI_Handler,
 		},
 		{
 			MethodName: "VagrantfileName",
@@ -8505,50 +8655,6 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VagrantfilePath",
 			Handler:    _ProjectService_VagrantfilePath_Handler,
-		},
-		{
-			MethodName: "UI",
-			Handler:    _ProjectService_UI_Handler,
-		},
-		{
-			MethodName: "Home",
-			Handler:    _ProjectService_Home_Handler,
-		},
-		{
-			MethodName: "LocalData",
-			Handler:    _ProjectService_LocalData_Handler,
-		},
-		{
-			MethodName: "Tmp",
-			Handler:    _ProjectService_Tmp_Handler,
-		},
-		{
-			MethodName: "DefaultPrivateKey",
-			Handler:    _ProjectService_DefaultPrivateKey_Handler,
-		},
-		{
-			MethodName: "Host",
-			Handler:    _ProjectService_Host_Handler,
-		},
-		{
-			MethodName: "Target",
-			Handler:    _ProjectService_Target_Handler,
-		},
-		{
-			MethodName: "TargetNames",
-			Handler:    _ProjectService_TargetNames_Handler,
-		},
-		{
-			MethodName: "TargetIds",
-			Handler:    _ProjectService_TargetIds_Handler,
-		},
-		{
-			MethodName: "Boxes",
-			Handler:    _ProjectService_Boxes_Handler,
-		},
-		{
-			MethodName: "ResourceId",
-			Handler:    _ProjectService_ResourceId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
