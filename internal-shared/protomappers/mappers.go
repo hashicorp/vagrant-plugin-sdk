@@ -1088,15 +1088,11 @@ func BoxProto(
 		return ch.(*vagrant_plugin_sdk.Args_Box), nil
 	}
 
-	log.Warn("failed to locate cached box", "cid", cid)
-
 	// Create our plugin
 	p := &plugincore.BoxPlugin{
 		BasePlugin: basePlugin(box, internal),
 		Impl:       box,
 	}
-
-	log.Warn("wrapping box to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(box, p, internal)
 	if err != nil {
@@ -1108,7 +1104,12 @@ func BoxProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache()))
+	log.Trace("registered box into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
 	internal.Cache().Register(cid, proto)
 
 	return proto, nil
@@ -1142,8 +1143,6 @@ func BoxCollectionProto(
 		return ch.(*vagrant_plugin_sdk.Args_BoxCollection), nil
 	}
 
-	log.Warn("failed to locate cached box collection", "cid", cid)
-
 	// Create our plugin
 	p := &plugincore.BoxCollectionPlugin{
 		BasePlugin: basePlugin(boxCollection, internal),
@@ -1162,7 +1161,12 @@ func BoxCollectionProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box collection into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache()))
+	log.Trace("registered box collection into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
 	internal.Cache().Register(cid, proto)
 
 	return proto, nil
@@ -1197,15 +1201,11 @@ func BoxMetadataProto(
 		return ch.(*vagrant_plugin_sdk.Args_BoxMetadata), nil
 	}
 
-	log.Warn("failed to locate cached box metadata", "cid", cid)
-
 	// Create our plugin
 	p := &plugincore.BoxMetadataPlugin{
 		BasePlugin: basePlugin(boxMetadata, internal),
 		Impl:       boxMetadata,
 	}
-
-	log.Warn("wrapping box metadata to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(boxMetadata, p, internal)
 	if err != nil {
@@ -1217,7 +1217,12 @@ func BoxMetadataProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box metadata into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache()))
+	log.Trace("registered box metadata into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
 	internal.Cache().Register(cid, proto)
 
 	return proto, nil
@@ -1997,7 +2002,10 @@ func SyncedFolderProto(
 ) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
 	rid := fmt.Sprintf("%p", s)
 	if at := internal.Cache().Get(rid); at != nil {
-		log.Warn("using cached synced folder value", "value", at)
+		log.Trace("using cached synced folder value",
+			"value", at,
+		)
+
 		return at.(*vagrant_plugin_sdk.Args_SyncedFolder), nil
 	}
 
@@ -2047,7 +2055,10 @@ func ProviderProto(
 ) (*vagrant_plugin_sdk.Args_Provider, error) {
 	cid := fmt.Sprintf("%p", t)
 	if c := internal.Cache().Get(cid); c != nil {
-		log.Warn("cache hit on provider proto", "cid", cid)
+		log.Trace("cache hit on provider proto",
+			"cid", cid,
+		)
+
 		return c.(*vagrant_plugin_sdk.Args_Provider), nil
 	}
 
@@ -2068,7 +2079,9 @@ func ProviderProto(
 	}
 
 	internal.Cache().Register(cid, proto)
-	log.Warn("registering provider to cache", "cid", cid)
+	log.Trace("registering provider to cache",
+		"cid", cid,
+	)
 
 	return proto, nil
 }
@@ -2082,7 +2095,10 @@ func Provider(
 	cid := input.Addr
 	if cid != "" {
 		if c := internal.Cache().Get(cid); c != nil {
-			log.Warn("cache hit on provider", "cid", cid)
+			log.Trace("cache hit on provider",
+				"cid", cid,
+			)
+
 			return c.(core.Provider), nil
 		}
 	}
@@ -2097,7 +2113,9 @@ func Provider(
 	}
 
 	internal.Cache().Register(cid, client)
-	log.Warn("registering provider to cache", "cid", cid)
+	log.Trace("registering provider to cache",
+		"cid", cid,
+	)
 
 	return client.(core.Provider), nil
 }
@@ -2198,11 +2216,11 @@ func TargetProto(
 		Addr:     endpoint.String(),
 	}
 
-	log.Warn("registering target proto to cache",
+	log.Trace("registering target proto to cache",
 		"rid", rid,
 		"proto", proto,
 	)
-	internal.Cache().Register(rid, proto)
+	internal.Cache().Register(cid, proto)
 	return proto, nil
 }
 
@@ -2229,14 +2247,12 @@ func TargetMachineProto(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
-	mid, err := m.ResourceId()
-	if err != nil {
-		return nil, err
-	}
-	rid := fmt.Sprintf("%s-machine", mid)
+	rid := fmt.Sprintf("%p", m)
 
 	if at := internal.Cache().Get(rid); at != nil {
-		log.Warn("using cached machine value", "value", at)
+		log.Trace("using cached machine value",
+			"value", at,
+		)
 		return at.(*vagrant_plugin_sdk.Args_Target_Machine), nil
 	}
 
@@ -2257,7 +2273,7 @@ func TargetMachineProto(
 		Addr:     endpoint.String(),
 	}
 
-	log.Warn("registering machine proto to cache",
+	log.Trace("registering machine proto to cache",
 		"rid", rid,
 		"proto", proto,
 	)
@@ -2431,6 +2447,7 @@ func wrapConnect(
 
 		return nil, err
 	}
+
 	internal.Cleanup().Do(func() error { return conn.Close() })
 
 	client, err := p.GRPCClient(ctx, internal.Broker(), conn)
