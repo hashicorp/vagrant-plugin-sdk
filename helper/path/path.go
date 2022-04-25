@@ -38,7 +38,7 @@ type path struct {
 }
 
 func NewPath(p string) Path {
-	if p[0:1] == "~" {
+	if len(p) > 0 && p[0:1] == "~" {
 		u, err := user.Current()
 		if err != nil {
 			// TODO(spox): remove the panic and just retain when error

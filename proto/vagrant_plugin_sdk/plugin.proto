@@ -1103,7 +1103,7 @@ message Target {
   }
   // VagrantfilePath
   message VagrantfilePathResponse {
-    string path = 1;
+    Args.Path path = 1;
   }
   // UpdatedAt
   message UpdatedAtResponse {
@@ -1154,24 +1154,24 @@ service ProjectService {
   rpc ActiveTargets(google.protobuf.Empty) returns (Project.ActiveTargetsResponse);
   rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
   rpc Config(google.protobuf.Empty) returns (Project.ConfigResponse);
-  rpc CWD(google.protobuf.Empty) returns (Project.CwdResponse);
+  rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
-  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Project.DefaultPrivateKeyResponse);
+  rpc DefaultPrivateKey(google.protobuf.Empty) returns (Args.Path);
   rpc DefaultProvider(google.protobuf.Empty) returns (Project.DefaultProviderResponse);
-  rpc Home(google.protobuf.Empty) returns (Project.HomeResponse);
+  rpc Home(google.protobuf.Empty) returns (Args.Path);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
-  rpc LocalData(google.protobuf.Empty) returns (Project.LocalDataResponse);
+  rpc LocalData(google.protobuf.Empty) returns (Args.Path);
   rpc PrimaryTargetName(google.protobuf.Empty) returns (Project.PrimaryTargetNameResponse);
   rpc ResourceId(google.protobuf.Empty) returns (Project.ResourceIdResponse);
-  rpc RootPath(google.protobuf.Empty) returns (Project.RootPathResponse);
+  rpc RootPath(google.protobuf.Empty) returns (Args.Path);
   rpc Target(Project.TargetRequest) returns (Args.Target);
   rpc TargetIds(google.protobuf.Empty) returns (Project.TargetIdsResponse);
   rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
   rpc TargetNames(google.protobuf.Empty) returns (Project.TargetNamesResponse);
-  rpc Tmp(google.protobuf.Empty) returns (Project.TmpResponse);
+  rpc Tmp(google.protobuf.Empty) returns (Args.Path);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc VagrantfileName(google.protobuf.Empty) returns (Project.VagrantfileNameResponse);
-  rpc VagrantfilePath(google.protobuf.Empty) returns (Project.VagrantfilePathResponse);
+  rpc VagrantfilePath(google.protobuf.Empty) returns (Args.Path);
 }
 
 /*******************************************************
@@ -1186,9 +1186,6 @@ message Project {
   }
   message CwdResponse {
     string path = 1;
-  }
-  message DefaultPrivateKeyResponse {
-    string key = 1;
   }
   message DefaultProviderResponse {
     string provider_name = 1;
@@ -1205,9 +1202,6 @@ message Project {
   message ResourceIdResponse {
     string resource_id = 1;
   }
-  message RootPathResponse {
-    string path = 1;
-  }
   message TargetRequest {
     string name = 1;
   }
@@ -1217,14 +1211,8 @@ message Project {
   message TargetIdsResponse {
     repeated string ids = 1;
   }
-  message TmpResponse {
-    string path = 1;
-  }
   message VagrantfileNameResponse {
     string name = 1;
-  }
-  message VagrantfilePathResponse {
-    string path = 1;
   }
 }
 
@@ -1528,7 +1516,7 @@ service BoxCollectionService {
  *******************************************************/
 message BoxCollection {
   message AddRequest {
-    string path = 1;
+    Args.Path path = 1;
     string name = 2;
     string version = 3;
     string metadataUrl = 4;

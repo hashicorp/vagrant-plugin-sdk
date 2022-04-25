@@ -1955,8 +1955,8 @@ func FolderToVagrantfileSyncedFolder(
 ) (*vagrant_plugin_sdk.Vagrantfile_SyncedFolder, error) {
 	var result *vagrant_plugin_sdk.Vagrantfile_SyncedFolder
 	err := mapstructure.Decode(f.Options, &result)
-	result.Source = f.Source
-	result.Destination = f.Destination
+	result.Source = f.Source.String()
+	result.Destination = f.Destination.String()
 	return result, err
 }
 

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -74,7 +75,7 @@ func (b *boxClient) Destroy() (err error) {
 	return
 }
 
-func (b *boxClient) Directory() (path string, err error) {
+func (b *boxClient) Directory() (p path.Path, err error) {
 	defer func() {
 		if err != nil {
 			b.Logger.Error("failed to get box directory",
@@ -87,7 +88,7 @@ func (b *boxClient) Directory() (path string, err error) {
 	if err != nil {
 		return
 	}
-	return dir.Path, nil
+	return path.NewPath(dir.Path), nil
 }
 
 func (b *boxClient) HasUpdate(version string) (updateAvailable bool, err error) {
@@ -268,7 +269,7 @@ func (b *boxClient) Provider() (name string, err error) {
 	return result.Provider, nil
 }
 
-func (b *boxClient) Repackage(path string) (err error) {
+func (b *boxClient) Repackage(path path.Path) (err error) {
 	defer func() {
 		if err != nil {
 			b.Logger.Error("failed to repackage box",
@@ -279,7 +280,7 @@ func (b *boxClient) Repackage(path string) (err error) {
 
 	_, err = b.client.Repackage(
 		b.Ctx,
-		&vagrant_plugin_sdk.Args_Path{Path: path},
+		&vagrant_plugin_sdk.Args_Path{Path: path.String()},
 	)
 	return
 }
@@ -456,7 +457,7 @@ func (b *boxServer) Machines(
 func (b *boxServer) Repackage(
 	ctx context.Context, in *vagrant_plugin_sdk.Args_Path,
 ) (*emptypb.Empty, error) {
-	err := b.Impl.Repackage(in.Path)
+	err := b.Impl.Repackage(path.NewPath(in.Path))
 	if err != nil {
 		b.Logger.Error("failed to repackage box",
 			"error", err,
@@ -479,7 +480,7 @@ func (b *boxServer) Directory(
 	}
 
 	return &vagrant_plugin_sdk.Args_Path{
-		Path: d,
+		Path: d.String(),
 	}, nil
 }
 

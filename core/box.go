@@ -1,12 +1,16 @@
 package core
 
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+)
+
 type Box interface {
 	// Check if a box is allowed
 	AutomaticUpdateCheckAllowed() (allowed bool, err error)
 	// Deletes the box
 	Destroy() (err error)
 	// The directory on disk where this box exists
-	Directory() (path string, err error)
+	Directory() (path path.Path, err error)
 	// Checks if the box has an update
 	HasUpdate(version string) (updateAvailable bool, err error)
 	// Checks if the box has an update and returns the metadata (from the metadata url),
@@ -27,7 +31,7 @@ type Box interface {
 	// Box provider
 	Provider() (name string, err error)
 	// This repackages this box and outputs it to the given path.
-	Repackage(path string) (err error)
+	Repackage(path path.Path) (err error)
 	// Box version
 	Version() (version string, err error)
 	// Compares a box to this box. Returns -1, 0, or 1 if this version is smaller, equal, or

@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
@@ -78,35 +79,35 @@ func (p *basisClient) Boxes() (b core.BoxCollection, err error) {
 	return
 }
 
-func (p *basisClient) CWD() (path string, err error) {
+func (b *basisClient) CWD() (p path.Path, err error) {
 	defer func() {
 		if err != nil {
-			p.Logger.Error("failed to get current working directory",
+			b.Logger.Error("failed to get current working directory",
 				"error", err,
 			)
 		}
 	}()
 
-	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
+	r, err := b.client.CWD(b.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		p = path.NewPath(r.Path)
 	}
 
 	return
 }
 
-func (p *basisClient) DefaultPrivateKey() (path string, err error) {
+func (b *basisClient) DefaultPrivateKey() (p path.Path, err error) {
 	defer func() {
 		if err != nil {
-			p.Logger.Error("failed to get default private key",
+			b.Logger.Error("failed to get default private key",
 				"error", err,
 			)
 		}
 	}()
 
-	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
+	r, err := b.client.DefaultPrivateKey(b.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		p = path.NewPath(r.Path)
 	}
 
 	return
@@ -239,7 +240,7 @@ func (p *basisServer) CWD(
 	}
 
 	return &vagrant_plugin_sdk.Args_Path{
-		Path: c,
+		Path: c.String(),
 	}, nil
 }
 
@@ -282,7 +283,7 @@ func (p *basisServer) DefaultPrivateKey(
 	}
 
 	return &vagrant_plugin_sdk.Args_Path{
-		Path: c,
+		Path: c.String(),
 	}, nil
 }
 

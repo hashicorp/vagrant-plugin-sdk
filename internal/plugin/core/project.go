@@ -111,7 +111,7 @@ func (p *projectClient) Boxes() (b core.BoxCollection, err error) {
 	return
 }
 
-func (p *projectClient) CWD() (path string, err error) {
+func (p *projectClient) CWD() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get cwd",
@@ -121,7 +121,7 @@ func (p *projectClient) CWD() (path string, err error) {
 	}()
 	r, err := p.client.CWD(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -164,7 +164,7 @@ func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
 	return
 }
 
-func (p *projectClient) DefaultPrivateKey() (path string, err error) {
+func (p *projectClient) DefaultPrivateKey() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get default private key",
@@ -174,7 +174,7 @@ func (p *projectClient) DefaultPrivateKey() (path string, err error) {
 	}()
 	r, err := p.client.DefaultPrivateKey(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Key
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -196,7 +196,7 @@ func (p *projectClient) DefaultProvider() (name string, err error) {
 	return
 }
 
-func (p *projectClient) Home() (path string, err error) {
+func (p *projectClient) Home() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get home path",
@@ -206,7 +206,7 @@ func (p *projectClient) Home() (path string, err error) {
 	}()
 	r, err := p.client.Home(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -235,7 +235,7 @@ func (p *projectClient) Host() (h core.Host, err error) {
 	return
 }
 
-func (p *projectClient) LocalData() (path string, err error) {
+func (p *projectClient) LocalData() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get local data path",
@@ -245,7 +245,7 @@ func (p *projectClient) LocalData() (path string, err error) {
 	}()
 	r, err := p.client.LocalData(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -283,7 +283,7 @@ func (p *projectClient) ResourceId() (rid string, err error) {
 	return
 }
 
-func (p *projectClient) RootPath() (path string, err error) {
+func (p *projectClient) RootPath() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get root path",
@@ -293,7 +293,7 @@ func (p *projectClient) RootPath() (path string, err error) {
 	}()
 	r, err := p.client.RootPath(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -376,7 +376,7 @@ func (p *projectClient) TargetNames() (names []string, err error) {
 	return
 }
 
-func (p *projectClient) Tmp() (path string, err error) {
+func (p *projectClient) Tmp() (dir path.Path, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get temp path",
@@ -386,7 +386,7 @@ func (p *projectClient) Tmp() (path string, err error) {
 	}()
 	r, err := p.client.Tmp(p.Ctx, &emptypb.Empty{})
 	if err == nil {
-		path = r.Path
+		dir = path.NewPath(r.Path)
 	}
 
 	return
@@ -513,7 +513,7 @@ func (p *projectServer) Config(
 func (p *projectServer) CWD(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_CwdResponse, error) {
+) (*vagrant_plugin_sdk.Args_Path, error) {
 	c, err := p.Impl.CWD()
 	if err != nil {
 		p.Logger.Error("failed to get cwd",
@@ -522,8 +522,8 @@ func (p *projectServer) CWD(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Project_CwdResponse{
-		Path: c,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: c.String(),
 	}, nil
 }
 
@@ -549,7 +549,7 @@ func (p *projectServer) DataDir(
 func (p *projectServer) DefaultPrivateKey(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse, error) {
+) (*vagrant_plugin_sdk.Args_Path, error) {
 	key, err := p.Impl.DefaultPrivateKey()
 	p.Logger.Warn("private key on project server", "key", key)
 	if err != nil {
@@ -559,8 +559,8 @@ func (p *projectServer) DefaultPrivateKey(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Project_DefaultPrivateKeyResponse{
-		Key: key,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: key.String(),
 	}, nil
 }
 
@@ -584,8 +584,8 @@ func (p *projectServer) DefaultProvider(
 func (p *projectServer) Home(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_HomeResponse, error) {
-	path, err := p.Impl.Home()
+) (*vagrant_plugin_sdk.Args_Path, error) {
+	homePath, err := p.Impl.Home()
 	if err != nil {
 		p.Logger.Error("failed to get home path",
 			"error", err,
@@ -593,8 +593,8 @@ func (p *projectServer) Home(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Project_HomeResponse{
-		Path: path,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: homePath.String(),
 	}, nil
 }
 
@@ -622,16 +622,16 @@ func (p *projectServer) Host(
 func (p *projectServer) LocalData(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_LocalDataResponse, error) {
-	path, err := p.Impl.LocalData()
+) (*vagrant_plugin_sdk.Args_Path, error) {
+	dataPath, err := p.Impl.LocalData()
 	if err != nil {
 		p.Logger.Error("failed to get local data path",
 			"error", err,
 		)
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Project_LocalDataResponse{
-		Path: path,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: dataPath.String(),
 	}, nil
 }
 
@@ -671,8 +671,8 @@ func (p *projectServer) ResourceId(
 func (p *projectServer) RootPath(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_RootPathResponse, error) {
-	path, err := p.Impl.RootPath()
+) (*vagrant_plugin_sdk.Args_Path, error) {
+	rootPath, err := p.Impl.RootPath()
 	if err != nil {
 		p.Logger.Error("failed to get root path",
 			"error", err,
@@ -680,8 +680,8 @@ func (p *projectServer) RootPath(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Project_RootPathResponse{
-		Path: path,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: rootPath.String(),
 	}, nil
 }
 
@@ -760,16 +760,16 @@ func (p *projectServer) TargetNames(
 func (p *projectServer) Tmp(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_TmpResponse, error) {
-	path, err := p.Impl.Tmp()
+) (*vagrant_plugin_sdk.Args_Path, error) {
+	tmpPath, err := p.Impl.Tmp()
 	if err != nil {
 		p.Logger.Error("failed to get temp path",
 			"error", err,
 		)
 		return nil, err
 	}
-	return &vagrant_plugin_sdk.Project_TmpResponse{
-		Path: path,
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: tmpPath.String(),
 	}, nil
 }
 
@@ -814,8 +814,8 @@ func (p *projectServer) VagrantfileName(
 func (p *projectServer) VagrantfilePath(
 	ctx context.Context,
 	_ *emptypb.Empty,
-) (*vagrant_plugin_sdk.Project_VagrantfilePathResponse, error) {
-	path, err := p.Impl.VagrantfilePath()
+) (*vagrant_plugin_sdk.Args_Path, error) {
+	vfPath, err := p.Impl.VagrantfilePath()
 	if err != nil {
 		p.Logger.Error("failed to get Vagrantfile path",
 			"error", err,
@@ -823,8 +823,8 @@ func (p *projectServer) VagrantfilePath(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Project_VagrantfilePathResponse{
-		Path: path.String(),
+	return &vagrant_plugin_sdk.Args_Path{
+		Path: vfPath.String(),
 	}, nil
 }
 
