@@ -1717,11 +1717,7 @@ func BasisProto(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Basis, error) {
-	cid, err := b.ResourceId()
-	if err != nil {
-		log.Warn("failed to get resource ID from basis", "error", err)
-		cid = fmt.Sprintf("%p", b)
-	}
+	cid := fmt.Sprintf("%p", b)
 
 	if ch := internal.Cache().Get(cid); ch != nil {
 		log.Trace("using cached basis proto", "cid", cid)
@@ -1880,11 +1876,7 @@ func ProjectProto(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Project, error) {
-	cid, err := p.ResourceId()
-	if err != nil {
-		log.Warn("failed to get resource ID from project", "error", err)
-		cid = fmt.Sprintf("%p", p)
-	}
+	cid := fmt.Sprintf("%p", p)
 
 	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_Project), nil
@@ -2195,8 +2187,12 @@ func TargetProto(
 	if err != nil {
 		return nil, err
 	}
-	if at := internal.Cache().Get(rid); at != nil {
-		log.Warn("using cached target value", "value", at)
+	cid := fmt.Sprintf("%s-%p", rid, t)
+	if at := internal.Cache().Get(cid); at != nil {
+		log.Trace("using cached target value",
+			"value", at,
+		)
+
 		return at.(*vagrant_plugin_sdk.Args_Target), nil
 	}
 
