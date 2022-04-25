@@ -1,7 +1,7 @@
 package cleanup
 
 import (
-	"fmt"
+	//	"fmt"
 	"sync"
 
 	"github.com/hashicorp/go-multierror"
@@ -13,6 +13,7 @@ type Cleanup interface {
 	Close() error // executes registered cleanup functions
 }
 
+// Create a new cleanup instance
 func New() Cleanup {
 	return &cleanup{
 		fns: []cleanupFn{},
@@ -27,6 +28,7 @@ type cleanup struct {
 	mark bool
 }
 
+// Register a new cleanup task to be performed on close
 func (c *cleanup) Do(fn cleanupFn) {
 	c.l.Lock()
 	defer c.l.Unlock()
@@ -34,12 +36,15 @@ func (c *cleanup) Do(fn cleanupFn) {
 	c.fns = append(c.fns, fn)
 }
 
+// Run all cleanup tasks
 func (c *cleanup) Close() (err error) {
 	c.l.Lock()
 	defer c.l.Unlock()
-	if c.mark {
-		return fmt.Errorf("Cleanup has already been closed")
-	}
+	// TODO(spox): Uncomment once closers are properly
+	//             setup to only be called once.
+	// if c.mark {
+	// 	return fmt.Errorf("Cleanup has already been closed")
+	// }
 
 	for _, fn := range c.fns {
 		e := fn()
