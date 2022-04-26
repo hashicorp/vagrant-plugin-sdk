@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strings"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
@@ -359,12 +360,19 @@ func (b *BaseClient) CallDynamicFunc(
 
 		for _, v := range s.Typed {
 			if a, ok := v.(*anypb.Any); ok {
+				// The TypeUrl uniquely identifies the type of the serialized protocol
+				// buffer message. The last segment of the URL's path must represent the
+				// fully qualified name of the type (as in `path/google.protobuf.Duration`).
+				// So, here we grab the last segment for the URL and use that as the Subtype
+				// for argmapper
+				typeUrl := strings.Split(a.TypeUrl, "/")
+				anyType := typeUrl[len(typeUrl)-1]
 				b.Logger.Info("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", v),
-					"subtype", a.TypeUrl,
+					"subtype", anyType,
 				)
 
-				callArgs = append(callArgs, argmapper.TypedSubtype(a, a.TypeUrl))
+				callArgs = append(callArgs, argmapper.TypedSubtype(a, anyType))
 			} else {
 				b.Logger.Info("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", v),
