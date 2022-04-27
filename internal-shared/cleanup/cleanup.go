@@ -29,6 +29,7 @@ type cleanup struct {
 }
 
 // Register a new cleanup task to be performed on close
+// NOTE: cleanup tasks are only called once
 func (c *cleanup) Do(fn cleanupFn) {
 	c.l.Lock()
 	defer c.l.Unlock()
@@ -53,6 +54,10 @@ func (c *cleanup) Close() (err error) {
 		}
 	}
 
+	// Remove cleanup tasks as they have been called
+	c.fns = []cleanupFn{}
+
+	// Set the mark to show close has been called
 	c.mark = true
 
 	return
