@@ -98,7 +98,7 @@ func (p *corePluginManagerServer) GetPlugin(
 	internal := p.Internal()
 	raw, err := dynamic.UnknownMap(plugin,
 		(*proto.Message)(nil),
-		internal.Mappers,
+		internal.Mappers(),
 		argmapper.Typed(p.Logger, internal),
 	)
 	if err != nil {

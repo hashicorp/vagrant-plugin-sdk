@@ -410,7 +410,7 @@ func ValueToStruct(
 func Seeds(
 	input *vagrant_plugin_sdk.Args_Seeds,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*core.Seeds, error) {
 	result := core.NewSeeds()
@@ -430,7 +430,7 @@ func Seeds(
 func SeedsProto(
 	input *core.Seeds,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Seeds, error) {
 	result := &vagrant_plugin_sdk.Args_Seeds{
@@ -460,7 +460,7 @@ func SeedsProto(
 func SeedsProtoFull(
 	input *core.Seeds,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Seeds, error) {
 	result := &vagrant_plugin_sdk.Args_Seeds{
@@ -537,7 +537,7 @@ func SymbolProto(
 func Array(
 	input *vagrant_plugin_sdk.Args_Array,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) ([]interface{}, error) {
 	result, err := Direct(
@@ -559,7 +559,7 @@ func Array(
 func ArrayProto(
 	input []interface{},
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Array, error) {
 	result, err := DirectProto(
@@ -583,7 +583,7 @@ func ArrayProto(
 func Hash(
 	input *vagrant_plugin_sdk.Args_Hash,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (result map[interface{}]interface{}, err error) {
 	result = make(map[interface{}]interface{}, len(input.Entries))
@@ -614,7 +614,7 @@ func Hash(
 func HashProto(
 	input map[interface{}]interface{},
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Hash, error) {
 	content := make([]*vagrant_plugin_sdk.Args_HashEntry, 0, len(input))
@@ -647,7 +647,7 @@ func HashProto(
 func Options(
 	input *vagrant_plugin_sdk.Args_Options,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (result map[interface{}]interface{}, err error) {
 	return Hash(
@@ -661,7 +661,7 @@ func Options(
 func OptionsProto(
 	input map[interface{}]interface{},
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (opts *vagrant_plugin_sdk.Args_Options, err error) {
 	h, err := HashProto(input, log, internal, ctx)
@@ -676,7 +676,7 @@ func OptionsProto(
 func Folders(
 	input *vagrant_plugin_sdk.Args_Folders,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (result map[interface{}]interface{}, err error) {
 	return Hash(
@@ -690,7 +690,7 @@ func Folders(
 func FoldersProto(
 	input map[interface{}]interface{},
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (opts *vagrant_plugin_sdk.Args_Folders, err error) {
 	h, err := HashProto(input, log, internal, ctx)
@@ -721,7 +721,7 @@ func NamedCapabilityProto(
 func Direct(
 	input *vagrant_plugin_sdk.Args_Direct,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*component.Direct, error) {
 	args := make([]interface{}, len(input.Arguments))
@@ -746,7 +746,7 @@ func Direct(
 
 		// Next attempt a blind map to convert the value into something
 		// we may have a converter for
-		nv, err = dynamic.BlindMap(val, internal.Mappers,
+		nv, err = dynamic.BlindMap(val, internal.Mappers(),
 			argmapper.Typed(internal, ctx, log))
 
 		// Again, if there's no error, set the value and move on
@@ -772,7 +772,7 @@ func Direct(
 func DirectProto(
 	input *component.Direct,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Args_Direct, error) {
 	list := make([]*anypb.Any, len(input.Arguments))
@@ -782,7 +782,7 @@ func DirectProto(
 		v, err := dynamic.MapToWellKnownProto(arg)
 		if err != nil {
 			v, err = dynamic.UnknownMap(arg, (*proto.Message)(nil),
-				internal.Mappers,
+				internal.Mappers(),
 				argmapper.Typed(internal),
 				argmapper.Typed(ctx),
 				argmapper.Typed(log),
@@ -809,10 +809,10 @@ func DirectProto(
 func HostProto(
 	input component.Host,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Host, error) {
 	cid := fmt.Sprintf("%p", input)
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_Host), nil
 	}
 	p := &plugincomponent.HostPlugin{
@@ -820,12 +820,12 @@ func HostProto(
 		Impl:       input,
 	}
 
-	internal.Logger.Trace("wrapping host plugin",
+	internal.Logger().Trace("wrapping host plugin",
 		"host", input)
 
 	id, ep, err := wrapClient(input, p, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to wrap host plugin",
+		internal.Logger().Warn("failed to wrap host plugin",
 			"host", input,
 			"error", err)
 
@@ -836,7 +836,7 @@ func HostProto(
 		Addr:     ep.String(),
 		StreamId: id,
 	}
-	internal.Cache.Register(cid, proto)
+	internal.Cache().Register(cid, proto)
 	return proto, nil
 }
 
@@ -844,17 +844,17 @@ func Host(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Host,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Host, error) {
 	p := &plugincomponent.HostPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
-	internal.Logger.Trace("connecting to wrapped host plugin",
+	internal.Logger().Trace("connecting to wrapped host plugin",
 		"connection-info", input)
 
 	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped host plugin",
+		internal.Logger().Warn("failed to connect to wrapped host plugin",
 			"connection-info", input,
 			"error", err)
 
@@ -867,17 +867,17 @@ func Host(
 func GuestProto(
 	input component.Guest,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Guest, error) {
 	p := &plugincomponent.GuestPlugin{
 		BasePlugin: basePlugin(input, internal),
 		Impl:       input,
 	}
 
-	internal.Logger.Trace("wrapping guest plugin", "guest", input)
+	internal.Logger().Trace("wrapping guest plugin", "guest", input)
 	id, ep, err := wrapClient(input, p, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to wrap guest plugin", "guest", input, "error", err)
+		internal.Logger().Warn("failed to wrap guest plugin", "guest", input, "error", err)
 		return nil, err
 	}
 	return &vagrant_plugin_sdk.Args_Guest{
@@ -891,15 +891,15 @@ func Guest(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Guest,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Guest, error) {
 	p := &plugincomponent.GuestPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
-	internal.Logger.Trace("connecting to wrapped guest plugin", "connection-info", input)
+	internal.Logger().Trace("connecting to wrapped guest plugin", "connection-info", input)
 	client, err := wrapConnect(ctx, p, input, internal)
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped guest plugin", "connection-info", input, "error", err)
+		internal.Logger().Warn("failed to connect to wrapped guest plugin", "connection-info", input, "error", err)
 		return nil, err
 	}
 
@@ -986,8 +986,16 @@ func SshInfoProto(input *core.SshInfo) (*vagrant_plugin_sdk.Args_Connection_SSHI
 func CorePluginManager(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_CorePluginManager,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.CorePluginManager, error) {
+	cid := input.Addr
+	if cid != "" {
+		if ch := internal.Cache().Get(cid); ch != nil {
+			log.Trace("using cached core plugin manager", "cid", cid)
+			return ch.(core.CorePluginManager), nil
+		}
+	}
+
 	// Create our plugin
 	p := &plugincore.CorePluginManagerPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -998,14 +1006,24 @@ func CorePluginManager(ctx context.Context,
 		return nil, err
 	}
 
+	internal.Cache().Register(cid, client)
+
+	log.Trace("cache miss on core plugin manager", "cid", cid)
+
 	return client.(core.CorePluginManager), nil
 }
 
 func CorePluginManagerProto(
 	impl core.CorePluginManager,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_CorePluginManager, error) {
+	cid := fmt.Sprintf("%p", impl)
+	if ch := internal.Cache().Get(cid); ch != nil {
+		log.Trace("using cached core plugin manager proto", "cid", cid)
+		return ch.(*vagrant_plugin_sdk.Args_CorePluginManager), nil
+	}
+
 	// Create our plugin
 	p := &plugincore.CorePluginManagerPlugin{
 		BasePlugin: basePlugin(impl, internal),
@@ -1020,41 +1038,20 @@ func CorePluginManagerProto(
 	proto := &vagrant_plugin_sdk.Args_CorePluginManager{
 		StreamId: id,
 		Network:  ep.Network(),
-		Addr:     ep.String()}
-
-	return proto, nil
-}
-
-func CorePluginManagerProtoDirect(
-	input core.CorePluginManager,
-	log hclog.Logger,
-	broker *plugin.GRPCBroker,
-) (*vagrant_plugin_sdk.Args_CorePluginManager, func(), error) {
-	p := &plugincore.CorePluginManagerPlugin{
-		BasePlugin: &plugincomponent.BasePlugin{
-			Logger:  log,
-			Wrapped: true,
-		},
-		Impl: input,
-	}
-	id, ep, closer, err := wrapClientStandalone(input, p, broker, log)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	proto := &vagrant_plugin_sdk.Args_CorePluginManager{
-		StreamId: id,
-		Network:  ep.Network(),
 		Addr:     ep.String(),
 	}
 
-	return proto, closer, nil
+	internal.Cache().Register(cid, proto)
+
+	log.Trace("cache miss on core plugin manager proto", "cid", cid)
+
+	return proto, nil
 }
 
 func Box(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Box,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Box, error) {
 	// Create our plugin
 	p := &plugincore.BoxPlugin{
@@ -1072,7 +1069,7 @@ func Box(ctx context.Context,
 func BoxProto(
 	box core.Box,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Box, error) {
 	n, err := box.Name()
 	if err != nil {
@@ -1087,19 +1084,15 @@ func BoxProto(
 		return nil, err
 	}
 	cid := n + "-" + v + "-" + pr
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_Box), nil
 	}
-
-	log.Warn("failed to locate cached box", "cid", cid)
 
 	// Create our plugin
 	p := &plugincore.BoxPlugin{
 		BasePlugin: basePlugin(box, internal),
 		Impl:       box,
 	}
-
-	log.Warn("wrapping box to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(box, p, internal)
 	if err != nil {
@@ -1111,8 +1104,13 @@ func BoxProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
-	internal.Cache.Register(cid, proto)
+	log.Trace("registered box into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
+	internal.Cache().Register(cid, proto)
 
 	return proto, nil
 }
@@ -1120,7 +1118,7 @@ func BoxProto(
 func BoxCollection(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_BoxCollection,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.BoxCollection, error) {
 	// Create our plugin
 	p := &plugincore.BoxCollectionPlugin{
@@ -1138,14 +1136,12 @@ func BoxCollection(ctx context.Context,
 func BoxCollectionProto(
 	boxCollection core.BoxCollection,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_BoxCollection, error) {
 	cid := fmt.Sprintf("%p", boxCollection)
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_BoxCollection), nil
 	}
-
-	log.Warn("failed to locate cached box collection", "cid", cid)
 
 	// Create our plugin
 	p := &plugincore.BoxCollectionPlugin{
@@ -1165,8 +1161,13 @@ func BoxCollectionProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box collection into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
-	internal.Cache.Register(cid, proto)
+	log.Trace("registered box collection into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
+	internal.Cache().Register(cid, proto)
 
 	return proto, nil
 }
@@ -1174,7 +1175,7 @@ func BoxCollectionProto(
 func BoxMetadata(ctx context.Context,
 	input *vagrant_plugin_sdk.Args_BoxMetadata,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.BoxMetadata, error) {
 	// Create our plugin
 	p := &plugincore.BoxMetadataPlugin{
@@ -1192,23 +1193,19 @@ func BoxMetadata(ctx context.Context,
 func BoxMetadataProto(
 	boxMetadata core.BoxMetadata,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_BoxMetadata, error) {
 	n := boxMetadata.BoxName()
 	cid := "box_metadata" + n
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_BoxMetadata), nil
 	}
-
-	log.Warn("failed to locate cached box metadata", "cid", cid)
 
 	// Create our plugin
 	p := &plugincore.BoxMetadataPlugin{
 		BasePlugin: basePlugin(boxMetadata, internal),
 		Impl:       boxMetadata,
 	}
-
-	log.Warn("wrapping box metadata to generate proto", "cid", cid)
 
 	id, ep, err := wrapClient(boxMetadata, p, internal)
 	if err != nil {
@@ -1220,8 +1217,13 @@ func BoxMetadataProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	log.Warn("registered box metadata into cache", "cid", cid, "proto", proto, "cache", hclog.Fmt("%p", internal.Cache))
-	internal.Cache.Register(cid, proto)
+	log.Trace("registered box metadata into cache",
+		"cid", cid,
+		"proto", proto,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
+	internal.Cache().Register(cid, proto)
 
 	return proto, nil
 }
@@ -1313,51 +1315,81 @@ func TerminalUI(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_TerminalUI,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (terminal.UI, error) {
+	cid := input.Addr
+	if cid != "" {
+		if ch := internal.Cache().Get(cid); ch != nil {
+			return ch.(terminal.UI), nil
+		}
+	}
+
 	// Create our plugin
 	p := &pluginterminal.UIPlugin{
-		Mappers: internal.Mappers,
+		Mappers: internal.Mappers(),
 		Logger:  log,
 	}
 
-	internal.Logger.Trace("connecting to wrapped ui", "stream_id", input.StreamId)
+	internal.Logger().Trace("connecting to wrapped ui",
+		"stream_id", input.StreamId,
+	)
+
 	client, err := wrapConnect(ctx, p, input, internal)
 
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped ui", "steam_id", input.StreamId, "error", err)
+		internal.Logger().Warn("failed to connect to wrapped ui",
+			"steam_id", input.StreamId,
+			"error", err,
+		)
+
 		return nil, err
 	}
 
-	internal.Logger.Trace("connected to wrapped ui", "ui", client, "stream_id", input.StreamId)
+	internal.Logger().Trace("connected to wrapped ui",
+		"ui", client,
+		"stream_id", input.StreamId,
+	)
+
+	internal.Cache().Register(cid, client)
+
 	return client.(terminal.UI), nil
 }
 
 func TerminalUIProto(
 	ui terminal.UI,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_TerminalUI, error) {
+	cid := fmt.Sprintf("%p", ui)
+	if ch := internal.Cache().Get(cid); ch != nil {
+		return ch.(*vagrant_plugin_sdk.Args_TerminalUI), nil
+	}
+
 	// Create our plugin
 	p := &pluginterminal.UIPlugin{
 		Impl:    ui,
-		Mappers: internal.Mappers,
+		Mappers: internal.Mappers(),
 		Logger:  log.ResetNamed("vagrant.wrapped"),
 	}
 
-	internal.Logger.Trace("wrapping ui", "ui", ui)
+	internal.Logger().Trace("wrapping ui", "ui", ui)
 	id, ep, err := wrapClient(ui, p, internal)
 
 	if err != nil {
-		internal.Logger.Trace("failed to wrap ui", "ui", ui, "error", err)
+		internal.Logger().Trace("failed to wrap ui", "ui", ui, "error", err)
 		return nil, err
 	}
 
-	internal.Logger.Trace("wrapped ui", "ui", ui, "stream_id", id, "endpoint", ep)
-	return &vagrant_plugin_sdk.Args_TerminalUI{
+	internal.Logger().Trace("wrapped ui", "ui", ui, "stream_id", id, "endpoint", ep)
+	proto := &vagrant_plugin_sdk.Args_TerminalUI{
 		StreamId: id,
 		Network:  ep.Network(),
-		Addr:     ep.String()}, nil
+		Addr:     ep.String(),
+	}
+
+	internal.Cache().Register(cid, proto)
+
+	return proto, nil
 }
 
 func MetadataSet(input *vagrant_plugin_sdk.Args_MetadataSet) *component.MetadataSet {
@@ -1374,7 +1406,7 @@ func Plugin(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.PluginManager_Plugin,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*core.NamedPlugin, error) {
 	t, err := component.FindType(input.Type)
 	if err != nil {
@@ -1390,7 +1422,7 @@ func Plugin(
 	}
 
 	args := []argmapper.Arg{
-		argmapper.ConverterFunc(internal.Mappers...),
+		argmapper.ConverterFunc(internal.Mappers()...),
 		argmapper.Typed(ctx, log, internal),
 	}
 	_, v, err := dynamic.DecodeAny(input.Plugin)
@@ -1406,7 +1438,7 @@ func Plugin(
 func PluginProto(
 	input *core.NamedPlugin,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.PluginManager_Plugin, error) {
 	t, err := component.FindType(input.Type)
 	if err != nil {
@@ -1422,7 +1454,7 @@ func PluginProto(
 
 	raw, err := dynamic.UnknownMap(input.Plugin,
 		(*proto.Message)(nil),
-		internal.Mappers,
+		internal.Mappers(),
 		argmapper.Typed(log, internal),
 	)
 	if err != nil {
@@ -1441,13 +1473,13 @@ func Plugins(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.PluginManager_PluginsResponse,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) ([]*core.NamedPlugin, error) {
 	result := make([]*core.NamedPlugin, len(input.Plugins))
 	for i, np := range input.Plugins {
 		raw, err := dynamic.Map(np,
 			(**core.NamedPlugin)(nil),
-			argmapper.ConverterFunc(internal.Mappers...),
+			argmapper.ConverterFunc(internal.Mappers()...),
 			argmapper.Typed(ctx, log, internal),
 		)
 		if err != nil {
@@ -1462,7 +1494,7 @@ func Plugins(
 func PluginsProto(
 	input []*core.NamedPlugin,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.PluginManager_PluginsResponse, error) {
 	result := &vagrant_plugin_sdk.PluginManager_PluginsResponse{
 		Plugins: make([]*vagrant_plugin_sdk.PluginManager_Plugin, len(input)),
@@ -1484,7 +1516,7 @@ func PluginManager(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_PluginManager,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.PluginManager, error) {
 	p := &plugincore.PluginManagerPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -1501,7 +1533,7 @@ func PluginManager(
 func PluginManagerProto(
 	input core.PluginManager,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_PluginManager, error) {
 	p := &plugincore.PluginManagerPlugin{
 		BasePlugin: basePlugin(input, internal),
@@ -1521,38 +1553,12 @@ func PluginManagerProto(
 	return proto, nil
 }
 
-func PluginManagerProtoDirect(
-	input core.PluginManager,
-	log hclog.Logger,
-	broker *plugin.GRPCBroker,
-) (*vagrant_plugin_sdk.Args_PluginManager, func(), error) {
-	p := &plugincore.PluginManagerPlugin{
-		BasePlugin: &plugincomponent.BasePlugin{
-			Logger:  log,
-			Wrapped: true,
-		},
-		Impl: input,
-	}
-	id, ep, closer, err := wrapClientStandalone(input, p, broker, log)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	proto := &vagrant_plugin_sdk.Args_PluginManager{
-		StreamId: id,
-		Network:  ep.Network(),
-		Addr:     ep.String(),
-	}
-
-	return proto, closer, nil
-}
-
 // StateBag maps StateBag proto to core.StateBag.
 func StateBag(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_StateBag,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.StateBag, error) {
 	// Create our plugin
 	p := &plugincore.StateBagPlugin{
@@ -1570,10 +1576,10 @@ func StateBag(
 func StateBagProto(
 	bag core.StateBag,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_StateBag, error) {
 	cid := fmt.Sprintf("%p", bag)
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_StateBag), nil
 	}
 
@@ -1593,7 +1599,7 @@ func StateBagProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	internal.Cache.Register(cid, proto)
+	internal.Cache().Register(cid, proto)
 
 	return proto, nil
 }
@@ -1709,8 +1715,15 @@ func Metadata(m *vagrant_plugin_sdk.Args_MetadataSet) map[string]string {
 func BasisProto(
 	b core.Basis,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Basis, error) {
+	cid := fmt.Sprintf("%p", b)
+
+	if ch := internal.Cache().Get(cid); ch != nil {
+		log.Trace("using cached basis proto", "cid", cid)
+		return ch.(*vagrant_plugin_sdk.Args_Basis), nil
+	}
+
 	bp := &plugincore.BasisPlugin{
 		BasePlugin: basePlugin(b, internal),
 		Impl:       b,
@@ -1721,19 +1734,33 @@ func BasisProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Basis{
+	proto := &vagrant_plugin_sdk.Args_Basis{
 		StreamId: id,
 		Network:  ep.Network(),
 		Addr:     ep.String(),
-	}, nil
+	}
+
+	internal.Cache().Register(cid, proto)
+
+	log.Trace("cache miss on basis proto", "cid", cid)
+
+	return proto, nil
 }
 
 func Basis(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Basis,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Basis, error) {
+	cid := input.Addr
+	if cid != "" {
+		if ch := internal.Cache().Get(cid); ch != nil {
+			log.Trace("using cached basis", "cid", cid)
+			return ch.(core.Basis), nil
+		}
+	}
+
 	b := &plugincore.BasisPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
@@ -1742,6 +1769,10 @@ func Basis(
 	if err != nil {
 		return nil, err
 	}
+
+	internal.Cache().Register(cid, client)
+
+	log.Trace("cache miss on basis", "cid", cid)
 
 	return client.(core.Basis), nil
 }
@@ -1763,7 +1794,7 @@ func CommunicatorCommandProto(
 func CommunicatorProto(
 	c component.Communicator,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Communicator, error) {
 	cp := &plugincomponent.CommunicatorPlugin{
 		BasePlugin: basePlugin(c, internal),
@@ -1786,7 +1817,7 @@ func Communicator(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Communicator,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Communicator, error) {
 	p := &plugincomponent.CommunicatorPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -1803,7 +1834,7 @@ func Communicator(
 func PushProto(
 	c component.Push,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Push, error) {
 	cp := &plugincomponent.PushPlugin{
 		BasePlugin: basePlugin(c, internal),
@@ -1826,7 +1857,7 @@ func Push(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Push,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Push, error) {
 	p := &plugincomponent.PushPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -1843,15 +1874,11 @@ func Push(
 func ProjectProto(
 	p core.Project,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Project, error) {
-	cid, err := p.ResourceId()
-	if err != nil {
-		log.Warn("failed to get resource ID from project", "error", err)
-		cid = fmt.Sprintf("%p", p)
-	}
+	cid := fmt.Sprintf("%p", p)
 
-	if ch := internal.Cache.Get(cid); ch != nil {
+	if ch := internal.Cache().Get(cid); ch != nil {
 		return ch.(*vagrant_plugin_sdk.Args_Project), nil
 	}
 
@@ -1870,7 +1897,7 @@ func ProjectProto(
 		Network:  ep.Network(),
 		Addr:     ep.String()}
 
-	internal.Cache.Register(cid, proto)
+	internal.Cache().Register(cid, proto)
 
 	return proto, nil
 }
@@ -1879,11 +1906,11 @@ func Project(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Project,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Project, error) {
 	cid := input.Addr
 	if cid != "" {
-		if ch := internal.Cache.Get(cid); ch != nil {
+		if ch := internal.Cache().Get(cid); ch != nil {
 			return ch.(core.Project), nil
 		}
 	}
@@ -1897,7 +1924,7 @@ func Project(
 		return nil, err
 	}
 
-	internal.Cache.Register(cid, client)
+	internal.Cache().Register(cid, client)
 
 	return client.(core.Project), nil
 }
@@ -1905,7 +1932,7 @@ func Project(
 func CommandProto(
 	c component.Command,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Command, error) {
 	cp := &plugincomponent.CommandPlugin{
 		BasePlugin: basePlugin(c, internal),
@@ -1929,7 +1956,7 @@ func Command(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Command,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Command, error) {
 	p := &plugincomponent.CommandPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -1963,11 +1990,14 @@ func FolderToVagrantfileSyncedFolder(
 func SyncedFolderProto(
 	s component.SyncedFolder,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_SyncedFolder, error) {
 	rid := fmt.Sprintf("%p", s)
-	if at := internal.Cache.Get(rid); at != nil {
-		log.Warn("using cached synced folder value", "value", at)
+	if at := internal.Cache().Get(rid); at != nil {
+		log.Trace("using cached synced folder value",
+			"value", at,
+		)
+
 		return at.(*vagrant_plugin_sdk.Args_SyncedFolder), nil
 	}
 
@@ -1987,7 +2017,7 @@ func SyncedFolderProto(
 		Addr:     endpoint.String(),
 	}
 
-	internal.Cache.Register(rid, proto)
+	internal.Cache().Register(rid, proto)
 
 	return proto, nil
 }
@@ -1996,7 +2026,7 @@ func SyncedFolder(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Provider,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.SyncedFolder, error) {
 	s := &plugincomponent.SyncedFolderPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2013,8 +2043,17 @@ func SyncedFolder(
 func ProviderProto(
 	t component.Provider,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Provider, error) {
+	cid := fmt.Sprintf("%p", t)
+	if c := internal.Cache().Get(cid); c != nil {
+		log.Trace("cache hit on provider proto",
+			"cid", cid,
+		)
+
+		return c.(*vagrant_plugin_sdk.Args_Provider), nil
+	}
+
 	tp := &plugincomponent.ProviderPlugin{
 		BasePlugin: basePlugin(t, internal),
 		Impl:       t,
@@ -2025,19 +2064,37 @@ func ProviderProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Provider{
+	proto := &vagrant_plugin_sdk.Args_Provider{
 		StreamId: id,
 		Network:  endpoint.Network(),
 		Addr:     endpoint.String(),
-	}, nil
+	}
+
+	internal.Cache().Register(cid, proto)
+	log.Trace("registering provider to cache",
+		"cid", cid,
+	)
+
+	return proto, nil
 }
 
 func Provider(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Provider,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Provider, error) {
+	cid := input.Addr
+	if cid != "" {
+		if c := internal.Cache().Get(cid); c != nil {
+			log.Trace("cache hit on provider",
+				"cid", cid,
+			)
+
+			return c.(core.Provider), nil
+		}
+	}
+
 	t := &plugincomponent.ProviderPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
@@ -2047,13 +2104,18 @@ func Provider(
 		return nil, err
 	}
 
+	internal.Cache().Register(cid, client)
+	log.Trace("registering provider to cache",
+		"cid", cid,
+	)
+
 	return client.(core.Provider), nil
 }
 
 func ProvisionerProto(
 	t component.Provisioner,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Provisioner, error) {
 	tp := &plugincomponent.ProvisionerPlugin{
 		BasePlugin: basePlugin(t, internal),
@@ -2076,7 +2138,7 @@ func Provisioner(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Provisioner,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Provisioner, error) {
 	t := &plugincomponent.ProvisionerPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2119,14 +2181,18 @@ func TargetProject(
 func TargetProto(
 	t core.Target,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target, error) {
 	rid, err := t.ResourceId()
 	if err != nil {
 		return nil, err
 	}
-	if at := internal.Cache.Get(rid); at != nil {
-		log.Warn("using cached target value", "value", at)
+	cid := fmt.Sprintf("%s-%p", rid, t)
+	if at := internal.Cache().Get(cid); at != nil {
+		log.Trace("using cached target value",
+			"value", at,
+		)
+
 		return at.(*vagrant_plugin_sdk.Args_Target), nil
 	}
 
@@ -2146,11 +2212,11 @@ func TargetProto(
 		Addr:     endpoint.String(),
 	}
 
-	log.Warn("registering target proto to cache",
+	log.Trace("registering target proto to cache",
 		"rid", rid,
 		"proto", proto,
 	)
-	internal.Cache.Register(rid, proto)
+	internal.Cache().Register(cid, proto)
 	return proto, nil
 }
 
@@ -2158,7 +2224,7 @@ func Target(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Target,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Target, error) {
 	t := &plugincore.TargetPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2175,16 +2241,14 @@ func Target(
 func TargetMachineProto(
 	m core.Machine,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
-	mid, err := m.ResourceId()
-	if err != nil {
-		return nil, err
-	}
-	rid := fmt.Sprintf("%s-machine", mid)
+	rid := fmt.Sprintf("%p", m)
 
-	if at := internal.Cache.Get(rid); at != nil {
-		log.Warn("using cached machine value", "value", at)
+	if at := internal.Cache().Get(rid); at != nil {
+		log.Trace("using cached machine value",
+			"value", at,
+		)
 		return at.(*vagrant_plugin_sdk.Args_Target_Machine), nil
 	}
 
@@ -2205,11 +2269,11 @@ func TargetMachineProto(
 		Addr:     endpoint.String(),
 	}
 
-	log.Warn("registering machine proto to cache",
+	log.Trace("registering machine proto to cache",
 		"rid", rid,
 		"proto", proto,
 	)
-	internal.Cache.Register(rid, proto)
+	internal.Cache().Register(rid, proto)
 	return proto, nil
 }
 
@@ -2217,7 +2281,7 @@ func TargetMachine(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Target_Machine,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Machine, error) {
 	m := &plugincore.TargetMachinePlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2234,7 +2298,7 @@ func TargetMachine(
 func TargetIndexProto(
 	t core.TargetIndex,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
 		BasePlugin: basePlugin(t, internal),
@@ -2257,7 +2321,7 @@ func TargetIndex(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_TargetIndex,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.TargetIndex, error) {
 	ti := &plugincore.TargetIndexPlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2274,7 +2338,7 @@ func TargetIndex(
 func VagrantfileProto(
 	v core.Vagrantfile,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
 	bp := &plugincore.VagrantfilePlugin{
 		BasePlugin: basePlugin(v, internal),
@@ -2297,7 +2361,7 @@ func Vagrantfile(
 	ctx context.Context,
 	input *vagrant_plugin_sdk.Args_Vagrantfile,
 	log hclog.Logger,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (core.Vagrantfile, error) {
 	b := &plugincore.VagrantfilePlugin{
 		BasePlugin: basePlugin(nil, internal),
@@ -2331,12 +2395,12 @@ func wrapConnect(
 	ctx context.Context,
 	p plugin.GRPCPlugin,
 	i connInfo,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (interface{}, error) {
-	internal.Logger.Trace("connecting to wrapped plugin",
+	internal.Logger().Trace("connecting to wrapped plugin",
 		"plugin", hclog.Fmt("%T", p),
 		"connection", i,
-		"broker", hclog.Fmt("%p", internal.Broker))
+		"broker", hclog.Fmt("%p", internal.Broker()))
 
 	var err error
 	var conn *grpc.ClientConn
@@ -2352,7 +2416,7 @@ func wrapConnect(
 				"Unknown target address type: %s", i.GetNetwork())
 		}
 
-		internal.Logger.Trace("connecting to wrapped plugin via direct target",
+		internal.Logger().Trace("connecting to wrapped plugin via direct target",
 			"plugin", hclog.Fmt("%T", p),
 			"target", target)
 
@@ -2363,58 +2427,59 @@ func wrapConnect(
 			}), grpc.WithInsecure(),
 		)
 	} else {
-		internal.Logger.Trace("connecting to wrapped plugin via broker",
+		internal.Logger().Trace("connecting to wrapped plugin via broker",
 			"plugin", hclog.Fmt("%T", p),
 			"stream_id", i.GetStreamId(),
-			"broker", hclog.Fmt("%p", internal.Broker))
+			"broker", hclog.Fmt("%p", internal.Broker()))
 
-		conn, err = internal.Broker.Dial(i.GetStreamId())
+		conn, err = internal.Broker().Dial(i.GetStreamId())
 	}
 	if err != nil {
-		internal.Logger.Warn("failed to connect to wrapped plugin",
+		internal.Logger().Warn("failed to connect to wrapped plugin",
 			"plugin", hclog.Fmt("%T", p),
 			"connection", i,
-			"broker", hclog.Fmt("%p", internal.Broker),
+			"broker", hclog.Fmt("%p", internal.Broker()),
 			"error", err)
 
 		return nil, err
 	}
-	internal.Cleanup.Do(func() { conn.Close() })
 
-	client, err := p.GRPCClient(ctx, internal.Broker, conn)
+	internal.Cleanup().Do(func() error { return conn.Close() })
+
+	client, err := p.GRPCClient(ctx, internal.Broker(), conn)
 	if err != nil {
-		internal.Logger.Warn("failed to create client for wrapped plugin",
+		internal.Logger().Warn("failed to create client for wrapped plugin",
 			"plugin", hclog.Fmt("%T", p),
 			"connection", i,
-			"broker", hclog.Fmt("%p", internal.Broker),
+			"broker", hclog.Fmt("%p", internal.Broker()),
 			"error", err)
 
 		return nil, err
 	}
 
 	if closer, ok := client.(io.Closer); ok {
-		internal.Cleanup.Do(func() { closer.Close() })
+		internal.Cleanup().Do(func() error { return closer.Close() })
 	}
 
 	if cache, ok := client.(cacher.HasCache); ok {
-		cache.SetCache(internal.Cache)
+		cache.SetCache(internal.Cache())
 	}
 
-	internal.Logger.Trace("new client built for wrapped plugin",
+	internal.Logger().Trace("new client built for wrapped plugin",
 		"plugin", hclog.Fmt("%T", p),
 		"client", client,
 		"connection", i,
-		"broker", hclog.Fmt("%p", internal.Broker))
+		"broker", hclog.Fmt("%p", internal.Broker()))
 
 	if addr != nil {
 		if ec, ok := client.(hasTarget); ok {
-			internal.Logger.Trace("setting direct target on new client",
+			internal.Logger().Trace("setting direct target on new client",
 				"plugin", hclog.Fmt("%T", p),
 				"target", addr)
 
 			ec.SetTarget(addr)
 		} else {
-			internal.Logger.Trace("client does not support direct targets for wrapped plugins",
+			internal.Logger().Trace("client does not support direct targets for wrapped plugins",
 				"plugin", hclog.Fmt("%T", p),
 				"client", hclog.Fmt("%T", client))
 		}
@@ -2430,7 +2495,7 @@ func wrapClientStandalone(
 	p plugin.GRPCPlugin,
 	broker *plugin.GRPCBroker,
 	logger hclog.Logger,
-) (id uint32, target net.Addr, closer func(), err error) {
+) (id uint32, target net.Addr, closer func() error, err error) {
 	// If an existing target exists for the implementation, use
 	// that value for where to connect
 	if iep, ok := impl.(hasTarget); ok {
@@ -2485,7 +2550,7 @@ func wrapClientStandalone(
 
 	// Register a shutdown of this wrapped plugin server in our
 	// cleanup so we don't leave it hanging around when closed
-	closer = func() {
+	closer = func() error {
 		logger.Trace("shutting down listener for wrapped plugin",
 			"broker", hclog.Fmt("%p", broker),
 			"plugin", hclog.Fmt("%T", p),
@@ -2493,6 +2558,7 @@ func wrapClientStandalone(
 			"target", target)
 
 		server.GracefulStop()
+		return nil
 	}
 
 	// Start serving
@@ -2506,20 +2572,20 @@ func wrapClientStandalone(
 func wrapClient(
 	impl interface{},
 	p plugin.GRPCPlugin,
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) (id uint32, target net.Addr, err error) {
 	id, target, closer, err := wrapClientStandalone(
 		impl,
 		p,
-		internal.Broker,
-		internal.Logger,
+		internal.Broker(),
+		internal.Logger(),
 	)
 
 	if err != nil {
 		return
 	}
 
-	internal.Cleanup.Do(closer)
+	internal.Cleanup().Do(closer)
 
 	return
 }
@@ -2528,15 +2594,16 @@ func wrapClient(
 // source client and the internal args
 func basePlugin(
 	src interface{},
-	internal *pluginargs.Internal,
+	internal pluginargs.Internal,
 ) *plugincomponent.BasePlugin {
 	if w, ok := src.(wrappable); ok {
 		return w.Wrap()
 	}
 	return &plugincomponent.BasePlugin{
-		Mappers: internal.Mappers,
-		Logger:  internal.Logger,
-		Cache:   internal.Cache,
+		Cache:   internal.Cache(),
+		Cleanup: internal.Cleanup(),
+		Mappers: internal.Mappers(),
+		Logger:  internal.Logger(),
 		Wrapped: true,
 	}
 }
