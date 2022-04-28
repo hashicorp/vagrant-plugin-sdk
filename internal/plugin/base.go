@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"strings"
 
 	"github.com/LK4D4/joincontext"
 	"github.com/hashicorp/go-argmapper"
@@ -360,20 +359,24 @@ func (b *BaseClient) CallDynamicFunc(
 		}
 
 		for _, v := range s.Typed {
+			// If the value is an Any value, unpack it before
+			// adding the value
 			if a, ok := v.(*anypb.Any); ok {
-				// The TypeUrl uniquely identifies the type of the serialized protocol
-				// buffer message. The last segment of the URL's path must represent the
-				// fully qualified name of the type (as in `path/google.protobuf.Duration`).
-				// So, here we grab the last segment for the URL and use that as the Subtype
-				// for argmapper
-				typeUrl := strings.Split(a.TypeUrl, "/")
-				anyType := typeUrl[len(typeUrl)-1]
+				val, err := a.UnmarshalNew()
+				if err != nil {
+					b.Logger.Info("failed to unmarshal Any type seed value",
+						"value", a,
+						"error", err,
+					)
+
+					return nil, err
+				}
+
 				b.Logger.Info("seeding typed value into dynamic call",
-					"type", hclog.Fmt("%T", v),
-					"subtype", anyType,
+					"type", hclog.Fmt("%T", val),
 				)
 
-				callArgs = append(callArgs, argmapper.TypedSubtype(a, anyType))
+				callArgs = append(callArgs, argmapper.Typed(val))
 			} else {
 				b.Logger.Info("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", v),
@@ -385,14 +388,25 @@ func (b *BaseClient) CallDynamicFunc(
 
 		for k := range s.Named {
 			v := s.Named[k]
+			// If the value is an Any value, unpack it before
+			// adding the value
 			if a, ok := v.(*anypb.Any); ok {
+				val, err := a.UnmarshalNew()
+				if err != nil {
+					b.Logger.Info("failed to unmarshal Any type seed value",
+						"value", a,
+						"error", err,
+					)
+
+					return nil, err
+				}
+
 				b.Logger.Info("seeding named value into dynamic call",
 					"name", k,
-					"type", hclog.Fmt("%T", v),
-					"subtype", a.TypeUrl,
+					"type", hclog.Fmt("%T", val),
 				)
 
-				callArgs = append(callArgs, argmapper.NamedSubtype(k, a, a.TypeUrl))
+				callArgs = append(callArgs, argmapper.Named(k, val))
 			} else {
 				b.Logger.Info("seeding named value into dynamic call",
 					"name", k,
