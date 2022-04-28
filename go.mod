@@ -24,6 +24,7 @@ require (
 	github.com/mitchellh/mapstructure v1.3.3
 	github.com/mitchellh/protostructure v0.0.0-20200814180458-3cfccdb015ce
 	github.com/morikuni/aec v1.0.0
+	github.com/nicksnyder/go-i18n/v2 v2.2.0 // indirect
 	github.com/oklog/ulid v1.3.1
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/stretchr/testify v1.6.1
