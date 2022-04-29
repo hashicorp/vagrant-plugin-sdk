@@ -20,7 +20,12 @@ func NewLocalizer(lang string, terminal terminal.UI) (localizer *Localizer, err 
 	}
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
-	_, err = bundle.LoadMessageFile("locales/en.json")
+	localDataPath := "localizer/locales/" + lang + ".json"
+	enData, err := Asset(localDataPath)
+	if err != nil {
+		return nil, err
+	}
+	_, err = bundle.ParseMessageFileBytes(enData, localDataPath)
 	if err != nil {
 		return nil, err
 	}
