@@ -10,6 +10,7 @@ require (
 	github.com/containerd/console v1.0.1
 	github.com/creack/pty v1.1.11
 	github.com/fatih/color v1.9.0
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/hashicorp/go-argmapper v0.2.3
 	github.com/hashicorp/go-hclog v0.14.1
@@ -31,6 +32,7 @@ require (
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
 	golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
+	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
 	google.golang.org/grpc v1.32.0
