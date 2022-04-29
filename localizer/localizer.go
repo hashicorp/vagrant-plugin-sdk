@@ -35,9 +35,10 @@ func NewLocalizer(lang string, terminal terminal.UI) (localizer *Localizer, err 
 	}, nil
 }
 
-func (l *Localizer) LocalizeMsg(msg string) error {
+func (l *Localizer) LocalizeMsg(msg string, templateData interface{}) error {
 	config := i18n.LocalizeConfig{
-		MessageID: msg,
+		MessageID:    msg,
+		TemplateData: templateData,
 	}
 	localizedMsg, err := l.localizer.Localize(&config)
 	if err != nil {
