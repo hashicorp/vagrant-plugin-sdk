@@ -1,6 +1,7 @@
 package cloud
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,6 +17,7 @@ const (
 	DELETE
 	GET
 	HEAD
+	POST
 )
 
 func (m HTTPMethod) String() string {
@@ -26,6 +28,8 @@ func (m HTTPMethod) String() string {
 		return "GET"
 	case HEAD:
 		return "HEAD"
+	case POST:
+		return "POST"
 	}
 	return "unknown"
 }
@@ -68,22 +72,43 @@ func NewVagrantCloudClient(accessToken string, retryCount int, retryInterval int
 	return client, nil
 }
 
+func contains(one []string, two string) bool {
+	for _, v := range one {
+		if v == two {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (vc *VagrantCloudClient) request(
-	path string, method HTTPMethod, params map[string]string,
+	path string, method HTTPMethod, params map[string]interface{},
 ) (map[string]interface{}, error) {
 	client := &http.Client{}
 	url := fmt.Sprintf("%s/%s", vc.url, path)
-	req, _ := http.NewRequest(method.String(), url, nil)
+	var req *http.Request
+
+	// Add query parameters if the HTTPMethod is GET, HEAD or DELETE
+	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
+	if contains(queryParamMethods, method.String()) {
+		req, _ = http.NewRequest(method.String(), url, nil)
+		q := req.URL.Query()
+		for k, v := range params {
+			q.Add(k, v.(string))
+		}
+		req.URL.RawQuery = q.Encode()
+	} else {
+		// Otherwise add params to the request body
+		jsonBody, err := json.Marshal(params)
+		if err != nil {
+			return nil, err
+		}
+		req, _ = http.NewRequest(method.String(), url, bytes.NewBuffer(jsonBody))
+	}
 
 	// Set headers
 	req.Header = vc.headers
-
-	// Add query parameters
-	q := req.URL.Query()
-	for k, v := range params {
-		q.Add(k, v)
-	}
-	req.URL.RawQuery = q.Encode()
 
 	// Execute request
 	resp, err := client.Do(req)
@@ -102,10 +127,31 @@ func (vc *VagrantCloudClient) request(
 	return jsonResp, nil
 }
 
+func (vc *VagrantCloudClient) AuthTokenCreate(
+	username string, password string, description string, code string,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	params["user"] = map[string]string{
+		"login":    username,
+		"password": password,
+	}
+	if description != "" {
+		params["token"] = map[string]string{
+			"description": description,
+		}
+	}
+	if code != "" {
+		params["two_factor"] = map[string]string{
+			"code": code,
+		}
+	}
+	return vc.request("authenticate", POST, params)
+}
+
 func (vc *VagrantCloudClient) Seach(
 	query string, provider string, sort string, order string, limit int, page int,
 ) (map[string]interface{}, error) {
-	params := make(map[string]string)
+	params := make(map[string]interface{})
 	if query != "" {
 		params["q"] = query
 	}
