@@ -21,11 +21,11 @@ const (
 func (m HTTPMethod) String() string {
 	switch m {
 	case DELETE:
-		return "delete"
+		return "DELETE"
 	case GET:
-		return "get"
+		return "GET"
 	case HEAD:
-		return "head"
+		return "HEAD"
 	}
 	return "unknown"
 }
@@ -72,13 +72,20 @@ func (vc *VagrantCloudClient) request(
 	path string, method HTTPMethod, params map[string]string,
 ) (map[string]interface{}, error) {
 	client := &http.Client{}
-	req, _ := http.NewRequest(method.String(), vc.url, nil)
-	// set headers
+	url := fmt.Sprintf("%s/%s", vc.url, path)
+	req, _ := http.NewRequest(method.String(), url, nil)
+
+	// Set headers
 	req.Header = vc.headers
-	// add query parameters
+
+	// Add query parameters
+	q := req.URL.Query()
 	for k, v := range params {
-		req.URL.Query().Add(k, v)
+		q.Add(k, v)
 	}
+	req.URL.RawQuery = q.Encode()
+
+	// Execute request
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -98,13 +105,24 @@ func (vc *VagrantCloudClient) request(
 func (vc *VagrantCloudClient) Seach(
 	query string, provider string, sort string, order string, limit int, page int,
 ) (map[string]interface{}, error) {
-	params := map[string]string{
-		"q":        query,
-		"provider": provider,
-		"sort":     sort,
-		"order":    order,
-		"limit":    strconv.Itoa(limit),
-		"page":     strconv.Itoa(page),
+	params := make(map[string]string)
+	if query != "" {
+		params["q"] = query
+	}
+	if provider != "" {
+		params["provider"] = provider
+	}
+	if sort != "" {
+		params["sort"] = sort
+	}
+	if order != "" {
+		params["order"] = order
+	}
+	if limit > 0 {
+		params["limit"] = strconv.Itoa(limit)
+	}
+	if page > 0 {
+		params["page"] = strconv.Itoa(page)
 	}
 	return vc.request("search", GET, params)
 }
