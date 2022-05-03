@@ -85,27 +85,64 @@ func contains(one []string, two string) bool {
 func (vc *VagrantCloudClient) request(
 	path string, method HTTPMethod, params map[string]interface{},
 ) (map[string]interface{}, error) {
-	client := &http.Client{}
-	url := fmt.Sprintf("%s/%s", vc.url, path)
-	var req *http.Request
-
-	// Add query parameters if the HTTPMethod is GET, HEAD or DELETE
+	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
 	if contains(queryParamMethods, method.String()) {
-		req, _ = http.NewRequest(method.String(), url, nil)
-		q := req.URL.Query()
+		stringParams := make(map[string]string)
 		for k, v := range params {
-			q.Add(k, v.(string))
+			stringParams[k] = v.(string)
 		}
-		req.URL.RawQuery = q.Encode()
+		return vc.requestWithQueryParams(path, method, stringParams)
 	} else {
-		// Otherwise add params to the request body
-		jsonBody, err := json.Marshal(params)
-		if err != nil {
-			return nil, err
-		}
-		req, _ = http.NewRequest(method.String(), url, bytes.NewBuffer(jsonBody))
+		return vc.requestWithBody(path, method, params)
 	}
+}
+
+func (vc *VagrantCloudClient) requestWithBody(
+	path string, method HTTPMethod, params map[string]interface{},
+) (map[string]interface{}, error) {
+	client := &http.Client{}
+	url := fmt.Sprintf("%s/%s", vc.url, path)
+
+	// Create the request body
+	jsonBody, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	req, _ := http.NewRequest(method.String(), url, bytes.NewBuffer(jsonBody))
+
+	// Set headers
+	req.Header = vc.headers
+
+	// Execute request
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	raw, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var jsonResp map[string]interface{}
+	if err := json.Unmarshal(raw, &jsonResp); err != nil {
+		return nil, err
+	}
+	return jsonResp, nil
+}
+
+func (vc *VagrantCloudClient) requestWithQueryParams(
+	path string, method HTTPMethod, params map[string]string,
+) (map[string]interface{}, error) {
+	client := &http.Client{}
+	url := fmt.Sprintf("%s/%s", vc.url, path)
+
+	req, _ := http.NewRequest(method.String(), url, nil)
+	q := req.URL.Query()
+	for k, v := range params {
+		q.Add(k, v)
+	}
+	req.URL.RawQuery = q.Encode()
 
 	// Set headers
 	req.Header = vc.headers
