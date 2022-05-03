@@ -11,4 +11,9 @@ func TestSearch(t *testing.T) {
 	res, err := vcc.Seach("hashicorp", "", "", "", 10, 1)
 	require.NoError(t, err)
 	require.Len(t, res["boxes"], 10)
+
+	res2, err := vcc.Seach("hashicorp", "", "", "", 10, 2)
+	require.NoError(t, err)
+	require.Len(t, res2["boxes"], 10)
+	require.NotEqual(t, res, res2)
 }
