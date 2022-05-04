@@ -25,6 +25,8 @@ import (
 
 //go:generate mockery --all --dir ./core --output ./core/mocks
 
+//go:generate mockery --all --dir ./cloud --output ./cloud/mocks
+
 // String generation
 //go:generate stringer -type=Type,FlagType -linecomment ./component
 
