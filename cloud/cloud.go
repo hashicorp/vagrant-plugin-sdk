@@ -87,7 +87,8 @@ func contains(one []string, two string) bool {
 
 func (vc *VagrantCloudClient) request(
 	path string, method HTTPMethod, params map[string]interface{},
-) (map[string]interface{}, error) {
+) (jsonResp map[string]interface{}, err error) {
+	var resp *http.Response
 	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
 	if contains(queryParamMethods, method.String()) {
@@ -95,15 +96,30 @@ func (vc *VagrantCloudClient) request(
 		for k, v := range params {
 			stringParams[k] = v.(string)
 		}
-		return vc.requestWithQueryParams(path, method, stringParams)
+		resp, err = vc.requestWithQueryParams(path, method, stringParams)
+		if err != nil {
+			return nil, err
+		}
 	} else {
-		return vc.requestWithBody(path, method, params)
+		resp, err = vc.requestWithBody(path, method, params)
+		if err != nil {
+			return nil, err
+		}
 	}
+	defer resp.Body.Close()
+	raw, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(raw, &jsonResp); err != nil {
+		return nil, err
+	}
+	return jsonResp, nil
 }
 
 func (vc *VagrantCloudClient) requestWithBody(
 	path string, method HTTPMethod, params map[string]interface{},
-) (map[string]interface{}, error) {
+) (*http.Response, error) {
 	client := retryablehttp.NewClient()
 	client.RetryMax = vc.retryCount
 	url := fmt.Sprintf("%s/%s", vc.url, path)
@@ -121,29 +137,17 @@ func (vc *VagrantCloudClient) requestWithBody(
 	req.Header = vc.headers
 
 	// Execute request
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var jsonResp map[string]interface{}
-	if err := json.Unmarshal(raw, &jsonResp); err != nil {
-		return nil, err
-	}
-	return jsonResp, nil
+	return client.Do(req)
 }
 
 func (vc *VagrantCloudClient) requestWithQueryParams(
 	path string, method HTTPMethod, params map[string]string,
-) (map[string]interface{}, error) {
+) (*http.Response, error) {
 	client := retryablehttp.NewClient()
 	client.RetryMax = vc.retryCount
 	url := fmt.Sprintf("%s/%s", vc.url, path)
 
+	// Add query parameters to request
 	req, _ := retryablehttp.NewRequest(method.String(), url, nil)
 	q := req.URL.Query()
 	for k, v := range params {
@@ -155,20 +159,7 @@ func (vc *VagrantCloudClient) requestWithQueryParams(
 	req.Header = vc.headers
 
 	// Execute request
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var jsonResp map[string]interface{}
-	if err := json.Unmarshal(raw, &jsonResp); err != nil {
-		return nil, err
-	}
-	return jsonResp, nil
+	return client.Do(req)
 }
 
 func (vc *VagrantCloudClient) AuthTokenCreate(
