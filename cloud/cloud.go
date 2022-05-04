@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/hashicorp/go-retryablehttp"
 )
 
 // Type is an enum of all the available http methods
@@ -44,15 +46,14 @@ const (
 )
 
 type VagrantCloudClient struct {
-	accessToken   string
-	retryCount    int
-	retryInterval int
-	url           string
+	accessToken string
+	retryCount  int
+	url         string
 
 	headers http.Header
 }
 
-func NewVagrantCloudClient(accessToken string, retryCount int, retryInterval int, url string) (*VagrantCloudClient, error) {
+func NewVagrantCloudClient(accessToken string, retryCount int, url string) (*VagrantCloudClient, error) {
 	// Set default url if none is provided
 	if url == "" {
 		url = DEFAULT_URL
@@ -66,11 +67,10 @@ func NewVagrantCloudClient(accessToken string, retryCount int, retryInterval int
 	}
 
 	client := &VagrantCloudClient{
-		accessToken:   accessToken,
-		retryCount:    retryCount,
-		retryInterval: retryInterval,
-		url:           url,
-		headers:       headers,
+		accessToken: accessToken,
+		retryCount:  retryCount,
+		url:         url,
+		headers:     headers,
 	}
 	return client, nil
 }
@@ -104,7 +104,8 @@ func (vc *VagrantCloudClient) request(
 func (vc *VagrantCloudClient) requestWithBody(
 	path string, method HTTPMethod, params map[string]interface{},
 ) (map[string]interface{}, error) {
-	client := &http.Client{}
+	client := retryablehttp.NewClient()
+	client.RetryMax = vc.retryCount
 	url := fmt.Sprintf("%s/%s", vc.url, path)
 
 	// Create the request body
@@ -112,7 +113,9 @@ func (vc *VagrantCloudClient) requestWithBody(
 	if err != nil {
 		return nil, err
 	}
-	req, _ := http.NewRequest(method.String(), url, bytes.NewBuffer(jsonBody))
+	req, _ := retryablehttp.NewRequest(
+		method.String(), url, bytes.NewBuffer(jsonBody),
+	)
 
 	// Set headers
 	req.Header = vc.headers
@@ -137,10 +140,11 @@ func (vc *VagrantCloudClient) requestWithBody(
 func (vc *VagrantCloudClient) requestWithQueryParams(
 	path string, method HTTPMethod, params map[string]string,
 ) (map[string]interface{}, error) {
-	client := &http.Client{}
+	client := retryablehttp.NewClient()
+	client.RetryMax = vc.retryCount
 	url := fmt.Sprintf("%s/%s", vc.url, path)
 
-	req, _ := http.NewRequest(method.String(), url, nil)
+	req, _ := retryablehttp.NewRequest(method.String(), url, nil)
 	q := req.URL.Query()
 	for k, v := range params {
 		q.Add(k, v)
