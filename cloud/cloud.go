@@ -18,6 +18,7 @@ const (
 	GET
 	HEAD
 	POST
+	PUT
 )
 
 func (m HTTPMethod) String() string {
@@ -30,6 +31,8 @@ func (m HTTPMethod) String() string {
 		return "HEAD"
 	case POST:
 		return "POST"
+	case PUT:
+		return "PUT"
 	}
 	return "unknown"
 }
@@ -183,6 +186,198 @@ func (vc *VagrantCloudClient) AuthTokenCreate(
 		}
 	}
 	return vc.request("authenticate", POST, params)
+}
+
+func (vc *VagrantCloudClient) AuthTokenDelete() (map[string]interface{}, error) {
+	return vc.request("authenticate", DELETE, nil)
+}
+
+func (vc *VagrantCloudClient) AuthRequest2faCode(
+	username string, password string, delivery_method string,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	params["user"] = map[string]string{
+		"login":    username,
+		"password": password,
+	}
+	params["two_factor"] = map[string]string{
+		"delivery_method": delivery_method,
+	}
+	return vc.request("two-factor/request-code", POST, params)
+}
+
+func (vc *VagrantCloudClient) AuthTokenValidate() (map[string]interface{}, error) {
+	return vc.request("authenticate", GET, nil)
+}
+
+func (vc *VagrantCloudClient) BoxCreate(
+	username string, name string, shortDescription string, description string, isPrivate bool,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	params["username"] = username
+	params["name"] = name
+	if shortDescription != "" {
+		params["short_description"] = shortDescription
+	}
+	if description != "" {
+		params["description"] = description
+	}
+	params["is_private"] = strconv.FormatBool(isPrivate)
+	return vc.request("boxes", POST, params)
+}
+
+func (vc *VagrantCloudClient) BoxDelete(
+	username string, name string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s", username, name)
+	return vc.request(path, DELETE, nil)
+}
+
+func (vc *VagrantCloudClient) BoxGet(
+	username string, name string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s", username, name)
+	return vc.request(path, GET, nil)
+}
+
+func (vc *VagrantCloudClient) BoxUpdate(
+	username string, name string, shortDescription string, description string, isPrivate bool,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	if shortDescription != "" {
+		params["short_description"] = shortDescription
+	}
+	if description != "" {
+		params["description"] = description
+	}
+	params["is_private"] = strconv.FormatBool(isPrivate)
+	path := fmt.Sprintf("box/%s/%s", username, name)
+	return vc.request(path, PUT, params)
+}
+
+func (vc *VagrantCloudClient) BoxVersionGet(
+	username string, name string, version string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s", username, name, version)
+	return vc.request(path, GET, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionCreate(
+	username string, name string, version string, description string,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	versionHash := map[string]string{
+		"version": version,
+	}
+	if description != "" {
+		versionHash["description"] = description
+	}
+	params["version"] = versionHash
+	path := fmt.Sprintf("box/%s/%s/version/%s", username, name, version)
+	return vc.request(path, POST, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionUpdate(
+	username string, name string, version string, description string,
+) (map[string]interface{}, error) {
+	params := make(map[string]interface{})
+	versionHash := map[string]string{
+		"version": version,
+	}
+	if description != "" {
+		versionHash["description"] = description
+	}
+	params["version"] = versionHash
+	path := fmt.Sprintf("box/%s/%s/version/%s", username, name, version)
+	return vc.request(path, PUT, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionDelete(
+	username string, name string, version string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s", username, name, version)
+	return vc.request(path, DELETE, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionRelease(
+	username string, name string, version string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/release", username, name, version)
+	return vc.request(path, PUT, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionRevoke(
+	username string, name string, version string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/revoke", username, name, version)
+	return vc.request(path, PUT, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderCreate(
+	username string, name string, version string, provider string, url string, checksum string, checksumType string,
+) (map[string]interface{}, error) {
+	params := map[string]interface{}{
+		"provider": map[string]string{
+			"name":          provider,
+			"url":           url,
+			"checksum":      checksum,
+			"checksum_type": checksumType,
+		},
+	}
+
+	path := fmt.Sprintf("box/%s/%s/version/%s/providers", username, name, version)
+	return vc.request(path, POST, params)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderDelete(
+	username string, name string, version string, provider string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/provider/%s", username, name, version, provider)
+	return vc.request(path, DELETE, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderGet(
+	username string, name string, version string, provider string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/provider/%s", username, name, version, provider)
+	return vc.request(path, GET, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderUpdate(
+	username string, name string, version string, provider string, url string, checksum string, checksumType string,
+) (map[string]interface{}, error) {
+	params := map[string]interface{}{
+		"provider": map[string]string{
+			"name":          provider,
+			"url":           url,
+			"checksum":      checksum,
+			"checksum_type": checksumType,
+		},
+	}
+
+	path := fmt.Sprintf("box/%s/%s/version/%s/provider/%s", username, name, version, provider)
+	return vc.request(path, PUT, params)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderUpload(
+	username string, name string, version string, provider string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/provider/%s/upload", username, name, version, provider)
+	return vc.request(path, GET, nil)
+}
+
+func (vc *VagrantCloudClient) BoxVersionProviderUploadDirect(
+	username string, name string, version string, provider string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("box/%s/%s/version/%s/provider/%s/upload/direct", username, name, version, provider)
+	return vc.request(path, GET, nil)
+}
+
+func (vc *VagrantCloudClient) OrganizationGet(
+	name string,
+) (map[string]interface{}, error) {
+	path := fmt.Sprintf("user/%s", name)
+	return vc.request(path, GET, nil)
 }
 
 func (vc *VagrantCloudClient) Seach(
