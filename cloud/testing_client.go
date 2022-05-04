@@ -9,7 +9,7 @@ import (
 // that does not have any auth tokens.
 func TestUnauthedClient(t testing.T) *VagrantCloudClient {
 	vcc, err := NewVagrantCloudClient(
-		"", DEFAULT_RETRY_COUNT, DEFAULT_RETRY_INTERVAL, DEFAULT_URL,
+		"", DEFAULT_RETRY_COUNT, DEFAULT_URL,
 	)
 	require.NoError(t, err)
 	return vcc
