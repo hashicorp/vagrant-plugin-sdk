@@ -180,7 +180,7 @@ func (p *projectClient) DefaultPrivateKey() (dir path.Path, err error) {
 	return
 }
 
-func (p *projectClient) DefaultProvider() (name string, err error) {
+func (p *projectClient) DefaultProvider(opts *core.DefaultProviderOptions) (name string, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get default provider",
@@ -188,7 +188,12 @@ func (p *projectClient) DefaultProvider() (name string, err error) {
 			)
 		}
 	}()
-	d, err := p.client.DefaultProvider(p.Ctx, &emptypb.Empty{})
+	d, err := p.client.DefaultProvider(p.Ctx, &vagrant_plugin_sdk.Project_DefaultProviderRequest{
+		CheckUsable:  opts.CheckUsable,
+		Exclude:      opts.Exclude,
+		ForceDefault: opts.ForceDefault,
+		MachineName:  opts.MachineName,
+	})
 	if err == nil {
 		name = d.ProviderName
 	}
@@ -566,9 +571,14 @@ func (p *projectServer) DefaultPrivateKey(
 
 func (p *projectServer) DefaultProvider(
 	ctx context.Context,
-	_ *emptypb.Empty,
+	req *vagrant_plugin_sdk.Project_DefaultProviderRequest,
 ) (*vagrant_plugin_sdk.Project_DefaultProviderResponse, error) {
-	provider, err := p.Impl.DefaultProvider()
+	provider, err := p.Impl.DefaultProvider(&core.DefaultProviderOptions{
+		CheckUsable:  req.CheckUsable,
+		Exclude:      req.Exclude,
+		ForceDefault: req.ForceDefault,
+		MachineName:  req.MachineName,
+	})
 	if err != nil {
 		p.Logger.Error("failed to get default provider",
 			"error", err,

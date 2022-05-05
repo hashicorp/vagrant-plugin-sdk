@@ -1164,7 +1164,7 @@ service ProjectService {
   rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Project);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Args.Path);
-  rpc DefaultProvider(google.protobuf.Empty) returns (Project.DefaultProviderResponse);
+  rpc DefaultProvider(Project.DefaultProviderRequest) returns (Project.DefaultProviderResponse);
   rpc Home(google.protobuf.Empty) returns (Args.Path);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
   rpc LocalData(google.protobuf.Empty) returns (Args.Path);
@@ -1193,6 +1193,12 @@ message Project {
   }
   message CwdResponse {
     string path = 1;
+  }
+  message DefaultProviderRequest {
+    bool check_usable = 1;
+    repeated string exclude = 2;
+    bool force_default = 3;
+    string machine_name = 4;
   }
   message DefaultProviderResponse {
     string provider_name = 1;

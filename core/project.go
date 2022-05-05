@@ -9,6 +9,22 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
+type DefaultProviderOptions struct {
+	CheckUsable  bool
+	Exclude      []string
+	ForceDefault bool
+	MachineName  string
+}
+
+func (d *DefaultProviderOptions) IsExcluded(provider string) bool {
+	for _, e := range d.Exclude {
+		if e == provider {
+			return true
+		}
+	}
+	return false
+}
+
 type Project interface {
 	ActiveTargets() (targets []Target, err error)
 	Boxes() (boxes BoxCollection, err error)
@@ -17,7 +33,7 @@ type Project interface {
 	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path path.Path, err error)
-	DefaultProvider() (name string, err error)
+	DefaultProvider(opts *DefaultProviderOptions) (name string, err error)
 	Home() (path path.Path, err error)
 	Host() (h Host, err error)
 	LocalData() (path path.Path, err error)
