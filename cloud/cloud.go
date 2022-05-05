@@ -1,48 +1,14 @@
 package cloud
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strconv"
-
-	"github.com/hashicorp/go-retryablehttp"
 )
 
-// Type is an enum of all the available http methods
-type HTTPMethod int64
-
 const (
-	Undef HTTPMethod = iota
-	DELETE
-	GET
-	HEAD
-	POST
-	PUT
-)
-
-func (m HTTPMethod) String() string {
-	switch m {
-	case DELETE:
-		return "DELETE"
-	case GET:
-		return "GET"
-	case HEAD:
-		return "HEAD"
-	case POST:
-		return "POST"
-	case PUT:
-		return "PUT"
-	}
-	return "unknown"
-}
-
-const (
-	DEFAULT_URL            = "https://vagrantcloud.com/api/v1"
-	DEFAULT_RETRY_COUNT    = 3
-	DEFAULT_RETRY_INTERVAL = 2 // in seconds
+	DEFAULT_URL         = "https://vagrantcloud.com/api/v1"
+	DEFAULT_RETRY_COUNT = 3
 )
 
 type CloudClient interface {
@@ -72,47 +38,36 @@ type CloudClient interface {
 
 type VagrantCloudClient struct {
 	accessToken string
-	headers     http.Header
-	retryCount  int
 	url         string
+	retryCount  int
 }
 
-func NewVagrantCloudClient(accessToken string, retryCount int, url string) (*VagrantCloudClient, error) {
+func NewVagrantCloudClient(accessToken string, url string, retryCount int) (*VagrantCloudClient, error) {
 	// Set default url if none is provided
 	if url == "" {
 		url = DEFAULT_URL
 	}
-	// Set default headers
-	headers := make(http.Header)
-	headers.Set("Accept", "application/json")
-	headers.Set("Content-Type", "application/json")
-	if accessToken != "" {
-		headers.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+	// Set default retryCount if none provided
+	if retryCount < 0 {
+		retryCount = DEFAULT_RETRY_COUNT
 	}
-
 	client := &VagrantCloudClient{
 		accessToken: accessToken,
-		retryCount:  retryCount,
 		url:         url,
-		headers:     headers,
+		retryCount:  retryCount,
 	}
 	return client, nil
-}
-
-func contains(one []string, two string) bool {
-	for _, v := range one {
-		if v == two {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (vc *VagrantCloudClient) request(
 	path string, method HTTPMethod, params map[string]interface{},
 ) (jsonResp map[string]interface{}, err error) {
-	var resp *http.Response
+	var raw []byte
+	var vcr *VagrantCloudRequest
+
+	// Build url
+	url := fmt.Sprintf("%s/%s", vc.url, path)
+
 	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
 	if contains(queryParamMethods, method.String()) {
@@ -120,18 +75,32 @@ func (vc *VagrantCloudClient) request(
 		for k, v := range params {
 			stringParams[k] = v.(string)
 		}
-		resp, err = vc.requestWithQueryParams(path, method, stringParams)
+		vcr, err = NewVagrantCloudRequest(
+			WithAuthTokenHeader(vc.accessToken),
+			WithRetryCount(vc.retryCount),
+			WithURL(url),
+			ReplaceHosts(),
+			WithMethod(method),
+			WithURLQueryParams(stringParams),
+		)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		resp, err = vc.requestWithBody(path, method, params)
+		vcr, err = NewVagrantCloudRequest(
+			WithAuthTokenHeader(vc.accessToken),
+			WithRetryCount(vc.retryCount),
+			WithURL(url),
+			ReplaceHosts(),
+			WithMethod(method),
+			WithRequestJSONableData(params),
+		)
 		if err != nil {
 			return nil, err
 		}
 	}
-	defer resp.Body.Close()
-	raw, err := ioutil.ReadAll(resp.Body)
+	// Execute request against Vagrant Cloud
+	raw, err = vcr.Do()
 	if err != nil {
 		return nil, err
 	}
@@ -141,49 +110,18 @@ func (vc *VagrantCloudClient) request(
 	return jsonResp, nil
 }
 
-func (vc *VagrantCloudClient) requestWithBody(
-	path string, method HTTPMethod, params map[string]interface{},
-) (*http.Response, error) {
-	client := retryablehttp.NewClient()
-	client.RetryMax = vc.retryCount
-	url := fmt.Sprintf("%s/%s", vc.url, path)
-
-	// Create the request body
-	jsonBody, err := json.Marshal(params)
+func (vc *VagrantCloudClient) AuthedRequest(url string, method HTTPMethod) (data []byte, err error) {
+	vcr, err := NewVagrantCloudRequest(
+		WithAuthTokenHeader(vc.accessToken),
+		WithRetryCount(vc.retryCount),
+		WithURL(url),
+		ReplaceHosts(),
+		WithMethod(method),
+	)
 	if err != nil {
 		return nil, err
 	}
-	req, _ := retryablehttp.NewRequest(
-		method.String(), url, bytes.NewBuffer(jsonBody),
-	)
-
-	// Set headers
-	req.Header = vc.headers
-
-	// Execute request
-	return client.Do(req)
-}
-
-func (vc *VagrantCloudClient) requestWithQueryParams(
-	path string, method HTTPMethod, params map[string]string,
-) (*http.Response, error) {
-	client := retryablehttp.NewClient()
-	client.RetryMax = vc.retryCount
-	url := fmt.Sprintf("%s/%s", vc.url, path)
-
-	// Add query parameters to request
-	req, _ := retryablehttp.NewRequest(method.String(), url, nil)
-	q := req.URL.Query()
-	for k, v := range params {
-		q.Add(k, v)
-	}
-	req.URL.RawQuery = q.Encode()
-
-	// Set headers
-	req.Header = vc.headers
-
-	// Execute request
-	return client.Do(req)
+	return vcr.Do()
 }
 
 func (vc *VagrantCloudClient) AuthTokenCreate(
