@@ -3,6 +3,7 @@ package cloud
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,9 +21,8 @@ const (
 type HTTPMethod int64
 
 const (
-	Undef HTTPMethod = iota
+	GET HTTPMethod = iota
 	DELETE
-	GET
 	HEAD
 	POST
 	PUT
@@ -64,6 +64,9 @@ func NewVagrantCloudRequest(opts ...VagrantCloudRequestOptions) (r *VagrantCloud
 		if oerr := opt(r); oerr != nil {
 			err = multierror.Append(err, oerr)
 		}
+	}
+	if r.url == nil {
+		return nil, errors.New("no URL provided")
 	}
 	return
 }
