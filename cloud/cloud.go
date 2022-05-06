@@ -3,6 +3,8 @@ package cloud
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"os"
 	"strconv"
 )
 
@@ -108,6 +110,39 @@ func (vc *VagrantCloudClient) request(
 		return nil, err
 	}
 	return jsonResp, nil
+}
+
+func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.URL, method HTTPMethod) (data []byte, err error) {
+	opts := []VagrantCloudRequestOptions{
+		WithRetryCount(vc.RetryCount),
+		WithURL(url),
+		ReplaceHosts(),
+		WithMethod(method),
+		WarnDifferentTarget(vagrantServerUrl),
+	}
+
+	var accessTokenByUrl bool
+	accessTokenEnvVar := os.Getenv("VAGRANT_SERVER_ACCESS_TOKEN_BY_URL")
+	if accessTokenEnvVar == "" {
+		accessTokenByUrl = false
+	} else {
+		accessTokenByUrl, err = strconv.ParseBool(accessTokenEnvVar)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if accessTokenByUrl {
+		// TODO: warn user
+		opts = append(opts, WithAuthTokenURLParam(vc.AccessToken))
+	} else {
+		opts = append(opts, WithAuthTokenHeader(vc.AccessToken))
+	}
+
+	vcr, err := NewVagrantCloudRequest(opts...)
+	if err != nil {
+		return nil, err
+	}
+	return vcr.Do()
 }
 
 func (vc *VagrantCloudClient) AuthTokenCreate(
