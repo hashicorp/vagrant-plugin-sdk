@@ -49,7 +49,7 @@ type VagrantCloudRequest struct {
 	method         HTTPMethod
 	retryCount     int
 	requestBody    []byte
-	url            string
+	url            *url.URL
 	urlQueryParams map[string]string
 }
 
@@ -76,14 +76,14 @@ func (vcr *VagrantCloudRequest) Do() (raw []byte, err error) {
 	// Create request with request body if one is provided
 	if vcr.requestBody != nil {
 		req, err = retryablehttp.NewRequest(
-			vcr.method.String(), vcr.url, bytes.NewBuffer(vcr.requestBody),
+			vcr.method.String(), vcr.url.String(), bytes.NewBuffer(vcr.requestBody),
 		)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		// If no request body is provided then create an empty request
-		req, err = retryablehttp.NewRequest(vcr.method.String(), vcr.url, nil)
+		req, err = retryablehttp.NewRequest(vcr.method.String(), vcr.url.String(), nil)
 	}
 
 	// Add query params if provided
@@ -107,10 +107,38 @@ func (vcr *VagrantCloudRequest) Do() (raw []byte, err error) {
 
 type VagrantCloudRequestOptions func(*VagrantCloudRequest) error
 
+func ReplaceHosts() VagrantCloudRequestOptions {
+	return func(r *VagrantCloudRequest) (err error) {
+		r.url = replaceHostUrl(r.url)
+		return
+	}
+}
+
+func WarnDifferentTarget(serverUrl *url.URL) VagrantCloudRequestOptions {
+	return func(r *VagrantCloudRequest) (err error) {
+		if serverUrl.Host == r.url.Host {
+			if serverUrl.Host != TARGET_HOST {
+				// TODO: warn user that the targets are different
+			}
+		}
+		return
+	}
+}
+
 func WithAuthTokenHeader(t string) VagrantCloudRequestOptions {
 	return func(r *VagrantCloudRequest) (err error) {
 		r.headers.Set("Authorization", fmt.Sprintf("Bearer %s", t))
 		return
+	}
+}
+
+func WithAuthTokenURLParam(t string) VagrantCloudRequestOptions {
+	return func(r *VagrantCloudRequest) (err error) {
+		if r.urlQueryParams == nil {
+			r.urlQueryParams = make(map[string]string)
+		}
+		r.urlQueryParams["access_token"] = t
+		return nil
 	}
 }
 
@@ -148,7 +176,11 @@ func WithRequestJSONableData(d map[string]interface{}) VagrantCloudRequestOption
 
 func WithURL(u string) VagrantCloudRequestOptions {
 	return func(r *VagrantCloudRequest) (err error) {
-		r.url = u
+		requestedUrl, err := url.Parse(u)
+		if err != nil {
+			return err
+		}
+		r.url = requestedUrl
 		return
 	}
 }
@@ -160,27 +192,12 @@ func WithURLQueryParams(u map[string]string) VagrantCloudRequestOptions {
 	}
 }
 
-func ReplaceHosts() VagrantCloudRequestOptions {
-	return func(r *VagrantCloudRequest) (err error) {
-		newUrl, err := replaceHostUrl(r.url)
-		if err != nil {
-			return err
-		}
-		r.url = newUrl
-		return
-	}
-}
-
-func replaceHostUrl(urlIn string) (string, error) {
+func replaceHostUrl(url *url.URL) *url.URL {
 	replacementHosts := []string{"app.vagrantup.com", "atlas.hashicorp.com"}
-	parsedUrl, err := url.Parse(urlIn)
-	if err != nil {
-		return "", err
-	}
 	// Replace the url host name with the TARGET_HOST if it is one of the hosts
 	// that should be replaced (eg. in the replacementHosts list).
-	if parsedUrl.Host != TARGET_HOST && contains(replacementHosts, parsedUrl.Host) {
-		parsedUrl.Host = TARGET_HOST
+	if url.Host != TARGET_HOST && contains(replacementHosts, url.Host) {
+		url.Host = TARGET_HOST
 	}
-	return parsedUrl.String(), nil
+	return url
 }
