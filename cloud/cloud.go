@@ -13,31 +13,6 @@ const (
 	DEFAULT_RETRY_COUNT = 3
 )
 
-type CloudClient interface {
-	AuthTokenCreate(username string, password string, description string, code string) (map[string]interface{}, error)
-	AuthTokenDelete() (map[string]interface{}, error)
-	AuthRequest2faCode(username string, password string, delivery_method string) (map[string]interface{}, error)
-	AuthTokenValidate() (map[string]interface{}, error)
-	BoxCreate(username string, name string, shortDescription string, description string, isPrivate bool) (map[string]interface{}, error)
-	BoxDelete(username string, name string) (map[string]interface{}, error)
-	BoxGet(username string, name string) (map[string]interface{}, error)
-	BoxUpdate(username string, name string, shortDescription string, description string, isPrivate bool) (map[string]interface{}, error)
-	BoxVersionGet(username string, name string, version string) (map[string]interface{}, error)
-	BoxVersionCreate(username string, name string, version string, description string) (map[string]interface{}, error)
-	BoxVersionUpdate(username string, name string, version string, description string) (map[string]interface{}, error)
-	BoxVersionDelete(username string, name string, version string) (map[string]interface{}, error)
-	BoxVersionRelease(username string, name string, version string) (map[string]interface{}, error)
-	BoxVersionRevoke(username string, name string, version string) (map[string]interface{}, error)
-	BoxVersionProviderCreate(username string, name string, version string, provider string, url string, checksum string, checksumType string) (map[string]interface{}, error)
-	BoxVersionProviderDelete(username string, name string, version string, provider string) (map[string]interface{}, error)
-	BoxVersionProviderGet(username string, name string, version string, provider string) (map[string]interface{}, error)
-	BoxVersionProviderUpdate(username string, name string, version string, provider string, url string, checksum string, checksumType string) (map[string]interface{}, error)
-	BoxVersionProviderUpload(username string, name string, version string, provider string) (map[string]interface{}, error)
-	BoxVersionProviderUploadDirect(username string, name string, version string, provider string) (map[string]interface{}, error)
-	OrganizationGet(name string) (map[string]interface{}, error)
-	Seach(query string, provider string, sort string, order string, limit int, page int) (map[string]interface{}, error)
-}
-
 type VagrantCloudClient struct {
 	AccessToken string
 	Url         string
@@ -382,7 +357,3 @@ func (vc *VagrantCloudClient) Seach(
 	}
 	return vc.request("search", GET, params)
 }
-
-var (
-	_ CloudClient = (*VagrantCloudClient)(nil)
-)
