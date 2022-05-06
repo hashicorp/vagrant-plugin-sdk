@@ -127,6 +127,9 @@ func WarnDifferentTarget(serverUrl *url.URL) VagrantCloudRequestOptions {
 
 func WithAuthTokenHeader(t string) VagrantCloudRequestOptions {
 	return func(r *VagrantCloudRequest) (err error) {
+		if t == "" {
+			return
+		}
 		r.headers.Set("Authorization", fmt.Sprintf("Bearer %s", t))
 		return
 	}
@@ -134,6 +137,9 @@ func WithAuthTokenHeader(t string) VagrantCloudRequestOptions {
 
 func WithAuthTokenURLParam(t string) VagrantCloudRequestOptions {
 	return func(r *VagrantCloudRequest) (err error) {
+		if t == "" {
+			return
+		}
 		if r.urlQueryParams == nil {
 			r.urlQueryParams = make(map[string]string)
 		}
