@@ -37,9 +37,9 @@ type CloudClient interface {
 }
 
 type VagrantCloudClient struct {
-	accessToken string
-	url         string
-	retryCount  int
+	AccessToken string
+	Url         string
+	RetryCount  int
 }
 
 func NewVagrantCloudClient(accessToken string, url string, retryCount int) (*VagrantCloudClient, error) {
@@ -52,9 +52,9 @@ func NewVagrantCloudClient(accessToken string, url string, retryCount int) (*Vag
 		retryCount = DEFAULT_RETRY_COUNT
 	}
 	client := &VagrantCloudClient{
-		accessToken: accessToken,
-		url:         url,
-		retryCount:  retryCount,
+		AccessToken: accessToken,
+		Url:         url,
+		RetryCount:  retryCount,
 	}
 	return client, nil
 }
@@ -66,7 +66,7 @@ func (vc *VagrantCloudClient) request(
 	var vcr *VagrantCloudRequest
 
 	// Build url
-	url := fmt.Sprintf("%s/%s", vc.url, path)
+	url := fmt.Sprintf("%s/%s", vc.Url, path)
 
 	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
@@ -76,8 +76,8 @@ func (vc *VagrantCloudClient) request(
 			stringParams[k] = v.(string)
 		}
 		vcr, err = NewVagrantCloudRequest(
-			WithAuthTokenHeader(vc.accessToken),
-			WithRetryCount(vc.retryCount),
+			WithAuthTokenHeader(vc.AccessToken),
+			WithRetryCount(vc.RetryCount),
 			WithURL(url),
 			ReplaceHosts(),
 			WithMethod(method),
@@ -88,8 +88,8 @@ func (vc *VagrantCloudClient) request(
 		}
 	} else {
 		vcr, err = NewVagrantCloudRequest(
-			WithAuthTokenHeader(vc.accessToken),
-			WithRetryCount(vc.retryCount),
+			WithAuthTokenHeader(vc.AccessToken),
+			WithRetryCount(vc.RetryCount),
 			WithURL(url),
 			ReplaceHosts(),
 			WithMethod(method),
@@ -108,20 +108,6 @@ func (vc *VagrantCloudClient) request(
 		return nil, err
 	}
 	return jsonResp, nil
-}
-
-func (vc *VagrantCloudClient) AuthedRequest(url string, method HTTPMethod) (data []byte, err error) {
-	vcr, err := NewVagrantCloudRequest(
-		WithAuthTokenHeader(vc.accessToken),
-		WithRetryCount(vc.retryCount),
-		WithURL(url),
-		ReplaceHosts(),
-		WithMethod(method),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return vcr.Do()
 }
 
 func (vc *VagrantCloudClient) AuthTokenCreate(
