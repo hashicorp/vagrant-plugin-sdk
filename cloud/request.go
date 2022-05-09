@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 const (
@@ -117,11 +118,20 @@ func ReplaceHosts() VagrantCloudRequestOptions {
 	}
 }
 
-func WarnDifferentTarget(serverUrl *url.URL) VagrantCloudRequestOptions {
+func WarnDifferentTarget(serverUrl *url.URL, ui terminal.UI) VagrantCloudRequestOptions {
 	return func(r *VagrantCloudRequest) (err error) {
 		if serverUrl.Host == r.url.Host {
 			if serverUrl.Host != TARGET_HOST {
-				// TODO: warn user that the targets are different
+				if ui != nil {
+					// TODO: This output should go through the localization module
+					ui.Output(fmt.Sprintf(`Vagrant has detected a custom Vagrant server in use for downloading
+				box files. An authentication token is currently set which will be
+				added to the box request. If the custom Vagrant server should not
+				be receiving the authentication token, please unset it.
+
+					Known Vagrant server:  %s
+					Custom Vagrant server: %s`, TARGET_HOST, serverUrl.Host))
+				}
 			}
 		}
 		return

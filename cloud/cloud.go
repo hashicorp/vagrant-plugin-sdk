@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 const (
@@ -87,13 +89,13 @@ func (vc *VagrantCloudClient) request(
 	return jsonResp, nil
 }
 
-func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.URL, method HTTPMethod) (data []byte, err error) {
+func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.URL, method HTTPMethod, ui terminal.UI) (data []byte, err error) {
 	opts := []VagrantCloudRequestOptions{
 		WithRetryCount(vc.RetryCount),
 		WithURL(url),
 		ReplaceHosts(),
 		WithMethod(method),
-		WarnDifferentTarget(vagrantServerUrl),
+		WarnDifferentTarget(vagrantServerUrl, ui),
 	}
 
 	var accessTokenByUrl bool
