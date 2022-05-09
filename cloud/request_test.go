@@ -2,22 +2,32 @@ package cloud
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewVagrantCloudRequest(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func simpleServer() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hello, client")
 	}))
-	defer ts.Close()
+}
 
+func validateRequestServer(t *testing.T, validate func(t *testing.T, r *http.Request)) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		validate(t, r)
+	}))
+}
+
+func TestNewVagrantCloudRequest(t *testing.T) {
 	_, err := NewVagrantCloudRequest()
 	require.Error(t, err)
 
+	ts := simpleServer()
 	vcr, err := NewVagrantCloudRequest(
 		WithURL(ts.URL),
 	)
@@ -26,7 +36,21 @@ func TestNewVagrantCloudRequest(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, raw)
 	require.Contains(t, string(raw), "Hello, client")
+	ts.Close()
 
+	ts = simpleServer()
+	vcr, err = NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		ReplaceHosts(),
+	)
+	require.NoError(t, err)
+	raw, err = vcr.Do()
+	require.NoError(t, err)
+	require.NotNil(t, raw)
+	require.Contains(t, string(raw), "Hello, client")
+	ts.Close()
+
+	ts = simpleServer()
 	vcr, err = NewVagrantCloudRequest(
 		WithURL(ts.URL),
 		WithMethod(PUT),
@@ -36,4 +60,114 @@ func TestNewVagrantCloudRequest(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, raw)
 	require.Contains(t, string(raw), "Hello, client")
+	ts.Close()
+}
+
+func TestWarnDifferentURL(t *testing.T) {
+	ts := simpleServer()
+	testServerURL, err := url.Parse(ts.URL)
+	require.NoError(t, err)
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WarnDifferentTarget(testServerURL),
+	)
+	require.NoError(t, err)
+	raw, err := vcr.Do()
+	require.NoError(t, err)
+	require.NotNil(t, raw)
+	require.Contains(t, string(raw), "Hello, client")
+	ts.Close()
+}
+
+func TestAuthTokenRequest(t *testing.T) {
+	ts := validateRequestServer(t, func(t *testing.T, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		require.NotEmpty(t, authHeader)
+		require.Equal(t, authHeader, "Bearer mytoken")
+	})
+
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WithAuthTokenHeader("mytoken"),
+	)
+	require.NoError(t, err)
+	_, err = vcr.Do()
+	require.NoError(t, err)
+	ts.Close()
+}
+
+func TestAuthURLParameterRequest(t *testing.T) {
+	ts := validateRequestServer(t, func(t *testing.T, r *http.Request) {
+		queryParams := r.URL.Query()
+		require.NotEmpty(t, queryParams)
+		require.Equal(t, queryParams["access_token"], []string{"mytoken"})
+	})
+
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WithAuthTokenURLParam("mytoken"),
+	)
+	require.NoError(t, err)
+	_, err = vcr.Do()
+	require.NoError(t, err)
+	ts.Close()
+}
+
+func TestRequestWithBody(t *testing.T) {
+	ts := validateRequestServer(t, func(t *testing.T, r *http.Request) {
+		body, err := ioutil.ReadAll(r.Body)
+		require.NoError(t, err)
+		require.NotEmpty(t, body)
+		require.Equal(t, string(body), "mybody")
+	})
+
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WithRequestBody([]byte("mybody")),
+	)
+	require.NoError(t, err)
+	_, err = vcr.Do()
+	require.NoError(t, err)
+	ts.Close()
+}
+
+func TestRequestWithJSONBody(t *testing.T) {
+	ts := validateRequestServer(t, func(t *testing.T, r *http.Request) {
+		body, err := ioutil.ReadAll(r.Body)
+		require.NoError(t, err)
+		require.NotEmpty(t, body)
+		require.Equal(t, string(body), "{\"key\":\"myval\"}")
+	})
+
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WithRequestJSONableData(map[string]interface{}{
+			"key": "myval",
+		}),
+	)
+	require.NoError(t, err)
+	_, err = vcr.Do()
+	require.NoError(t, err)
+	ts.Close()
+}
+
+func TestQueryURLParameterRequest(t *testing.T) {
+	ts := validateRequestServer(t, func(t *testing.T, r *http.Request) {
+		queryParams := r.URL.Query()
+		require.NotEmpty(t, queryParams)
+		require.Equal(t, queryParams["test"], []string{"val"})
+		require.Equal(t, queryParams["othertest"], []string{"otherval"})
+	})
+
+	vcr, err := NewVagrantCloudRequest(
+		WithURL(ts.URL),
+		WithURLQueryParams(map[string]string{
+			"test":      "val",
+			"othertest": "otherval",
+		}),
+	)
+	require.NoError(t, err)
+	_, err = vcr.Do()
+	require.NoError(t, err)
+	ts.Close()
 }
