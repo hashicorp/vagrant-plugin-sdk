@@ -14,7 +14,7 @@ import (
 
 const (
 	DEFAULT_SERVER_URL       = "https://vagrantcloud.com"
-	DEFAULT_API_URL          = "https://vagrantcloud.com/api/v1"
+	DEFAULT_API_PATH         = "/api/v1"
 	DEFAULT_RETRY_COUNT      = 3
 	VAGRANT_LOGIN_TOKEN_FILE = "vagrant_login_token"
 )
@@ -89,7 +89,7 @@ func NewVagrantCloudClient(accessToken string, opts ...VagrantCloudClientOptions
 	vcc = &VagrantCloudClient{
 		accessToken: accessToken,
 		retryCount:  DEFAULT_RETRY_COUNT,
-		url:         DEFAULT_API_URL,
+		url:         DEFAULT_SERVER_URL,
 	}
 	for _, opt := range opts {
 		if oerr := opt(vcc); oerr != nil {
@@ -110,7 +110,7 @@ func (vc *VagrantCloudClient) request(
 	var vcr *VagrantCloudRequest
 
 	// Build url
-	url := fmt.Sprintf("%s/%s", vc.url, path)
+	url := fmt.Sprintf("%s%s/%s", vc.url, DEFAULT_API_PATH, path)
 
 	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
