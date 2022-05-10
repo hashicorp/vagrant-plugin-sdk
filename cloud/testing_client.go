@@ -8,9 +8,7 @@ import (
 // TestUnauthedClient returns a fully in-memory and side-effect free VagrantCloudClient
 // that does not have any auth tokens.
 func TestUnauthedClient(t testing.T) *VagrantCloudClient {
-	vcc, err := NewVagrantCloudClient(
-		"", DEFAULT_URL, DEFAULT_RETRY_COUNT,
-	)
+	vcc, err := NewVagrantCloudClient("")
 	require.NoError(t, err)
 	return vcc
 }
