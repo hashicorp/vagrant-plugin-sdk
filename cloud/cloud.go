@@ -8,13 +8,60 @@ import (
 	"strconv"
 
 	"github.com/hashicorp/go-multierror"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
 const (
-	DEFAULT_URL         = "https://vagrantcloud.com/api/v1"
-	DEFAULT_RETRY_COUNT = 3
+	DEFAULT_SERVER_URL       = "https://vagrantcloud.com"
+	DEFAULT_API_URL          = "https://vagrantcloud.com/api/v1"
+	DEFAULT_RETRY_COUNT      = 3
+	VAGRANT_LOGIN_TOKEN_FILE = "vagrant_login_token"
 )
+
+func ServerUrl() (url *url.URL, err error) {
+	vagrantServerUrl := os.Getenv("VAGRANT_SERVER_URL")
+	if vagrantServerUrl == "" {
+		url, err = url.Parse(DEFAULT_SERVER_URL)
+	} else {
+		url, err = url.Parse(vagrantServerUrl)
+	}
+	return
+}
+
+func VagrantCloudToken(dataDir path.Path, ui terminal.UI) (token string, err error) {
+	tokenPath := ""
+	loginTokenFile := dataDir.Join(VAGRANT_LOGIN_TOKEN_FILE)
+	if _, err := os.Stat(loginTokenFile.String()); err == nil {
+		tokenPath = loginTokenFile.String()
+	}
+
+	vagrantCloudToken := os.Getenv("VAGRANT_CLOUD_TOKEN")
+	if tokenPath != "" && vagrantCloudToken != "" {
+		if ui != nil {
+			// TODO: this output should go through the localization service
+			ui.Output(`Vagrant detected both the VAGRANT_CLOUD_TOKEN environment variable and a Vagrant login
+	token are present on this system. The VAGRANT_CLOUD_TOKEN environment variable takes
+	precedence over the locally stored token. To remove this error, either unset
+	the VAGRANT_CLOUD_TOKEN environment variable or remove the login token stored on disk:
+
+			%s`, loginTokenFile)
+		}
+	}
+
+	// Set the token
+	if vagrantCloudToken != "" {
+		token = vagrantCloudToken
+	} else if tokenPath != "" {
+		tokenData, err := os.ReadFile(tokenPath)
+		if err == nil {
+			token = string(tokenData)
+		}
+	} else if os.Getenv("ATLAS_TOKEN") != "" {
+		token = os.Getenv("ATLAS_TOKEN")
+	}
+	return
+}
 
 type VagrantCloudClient struct {
 	accessToken string
@@ -42,7 +89,7 @@ func NewVagrantCloudClient(accessToken string, opts ...VagrantCloudClientOptions
 	vcc = &VagrantCloudClient{
 		accessToken: accessToken,
 		retryCount:  DEFAULT_RETRY_COUNT,
-		url:         DEFAULT_URL,
+		url:         DEFAULT_API_URL,
 	}
 	for _, opt := range opts {
 		if oerr := opt(vcc); oerr != nil {
