@@ -100,6 +100,14 @@ func (vcr *VagrantCloudRequest) Do() (raw []byte, err error) {
 	}
 	// Set headers
 	req.Header = vcr.headers
+	// Add headers to redirects
+	client.HTTPClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		for key, val := range via[0].Header {
+			req.Header[key] = val
+		}
+		return err
+	}
+
 	// Execute request
 	resp, err := client.Do(req)
 	if err != nil {
