@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -16,26 +17,43 @@ const (
 )
 
 type VagrantCloudClient struct {
-	AccessToken string
-	Url         string
-	RetryCount  int
+	accessToken string
+	retryCount  int
+	url         string
 }
 
-func NewVagrantCloudClient(accessToken string, url string, retryCount int) (*VagrantCloudClient, error) {
-	// Set default url if none is provided
-	if url == "" {
-		url = DEFAULT_URL
+type VagrantCloudClientOptions func(*VagrantCloudClient) error
+
+func WithServerURL(url string) VagrantCloudClientOptions {
+	return func(c *VagrantCloudClient) (err error) {
+		c.url = url
+		return
 	}
-	// Set default retryCount if none provided
-	if retryCount < 0 {
-		retryCount = DEFAULT_RETRY_COUNT
+}
+
+func WithClientRetryCount(r int) VagrantCloudClientOptions {
+	return func(c *VagrantCloudClient) (err error) {
+		c.retryCount = r
+		return
 	}
-	client := &VagrantCloudClient{
-		AccessToken: accessToken,
-		Url:         url,
-		RetryCount:  retryCount,
+}
+
+func NewVagrantCloudClient(accessToken string, opts ...VagrantCloudClientOptions) (vcc *VagrantCloudClient, err error) {
+	vcc = &VagrantCloudClient{
+		accessToken: accessToken,
+		retryCount:  DEFAULT_RETRY_COUNT,
+		url:         DEFAULT_URL,
 	}
-	return client, nil
+	for _, opt := range opts {
+		if oerr := opt(vcc); oerr != nil {
+			err = multierror.Append(err, oerr)
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return
 }
 
 func (vc *VagrantCloudClient) request(
@@ -45,7 +63,7 @@ func (vc *VagrantCloudClient) request(
 	var vcr *VagrantCloudRequest
 
 	// Build url
-	url := fmt.Sprintf("%s/%s", vc.Url, path)
+	url := fmt.Sprintf("%s/%s", vc.url, path)
 
 	// Request with query parameters if the HTTPMethod is GET, HEAD or DELETE
 	queryParamMethods := []string{DELETE.String(), GET.String(), HEAD.String()}
@@ -55,8 +73,8 @@ func (vc *VagrantCloudClient) request(
 			stringParams[k] = v.(string)
 		}
 		vcr, err = NewVagrantCloudRequest(
-			WithAuthTokenHeader(vc.AccessToken),
-			WithRetryCount(vc.RetryCount),
+			WithAuthTokenHeader(vc.accessToken),
+			WithRetryCount(vc.retryCount),
 			WithURL(url),
 			ReplaceHosts(),
 			WithMethod(method),
@@ -67,8 +85,8 @@ func (vc *VagrantCloudClient) request(
 		}
 	} else {
 		vcr, err = NewVagrantCloudRequest(
-			WithAuthTokenHeader(vc.AccessToken),
-			WithRetryCount(vc.RetryCount),
+			WithAuthTokenHeader(vc.accessToken),
+			WithRetryCount(vc.retryCount),
 			WithURL(url),
 			ReplaceHosts(),
 			WithMethod(method),
@@ -91,7 +109,7 @@ func (vc *VagrantCloudClient) request(
 
 func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.URL, method HTTPMethod, ui terminal.UI) (data []byte, err error) {
 	opts := []VagrantCloudRequestOptions{
-		WithRetryCount(vc.RetryCount),
+		WithRetryCount(vc.retryCount),
 		WithURL(url),
 		ReplaceHosts(),
 		WithMethod(method),
@@ -110,9 +128,9 @@ func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.UR
 	}
 	if accessTokenByUrl {
 		// TODO: warn user
-		opts = append(opts, WithAuthTokenURLParam(vc.AccessToken))
+		opts = append(opts, WithAuthTokenURLParam(vc.accessToken))
 	} else {
-		opts = append(opts, WithAuthTokenHeader(vc.AccessToken))
+		opts = append(opts, WithAuthTokenHeader(vc.accessToken))
 	}
 
 	vcr, err := NewVagrantCloudRequest(opts...)
