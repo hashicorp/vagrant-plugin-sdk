@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-argmapper"
+	"github.com/hashicorp/go-hclog"
 	"github.com/stretchr/testify/require"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -19,18 +19,18 @@ func TestMappers(t *testing.T) {
 		Error  string
 	}{
 		{
-			"Source",
-			Source,
-			[]interface{}{&vagrant_plugin_sdk.Args_Source{App: "foo"}},
-			&component.Source{App: "foo"},
+			"Logger",
+			Logger,
+			[]interface{}{&vagrant_plugin_sdk.Args_Logger{Name: "foo"}},
+			hclog.L().ResetNamed("foo"),
 			"",
 		},
 
 		{
-			"SourceProto",
-			SourceProto,
-			[]interface{}{&component.Source{App: "foo"}},
-			&vagrant_plugin_sdk.Args_Source{App: "foo"},
+			"LoggerProto",
+			LoggerProto,
+			[]interface{}{hclog.L().ResetNamed("foo")},
+			&vagrant_plugin_sdk.Args_Logger{Name: "foo"},
 			"",
 		},
 	}

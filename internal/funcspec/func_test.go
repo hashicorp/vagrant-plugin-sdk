@@ -38,7 +38,7 @@ func TestFunc(t *testing.T) {
 		msg, err := ptypes.MarshalAny(&empty.Empty{})
 		require.NoError(err)
 
-		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
+		result := f.Func.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
 		require.NoError(result.Err())
 		require.Equal(reflect.Struct, reflect.ValueOf(result.Out(0)).Kind())
 	})
@@ -61,7 +61,7 @@ func TestFunc(t *testing.T) {
 		// Create an argument with the wrong type
 		msg, err := ptypes.MarshalAny(&vagrant_plugin_sdk.FuncSpec{})
 		require.NoError(err)
-		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&vagrant_plugin_sdk.FuncSpec{})))
+		result := f.Func.Call(argmapper.TypedSubtype(msg, proto.MessageName(&vagrant_plugin_sdk.FuncSpec{})))
 
 		// We should have an error
 		require.Error(result.Err())
@@ -88,7 +88,7 @@ func TestFunc(t *testing.T) {
 		// Call the function with the proto type we expect
 		msg, err := ptypes.MarshalAny(&empty.Empty{})
 		require.NoError(err)
-		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
+		result := f.Func.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
 
 		// Should succeed and give us our primitive
 		require.NoError(result.Err())
@@ -114,7 +114,7 @@ func TestFunc(t *testing.T) {
 		msg, err := ptypes.MarshalAny(&empty.Empty{})
 		require.NoError(err)
 
-		result := f.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
+		result := f.Func.Call(argmapper.TypedSubtype(msg, proto.MessageName(&empty.Empty{})))
 		require.NoError(result.Err())
 		require.Equal(reflect.Struct, reflect.ValueOf(result.Out(0)).Kind())
 	})
