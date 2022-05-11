@@ -71,9 +71,13 @@ type VagrantCloudClient struct {
 
 type VagrantCloudClientOptions func(*VagrantCloudClient) error
 
-func WithServerURL(url string) VagrantCloudClientOptions {
+func WithServerURL(u string) VagrantCloudClientOptions {
 	return func(c *VagrantCloudClient) (err error) {
-		c.url = url
+		_, err = url.Parse(u)
+		if err != nil {
+			return err
+		}
+		c.url = u
 		return
 	}
 }
@@ -154,13 +158,14 @@ func (vc *VagrantCloudClient) request(
 	return jsonResp, nil
 }
 
-func (vc *VagrantCloudClient) AuthedRequest(url string, vagrantServerUrl *url.URL, method HTTPMethod, ui terminal.UI) (data []byte, err error) {
+func (vc *VagrantCloudClient) AuthedRequest(u string, method HTTPMethod, ui terminal.UI) (data []byte, err error) {
+	serverUrl, _ := url.Parse(vc.url)
 	opts := []VagrantCloudRequestOptions{
 		WithRetryCount(vc.retryCount),
-		WithURL(url),
+		WithURL(u),
 		ReplaceHosts(),
 		WithMethod(method),
-		WarnDifferentTarget(vagrantServerUrl, ui),
+		WarnDifferentTarget(serverUrl, ui),
 	}
 
 	var accessTokenByUrl bool
