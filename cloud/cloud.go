@@ -31,11 +31,13 @@ func ServerUrl() (url *url.URL, err error) {
 
 func VagrantCloudToken(dataDir path.Path, ui terminal.UI) (token string, err error) {
 	tokenPath := ""
-	loginTokenFile := dataDir.Join(VAGRANT_LOGIN_TOKEN_FILE)
-	if _, err := os.Stat(loginTokenFile.String()); err == nil {
-		tokenPath = loginTokenFile.String()
+	loginTokenFile := path.NewPath("")
+	if dataDir != nil {
+		loginTokenFile := dataDir.Join(VAGRANT_LOGIN_TOKEN_FILE)
+		if _, err := os.Stat(loginTokenFile.String()); err == nil {
+			tokenPath = loginTokenFile.String()
+		}
 	}
-
 	vagrantCloudToken := os.Getenv("VAGRANT_CLOUD_TOKEN")
 	if tokenPath != "" && vagrantCloudToken != "" {
 		if ui != nil {
