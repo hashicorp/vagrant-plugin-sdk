@@ -46,14 +46,14 @@ func NewCoreLocalizer(terminal terminal.UI) (localizer *Localizer, err error) {
 	if err != nil {
 		return nil, err
 	}
-	localDataPath := "localizer/locales/" + lang.String() + ".json"
-	localeData, err := Asset(localDataPath)
+	localDataPathEN := "localizer/locales/en.json"
+	localeData, err := Asset(localDataPathEN)
 	if err != nil {
 		return nil, err
 	}
 	bundle, err := loadLocaleData(lang, LocaleData{
 		LocaleData: localeData,
-		LocalePath: localDataPath,
+		LocalePath: localDataPathEN,
 		Languages:  []language.Tag{language.English, language.AmericanEnglish, language.BritishEnglish},
 	})
 	if err != nil {
