@@ -27,6 +27,7 @@ import (
 
 // String generation
 //go:generate stringer -type=Type,FlagType -linecomment ./component
+//go:generate stringer -type=HTTPMethod -linecomment ./cloud
 
 // Main is the primary entrypoint for plugins serving components. This
 // function never returns; it blocks until the program is exited. This should
