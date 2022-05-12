@@ -33,6 +33,7 @@ import (
 
 // String generation
 //go:generate stringer -type=Type,FlagType -linecomment ./component
+//go:generate stringer -type=HTTPMethod -linecomment ./cloud
 
 // Locales data bundling
 //go:generate go-bindata -o localizer/locales.go -pkg localizer localizer/locales/
