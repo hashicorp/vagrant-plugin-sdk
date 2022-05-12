@@ -65,8 +65,8 @@ func TestSpec(t *testing.T) {
 		require := require.New(t)
 
 		spec, err := Spec(func(*empty.Empty) int { return 0 })
-		require.Error(err)
-		require.Nil(spec)
+		require.NoError(err)
+		require.NotNil(spec)
 	})
 
 	t.Run("WithOutput proto to int", func(t *testing.T) {
