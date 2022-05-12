@@ -29,22 +29,6 @@ const (
 	PUT
 )
 
-func (m HTTPMethod) String() string {
-	switch m {
-	case DELETE:
-		return "DELETE"
-	case GET:
-		return "GET"
-	case HEAD:
-		return "HEAD"
-	case POST:
-		return "POST"
-	case PUT:
-		return "PUT"
-	}
-	return "unknown"
-}
-
 type VagrantCloudRequest struct {
 	headers        http.Header
 	method         HTTPMethod
