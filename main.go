@@ -28,6 +28,9 @@ import (
 // String generation
 //go:generate stringer -type=Type,FlagType -linecomment ./component
 
+// Locales data bundling
+//go:generate go-bindata -o localizer/locales.go -pkg localizer localizer/locales/
+
 // Main is the primary entrypoint for plugins serving components. This
 // function never returns; it blocks until the program is exited. This should
 // be called immediately in main() in your plugin binaries, no prior setup
