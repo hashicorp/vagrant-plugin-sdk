@@ -8,7 +8,7 @@ import (
 
 func TestSearch(t *testing.T) {
 	vcc := TestUnauthedClient(t)
-	res, err := vcc.Seach("hashicorp", "", "", "", 10, 1)
+	res, err := vcc.Search("hashicorp", "", "", "", 10, 1)
 	require.NoError(t, err)
 	require.Len(t, res["boxes"], 10)
 }

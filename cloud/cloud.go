@@ -407,7 +407,7 @@ func (vc *VagrantCloudClient) OrganizationGet(
 	return vc.request(path, GET, nil)
 }
 
-func (vc *VagrantCloudClient) Seach(
+func (vc *VagrantCloudClient) Search(
 	query string, provider string, sort string, order string, limit int, page int,
 ) (map[string]interface{}, error) {
 	params := make(map[string]interface{})
