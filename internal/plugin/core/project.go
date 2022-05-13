@@ -304,17 +304,19 @@ func (p *projectClient) RootPath() (dir path.Path, err error) {
 	return
 }
 
-func (p *projectClient) Target(name string) (t core.Target, err error) {
+func (p *projectClient) Target(name string, provider string) (t core.Target, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get target",
-				name,
+				"name", name,
+				"provider", provider,
 				"error", err,
 			)
 		}
 	}()
 	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
-		Name: name,
+		Name:     name,
+		Provider: provider,
 	})
 	if err != nil {
 		return
@@ -699,9 +701,11 @@ func (p *projectServer) Target(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Project_TargetRequest,
 ) (r *vagrant_plugin_sdk.Args_Target, err error) {
-	d, err := p.Impl.Target(in.Name)
+	d, err := p.Impl.Target(in.Name, in.Provider)
 	if err != nil {
-		p.Logger.Error("failed to get targets",
+		p.Logger.Error("failed to get target",
+			"name", in.Name,
+			"provider", in.Provider,
 			"error", err,
 		)
 		return

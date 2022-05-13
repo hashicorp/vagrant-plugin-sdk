@@ -40,7 +40,13 @@ type Project interface {
 	PrimaryTargetName() (name string, err error)
 	ResourceId() (string, error)
 	RootPath() (path path.Path, err error)
-	Target(name string) (t Target, err error)
+
+	// Target loads a target within this project with the given name. The
+	// provider parameter is optional and is used to specify which provider
+	// should be used to load the machine. This second parameter can be left
+	// blank when fetching an existing target, but can be specified during
+	// machine up to indicate a user flag that's been provided.
+	Target(name string, provider string) (t Target, err error)
 	TargetIds() (ids []string, err error)
 	TargetIndex() (index TargetIndex, err error)
 	TargetNames() (names []string, err error)

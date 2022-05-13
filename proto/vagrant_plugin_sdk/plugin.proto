@@ -1217,6 +1217,7 @@ message Project {
   }
   message TargetRequest {
     string name = 1;
+    string provider = 2;
   }
   message TargetNamesResponse {
     repeated string names = 1;
