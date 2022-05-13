@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-retryablehttp"
@@ -15,7 +16,8 @@ import (
 )
 
 const (
-	TARGET_HOST = "vagrantcloud.com"
+	TARGET_HOST             = "vagrantcloud.com"
+	CUSTOM_HOST_NOTIFY_WAIT = 5 // time in seconds
 )
 
 // Type is an enum of all the available http methods
@@ -123,6 +125,7 @@ func WarnDifferentTarget(serverUrl *url.URL, ui terminal.UI) VagrantCloudRequest
 
 					Known Vagrant server:  %s
 					Custom Vagrant server: %s`, TARGET_HOST, serverUrl.Host))
+					time.Sleep(CUSTOM_HOST_NOTIFY_WAIT * time.Second)
 				}
 			}
 		}
