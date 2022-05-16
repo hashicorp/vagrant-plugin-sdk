@@ -1,3 +1,4 @@
 {
-  "box_add": "Adding box"
+  "box_add": "Adding box",
+  "error_noninteractive_ui": "Vagrant is attempting to interface with the UI in a way that requires a TTY. Most actions in Vagrant that require a TTY have configuration switches to disable this requirement. Please do that or run Vagrant with TTY."
 }
