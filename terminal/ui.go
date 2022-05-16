@@ -1,15 +1,22 @@
 package terminal
 
 import (
-	"errors"
 	"fmt"
 	"io"
 
 	"github.com/fatih/color"
+	"github.com/hashicorp/vagrant-plugin-sdk/localizer"
 )
 
-// ErrNonInteractive is returned when Input is called on a non-Interactive UI.
-var ErrNonInteractive = errors.New("noninteractive UI doesn't support this operation")
+var ErrNonInteractive = nonInteractiveError()
+
+func nonInteractiveError() error {
+	localizer, err := localizer.NewCoreLocalizer()
+	if err != nil {
+		return err
+	}
+	return localizer.LocalizeErr("error_noninteractive_ui", nil)
+}
 
 // Passed to UI.NamedValues to provide a nicely formatted key: value output
 type NamedValue struct {
