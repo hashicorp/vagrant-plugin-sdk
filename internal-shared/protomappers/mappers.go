@@ -917,6 +917,7 @@ func Flags(input []*vagrant_plugin_sdk.Command_Flag) (flags []*component.Command
 			ShortName:    f.ShortName,
 			Description:  f.Description,
 			DefaultValue: f.DefaultValue,
+			Aliases:      f.Aliases,
 		}
 
 		switch f.Type {
@@ -939,6 +940,7 @@ func FlagsProto(input []*component.CommandFlag) (output []*vagrant_plugin_sdk.Co
 			ShortName:    f.ShortName,
 			Description:  f.Description,
 			DefaultValue: f.DefaultValue,
+			Aliases:      f.Aliases,
 		}
 
 		switch f.Type {

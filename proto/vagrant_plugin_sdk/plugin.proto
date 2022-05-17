@@ -744,6 +744,7 @@ message Command {
     string description = 3;
     string default_value = 4;
     Type type = 5;
+    repeated string aliases = 6;
 
     enum Type {
       STRING = 0;
