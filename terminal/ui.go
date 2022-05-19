@@ -11,10 +11,6 @@ import (
 var ErrNonInteractive = nonInteractiveError()
 
 func nonInteractiveError() error {
-	localizer, err := localizer.NewCoreLocalizer()
-	if err != nil {
-		return err
-	}
 	return localizer.LocalizeErr("error_noninteractive_ui", nil)
 }
 

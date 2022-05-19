@@ -25,6 +25,26 @@ type Localizer struct {
 	bundle    *i18n.Bundle
 }
 
+func LocalizeMsg(msg string, templateData interface{}) string {
+	l, err := NewCoreLocalizer()
+	if err != nil {
+		return ""
+	}
+	localizedMsg, err := l.LocalizeMsg(msg, templateData)
+	if err != nil {
+		return ""
+	}
+	return localizedMsg
+}
+
+func LocalizeErr(msg string, templateData interface{}) error {
+	l, err := NewCoreLocalizer()
+	if err != nil {
+		return err
+	}
+	return l.LocalizeErr(msg, templateData)
+}
+
 func NewPluginLocalizer(data ...LocaleData) (localizer *Localizer, err error) {
 	lang, err := getLang()
 	if err != nil {
