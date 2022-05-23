@@ -1658,5 +1658,12 @@ service PushService {
 
 
 service DownloaderService {
-  rpc Download(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc DownloadSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Download(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
+
+  rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
+  rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
 }

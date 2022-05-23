@@ -10505,7 +10505,12 @@ var PushService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DownloaderServiceClient interface {
-	Download(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error)
+	Download(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
+	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
 type downloaderServiceClient struct {
@@ -10516,9 +10521,54 @@ func NewDownloaderServiceClient(cc grpc.ClientConnInterface) DownloaderServiceCl
 	return &downloaderServiceClient{cc}
 }
 
-func (c *downloaderServiceClient) Download(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *downloaderServiceClient) DownloadSpec(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*FuncSpec, error) {
+	out := new(FuncSpec)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/DownloadSpec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) Download(ctx context.Context, in *FuncSpec_Args, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/Download", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/Seed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error) {
+	out := new(Args_Seeds)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/Seeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/SetPluginName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
+	out := new(PluginInfo_Name)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/PluginName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -10529,15 +10579,35 @@ func (c *downloaderServiceClient) Download(ctx context.Context, in *emptypb.Empt
 // All implementations should embed UnimplementedDownloaderServiceServer
 // for forward compatibility
 type DownloaderServiceServer interface {
-	Download(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	DownloadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error)
+	Download(context.Context, *FuncSpec_Args) (*emptypb.Empty, error)
+	Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error)
+	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
+	SetPluginName(context.Context, *PluginInfo_Name) (*emptypb.Empty, error)
+	PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error)
 }
 
 // UnimplementedDownloaderServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedDownloaderServiceServer struct {
 }
 
-func (UnimplementedDownloaderServiceServer) Download(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedDownloaderServiceServer) DownloadSpec(context.Context, *emptypb.Empty) (*FuncSpec, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadSpec not implemented")
+}
+func (UnimplementedDownloaderServiceServer) Download(context.Context, *FuncSpec_Args) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Download not implemented")
+}
+func (UnimplementedDownloaderServiceServer) Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seed not implemented")
+}
+func (UnimplementedDownloaderServiceServer) Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Seeds not implemented")
+}
+func (UnimplementedDownloaderServiceServer) SetPluginName(context.Context, *PluginInfo_Name) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPluginName not implemented")
+}
+func (UnimplementedDownloaderServiceServer) PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
 }
 
 // UnsafeDownloaderServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -10551,8 +10621,26 @@ func RegisterDownloaderServiceServer(s grpc.ServiceRegistrar, srv DownloaderServ
 	s.RegisterService(&DownloaderService_ServiceDesc, srv)
 }
 
-func _DownloaderService_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DownloaderService_DownloadSpec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).DownloadSpec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/DownloadSpec",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).DownloadSpec(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FuncSpec_Args)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -10564,7 +10652,79 @@ func _DownloaderService_Download_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/Download",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DownloaderServiceServer).Download(ctx, req.(*emptypb.Empty))
+		return srv.(DownloaderServiceServer).Download(ctx, req.(*FuncSpec_Args))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_Seed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Args_Seeds)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).Seed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/Seed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).Seed(ctx, req.(*Args_Seeds))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_Seeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).Seeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/Seeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).Seeds(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_SetPluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo_Name)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).SetPluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/SetPluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).SetPluginName(ctx, req.(*PluginInfo_Name))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_PluginName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).PluginName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/PluginName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).PluginName(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -10577,8 +10737,28 @@ var DownloaderService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*DownloaderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "DownloadSpec",
+			Handler:    _DownloaderService_DownloadSpec_Handler,
+		},
+		{
 			MethodName: "Download",
 			Handler:    _DownloaderService_Download_Handler,
+		},
+		{
+			MethodName: "Seed",
+			Handler:    _DownloaderService_Seed_Handler,
+		},
+		{
+			MethodName: "Seeds",
+			Handler:    _DownloaderService_Seeds_Handler,
+		},
+		{
+			MethodName: "SetPluginName",
+			Handler:    _DownloaderService_SetPluginName_Handler,
+		},
+		{
+			MethodName: "PluginName",
+			Handler:    _DownloaderService_PluginName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
