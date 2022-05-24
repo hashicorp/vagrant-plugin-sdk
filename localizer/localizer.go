@@ -2,10 +2,10 @@ package localizer
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"strings"
 
-	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -23,10 +23,29 @@ type LocaleData struct {
 type Localizer struct {
 	localizer *i18n.Localizer
 	bundle    *i18n.Bundle
-	terminal  terminal.UI
 }
 
-func NewPluginLocalizer(terminal terminal.UI, data ...LocaleData) (localizer *Localizer, err error) {
+func LocalizeMsg(msg string, templateData interface{}) string {
+	l, err := NewCoreLocalizer()
+	if err != nil {
+		return ""
+	}
+	localizedMsg, err := l.LocalizeMsg(msg, templateData)
+	if err != nil {
+		return ""
+	}
+	return localizedMsg
+}
+
+func LocalizeErr(msg string, templateData interface{}) error {
+	l, err := NewCoreLocalizer()
+	if err != nil {
+		return err
+	}
+	return l.LocalizeErr(msg, templateData)
+}
+
+func NewPluginLocalizer(data ...LocaleData) (localizer *Localizer, err error) {
 	lang, err := getLang()
 	if err != nil {
 		return nil, err
@@ -37,11 +56,11 @@ func NewPluginLocalizer(terminal terminal.UI, data ...LocaleData) (localizer *Lo
 	}
 	l := i18n.NewLocalizer(bundle, lang.String())
 	return &Localizer{
-		localizer: l, bundle: bundle, terminal: terminal,
+		localizer: l, bundle: bundle,
 	}, nil
 }
 
-func NewCoreLocalizer(terminal terminal.UI) (localizer *Localizer, err error) {
+func NewCoreLocalizer() (localizer *Localizer, err error) {
 	lang, err := getLang()
 	if err != nil {
 		return nil, err
@@ -61,7 +80,7 @@ func NewCoreLocalizer(terminal terminal.UI) (localizer *Localizer, err error) {
 	}
 	l := i18n.NewLocalizer(bundle, lang.String())
 	return &Localizer{
-		localizer: l, bundle: bundle, terminal: terminal,
+		localizer: l, bundle: bundle,
 	}, nil
 }
 
@@ -73,17 +92,16 @@ func (l *Localizer) LocalizeMsg(msg string, templateData interface{}) (string, e
 	return l.localizer.Localize(&config)
 }
 
-func (l *Localizer) Output(msg string, templateData interface{}) error {
+func (l *Localizer) LocalizeErr(msg string, templateData interface{}) error {
 	config := i18n.LocalizeConfig{
 		MessageID:    msg,
 		TemplateData: templateData,
 	}
-	localizedMsg, err := l.localizer.Localize(&config)
+	localizedErrMsg, err := l.localizer.Localize(&config)
 	if err != nil {
 		return err
 	}
-	l.terminal.Output(localizedMsg)
-	return nil
+	return errors.New(localizedErrMsg)
 }
 
 func getLang() (locale language.Tag, err error) {

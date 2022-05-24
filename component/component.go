@@ -131,6 +131,7 @@ type CommandFlag struct {
 	Description  string
 	DefaultValue string
 	Type         FlagType
+	Aliases      []string
 }
 
 type CommandInfo struct {
