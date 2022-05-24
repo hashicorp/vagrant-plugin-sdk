@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
+	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"google.golang.org/grpc"
@@ -48,6 +49,18 @@ type downloaderClient struct {
 	client vagrant_plugin_sdk.DownloaderServiceClient
 }
 
+func (c *downloaderClient) Config() (interface{}, error) {
+	return configStructCall(c.Ctx, c.client)
+}
+
+func (c *downloaderClient) ConfigSet(v interface{}) error {
+	return configureCall(c.Ctx, c.client, v)
+}
+
+func (c *downloaderClient) Documentation() (*docs.Documentation, error) {
+	return documentationCall(c.Ctx, c.client)
+}
+
 func (c *downloaderClient) DownloadFunc() interface{} {
 	spec, err := c.client.DownloadSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
@@ -76,6 +89,27 @@ type downloaderServer struct {
 
 	Impl component.Downloader
 	vagrant_plugin_sdk.UnsafeDownloaderServiceServer
+}
+
+func (s *downloaderServer) ConfigStruct(
+	ctx context.Context,
+	empty *emptypb.Empty,
+) (*vagrant_plugin_sdk.Config_StructResp, error) {
+	return configStruct(s.Impl)
+}
+
+func (s *downloaderServer) Configure(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Config_ConfigureRequest,
+) (*emptypb.Empty, error) {
+	return configure(s.Impl, req)
+}
+
+func (s *downloaderServer) Documentation(
+	ctx context.Context,
+	empty *emptypb.Empty,
+) (*vagrant_plugin_sdk.Config_Documentation, error) {
+	return documentation(s.Impl)
 }
 
 func (s *downloaderServer) DownloadSpec(

@@ -10511,6 +10511,9 @@ type DownloaderServiceClient interface {
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
 	SetPluginName(ctx context.Context, in *PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
+	ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error)
+	Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error)
 }
 
 type downloaderServiceClient struct {
@@ -10575,6 +10578,33 @@ func (c *downloaderServiceClient) PluginName(ctx context.Context, in *emptypb.Em
 	return out, nil
 }
 
+func (c *downloaderServiceClient) ConfigStruct(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_StructResp, error) {
+	out := new(Config_StructResp)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/ConfigStruct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) Configure(ctx context.Context, in *Config_ConfigureRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/Configure", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *downloaderServiceClient) Documentation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config_Documentation, error) {
+	out := new(Config_Documentation)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.DownloaderService/Documentation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DownloaderServiceServer is the server API for DownloaderService service.
 // All implementations should embed UnimplementedDownloaderServiceServer
 // for forward compatibility
@@ -10585,6 +10615,9 @@ type DownloaderServiceServer interface {
 	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
 	SetPluginName(context.Context, *PluginInfo_Name) (*emptypb.Empty, error)
 	PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error)
+	ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error)
+	Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error)
+	Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error)
 }
 
 // UnimplementedDownloaderServiceServer should be embedded to have forward compatible implementations.
@@ -10608,6 +10641,15 @@ func (UnimplementedDownloaderServiceServer) SetPluginName(context.Context, *Plug
 }
 func (UnimplementedDownloaderServiceServer) PluginName(context.Context, *emptypb.Empty) (*PluginInfo_Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PluginName not implemented")
+}
+func (UnimplementedDownloaderServiceServer) ConfigStruct(context.Context, *emptypb.Empty) (*Config_StructResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfigStruct not implemented")
+}
+func (UnimplementedDownloaderServiceServer) Configure(context.Context, *Config_ConfigureRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
+}
+func (UnimplementedDownloaderServiceServer) Documentation(context.Context, *emptypb.Empty) (*Config_Documentation, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Documentation not implemented")
 }
 
 // UnsafeDownloaderServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -10729,6 +10771,60 @@ func _DownloaderService_PluginName_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DownloaderService_ConfigStruct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).ConfigStruct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/ConfigStruct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).ConfigStruct(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config_ConfigureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).Configure(ctx, req.(*Config_ConfigureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DownloaderService_Documentation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloaderServiceServer).Documentation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.DownloaderService/Documentation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloaderServiceServer).Documentation(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DownloaderService_ServiceDesc is the grpc.ServiceDesc for DownloaderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -10759,6 +10855,18 @@ var DownloaderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PluginName",
 			Handler:    _DownloaderService_PluginName_Handler,
+		},
+		{
+			MethodName: "ConfigStruct",
+			Handler:    _DownloaderService_ConfigStruct_Handler,
+		},
+		{
+			MethodName: "Configure",
+			Handler:    _DownloaderService_Configure_Handler,
+		},
+		{
+			MethodName: "Documentation",
+			Handler:    _DownloaderService_Documentation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
