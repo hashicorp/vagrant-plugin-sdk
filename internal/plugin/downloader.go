@@ -127,7 +127,7 @@ func (s *downloaderServer) Download(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
 ) (*emptypb.Empty, error) {
-	_, err := s.CallDynamicFunc(s.Impl.DownloadFunc(), (*int32)(nil), args.Args,
+	_, err := s.CallDynamicFunc(s.Impl.DownloadFunc(), false, args.Args,
 		argmapper.Typed(ctx))
 
 	return &emptypb.Empty{}, err
