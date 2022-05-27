@@ -7867,7 +7867,7 @@ type ProjectServiceClient interface {
 	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
-	DefaultProvider(ctx context.Context, in *Project_DefaultProviderRequest, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error)
+	DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error)
 	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
 	LocalData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
@@ -7946,7 +7946,7 @@ func (c *projectServiceClient) DefaultPrivateKey(ctx context.Context, in *emptyp
 	return out, nil
 }
 
-func (c *projectServiceClient) DefaultProvider(ctx context.Context, in *Project_DefaultProviderRequest, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error) {
+func (c *projectServiceClient) DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Project_DefaultProviderResponse, error) {
 	out := new(Project_DefaultProviderResponse)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.ProjectService/DefaultProvider", in, out, opts...)
 	if err != nil {
@@ -8091,7 +8091,7 @@ type ProjectServiceServer interface {
 	CWD(context.Context, *emptypb.Empty) (*Args_Path, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Project, error)
 	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error)
-	DefaultProvider(context.Context, *Project_DefaultProviderRequest) (*Project_DefaultProviderResponse, error)
+	DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error)
 	Home(context.Context, *emptypb.Empty) (*Args_Path, error)
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
 	LocalData(context.Context, *emptypb.Empty) (*Args_Path, error)
@@ -8130,7 +8130,7 @@ func (UnimplementedProjectServiceServer) DataDir(context.Context, *emptypb.Empty
 func (UnimplementedProjectServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
 }
-func (UnimplementedProjectServiceServer) DefaultProvider(context.Context, *Project_DefaultProviderRequest) (*Project_DefaultProviderResponse, error) {
+func (UnimplementedProjectServiceServer) DefaultProvider(context.Context, *emptypb.Empty) (*Project_DefaultProviderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DefaultProvider not implemented")
 }
 func (UnimplementedProjectServiceServer) Home(context.Context, *emptypb.Empty) (*Args_Path, error) {
@@ -8296,7 +8296,7 @@ func _ProjectService_DefaultPrivateKey_Handler(srv interface{}, ctx context.Cont
 }
 
 func _ProjectService_DefaultProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Project_DefaultProviderRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -8308,7 +8308,7 @@ func _ProjectService_DefaultProvider_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/hashicorp.vagrant.sdk.ProjectService/DefaultProvider",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServiceServer).DefaultProvider(ctx, req.(*Project_DefaultProviderRequest))
+		return srv.(ProjectServiceServer).DefaultProvider(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

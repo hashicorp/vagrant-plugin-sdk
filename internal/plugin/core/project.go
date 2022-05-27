@@ -180,7 +180,7 @@ func (p *projectClient) DefaultPrivateKey() (dir path.Path, err error) {
 	return
 }
 
-func (p *projectClient) DefaultProvider(opts *core.DefaultProviderOptions) (name string, err error) {
+func (p *projectClient) DefaultProvider() (name string, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get default provider",
@@ -188,12 +188,7 @@ func (p *projectClient) DefaultProvider(opts *core.DefaultProviderOptions) (name
 			)
 		}
 	}()
-	d, err := p.client.DefaultProvider(p.Ctx, &vagrant_plugin_sdk.Project_DefaultProviderRequest{
-		CheckUsable:  opts.CheckUsable,
-		Exclude:      opts.Exclude,
-		ForceDefault: opts.ForceDefault,
-		MachineName:  opts.MachineName,
-	})
+	d, err := p.client.DefaultProvider(p.Ctx, &emptypb.Empty{})
 	if err == nil {
 		name = d.ProviderName
 	}
@@ -304,19 +299,17 @@ func (p *projectClient) RootPath() (dir path.Path, err error) {
 	return
 }
 
-func (p *projectClient) Target(name string, provider string) (t core.Target, err error) {
+func (p *projectClient) Target(name string) (t core.Target, err error) {
 	defer func() {
 		if err != nil {
 			p.Logger.Error("failed to get target",
-				"name", name,
-				"provider", provider,
+				name,
 				"error", err,
 			)
 		}
 	}()
 	r, err := p.client.Target(p.Ctx, &vagrant_plugin_sdk.Project_TargetRequest{
-		Name:     name,
-		Provider: provider,
+		Name: name,
 	})
 	if err != nil {
 		return
@@ -573,14 +566,9 @@ func (p *projectServer) DefaultPrivateKey(
 
 func (p *projectServer) DefaultProvider(
 	ctx context.Context,
-	req *vagrant_plugin_sdk.Project_DefaultProviderRequest,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_DefaultProviderResponse, error) {
-	provider, err := p.Impl.DefaultProvider(&core.DefaultProviderOptions{
-		CheckUsable:  req.CheckUsable,
-		Exclude:      req.Exclude,
-		ForceDefault: req.ForceDefault,
-		MachineName:  req.MachineName,
-	})
+	provider, err := p.Impl.DefaultProvider()
 	if err != nil {
 		p.Logger.Error("failed to get default provider",
 			"error", err,
@@ -701,11 +689,9 @@ func (p *projectServer) Target(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Project_TargetRequest,
 ) (r *vagrant_plugin_sdk.Args_Target, err error) {
-	d, err := p.Impl.Target(in.Name, in.Provider)
+	d, err := p.Impl.Target(in.Name)
 	if err != nil {
-		p.Logger.Error("failed to get target",
-			"name", in.Name,
-			"provider", in.Provider,
+		p.Logger.Error("failed to get targets",
 			"error", err,
 		)
 		return
