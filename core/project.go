@@ -9,22 +9,6 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
-type DefaultProviderOptions struct {
-	CheckUsable  bool
-	Exclude      []string
-	ForceDefault bool
-	MachineName  string
-}
-
-func (d *DefaultProviderOptions) IsExcluded(provider string) bool {
-	for _, e := range d.Exclude {
-		if e == provider {
-			return true
-		}
-	}
-	return false
-}
-
 type Project interface {
 	ActiveTargets() (targets []Target, err error)
 	Boxes() (boxes BoxCollection, err error)
@@ -33,20 +17,14 @@ type Project interface {
 	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path path.Path, err error)
-	DefaultProvider(opts *DefaultProviderOptions) (name string, err error)
+	DefaultProvider() (name string, err error)
 	Home() (path path.Path, err error)
 	Host() (h Host, err error)
 	LocalData() (path path.Path, err error)
 	PrimaryTargetName() (name string, err error)
 	ResourceId() (string, error)
 	RootPath() (path path.Path, err error)
-
-	// Target loads a target within this project with the given name. The
-	// provider parameter is optional and is used to specify which provider
-	// should be used to load the machine. This second parameter can be left
-	// blank when fetching an existing target, but can be specified during
-	// machine up to indicate a user flag that's been provided.
-	Target(name string, provider string) (t Target, err error)
+	Target(name string) (t Target, err error)
 	TargetIds() (ids []string, err error)
 	TargetIndex() (index TargetIndex, err error)
 	TargetNames() (names []string, err error)
