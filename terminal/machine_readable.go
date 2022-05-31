@@ -45,6 +45,11 @@ func (ui *machineReadableUI) Interactive() bool {
 	return false
 }
 
+// MachineReadable implements UI
+func (ui *machineReadableUI) MachineReadable() bool {
+	return true
+}
+
 // Output implements UI
 func (ui *machineReadableUI) Output(msg string, raw ...interface{}) {
 	if ui.format == TableFormat {

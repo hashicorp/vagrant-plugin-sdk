@@ -172,20 +172,20 @@ func (_m *Project) DefaultPrivateKey() (path.Path, error) {
 	return r0, r1
 }
 
-// DefaultProvider provides a mock function with given fields:
-func (_m *Project) DefaultProvider() (string, error) {
-	ret := _m.Called()
+// DefaultProvider provides a mock function with given fields: opts
+func (_m *Project) DefaultProvider(opts *core.DefaultProviderOptions) (string, error) {
+	ret := _m.Called(opts)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(*core.DefaultProviderOptions) string); ok {
+		r0 = rf(opts)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(*core.DefaultProviderOptions) error); ok {
+		r1 = rf(opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -327,13 +327,13 @@ func (_m *Project) RootPath() (path.Path, error) {
 	return r0, r1
 }
 
-// Target provides a mock function with given fields: name
-func (_m *Project) Target(name string) (core.Target, error) {
-	ret := _m.Called(name)
+// Target provides a mock function with given fields: name, provider
+func (_m *Project) Target(name string, provider string) (core.Target, error) {
+	ret := _m.Called(name, provider)
 
 	var r0 core.Target
-	if rf, ok := ret.Get(0).(func(string) core.Target); ok {
-		r0 = rf(name)
+	if rf, ok := ret.Get(0).(func(string, string) core.Target); ok {
+		r0 = rf(name, provider)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(core.Target)
@@ -341,8 +341,8 @@ func (_m *Project) Target(name string) (core.Target, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(name)
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(name, provider)
 	} else {
 		r1 = ret.Error(1)
 	}

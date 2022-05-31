@@ -56,7 +56,11 @@ func (p *UIPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	client := vagrant_plugin_sdk.NewTerminalUIServiceClient(c)
-	resp, err := client.IsInteractive(ctx, &empty.Empty{})
+	interactiveResp, err := client.IsInteractive(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	machineReadableResp, err := client.IsMachineReadable(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +73,11 @@ func (p *UIPlugin) GRPCClient(
 	ctx, cancel := context.WithCancel(ctx)
 
 	return &uiBridge{
-		ctx:         ctx,
-		cancel:      cancel,
-		interactive: resp.Interactive,
-		evc:         evstream,
+		ctx:             ctx,
+		cancel:          cancel,
+		interactive:     interactiveResp.Interactive,
+		machineReadable: machineReadableResp.MachineReadable,
+		evc:             evstream,
 	}, nil
 }
 
@@ -124,6 +129,15 @@ func (s *uiServer) IsInteractive(
 ) (*vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse, error) {
 	return &vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse{
 		Interactive: s.Impl.Interactive(),
+	}, nil
+}
+
+func (s *uiServer) IsMachineReadable(
+	ctx context.Context,
+	req *empty.Empty,
+) (*vagrant_plugin_sdk.TerminalUI_IsMachineReadableResponse, error) {
+	return &vagrant_plugin_sdk.TerminalUI_IsMachineReadableResponse{
+		MachineReadable: s.Impl.MachineReadable(),
 	}, nil
 }
 
@@ -303,11 +317,12 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 }
 
 type uiBridge struct {
-	ctx         context.Context
-	cancel      func()
-	mu          sync.Mutex
-	evc         vagrant_plugin_sdk.TerminalUIService_EventsClient
-	interactive bool
+	ctx             context.Context
+	cancel          func()
+	mu              sync.Mutex
+	evc             vagrant_plugin_sdk.TerminalUIService_EventsClient
+	interactive     bool
+	machineReadable bool
 
 	evcRecvLock    sync.Mutex
 	stdSetup       sync.Once
@@ -373,6 +388,10 @@ func (u *uiBridge) Input(input *terminal.Input) (string, error) {
 
 func (u *uiBridge) Interactive() bool {
 	return u.interactive
+}
+
+func (u *uiBridge) MachineReadable() bool {
+	return u.machineReadable
 }
 
 func (u *uiBridge) ClearLine() {

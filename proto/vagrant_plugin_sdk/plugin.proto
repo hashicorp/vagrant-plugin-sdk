@@ -423,11 +423,16 @@ service TerminalUIService {
   rpc Output(TerminalUI.OutputRequest) returns (google.protobuf.Empty);
   rpc Events(stream TerminalUI.Event) returns (stream TerminalUI.Response);
   rpc IsInteractive(google.protobuf.Empty) returns (TerminalUI.IsInteractiveResponse);
+  rpc IsMachineReadable(google.protobuf.Empty) returns (TerminalUI.IsMachineReadableResponse);
 }
 
 message TerminalUI {
   message IsInteractiveResponse {
     bool interactive = 1;
+  }
+
+  message IsMachineReadableResponse {
+    bool machine_readable = 1;
   }
 
   message OutputRequest {
