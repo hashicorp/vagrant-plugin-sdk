@@ -224,6 +224,7 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 						Color: ent.Color,
 					})
 				}
+				tbl.Rows = append(tbl.Rows, trow)
 			}
 
 			s.Impl.Table(tbl)

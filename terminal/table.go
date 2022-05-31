@@ -15,6 +15,7 @@ type Table struct {
 func NewTable(headers ...string) *Table {
 	return &Table{
 		Headers: headers,
+		Rows:    make([][]TableEntry, 0),
 	}
 }
 
