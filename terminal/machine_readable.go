@@ -135,13 +135,20 @@ func (ui *machineReadableUI) Table(tbl *Table, opts ...Option) {
 	table.SetHeader(tbl.Headers)
 	table.SetBorder(false)
 	table.SetAutoWrapText(false)
+	table.SetNoWhiteSpace(true)
 
 	for _, row := range tbl.Rows {
 		colors := make([]tablewriter.Colors, len(row))
 		entries := make([]string, len(row))
 
+		entriesLen := len(row)
 		for i, ent := range row {
-			entries[i] = ent.Value
+			// Comma seperate entries
+			if i == entriesLen-1 {
+				entries[i] = ent.Value
+			} else {
+				entries[i] = fmt.Sprintf("%s,", ent.Value)
+			}
 
 			color, ok := colorMapping[ent.Color]
 			if ok {
