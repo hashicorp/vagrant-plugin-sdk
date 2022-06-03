@@ -44,6 +44,10 @@ type UI interface {
 	// ClearLine clears the content from the current line
 	ClearLine()
 
+	// MachineReadable returns true if this UI is for machine readable
+	// output.
+	MachineReadable() bool
+
 	// Output data as a table of data. Each entry is a row which will be output
 	// with the columns lined up nicely.
 	NamedValues([]NamedValue, ...Option)

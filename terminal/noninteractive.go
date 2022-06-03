@@ -33,6 +33,11 @@ func (ui *nonInteractiveUI) Interactive() bool {
 	return false
 }
 
+// MachineReadable implements UI
+func (ui *nonInteractiveUI) MachineReadable() bool {
+	return false
+}
+
 // Output implements UI
 func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 	ui.mu.Lock()

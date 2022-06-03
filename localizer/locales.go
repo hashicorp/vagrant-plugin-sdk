@@ -92,7 +92,7 @@ func localizerLocalesEnJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "localizer/locales/en.json", size: 404, mode: os.FileMode(420), modTime: time.Unix(1653402865, 0)}
+	info := bindataFileInfo{name: "localizer/locales/en.json", size: 404, mode: os.FileMode(420), modTime: time.Unix(1653669692, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

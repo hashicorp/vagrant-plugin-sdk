@@ -23,6 +23,7 @@ type TerminalUIServiceClient interface {
 	Output(ctx context.Context, in *TerminalUI_OutputRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Events(ctx context.Context, opts ...grpc.CallOption) (TerminalUIService_EventsClient, error)
 	IsInteractive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TerminalUI_IsInteractiveResponse, error)
+	IsMachineReadable(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TerminalUI_IsMachineReadableResponse, error)
 }
 
 type terminalUIServiceClient struct {
@@ -82,6 +83,15 @@ func (c *terminalUIServiceClient) IsInteractive(ctx context.Context, in *emptypb
 	return out, nil
 }
 
+func (c *terminalUIServiceClient) IsMachineReadable(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TerminalUI_IsMachineReadableResponse, error) {
+	out := new(TerminalUI_IsMachineReadableResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TerminalUIService/IsMachineReadable", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TerminalUIServiceServer is the server API for TerminalUIService service.
 // All implementations should embed UnimplementedTerminalUIServiceServer
 // for forward compatibility
@@ -89,6 +99,7 @@ type TerminalUIServiceServer interface {
 	Output(context.Context, *TerminalUI_OutputRequest) (*emptypb.Empty, error)
 	Events(TerminalUIService_EventsServer) error
 	IsInteractive(context.Context, *emptypb.Empty) (*TerminalUI_IsInteractiveResponse, error)
+	IsMachineReadable(context.Context, *emptypb.Empty) (*TerminalUI_IsMachineReadableResponse, error)
 }
 
 // UnimplementedTerminalUIServiceServer should be embedded to have forward compatible implementations.
@@ -103,6 +114,9 @@ func (UnimplementedTerminalUIServiceServer) Events(TerminalUIService_EventsServe
 }
 func (UnimplementedTerminalUIServiceServer) IsInteractive(context.Context, *emptypb.Empty) (*TerminalUI_IsInteractiveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsInteractive not implemented")
+}
+func (UnimplementedTerminalUIServiceServer) IsMachineReadable(context.Context, *emptypb.Empty) (*TerminalUI_IsMachineReadableResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsMachineReadable not implemented")
 }
 
 // UnsafeTerminalUIServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -178,6 +192,24 @@ func _TerminalUIService_IsInteractive_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TerminalUIService_IsMachineReadable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TerminalUIServiceServer).IsMachineReadable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TerminalUIService/IsMachineReadable",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TerminalUIServiceServer).IsMachineReadable(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TerminalUIService_ServiceDesc is the grpc.ServiceDesc for TerminalUIService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +224,10 @@ var TerminalUIService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsInteractive",
 			Handler:    _TerminalUIService_IsInteractive_Handler,
+		},
+		{
+			MethodName: "IsMachineReadable",
+			Handler:    _TerminalUIService_IsMachineReadable_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

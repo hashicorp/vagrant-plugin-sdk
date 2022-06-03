@@ -107,6 +107,11 @@ func (ui *glintUI) Interactive() bool {
 	return true
 }
 
+// MachineReadable implements UI
+func (ui *glintUI) MachineReadable() bool {
+	return false
+}
+
 // Output implements UI
 func (ui *glintUI) Output(msg string, raw ...interface{}) {
 	defer ui.d.RenderFrame()
