@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/mattn/go-colorable"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/protomappers"
 	sdkplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
@@ -156,6 +157,14 @@ func WithLogger(l hclog.Logger) Option {
 // currently only serve at most one of each type of plugin.
 func WithComponents(cs ...interface{}) Option {
 	return func(c *config) { c.Components = append(c.Components, cs...) }
+}
+
+// WithComponent registers a single component along with options for that component
+func WithComponent(comp interface{}, options interface{}) Option {
+	return func(con *config) {
+		con.Components = append(con.Components,
+			&component.ComponentWithOptions{Component: comp, Options: options})
+	}
 }
 
 // WithMappers specifies a list of mappers to apply to the plugin.

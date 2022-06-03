@@ -6,14 +6,20 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 type pluginInfo struct {
-	types []component.Type
-	name  string
+	options map[component.Type]interface{}
+	types   []component.Type
+	name    string
+}
+
+func (p *pluginInfo) ComponentOptions() map[component.Type]interface{} {
+	return p.options
 }
 
 func (p *pluginInfo) ComponentTypes() []component.Type {
@@ -64,6 +70,27 @@ type pluginInfoServer struct {
 	vagrant_plugin_sdk.UnimplementedPluginInfoServiceServer
 }
 
+func (c *pluginInfoClient) ComponentOptions() (result map[component.Type]interface{}) {
+	result = map[component.Type]interface{}{}
+	resp, err := c.client.ComponentOptions(c.Ctx, &empty.Empty{})
+	if err != nil {
+		c.Logger.Error("unexpected error when requesting component options",
+			"error", err)
+		return
+	}
+	for t, optsProto := range resp.Options {
+		typ := component.Type(t)
+		opts, err := component.UnmarshalOptionsProto(typ, optsProto)
+		if err != nil {
+			c.Logger.Error("cannot unmarshal options for type",
+				"type", typ, "options", opts)
+			continue
+		}
+		result[typ] = opts
+	}
+	return
+}
+
 func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 	result = []component.Type{}
 	resp, err := c.client.ComponentTypes(c.Ctx, &empty.Empty{})
@@ -87,6 +114,35 @@ func (c *pluginInfoClient) Name() string {
 		return ""
 	}
 	return resp.Name
+}
+
+func (s *pluginInfoServer) ComponentOptions(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.PluginInfo_ComponentOptionsMap, error) {
+	if err := isImplemented(s, "plugin info"); err != nil {
+		return nil, err
+	}
+
+	optsMap := s.Impl.ComponentOptions()
+	result := &vagrant_plugin_sdk.PluginInfo_ComponentOptionsMap{
+		Options: map[uint32]*anypb.Any{},
+	}
+	for t, opts := range optsMap {
+		s.Logger.Info("trying to map these opts to a proto",
+			"type", component.Type(t).String(), "opts", opts)
+		any, err := component.ProtoAny(opts)
+		if err != nil {
+			s.Logger.Error("unexpected error while encoding component options into any",
+				"error", err)
+			return nil, err
+		}
+		if any != nil {
+			result.Options[uint32(t)] = any
+		}
+	}
+
+	return result, nil
 }
 
 func (s *pluginInfoServer) ComponentTypes(
