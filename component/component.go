@@ -13,6 +13,8 @@ package component
 import (
 	"fmt"
 	"strings"
+
+	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 )
 
 // Type is an enum of all the types of components supported.
@@ -159,6 +161,8 @@ type Command interface {
 }
 
 type Config interface {
+	Config() (interface{}, error)
+	Documentation() (*docs.Documentation, error)
 }
 
 type Communicator interface {
