@@ -12,6 +12,22 @@ type PluginInfo struct {
 	mock.Mock
 }
 
+// ComponentOptions provides a mock function with given fields:
+func (_m *PluginInfo) ComponentOptions() map[component.Type]interface{} {
+	ret := _m.Called()
+
+	var r0 map[component.Type]interface{}
+	if rf, ok := ret.Get(0).(func() map[component.Type]interface{}); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(map[component.Type]interface{})
+		}
+	}
+
+	return r0
+}
+
 // ComponentTypes provides a mock function with given fields:
 func (_m *PluginInfo) ComponentTypes() []component.Type {
 	ret := _m.Called()

@@ -65,23 +65,35 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 	}
 
 	t := []component.Type{}
+	optsMap := map[component.Type]interface{}{}
 
 	// Set the various field values
-	for _, c := range c.Components {
+	for _, comp := range c.Components {
+		opts := interface{}(nil)
+		// First unwrap and save options if any
+		if cwi, ok := comp.(*component.ComponentWithOptions); ok {
+			comp = cwi.Component
+			opts = cwi.Options
+		}
 		for typ, ptr := range component.TypeMap {
 			pTyp := reflect.TypeOf(ptr)
-			cTyp := reflect.TypeOf(c)
+			cTyp := reflect.TypeOf(comp)
 			if cTyp.Implements(pTyp.Elem()) {
 				t = append(t, typ)
+				if opts != nil {
+					optsMap[typ] = opts
+				} else {
+					optsMap[typ] = component.DefaultOptionsMap[typ]
+				}
 			}
 		}
-		if err := setFieldValue(result, c); err != nil {
+		if err := setFieldValue(result, comp); err != nil {
 			panic(err)
 		}
 	}
 
 	// Set plugin info before we finish
-	info.Impl = &pluginInfo{types: t, name: c.Name}
+	info.Impl = &pluginInfo{types: t, name: c.Name, options: optsMap}
 
 	return result
 }

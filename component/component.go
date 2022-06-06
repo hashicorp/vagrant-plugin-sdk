@@ -13,6 +13,10 @@ package component
 import (
 	"fmt"
 	"strings"
+
+	"github.com/golang/protobuf/proto"
+	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
 // Type is an enum of all the types of components supported.
@@ -57,6 +61,28 @@ var TypeMap = map[Type]interface{}{
 	PushType:          (*Push)(nil),
 }
 
+// OptionsTypeMap is a mapping of a type to the nil pointer of the interface to
+// the options struct (if any) for that type. This is used in PluginInfo when
+// decoding options from proto.
+var OptionsTypeMap = map[Type]interface{}{
+	ProviderType: (*ProviderOptions)(nil),
+}
+
+// DefaultOptions contains default options values for components that use
+// options
+var DefaultOptionsMap = map[Type]interface{}{
+	ProviderType: &ProviderOptions{
+		// See V2::Plugin.provider where priority is defaulted to 5.
+		Priority: 5,
+		// See Environment#default_provider where defaultable is assumed true if missing
+		Defaultable: true,
+		// See Vagrant::BatchAction#run parallel is assumed false if missing
+		Parallel: false,
+		// See VMConfig#validate where box_optional is assumed false if missing
+		BoxOptional: false,
+	},
+}
+
 func FindComponent(name string) (interface{}, error) {
 	for k, v := range TypeMap {
 		if k.String() == name ||
@@ -79,7 +105,34 @@ func FindType(name string) (Type, error) {
 	return maxType, fmt.Errorf("failed to find component for name '%s'", name)
 }
 
+// UnmarshalOptionsProto transforms a proto containing component
+// options into its equivalent go struct. The result's type will match the
+// mapping in OptionsTypeMap.
+func UnmarshalOptionsProto(typ Type, optionsProto interface{}) (result interface{}, err error) {
+	// Return early if this component type does not implement an options type
+	if _, ok := OptionsTypeMap[typ]; !ok {
+		return nil, nil
+	}
+	switch typ {
+	case ProviderType:
+		pipo := &vagrant_plugin_sdk.PluginInfo_ProviderOptions{}
+		err := ProtoAnyUnmarshal(optionsProto, pipo)
+		if err != nil {
+			return nil, fmt.Errorf("error unmarshalling provider options: %s", err)
+		}
+		return &ProviderOptions{
+			Priority:    int(pipo.Priority),
+			Parallel:    pipo.Parallel,
+			BoxOptional: pipo.BoxOptional,
+			Defaultable: pipo.Defaultable,
+		}, nil
+	default:
+		return nil, fmt.Errorf("unknown options for type %s: %#v", typ, optionsProto)
+	}
+}
+
 type PluginInfo interface {
+	ComponentOptions() map[Type]interface{}
 	ComponentTypes() []Type
 	Name() string
 }
@@ -159,6 +212,13 @@ type Command interface {
 }
 
 type Config interface {
+	Config() (interface{}, error)
+	Documentation() (*docs.Documentation, error)
+}
+
+type ComponentWithOptions struct {
+	Component interface{}
+	Options   interface{}
 }
 
 type Communicator interface {
@@ -224,6 +284,31 @@ type Provider interface {
 	SshInfoFunc() interface{}
 	// Get target state
 	StateFunc() interface{}
+}
+
+// ProviderOptions stores options about a given provider plugin which are used
+// in provider selection and validation
+type ProviderOptions struct {
+	// Priority indicates the precedence of provider plugin selection (higher overrides lower)
+	Priority int
+
+	// Parallel indicates whether or not the provider supports parallel operations
+	Parallel bool
+
+	// BoxOptional indicates if the provider can function without a box
+	BoxOptional bool
+
+	// Defaultable can be set to false to omit the provider from consideration as a default
+	Defaultable bool
+}
+
+func (po *ProviderOptions) Proto() proto.Message {
+	return &vagrant_plugin_sdk.PluginInfo_ProviderOptions{
+		Priority:    int32(po.Priority),
+		Parallel:    po.Parallel,
+		BoxOptional: po.BoxOptional,
+		Defaultable: po.Defaultable,
+	}
 }
 
 type Provisioner interface {

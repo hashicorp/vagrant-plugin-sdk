@@ -566,6 +566,7 @@ var StateBagService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PluginInfoServiceClient interface {
 	ComponentTypes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_ComponentList, error)
+	ComponentOptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_ComponentOptionsMap, error)
 	Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error)
 }
 
@@ -586,6 +587,15 @@ func (c *pluginInfoServiceClient) ComponentTypes(ctx context.Context, in *emptyp
 	return out, nil
 }
 
+func (c *pluginInfoServiceClient) ComponentOptions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_ComponentOptionsMap, error) {
+	out := new(PluginInfo_ComponentOptionsMap)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PluginInfoService/ComponentOptions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *pluginInfoServiceClient) Name(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PluginInfo_Name, error) {
 	out := new(PluginInfo_Name)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.PluginInfoService/Name", in, out, opts...)
@@ -600,6 +610,7 @@ func (c *pluginInfoServiceClient) Name(ctx context.Context, in *emptypb.Empty, o
 // for forward compatibility
 type PluginInfoServiceServer interface {
 	ComponentTypes(context.Context, *emptypb.Empty) (*PluginInfo_ComponentList, error)
+	ComponentOptions(context.Context, *emptypb.Empty) (*PluginInfo_ComponentOptionsMap, error)
 	Name(context.Context, *emptypb.Empty) (*PluginInfo_Name, error)
 }
 
@@ -609,6 +620,9 @@ type UnimplementedPluginInfoServiceServer struct {
 
 func (UnimplementedPluginInfoServiceServer) ComponentTypes(context.Context, *emptypb.Empty) (*PluginInfo_ComponentList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ComponentTypes not implemented")
+}
+func (UnimplementedPluginInfoServiceServer) ComponentOptions(context.Context, *emptypb.Empty) (*PluginInfo_ComponentOptionsMap, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ComponentOptions not implemented")
 }
 func (UnimplementedPluginInfoServiceServer) Name(context.Context, *emptypb.Empty) (*PluginInfo_Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
@@ -643,6 +657,24 @@ func _PluginInfoService_ComponentTypes_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginInfoService_ComponentOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginInfoServiceServer).ComponentOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.PluginInfoService/ComponentOptions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginInfoServiceServer).ComponentOptions(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PluginInfoService_Name_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -671,6 +703,10 @@ var PluginInfoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ComponentTypes",
 			Handler:    _PluginInfoService_ComponentTypes_Handler,
+		},
+		{
+			MethodName: "ComponentOptions",
+			Handler:    _PluginInfoService_ComponentOptions_Handler,
 		},
 		{
 			MethodName: "Name",

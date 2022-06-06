@@ -608,6 +608,7 @@ message StateBag {
 
 service PluginInfoService {
   rpc ComponentTypes(google.protobuf.Empty) returns (PluginInfo.ComponentList);
+  rpc ComponentOptions(google.protobuf.Empty) returns (PluginInfo.ComponentOptionsMap);
   rpc Name(google.protobuf.Empty) returns (PluginInfo.Name);
 }
 
@@ -617,6 +618,16 @@ message PluginInfo {
   }
   message Name {
     string name = 1;
+  }
+  message ComponentOptionsMap {
+    map<uint32, google.protobuf.Any> options = 1;
+  }
+  // See component.ProviderOptions for details
+  message ProviderOptions {
+    int32 priority = 1;
+    bool parallel = 2;
+    bool box_optional = 3;
+    bool defaultable = 4;
   }
 }
 

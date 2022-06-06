@@ -3,9 +3,10 @@ package core
 import "io"
 
 type NamedPlugin struct {
-	Plugin interface{}
-	Name   string
-	Type   string
+	Plugin  interface{}
+	Name    string
+	Type    string
+	Options interface{}
 }
 
 type PluginManager interface {
