@@ -65,7 +65,8 @@ var TypeMap = map[Type]interface{}{
 // the options struct (if any) for that type. This is used in PluginInfo when
 // decoding options from proto.
 var OptionsTypeMap = map[Type]interface{}{
-	ProviderType: (*ProviderOptions)(nil),
+	ProviderType:     (*ProviderOptions)(nil),
+	SyncedFolderType: (*SyncedFolderOptions)(nil),
 }
 
 // DefaultOptions contains default options values for components that use
@@ -80,6 +81,10 @@ var DefaultOptionsMap = map[Type]interface{}{
 		Parallel: false,
 		// See VMConfig#validate where box_optional is assumed false if missing
 		BoxOptional: false,
+	},
+	SyncedFolderType: &SyncedFolderOptions{
+		// See V2::Plugin.synced_fodler where priority is defaulted to 10.
+		Priority: 10,
 	},
 }
 
@@ -108,26 +113,35 @@ func FindType(name string) (Type, error) {
 // UnmarshalOptionsProto transforms a proto containing component
 // options into its equivalent go struct. The result's type will match the
 // mapping in OptionsTypeMap.
-func UnmarshalOptionsProto(typ Type, optionsProto interface{}) (result interface{}, err error) {
+func UnmarshalOptionsProto(typ Type, optsProtoAny interface{}) (result interface{}, err error) {
 	// Return early if this component type does not implement an options type
 	if _, ok := OptionsTypeMap[typ]; !ok {
 		return nil, nil
 	}
 	switch typ {
 	case ProviderType:
-		pipo := &vagrant_plugin_sdk.PluginInfo_ProviderOptions{}
-		err := ProtoAnyUnmarshal(optionsProto, pipo)
+		optsProto := &vagrant_plugin_sdk.PluginInfo_ProviderOptions{}
+		err := ProtoAnyUnmarshal(optsProtoAny, optsProto)
 		if err != nil {
 			return nil, fmt.Errorf("error unmarshalling provider options: %s", err)
 		}
 		return &ProviderOptions{
-			Priority:    int(pipo.Priority),
-			Parallel:    pipo.Parallel,
-			BoxOptional: pipo.BoxOptional,
-			Defaultable: pipo.Defaultable,
+			Priority:    int(optsProto.Priority),
+			Parallel:    optsProto.Parallel,
+			BoxOptional: optsProto.BoxOptional,
+			Defaultable: optsProto.Defaultable,
+		}, nil
+	case SyncedFolderType:
+		optsProto := &vagrant_plugin_sdk.PluginInfo_SyncedFolderOptions{}
+		err := ProtoAnyUnmarshal(optsProtoAny, optsProto)
+		if err != nil {
+			return nil, fmt.Errorf("error unmarshalling provider options: %s", err)
+		}
+		return &SyncedFolderOptions{
+			Priority: int(optsProto.Priority),
 		}, nil
 	default:
-		return nil, fmt.Errorf("unknown options for type %s: %#v", typ, optionsProto)
+		return nil, fmt.Errorf("unknown options for type %s: %#v", typ, optsProtoAny)
 	}
 }
 
@@ -302,6 +316,7 @@ type ProviderOptions struct {
 	Defaultable bool
 }
 
+// implements ProtoMarshaler
 func (po *ProviderOptions) Proto() proto.Message {
 	return &vagrant_plugin_sdk.PluginInfo_ProviderOptions{
 		Priority:    int32(po.Priority),
@@ -336,6 +351,23 @@ type SyncedFolder interface {
 	DisableFunc() interface{}
 	// Called after destroying a machine
 	CleanupFunc() interface{}
+}
+
+// SyncedFolderOptions contains attributes that can be configured for a Synced
+// Folder plugin. These are meant to be	set on plugin definition via
+// sdk.WithComponent().
+type SyncedFolderOptions struct {
+	// Priority determines the weight used to select a synced folder plugin
+	// when one is not specified explicitly. A higher number is more likely to
+	// be selected.
+	Priority int
+}
+
+// implements ProtoMarshaler
+func (po *SyncedFolderOptions) Proto() proto.Message {
+	return &vagrant_plugin_sdk.PluginInfo_SyncedFolderOptions{
+		Priority: int32(po.Priority),
+	}
 }
 
 type MetadataSet struct {
