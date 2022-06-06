@@ -1099,7 +1099,7 @@ service TargetMachineService {
   rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
   rpc Box(google.protobuf.Empty) returns (Args.Box);
   rpc Guest(google.protobuf.Empty) returns (Args.Guest);
-  rpc ConnectionInfo(google.protobuf.Empty) returns(Target.Machine.ConnectionInfoResponse);
+  rpc ConnectionInfo(google.protobuf.Empty) returns(Args.Hash);
   rpc UID(google.protobuf.Empty) returns(Target.Machine.UIDResponse);
   rpc SyncedFolders(google.protobuf.Empty) returns (Target.Machine.SyncedFoldersResponse);
 }
@@ -1154,9 +1154,6 @@ message Target {
     }
     message GetStateResponse {
       Args.Target.Machine.State state = 1;
-    }
-    message ConnectionInfoResponse {
-      map<string, google.protobuf.Any> connection_info = 1;
     }
     message UIDResponse{
       string user_id = 1;

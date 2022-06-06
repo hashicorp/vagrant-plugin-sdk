@@ -275,7 +275,7 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 func (t *targetMachineServer) ConnectionInfo(
 	ctx context.Context,
 	_ *empty.Empty,
-) (resp *vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse, err error) {
+) (resp *vagrant_plugin_sdk.Args_Hash, err error) {
 	defer func() {
 		if err != nil {
 			t.Logger.Error("failed to get machine connnection info",
@@ -289,10 +289,10 @@ func (t *targetMachineServer) ConnectionInfo(
 		return nil, err
 	}
 
-	result, err := t.Map(connInfo, (**vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse)(nil),
+	result, err := t.Map(connInfo, (**vagrant_plugin_sdk.Args_Hash)(nil),
 		argmapper.Typed(ctx))
 	if err == nil {
-		resp = result.(*vagrant_plugin_sdk.Target_Machine_ConnectionInfoResponse)
+		resp = result.(*vagrant_plugin_sdk.Args_Hash)
 	}
 
 	return
