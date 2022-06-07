@@ -629,6 +629,10 @@ message PluginInfo {
     bool box_optional = 3;
     bool defaultable = 4;
   }
+  // See component.SyncedFolderOptions
+  message SyncedFolderOptions {
+    int32 priority = 1;
+  }
 }
 
 service PluginManagerService {
