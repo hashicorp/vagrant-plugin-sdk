@@ -83,7 +83,7 @@ var DefaultOptionsMap = map[Type]interface{}{
 		BoxOptional: false,
 	},
 	SyncedFolderType: &SyncedFolderOptions{
-		// See V2::Plugin.synced_fodler where priority is defaulted to 10.
+		// See V2::Plugin.synced_folder where priority is defaulted to 10.
 		Priority: 10,
 	},
 }
