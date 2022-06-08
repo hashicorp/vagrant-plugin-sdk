@@ -93,7 +93,7 @@ func (c *targetClient) Provider() (p core.Provider, err error) {
 	if err != nil {
 		return
 	}
-	result, err := c.Map(pr, (*core.Provider)(nil))
+	result, err := c.Map(pr, (*core.Provider)(nil), argmapper.Typed(c.Ctx))
 	if err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func (c *targetClient) Project() (project core.Project, err error) {
 	if err != nil {
 		return
 	}
-	result, err := c.Map(r, (*core.Project)(nil))
+	result, err := c.Map(r, (*core.Project)(nil), argmapper.Typed(c.Ctx))
 	if err != nil {
 		return
 	}
@@ -432,7 +432,6 @@ func (s *targetServer) Project(
 	if err != nil {
 		return nil, err
 	}
-
 	return result.(*vagrant_plugin_sdk.Args_Project), nil
 }
 
