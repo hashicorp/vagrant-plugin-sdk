@@ -1,9 +1,12 @@
 package component
 
 import (
+	"errors"
+
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
+	"github.com/mitchellh/mapstructure"
 )
 
 // Configurable can be optionally implemented by any compontent to
@@ -86,6 +89,45 @@ func Configure(c interface{}, body hcl.Body, ctx *hcl.EvalContext) hcl.Diagnosti
 	// non-conformant to the schema.
 	_, diag := body.Content(&hcl.BodySchema{})
 	return diag
+}
+
+// Configure configures c with the provided configuration.
+//
+// If c does not implement Configurable AND config is non-empty, then it is
+// an error. If body is empty in that case, it is not an error.
+func ConfigureFromMap(c interface{}, config map[string]interface{}) error {
+	if c, ok := c.(Configurable); ok {
+		// Get the configuration value
+		v, err := c.Config()
+		if err != nil {
+			return err
+		}
+
+		// If the configuration structure is nil then we behave as if the
+		// component is not configurable.
+		if v == nil {
+			return nil
+		}
+
+		// Decode config
+		err = mapstructure.Decode(config, v)
+		if err != nil {
+			return err
+		}
+
+		// If decoding worked and we have a notification implementation, then
+		// notify with the value.
+		if cn, ok := c.(ConfigurableNotify); ok {
+			if err := cn.ConfigSet(v); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	// If c doesn't implement Configurable, raise an error
+	return errors.New("provided component is not configurable")
 }
 
 // Documentation returns the documentation for the given component.

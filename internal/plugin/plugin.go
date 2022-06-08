@@ -53,6 +53,7 @@ func Plugins(opts ...Option) map[int]plugin.PluginSet {
 			"command":      &CommandPlugin{BasePlugin: bp.Clone()},
 			"communicator": &CommunicatorPlugin{BasePlugin: bp.Clone()},
 			"config":       &ConfigPlugin{},
+			"downloader":   &DownloaderPlugin{BasePlugin: bp.Clone()},
 			"guest":        &GuestPlugin{BasePlugin: bp.Clone()},
 			"host":         &HostPlugin{BasePlugin: bp.Clone()},
 			"mapper":       &MapperPlugin{BasePlugin: bp.Clone()},

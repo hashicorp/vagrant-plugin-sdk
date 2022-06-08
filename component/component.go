@@ -40,6 +40,7 @@ const (
 	ConfigType                    // Config
 	PluginInfoType                // PluginInfo
 	PushType                      // Push
+	DownloaderType                // Downloader
 	maxType
 )
 
@@ -50,6 +51,7 @@ var TypeMap = map[Type]interface{}{
 	CommandType:       (*Command)(nil),
 	CommunicatorType:  (*Communicator)(nil),
 	ConfigType:        (*Config)(nil),
+	DownloaderType:    (*Downloader)(nil),
 	GuestType:         (*Guest)(nil),
 	HostType:          (*Host)(nil),
 	LogPlatformType:   (*LogPlatform)(nil),
@@ -263,6 +265,10 @@ type CapabilityPlatform interface {
 	HasCapabilityFunc() interface{}
 	// Run a capability
 	CapabilityFunc(capName string) interface{}
+}
+
+type Downloader interface {
+	DownloadFunc() interface{}
 }
 
 type Guest interface {

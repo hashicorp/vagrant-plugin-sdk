@@ -301,6 +301,10 @@ message Args {
   }
 
   message Null {}
+
+  message URL {
+    string url = 1;
+  }
 }
 
 // FuncSpec describes a function and is used by the dependency-injection
@@ -1650,4 +1654,20 @@ service PushService {
 
   rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
   rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
+}
+
+
+service DownloaderService {
+  rpc DownloadSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Download(FuncSpec.Args) returns (google.protobuf.Empty);
+
+  rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
+  rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
+
+  rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
+  rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
+
+  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
+  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
