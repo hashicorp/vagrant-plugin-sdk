@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/LK4D4/joincontext"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -67,7 +67,7 @@ func (c *guestClient) GetCapabilityClient() *capabilityClient {
 }
 
 func (c *guestClient) GuestDetectFunc() interface{} {
-	spec, err := c.client.DetectSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.DetectSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -96,7 +96,7 @@ func (c *guestClient) Detect(t core.Target) (bool, error) {
 }
 
 func (c *guestClient) ParentFunc() interface{} {
-	spec, err := c.client.ParentSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.ParentSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -136,7 +136,7 @@ type guestServer struct {
 
 func (s *guestServer) DetectSpec(
 	ctx context.Context,
-	args *empty.Empty,
+	args *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, "guest"); err != nil {
 		return nil, err
@@ -166,7 +166,7 @@ func (s *guestServer) Detect(
 
 func (s *guestServer) ParentSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err

@@ -3,10 +3,10 @@ package plugin
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -72,7 +72,7 @@ type pluginInfoServer struct {
 
 func (c *pluginInfoClient) ComponentOptions() (result map[component.Type]interface{}) {
 	result = map[component.Type]interface{}{}
-	resp, err := c.client.ComponentOptions(c.Ctx, &empty.Empty{})
+	resp, err := c.client.ComponentOptions(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		c.Logger.Error("unexpected error when requesting component options",
 			"error", err)
@@ -93,7 +93,7 @@ func (c *pluginInfoClient) ComponentOptions() (result map[component.Type]interfa
 
 func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 	result = []component.Type{}
-	resp, err := c.client.ComponentTypes(c.Ctx, &empty.Empty{})
+	resp, err := c.client.ComponentTypes(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		c.Logger.Error("unexpected error when requesting component types",
 			"error", err)
@@ -106,7 +106,7 @@ func (c *pluginInfoClient) ComponentTypes() (result []component.Type) {
 }
 
 func (c *pluginInfoClient) Name() string {
-	resp, err := c.client.Name(c.Ctx, &empty.Empty{})
+	resp, err := c.client.Name(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		c.Logger.Error("unexpected error when requesting component name",
 			"error", err)
@@ -118,7 +118,7 @@ func (c *pluginInfoClient) Name() string {
 
 func (s *pluginInfoServer) ComponentOptions(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_ComponentOptionsMap, error) {
 	if err := isImplemented(s, "plugin info"); err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (s *pluginInfoServer) ComponentOptions(
 
 func (s *pluginInfoServer) ComponentTypes(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_ComponentList, error) {
 	if err := isImplemented(s, "plugin info"); err != nil {
 		return nil, err
@@ -164,7 +164,7 @@ func (s *pluginInfoServer) ComponentTypes(
 
 func (s *pluginInfoServer) Name(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.PluginInfo_Name, error) {
 	if err := isImplemented(s, "plugin info"); err != nil {
 		return nil, err

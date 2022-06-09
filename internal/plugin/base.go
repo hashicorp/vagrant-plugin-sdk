@@ -468,7 +468,7 @@ func (b *BaseServer) CallDynamicFunc(
 ) (interface{}, error) {
 	internal := b.Internal()
 
-	// Decode our *any.Any values.
+	// Decode our *anypb.Any values.
 	for _, arg := range args {
 		anyVal := arg.Value
 

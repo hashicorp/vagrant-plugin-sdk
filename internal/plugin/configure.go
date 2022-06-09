@@ -4,9 +4,9 @@ package plugin
 // 	"context"
 // 	"encoding/json"
 
-// 	"github.com/golang/protobuf/ptypes/empty"
 // 	"github.com/mitchellh/protostructure"
 // 	"google.golang.org/grpc"
+// 	"google.golang.org/protobuf/types/known/emptypb"
 
 // 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 // 	"github.com/hashicorp/vagrant-plugin-sdk/docs"
@@ -42,7 +42,7 @@ package plugin
 // // configStructCall is the shared helper to call the ConfigStruct RPC call
 // // and return the proper struct value for decoding configuration.
 // func configStructCall(ctx context.Context, c configurableClient) (interface{}, error) {
-// 	resp, err := c.ConfigStruct(ctx, &empty.Empty{})
+// 	resp, err := c.ConfigStruct(ctx, &emptypb.Empty{})
 
 // 	// If we had a failure receiving the configuration struct, then
 // 	// panic because this should never happen. In the future maybe we can
@@ -65,14 +65,14 @@ package plugin
 // }
 
 // // configure is the shared helper to implement the Configure RPC call.
-// func configure(impl interface{}, req *vagrant_plugin_sdk.Config_ConfigureRequest) (*empty.Empty, error) {
+// func configure(impl interface{}, req *vagrant_plugin_sdk.Config_ConfigureRequest) (*emptypb.Empty, error) {
 // 	c, ok := impl.(component.Configurable)
 
 // 	// This should never happen but if it does just do nothing. This
 // 	// should never happen because prior to this ever being called, our core
 // 	// calls ConfigStruct and if we return nil then we don't configure anything.
 // 	if !ok {
-// 		return &empty.Empty{}, nil
+// 		return &emptypb.Empty{}, nil
 // 	}
 
 // 	// Get our value that we can decode into
@@ -93,7 +93,7 @@ package plugin
 // 		}
 // 	}
 
-// 	return &empty.Empty{}, nil
+// 	return &emptypb.Empty{}, nil
 // }
 
 // // configureCall calls the Configure RPC endpoint.
@@ -154,7 +154,7 @@ package plugin
 // // configStructCall is the shared helper to call the ConfigStruct RPC call
 // // and return the proper struct value for decoding configuration.
 // func documentationCall(ctx context.Context, c configurableClient) (*docs.Documentation, error) {
-// 	resp, err := c.Documentation(ctx, &empty.Empty{})
+// 	resp, err := c.Documentation(ctx, &emptypb.Empty{})
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -192,7 +192,7 @@ package plugin
 // // have the configuration RPC methods. We use this with the helpers above
 // // to extract shared logic for component configuration.
 // type configurableClient interface {
-// 	ConfigStruct(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_StructResp, error)
-// 	Configure(context.Context, *vagrant_plugin_sdk.Config_ConfigureRequest, ...grpc.CallOption) (*empty.Empty, error)
-// 	Documentation(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_Documentation, error)
+// 	ConfigStruct(context.Context, *emptypb.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_StructResp, error)
+// 	Configure(context.Context, *vagrant_plugin_sdk.Config_ConfigureRequest, ...grpc.CallOption) (*emptypb.Empty, error)
+// 	Documentation(context.Context, *emptypb.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.Config_Documentation, error)
 // }

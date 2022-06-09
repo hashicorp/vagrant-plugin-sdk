@@ -4,15 +4,16 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/any"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
+	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
@@ -55,7 +56,7 @@ type MapperClient struct {
 // Mappers returns the list of mappers that are supported by this plugin.
 func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 	// Get our list of mapper FuncSpecs
-	resp, err := c.client.ListMappers(c.Ctx, &empty.Empty{})
+	resp, err := c.client.ListMappers(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (c *MapperClient) Mappers() ([]*argmapper.Func, error) {
 		// We use a closure here to capture spec so that we can provide
 		// the correct result type. All we're doing is making our callback
 		// call the Map RPC call and return the result/error.
-		cb := func(ctx context.Context, args funcspec.Args) (*any.Any, error) {
+		cb := func(ctx context.Context, args funcspec.Args) (*anypb.Any, error) {
 			resp, err := c.client.Map(ctx, &vagrant_plugin_sdk.Map_Request{
 				Args:   &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
 				Result: specCopy.Result[0].Type,
@@ -105,7 +106,7 @@ type mapperServer struct {
 
 func (s *mapperServer) ListMappers(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Map_ListResponse, error) {
 	// Go through each mapper and build up our FuncSpecs for each of them.
 	var result vagrant_plugin_sdk.Map_ListResponse
@@ -138,8 +139,11 @@ func (s *mapperServer) Map(
 	args *vagrant_plugin_sdk.Map_Request,
 ) (*vagrant_plugin_sdk.Map_Response, error) {
 	// Find the output type, which we should know about.
-	typ := proto.MessageType(args.Result)
-	if typ == nil {
+	protoType, err := protoregistry.GlobalTypes.FindMessageByName(protoreflect.FullName(args.Result))
+	if err != nil {
+		return nil, err
+	}
+	if protoType == nil {
 		return nil, status.Newf(
 			codes.FailedPrecondition,
 			"output type is not known: %s",
@@ -147,12 +151,13 @@ func (s *mapperServer) Map(
 		).Err()
 	}
 
+	goType := reflect.TypeOf(protoType.New())
 	// Build our function that expects this type as an argument
 	// so that we can return it. We do this dynamic function thing so
 	// that we can just pretend that this is a function we have so that
 	// callDynamicFunc just works.
 	f := reflect.MakeFunc(
-		reflect.FuncOf([]reflect.Type{typ}, []reflect.Type{typ}, false),
+		reflect.FuncOf([]reflect.Type{goType}, []reflect.Type{goType}, false),
 		func(args []reflect.Value) []reflect.Value {
 			return args
 		},

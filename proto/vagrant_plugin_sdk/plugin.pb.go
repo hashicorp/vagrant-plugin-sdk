@@ -4565,7 +4565,7 @@ type FuncSpec_Value struct {
 	// name is the name of the argument. This may be empty for typed arguments.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// type is the type of the argument. All arguments must be encoded using
-	// *any.Any so this type specifies the proto Any message type and not
+	// *anypb.Any so this type specifies the proto Any message type and not
 	// a language-specific type.
 	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	// value is the value for this Value. This is only expected to be set

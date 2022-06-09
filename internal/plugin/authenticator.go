@@ -4,8 +4,8 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
@@ -22,11 +22,11 @@ import (
 // authenticatorProtoClient is the interface implemented by all gRPC services that
 // have the authenticator RPC methods.
 type authenticatorProtoClient interface {
-	IsAuthenticator(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.ImplementsResp, error)
+	IsAuthenticator(context.Context, *emptypb.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.ImplementsResp, error)
 	Auth(context.Context, *vagrant_plugin_sdk.FuncSpec_Args, ...grpc.CallOption) (*vagrant_plugin_sdk.Auth_AuthResponse, error)
-	ValidateAuth(context.Context, *vagrant_plugin_sdk.FuncSpec_Args, ...grpc.CallOption) (*empty.Empty, error)
-	AuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
-	ValidateAuthSpec(context.Context, *empty.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
+	ValidateAuth(context.Context, *vagrant_plugin_sdk.FuncSpec_Args, ...grpc.CallOption) (*emptypb.Empty, error)
+	AuthSpec(context.Context, *emptypb.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
+	ValidateAuthSpec(context.Context, *emptypb.Empty, ...grpc.CallOption) (*vagrant_plugin_sdk.FuncSpec, error)
 }
 
 // authenticatorClient implements component.Authenticator for a service that
@@ -39,7 +39,7 @@ type authenticatorClient struct {
 }
 
 func (c *authenticatorClient) Implements(ctx context.Context) (bool, error) {
-	resp, err := c.Client.IsAuthenticator(ctx, &empty.Empty{})
+	resp, err := c.Client.IsAuthenticator(ctx, &emptypb.Empty{})
 	if err != nil {
 		return false, err
 	}
@@ -55,7 +55,7 @@ func (c *authenticatorClient) AuthFunc() interface{} {
 	}
 
 	// Get the spec
-	spec, err := c.Client.AuthSpec(context.Background(), &empty.Empty{})
+	spec, err := c.Client.AuthSpec(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -83,7 +83,7 @@ func (c *authenticatorClient) ValidateAuthFunc() interface{} {
 	}
 
 	// Get the spec
-	spec, err := c.Client.ValidateAuthSpec(context.Background(), &empty.Empty{})
+	spec, err := c.Client.ValidateAuthSpec(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -143,7 +143,7 @@ type authenticatorServer struct {
 
 func (s *authenticatorServer) IsAuthenticator(
 	ctx context.Context,
-	empty *empty.Empty,
+	empty *emptypb.Empty,
 ) (*vagrant_plugin_sdk.ImplementsResp, error) {
 	_, ok := s.Impl.(component.Authenticator)
 	return &vagrant_plugin_sdk.ImplementsResp{Implements: ok}, nil
@@ -151,7 +151,7 @@ func (s *authenticatorServer) IsAuthenticator(
 
 func (s *authenticatorServer) AuthSpec(
 	ctx context.Context,
-	args *empty.Empty,
+	args *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	return funcspec.Spec(s.Impl.(component.Authenticator).AuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
@@ -199,7 +199,7 @@ func (s *authenticatorServer) Auth(
 
 func (s *authenticatorServer) ValidateAuthSpec(
 	ctx context.Context,
-	args *empty.Empty,
+	args *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	return funcspec.Spec(s.Impl.(component.Authenticator).ValidateAuthFunc(),
 		argmapper.ConverterFunc(s.Mappers...),
@@ -211,7 +211,7 @@ func (s *authenticatorServer) ValidateAuthSpec(
 func (s *authenticatorServer) ValidateAuth(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	internal := s.Internal()
 	defer internal.Cleanup().Close()
 
@@ -226,7 +226,7 @@ func (s *authenticatorServer) ValidateAuth(
 	// 	return nil, err
 	// }
 
-	// return &empty.Empty{}, nil
+	// return &emptypb.Empty{}, nil
 }
 
 var (

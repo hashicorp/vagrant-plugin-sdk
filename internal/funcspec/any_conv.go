@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
 	"github.com/hashicorp/go-argmapper"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // anyConvGen is an argmapper.ConverterGenFunc that dynamically creates
-// converters to *any.Any for types that implement proto.Message. This
-// allows automatic conversion to *any.Any.
+// converters to *anypb.Any for types that implement proto.Message. This
+// allows automatic conversion to *anypb.Any.
 //
 // This is automatically injected for all funcspec.Func calls.
 func anyConvGen(v argmapper.Value) (*argmapper.Func, error) {
-	anyType := reflect.TypeOf((*any.Any)(nil))
+	anyType := reflect.TypeOf((*anypb.Any)(nil))
 	protoMessageType := reflect.TypeOf((*proto.Message)(nil)).Elem()
 	if !v.Type.Implements(protoMessageType) {
 		return nil, nil
@@ -32,7 +31,7 @@ func anyConvGen(v argmapper.Value) (*argmapper.Func, error) {
 	outputSet, err := argmapper.NewValueSet([]argmapper.Value{{
 		Name:    v.Name,
 		Type:    anyType,
-		Subtype: proto.MessageName(reflect.Zero(v.Type).Interface().(proto.Message)),
+		Subtype: string(reflect.Zero(v.Type).Interface().(proto.Message).ProtoReflect().Descriptor().FullName()),
 	}})
 	if err != nil {
 		return nil, err
@@ -44,7 +43,7 @@ func anyConvGen(v argmapper.Value) (*argmapper.Func, error) {
 		if inputVal == nil {
 			inputVal = inputSet.Named(v.Name)
 		}
-		anyVal, err := ptypes.MarshalAny(inputVal.Value.Interface().(proto.Message))
+		anyVal, err := anypb.New(inputVal.Value.Interface().(proto.Message))
 		if err != nil {
 			return err
 		}

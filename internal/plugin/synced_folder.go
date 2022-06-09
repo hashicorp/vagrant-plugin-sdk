@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/LK4D4/joincontext"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -64,7 +64,7 @@ type syncedFolderClient struct {
 }
 
 func (c *syncedFolderClient) UsableFunc() interface{} {
-	spec, err := c.client.UsableSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.UsableSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -95,7 +95,7 @@ func (c *syncedFolderClient) Usable(machine core.Machine) (bool, error) {
 }
 
 func (c *syncedFolderClient) EnableFunc() interface{} {
-	spec, err := c.client.EnableSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.EnableSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -121,7 +121,7 @@ func (c *syncedFolderClient) Enable(machine core.Machine, folders []*core.Folder
 }
 
 func (c *syncedFolderClient) PrepareFunc() interface{} {
-	spec, err := c.client.PrepareSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.PrepareSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -147,7 +147,7 @@ func (c *syncedFolderClient) Prepare(machine core.Machine, folders []*core.Folde
 }
 
 func (c *syncedFolderClient) DisableFunc() interface{} {
-	spec, err := c.client.DisableSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.DisableSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -173,7 +173,7 @@ func (c *syncedFolderClient) Disable(machine core.Machine, folders []*core.Folde
 }
 
 func (c *syncedFolderClient) CleanupFunc() interface{} {
-	spec, err := c.client.CleanupSpec(c.Ctx, &empty.Empty{})
+	spec, err := c.client.CleanupSpec(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return funcErr(err)
 	}
@@ -209,7 +209,7 @@ type syncedFolderServer struct {
 
 func (s *syncedFolderServer) UsableSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
@@ -238,7 +238,7 @@ func (s *syncedFolderServer) Usable(
 
 func (s *syncedFolderServer) EnableSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
@@ -250,7 +250,7 @@ func (s *syncedFolderServer) EnableSpec(
 func (s *syncedFolderServer) Enable(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.EnableFunc(), false,
 		args.Args, argmapper.Typed(ctx))
 
@@ -261,12 +261,12 @@ func (s *syncedFolderServer) Enable(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *syncedFolderServer) PrepareSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
@@ -278,7 +278,7 @@ func (s *syncedFolderServer) PrepareSpec(
 func (s *syncedFolderServer) Prepare(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.PrepareFunc(), false,
 		args.Args, argmapper.Typed(ctx))
 
@@ -289,12 +289,12 @@ func (s *syncedFolderServer) Prepare(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *syncedFolderServer) DisableSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
@@ -306,7 +306,7 @@ func (s *syncedFolderServer) DisableSpec(
 func (s *syncedFolderServer) Disable(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.DisableFunc(), false,
 		args.Args, argmapper.Typed(ctx))
 
@@ -317,12 +317,12 @@ func (s *syncedFolderServer) Disable(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *syncedFolderServer) CleanupSpec(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.FuncSpec, error) {
 	if err := isImplemented(s, s.typ); err != nil {
 		return nil, err
@@ -334,7 +334,7 @@ func (s *syncedFolderServer) CleanupSpec(
 func (s *syncedFolderServer) Cleanup(
 	ctx context.Context,
 	args *vagrant_plugin_sdk.FuncSpec_Args,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	_, err := s.CallDynamicFunc(s.Impl.CleanupFunc(), false,
 		args.Args, argmapper.Typed(ctx))
 
@@ -345,7 +345,7 @@ func (s *syncedFolderServer) Cleanup(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 var (

@@ -11,8 +11,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/golang/protobuf/ptypes/any"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 
@@ -65,7 +63,7 @@ type targetServer struct {
 }
 
 func (c *targetClient) Communicate() (comm core.Communicator, err error) {
-	commArg, err := c.client.Communicate(c.Ctx, &empty.Empty{})
+	commArg, err := c.client.Communicate(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to call communicator from client, %w", err)
 	}
@@ -102,7 +100,7 @@ func (c *targetClient) Provider() (p core.Provider, err error) {
 }
 
 func (c *targetClient) ProviderName() (name string, err error) {
-	result, err := c.client.ProviderName(c.Ctx, &empty.Empty{})
+	result, err := c.client.ProviderName(c.Ctx, &emptypb.Empty{})
 	if err == nil {
 		name = result.Name
 	}
@@ -111,7 +109,7 @@ func (c *targetClient) ProviderName() (name string, err error) {
 }
 
 func (c *targetClient) UpdatedAt() (utime *time.Time, err error) {
-	r, err := c.client.UpdatedAt(c.Ctx, &empty.Empty{})
+	r, err := c.client.UpdatedAt(c.Ctx, &emptypb.Empty{})
 	if err == nil {
 		ut := r.UpdatedAt.AsTime()
 		utime = &ut
@@ -201,7 +199,7 @@ func (c *targetClient) Record() (record *anypb.Any, err error) {
 }
 
 func (c *targetClient) GetUUID() (id string, err error) {
-	uuid, err := c.client.GetUUID(c.Ctx, &empty.Empty{})
+	uuid, err := c.client.GetUUID(c.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -221,7 +219,7 @@ func (c *targetClient) SetUUID(uuid string) (err error) {
 
 func (c *targetClient) Specialize(kind interface{}) (specialized interface{}, err error) {
 	// TODO: specialize type based on the `kind` requested
-	a, err := anypb.New(&empty.Empty{})
+	a, err := anypb.New(&emptypb.Empty{})
 	if err != nil {
 		return
 	}
@@ -257,17 +255,17 @@ func (c *targetClient) UI() (ui terminal.UI, err error) {
 }
 
 func (t *targetClient) Save() (err error) {
-	_, err = t.client.Save(t.Ctx, &empty.Empty{})
+	_, err = t.client.Save(t.Ctx, &emptypb.Empty{})
 	return
 }
 
 func (t *targetClient) Destroy() (err error) {
-	_, err = t.client.Destroy(t.Ctx, &empty.Empty{})
+	_, err = t.client.Destroy(t.Ctx, &emptypb.Empty{})
 	return
 }
 
 func (t *targetClient) Vagrantfile() (core.Vagrantfile, error) {
-	resp, err := t.client.Vagrantfile(t.Ctx, &empty.Empty{})
+	resp, err := t.client.Vagrantfile(t.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +282,7 @@ func (t *targetClient) Vagrantfile() (core.Vagrantfile, error) {
 
 func (s *targetServer) Communicate(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (_ *vagrant_plugin_sdk.Args_Communicator, err error) {
 	defer func() {
 		if err != nil {
@@ -309,7 +307,7 @@ func (s *targetServer) Communicate(
 
 func (s *targetServer) Name(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
 	defer func() {
 		if err != nil {
@@ -330,7 +328,7 @@ func (s *targetServer) Name(
 func (t *targetServer) SetName(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Target_SetNameRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	if err := t.Impl.SetName(in.Name); err != nil {
 		t.Logger.Error("failed to set target name",
 			"error", err,
@@ -339,12 +337,12 @@ func (t *targetServer) SetName(
 		return nil, err
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (t *targetServer) Provider(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Provider, err error) {
 	defer func() {
 		if err != nil {
@@ -370,7 +368,7 @@ func (t *targetServer) Provider(
 
 func (t *targetServer) ProviderName(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Target_NameResponse, err error) {
 	defer func() {
 		if err != nil {
@@ -390,7 +388,7 @@ func (t *targetServer) ProviderName(
 
 func (t *targetServer) UpdatedAt(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Target_UpdatedAtResponse, error) {
 	u, err := t.Impl.UpdatedAt()
 	if err != nil {
@@ -407,7 +405,7 @@ func (t *targetServer) UpdatedAt(
 
 func (s *targetServer) ResourceId(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Target_ResourceIdResponse, err error) {
 	defer func() {
 		if err != nil {
@@ -427,7 +425,7 @@ func (s *targetServer) ResourceId(
 
 func (s *targetServer) Project(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (_ *vagrant_plugin_sdk.Args_Project, err error) {
 	defer func() {
 		if err != nil {
@@ -451,7 +449,7 @@ func (s *targetServer) Project(
 
 func (s *targetServer) Metadata(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_MetadataSet, err error) {
 	defer func() {
 		if err != nil {
@@ -476,7 +474,7 @@ func (s *targetServer) Metadata(
 
 func (s *targetServer) DataDir(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_DataDir_Target, err error) {
 	defer func() {
 		if err != nil {
@@ -505,7 +503,7 @@ func (s *targetServer) DataDir(
 
 func (s *targetServer) State(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_Target_State, err error) {
 	defer func() {
 		if err != nil {
@@ -530,7 +528,7 @@ func (s *targetServer) State(
 
 func (s *targetServer) Record(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Target_RecordResponse, err error) {
 	defer func() {
 		if err != nil {
@@ -550,7 +548,7 @@ func (s *targetServer) Record(
 
 func (t *targetServer) UI(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (r *vagrant_plugin_sdk.Args_TerminalUI, err error) {
 	defer func() {
 		if err != nil {
@@ -577,19 +575,19 @@ func (t *targetServer) UI(
 func (t *targetServer) SetUUID(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.Target_SetUUIDRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	err := t.Impl.SetUUID(in.Uuid)
 	if err != nil {
 		t.Logger.Error("failed to set target uuid",
 			"error", err,
 		)
 	}
-	return &empty.Empty{}, err
+	return &emptypb.Empty{}, err
 }
 
 func (t *targetServer) GetUUID(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Target_GetUUIDResponse, error) {
 	uuid, err := t.Impl.GetUUID()
 	if err != nil {
@@ -606,8 +604,8 @@ func (t *targetServer) GetUUID(
 
 func (t *targetServer) Specialize(
 	ctx context.Context,
-	in *any.Any,
-) (r *any.Any, err error) {
+	in *anypb.Any,
+) (r *anypb.Any, err error) {
 	defer func() {
 		if err != nil {
 			t.Logger.Error("failed to specialize target",
@@ -632,23 +630,23 @@ func (t *targetServer) Specialize(
 
 func (t *targetServer) Save(
 	ctx context.Context,
-	_ *empty.Empty,
-) (_ *empty.Empty, err error) {
+	_ *emptypb.Empty,
+) (_ *emptypb.Empty, err error) {
 	err = t.Impl.Save()
 	return
 }
 
 func (t *targetServer) Destroy(
 	ctx context.Context,
-	_ *empty.Empty,
-) (_ *empty.Empty, err error) {
+	_ *emptypb.Empty,
+) (_ *emptypb.Empty, err error) {
 	err = t.Impl.Destroy()
 	return
 }
 
 func (t *targetServer) Vagrantfile(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
 	v, err := t.Impl.Vagrantfile()
 	if err != nil {

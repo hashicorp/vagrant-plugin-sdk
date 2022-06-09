@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/go-hclog"
 )
@@ -19,7 +19,7 @@ func TestSpec(t *testing.T) {
 	t.Run("proto to proto", func(t *testing.T) {
 		require := require.New(t)
 
-		spec, err := Spec(func(*empty.Empty) *empty.Empty { return nil })
+		spec, err := Spec(func(*emptypb.Empty) *emptypb.Empty { return nil })
 		require.NoError(err)
 		require.NotNil(spec)
 		require.Len(spec.Args, 1)
@@ -35,8 +35,8 @@ func TestSpec(t *testing.T) {
 
 		type Foo struct{}
 
-		spec, err := Spec(func(*Foo) *empty.Empty { return nil },
-			argmapper.Converter(func(*empty.Empty) *Foo { return nil }),
+		spec, err := Spec(func(*Foo) *emptypb.Empty { return nil },
+			argmapper.Converter(func(*emptypb.Empty) *Foo { return nil }),
 		)
 		require.NoError(err)
 		require.NotNil(spec)
@@ -54,8 +54,8 @@ func TestSpec(t *testing.T) {
 		type Foo struct{}
 		type Bar struct{}
 
-		spec, err := Spec(func(*Foo) *empty.Empty { return nil },
-			argmapper.Converter(func(*empty.Empty) *Bar { return nil }),
+		spec, err := Spec(func(*Foo) *emptypb.Empty { return nil },
+			argmapper.Converter(func(*emptypb.Empty) *Bar { return nil }),
 		)
 		require.Error(err)
 		require.Nil(spec)
@@ -64,7 +64,7 @@ func TestSpec(t *testing.T) {
 	t.Run("proto to int", func(t *testing.T) {
 		require := require.New(t)
 
-		spec, err := Spec(func(*empty.Empty) int { return 0 })
+		spec, err := Spec(func(*emptypb.Empty) int { return 0 })
 		require.NoError(err)
 		require.NotNil(spec)
 	})
@@ -72,7 +72,7 @@ func TestSpec(t *testing.T) {
 	t.Run("WithOutput proto to interface, doesn't implement", func(t *testing.T) {
 		require := require.New(t)
 
-		spec, err := Spec(func(*empty.Empty) struct{} { return struct{}{} },
+		spec, err := Spec(func(*emptypb.Empty) struct{} { return struct{}{} },
 			argmapper.FilterOutput(argmapper.FilterType(reflect.TypeOf((*testSpecInterface)(nil)).Elem())),
 		)
 		require.Error(err)
@@ -85,8 +85,8 @@ func TestSpec(t *testing.T) {
 		type Foo struct{}
 		type Bar struct{}
 
-		spec, err := Spec(func(*Foo, *Bar) *empty.Empty { return nil },
-			argmapper.Converter(func(*empty.Empty) *Foo { return nil }),
+		spec, err := Spec(func(*Foo, *Bar) *emptypb.Empty { return nil },
+			argmapper.Converter(func(*emptypb.Empty) *Foo { return nil }),
 			argmapper.Typed(&Bar{}),
 		)
 		require.NoError(err)
