@@ -58,6 +58,17 @@ func NewVagrantCloudRequest(opts ...VagrantCloudRequestOptions) (r *VagrantCloud
 	return
 }
 
+func (vcr *VagrantCloudRequest) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"headers":        vcr.headers,
+		"method":         vcr.method.String(),
+		"retryCount":     vcr.retryCount,
+		"requestBody":    vcr.requestBody,
+		"src":            vcr.url.String(),
+		"urlQueryParams": vcr.urlQueryParams,
+	}
+}
+
 func (vcr *VagrantCloudRequest) Do() (raw []byte, err error) {
 	client := retryablehttp.NewClient()
 	client.RetryMax = vcr.retryCount
