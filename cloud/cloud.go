@@ -160,7 +160,7 @@ func (vc *VagrantCloudClient) request(
 	return jsonResp, nil
 }
 
-func (vc *VagrantCloudClient) AuthedRequest(u string, method HTTPMethod, ui terminal.UI) (data []byte, err error) {
+func (vc *VagrantCloudClient) AuthedRequest(u string, method HTTPMethod, ui terminal.UI) (vcr *VagrantCloudRequest, err error) {
 	serverUrl, _ := url.Parse(vc.url)
 	opts := []VagrantCloudRequestOptions{
 		WithRetryCount(vc.retryCount),
@@ -187,11 +187,8 @@ func (vc *VagrantCloudClient) AuthedRequest(u string, method HTTPMethod, ui term
 		opts = append(opts, WithAuthTokenHeader(vc.accessToken))
 	}
 
-	vcr, err := NewVagrantCloudRequest(opts...)
-	if err != nil {
-		return nil, err
-	}
-	return vcr.Do()
+	vcr, err = NewVagrantCloudRequest(opts...)
+	return
 }
 
 func (vc *VagrantCloudClient) AuthTokenCreate(
