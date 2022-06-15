@@ -26,18 +26,25 @@ import (
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
-func isImplemented(t interface{}, name string) error {
+// Checks if value is implemented. If it is not (value is nil) a
+// customized error is returned
+func isImplemented(
+	t interface{}, // value to check
+	name string, // name of the value
+) error {
 	if t == nil {
 		return status.Errorf(codes.Unimplemented, "plugin does not implement: "+name)
 	}
 	return nil
 }
 
+// Defines client interface for plugins supporting value seeding
 type SeederClient interface {
 	Seed(ctx context.Context, in *vagrant_plugin_sdk.Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.Args_Seeds, error)
 }
 
+// Defines client interface for plugins supporting a name
 type NamedPluginClient interface {
 	SetPluginName(ctx context.Context, in *vagrant_plugin_sdk.PluginInfo_Name, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PluginName(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*vagrant_plugin_sdk.PluginInfo_Name, error)
@@ -53,20 +60,41 @@ type BasePlugin struct {
 	Wrapped bool              // Used to determine if wrapper
 }
 
+// Base client type
+type BaseClient struct {
+	*Base
+
+	Ctx             context.Context // base context for the client
+	Client          interface{}     // actual grpc client
+	addr            net.Addr        // address to connect to this client
+	parentComponent interface{}     // parent component (if available)
+}
+
+// Base server type
+type BaseServer struct {
+	*Base
+
+	impl       interface{}                    // real implementation
+	name       string                         // name of the plugin
+	seedValues *vagrant_plugin_sdk.Args_Seeds // stored seed values
+}
+
+// Create a new shallow copy
 func (b *BasePlugin) Clone() *BasePlugin {
 	return &BasePlugin{
 		Cache:   b.Cache,
 		Cleanup: cleanup.New(),
-		Mappers: b.Mappers,
+		Mappers: mappers(b.Mappers),
 		Logger:  b.Logger,
 		Wrapped: b.Wrapped,
 	}
 }
 
+// Create a new client
 func (b *BasePlugin) NewClient(
-	ctx context.Context,
-	broker *plugin.GRPCBroker,
-	s interface{},
+	ctx context.Context, // context used by the client
+	broker *plugin.GRPCBroker, // broker assigned to this client
+	s interface{}, // the grpc client
 ) *BaseClient {
 	return &BaseClient{
 		Ctx:    ctx,
@@ -76,15 +104,16 @@ func (b *BasePlugin) NewClient(
 			Cache:   b.Cache,
 			Cleanup: b.Cleanup,
 			Logger:  b.Logger,
-			Mappers: b.Mappers,
+			Mappers: mappers(b.Mappers),
 			Wrapped: b.Wrapped,
 		},
 	}
 }
 
+// Create a new server
 func (b *BasePlugin) NewServer(
-	broker *plugin.GRPCBroker,
-	impl interface{},
+	broker *plugin.GRPCBroker, // broker assigned to this server
+	impl interface{}, // real implementation of service
 ) *BaseServer {
 	return &BaseServer{
 		impl:       impl,
@@ -95,7 +124,7 @@ func (b *BasePlugin) NewServer(
 			Cache:   b.Cache,
 			Cleanup: b.Cleanup,
 			Logger:  b.Logger,
-			Mappers: b.Mappers,
+			Mappers: mappers(b.Mappers),
 			Wrapped: b.Wrapped,
 		},
 	}
@@ -113,12 +142,15 @@ type Base struct {
 	Wrapped bool
 }
 
+// Create a new BasePlugin that is a shallow copy
+// of the current Base and marks wrapped as true.
+// This is used when wrapping a GRPC client.
 func (b *Base) Wrap() *BasePlugin {
 	return &BasePlugin{
 		Cache:   b.Cache,
 		Cleanup: b.Cleanup,
 		Logger:  b.Logger,
-		Mappers: b.Mappers,
+		Mappers: mappers(b.Mappers),
 		Wrapped: true,
 	}
 }
@@ -126,25 +158,6 @@ func (b *Base) Wrap() *BasePlugin {
 // If this plugin is a wrapper
 func (b *Base) IsWrapped() bool {
 	return b.Wrapped
-}
-
-// Base client type
-type BaseClient struct {
-	*Base
-
-	Ctx             context.Context
-	Client          interface{}
-	addr            net.Addr
-	parentComponent interface{}
-}
-
-// Base server type
-type BaseServer struct {
-	*Base
-
-	impl       interface{}
-	name       string
-	seedValues *vagrant_plugin_sdk.Args_Seeds
 }
 
 // internal returns a new pluginargs.Internal that can be used with
@@ -162,7 +175,7 @@ func (b *Base) Internal() pluginargs.Internal {
 		b.Cache,
 		b.Cleanup,
 		b.Logger,
-		mappers(b.Mappers),
+		b.Mappers,
 	)
 }
 
@@ -176,7 +189,7 @@ func (b *Base) Map(
 	args ...argmapper.Arg, // list of argmapper arguments
 ) (interface{}, error) {
 	args = append(args,
-		argmapper.ConverterFunc(mappers(b.Mappers)...),
+		argmapper.ConverterFunc(b.Mappers...),
 		argmapper.Typed(b.Internal()),
 		argmapper.Typed(b.Logger),
 	)
@@ -184,11 +197,16 @@ func (b *Base) Map(
 	return dynamic.Map(resultValue, expectedType, args...)
 }
 
+// Set the cache to be used
 func (b *Base) SetCache(c cacher.Cache) {
 	b.Cache = c
 }
 
-func (b *BaseClient) Seed(args *core.Seeds) error {
+// Set seed values. These values are will be automatically
+// addeed to all dynamic calls.
+func (b *BaseClient) Seed(
+	args *core.Seeds, // typed and named values to store
+) error {
 	if b.Client == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
 		return nil
@@ -207,6 +225,7 @@ func (b *BaseClient) Seed(args *core.Seeds) error {
 	return err
 }
 
+// Returns the collection of stored seed values
 func (b *BaseClient) Seeds() (*core.Seeds, error) {
 	if b.Client == nil {
 		b.Logger.Trace("plugin does not implement seeder interface")
@@ -235,6 +254,7 @@ func (b *BaseClient) Seeds() (*core.Seeds, error) {
 	return s.(*core.Seeds), nil
 }
 
+// Set the plugin name
 func (b *BaseClient) SetPluginName(name string) (err error) {
 	if b.Client == nil {
 		return
@@ -248,6 +268,7 @@ func (b *BaseClient) SetPluginName(name string) (err error) {
 	return errors.New("plugin does not support naming")
 }
 
+// Returns the name of the plugin
 func (b *BaseClient) PluginName() (name string, err error) {
 	if b.Client == nil {
 		return
@@ -270,18 +291,25 @@ func (b *BaseClient) SetParentComponent(c interface{}) {
 	b.parentComponent = c
 }
 
+// Returns parent component
 func (b *BaseClient) GetParentComponent() interface{} {
 	return b.parentComponent
 }
 
+// Add extra mapper functions
 func (b *BaseClient) AppendMappers(mappers ...*argmapper.Func) {
 	b.Mappers = append(b.Mappers, mappers...)
 }
 
+// Generates a new context that is a combination of the
+// given context and the client's context. Using the
+// generated context helps to ensure things like customized
+// metadata is included within client requests.
 func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, context.CancelFunc) {
 	return joincontext.Join(ctx, b.Ctx)
 }
 
+// Close the client and perform any required cleanup
 func (b *BaseClient) Close() error {
 	b.Logger.Warn("received close request for plugin client")
 	return b.Cleanup.Close()
@@ -344,9 +372,6 @@ func (b *BaseClient) CallDynamicFunc(
 	callArgs ...argmapper.Arg, // any extra argmapper arguments to include
 ) (interface{}, error) {
 	internal := b.Internal()
-	// TODO(spox): We need to determine how to properly cleanup when connections
-	//             may still exist after the dynamic call is complete
-	//	defer internal.Cleanup.Close()
 
 	if b.Client != nil {
 		s, err := b.Seeds()
@@ -372,13 +397,13 @@ func (b *BaseClient) CallDynamicFunc(
 					return nil, err
 				}
 
-				b.Logger.Info("seeding typed value into dynamic call",
+				b.Logger.Trace("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", val),
 				)
 
 				callArgs = append(callArgs, argmapper.Typed(val))
 			} else {
-				b.Logger.Info("seeding typed value into dynamic call",
+				b.Logger.Trace("seeding typed value into dynamic call",
 					"type", hclog.Fmt("%T", v),
 				)
 
@@ -401,14 +426,14 @@ func (b *BaseClient) CallDynamicFunc(
 					return nil, err
 				}
 
-				b.Logger.Info("seeding named value into dynamic call",
+				b.Logger.Trace("seeding named value into dynamic call",
 					"name", k,
 					"type", hclog.Fmt("%T", val),
 				)
 
 				callArgs = append(callArgs, argmapper.Named(k, val))
 			} else {
-				b.Logger.Info("seeding named value into dynamic call",
+				b.Logger.Trace("seeding named value into dynamic call",
 					"name", k,
 					"type", hclog.Fmt("%T", v),
 				)
@@ -473,9 +498,15 @@ func (b *BaseServer) GenerateSpec(
 	if f, ok := fn.(*dynamic.SpecAndFunc); ok {
 		return f.Spec, nil
 	}
-	f, err := funcspec.Spec(fn, append(args,
-		argmapper.ConverterFunc(b.Mappers...),
-		argmapper.Typed(b.Internal()))...,
+	f, err := funcspec.Spec(fn,
+		append(
+			args,
+			argmapper.ConverterFunc(b.Mappers...),
+			argmapper.Typed(
+				b.Internal(),
+				b.Logger,
+			),
+		)...,
 	)
 	if err != nil {
 		return f, err
@@ -483,6 +514,7 @@ func (b *BaseServer) GenerateSpec(
 	return f, err
 }
 
+// Store seed values
 func (b *BaseServer) Seed(
 	ctx context.Context,
 	seeds *vagrant_plugin_sdk.Args_Seeds,
@@ -529,6 +561,7 @@ func (b *BaseServer) Seed(
 	return &emptypb.Empty{}, err
 }
 
+// Returns collection of stored seed values
 func (b *BaseServer) Seeds(
 	ctx context.Context,
 	_ *emptypb.Empty,
@@ -578,6 +611,7 @@ func (b *BaseServer) Seeds(
 	return r.(*vagrant_plugin_sdk.Args_Seeds), nil
 }
 
+// Set the plugin name
 func (b *BaseServer) SetPluginName(
 	ctx context.Context,
 	name *vagrant_plugin_sdk.PluginInfo_Name,
@@ -596,6 +630,7 @@ func (b *BaseServer) SetPluginName(
 	return &emptypb.Empty{}, nil
 }
 
+// Returns the plugin name
 func (b *BaseServer) PluginName(
 	ctx context.Context,
 	_ *emptypb.Empty,
@@ -618,7 +653,7 @@ func (b *BaseServer) PluginName(
 // defined mappers to the given list, ensuring duplicates
 // aren't added.
 func mappers(base []*argmapper.Func) []*argmapper.Func {
-	result := make([]*argmapper.Func, 0, len(base))
+	result := make([]*argmapper.Func, len(base))
 	copy(result, base)
 	for _, m := range MapperFns {
 		found := false
@@ -628,10 +663,9 @@ func mappers(base []*argmapper.Func) []*argmapper.Func {
 				break
 			}
 		}
-		if found {
-			continue
+		if !found {
+			result = append(result, m)
 		}
-		result = append(result, m)
 	}
 
 	return result
