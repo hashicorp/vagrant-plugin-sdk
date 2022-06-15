@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-argmapper"
+	"github.com/hashicorp/go-hclog"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -43,7 +44,8 @@ func Map(
 		return nil
 	}
 
-	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb, argmapper.FuncName("Map -> "+strings.TrimPrefix(fmt.Sprintf("%T", expectedType), "*")))
+	callFn, err := argmapper.BuildFunc(vsIn, vsOut, cb,
+		argmapper.FuncName("Value mapping -> "+strings.TrimPrefix(fmt.Sprintf("%T", expectedType), "*")))
 	if err != nil {
 		return nil, err
 	}
@@ -117,10 +119,12 @@ func BlindMap(
 	for _, m := range mappers {
 		for _, typ := range m.Input().Signature() {
 			if t == typ || t.AssignableTo(typ) {
-				margs := append(args, argmapper.Typed(value))
+				margs := append(args, argmapper.Typed(value), argmapper.Logger(Logger))
 				r := m.Call(margs...)
 				if r.Err() == nil {
 					return r.Out(0), nil
+				} else {
+					hclog.L().Info("failed to run blind map function", "source-type", hclog.Fmt("%T", value), "error", r.Err())
 				}
 			}
 		}
