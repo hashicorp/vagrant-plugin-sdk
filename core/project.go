@@ -3,9 +3,9 @@ package core
 import (
 	"io"
 
+	//	"github.com/hashicorp/vagrant-plugin-sdk/config"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 	"github.com/hashicorp/vagrant-plugin-sdk/terminal"
 )
 
@@ -30,7 +30,7 @@ type Project interface {
 	Boxes() (boxes BoxCollection, err error)
 	// accessors
 	CWD() (path path.Path, err error)
-	Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error)
+	Config() (v Vagrantfile, err error)
 	DataDir() (dir *datadir.Project, err error)
 	DefaultPrivateKey() (path path.Path, err error)
 	DefaultProvider(opts *DefaultProviderOptions) (name string, err error)
@@ -52,6 +52,7 @@ type Project interface {
 	TargetNames() (names []string, err error)
 	Tmp() (path path.Path, err error)
 	UI() (ui terminal.UI, err error)
+	Vagrantfile() (Vagrantfile, error)
 	VagrantfileName() (name string, err error)
 	VagrantfilePath() (p path.Path, err error)
 

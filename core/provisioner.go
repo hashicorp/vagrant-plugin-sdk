@@ -1,11 +1,11 @@
 package core
 
-type ProvisionerConfig struct {
-	Config map[string]interface{}
-}
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
+)
 
 type Provisioner interface {
-	Provision(machine Machine, config ProvisionerConfig) (err error)
-	Configure(machine Machine, config ProvisionerConfig, rootConfig Vagrantfile) (err error)
-	Cleanup(machine Machine, config ProvisionerConfig) (err error)
+	Provision(machine Machine, config *component.ConfigData) (err error)
+	Configure(machine Machine, config *component.ConfigData, rootConfig *component.ConfigData) (err error)
+	Cleanup(machine Machine, config *component.ConfigData) (err error)
 }
