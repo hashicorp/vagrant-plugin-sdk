@@ -7,6 +7,8 @@ type CommunicatorMessage struct {
 }
 
 type Communicator interface {
+	Seeder
+
 	// Config() interface{}
 	// Documentation() (*docs.Documentation, error)
 	Download(machine Machine, source, destination string) error
