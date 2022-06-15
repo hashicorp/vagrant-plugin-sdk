@@ -22,9 +22,11 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
+	"github.com/hashicorp/vagrant-plugin-sdk/config"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	"github.com/hashicorp/vagrant-plugin-sdk/datadir"
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/types"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/cacher"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/pluginclient"
@@ -38,25 +40,43 @@ import (
 
 var WellKnownTypes = []interface{}{
 	Boolean,
+	BooleanPtr,
 	BooleanProto,
+	BooleanPtrProto,
 	Bytes,
 	BytesProto,
 	Double,
+	DoublePtr,
 	DoubleProto,
+	DoublePtrProto,
 	Float,
+	FloatPtr,
 	FloatProto,
+	FloatPtrProto,
 	Int32,
+	Int32Ptr,
 	Int32Proto,
+	Int32PtrProto,
 	Int64,
+	Int64Ptr,
 	Int64Proto,
+	Int64PtrProto,
 	String,
+	StringPtr,
 	StringProto,
+	StringPtrProto,
 	Timestamp,
+	TimestampPtr,
 	TimestampProto,
+	TimestampPtrProto,
 	UInt32,
+	UInt32Ptr,
 	UInt32Proto,
+	UInt32PtrProto,
 	UInt64,
+	UInt64Ptr,
 	UInt64Proto,
+	UInt64PtrProto,
 	ValueToBool,
 	ValueToList,
 	ValueToNull,
@@ -86,6 +106,8 @@ var All = []interface{}{
 	HostProto,
 	Guest,
 	GuestProto,
+	Class,
+	ClassProto,
 	Command,
 	CommandProto,
 	CommandInfo,
@@ -96,6 +118,8 @@ var All = []interface{}{
 	CommunicatorCommandProto,
 	Communicator,
 	CommunicatorProto,
+	ConfigData,
+	ConfigDataProto,
 	DatadirBasis,
 	DatadirBasisProto,
 	DatadirProject,
@@ -155,6 +179,8 @@ var All = []interface{}{
 	ProvisionerProto,
 	Push,
 	PushProto,
+	Range,
+	RangeProto,
 	Seeds,
 	SeedsProto,
 	State,
@@ -163,6 +189,8 @@ var All = []interface{}{
 	StateBagProto,
 	SyncedFolder,
 	SyncedFolderProto,
+	Vagrantfile,
+	VagrantfileProto,
 	VagrantfileSyncedFolderToFolder,
 	FolderToVagrantfileSyncedFolder,
 	Target,
@@ -177,6 +205,9 @@ var All = []interface{}{
 	Vagrantfile,
 	VagrantfileProto,
 }
+
+var AllFns []*argmapper.Func
+var WellKnownFns []*argmapper.Func
 
 func MapKeyInterface(
 	input map[string]interface{},
@@ -211,11 +242,28 @@ func Boolean(
 	return input.Value
 }
 
+func BooleanPtr(
+	input *wrapperspb.BoolValue,
+) *bool {
+	return &input.Value
+}
+
 func BooleanProto(
 	input bool,
 ) *wrapperspb.BoolValue {
 	return &wrapperspb.BoolValue{
 		Value: input,
+	}
+}
+
+func BooleanPtrProto(
+	input *bool,
+) *wrapperspb.BoolValue {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.BoolValue{
+		Value: *input,
 	}
 }
 
@@ -239,6 +287,12 @@ func Double(
 	return input.Value
 }
 
+func DoublePtr(
+	input *wrapperspb.DoubleValue,
+) *float64 {
+	return &input.Value
+}
+
 func DoubleProto(
 	input float64,
 ) *wrapperspb.DoubleValue {
@@ -247,10 +301,27 @@ func DoubleProto(
 	}
 }
 
+func DoublePtrProto(
+	input *float64,
+) *wrapperspb.DoubleValue {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.DoubleValue{
+		Value: *input,
+	}
+}
+
 func Float(
 	input *wrapperspb.FloatValue,
 ) float32 {
 	return input.Value
+}
+
+func FloatPtr(
+	input *wrapperspb.FloatValue,
+) *float32 {
+	return &input.Value
 }
 
 func FloatProto(
@@ -261,10 +332,27 @@ func FloatProto(
 	}
 }
 
+func FloatPtrProto(
+	input *float32,
+) *wrapperspb.FloatValue {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.FloatValue{
+		Value: *input,
+	}
+}
+
 func Int32(
 	input *wrapperspb.Int32Value,
 ) int32 {
 	return input.Value
+}
+
+func Int32Ptr(
+	input *wrapperspb.Int32Value,
+) *int32 {
+	return &input.Value
 }
 
 func Int32Proto(
@@ -275,10 +363,27 @@ func Int32Proto(
 	}
 }
 
+func Int32PtrProto(
+	input *int32,
+) *wrapperspb.Int32Value {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.Int32Value{
+		Value: *input,
+	}
+}
+
 func Int64(
 	input *wrapperspb.Int64Value,
 ) int64 {
 	return input.Value
+}
+
+func Int64Ptr(
+	input *wrapperspb.Int64Value,
+) *int64 {
+	return &input.Value
 }
 
 func Int64Proto(
@@ -289,10 +394,27 @@ func Int64Proto(
 	}
 }
 
+func Int64PtrProto(
+	input *int64,
+) *wrapperspb.Int64Value {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.Int64Value{
+		Value: *input,
+	}
+}
+
 func String(
 	input *wrapperspb.StringValue,
 ) string {
 	return input.Value
+}
+
+func StringPtr(
+	input *wrapperspb.StringValue,
+) *string {
+	return &input.Value
 }
 
 func StringProto(
@@ -303,10 +425,28 @@ func StringProto(
 	}
 }
 
+func StringPtrProto(
+	input *string,
+) *wrapperspb.StringValue {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.StringValue{
+		Value: *input,
+	}
+}
+
 func Timestamp(
 	input *timestamppb.Timestamp,
 ) time.Time {
 	return input.AsTime()
+}
+
+func TimestampPtr(
+	input *timestamppb.Timestamp,
+) *time.Time {
+	v := input.AsTime()
+	return &v
 }
 
 func TimestampProto(
@@ -315,10 +455,25 @@ func TimestampProto(
 	return timestamppb.New(input)
 }
 
+func TimestampPtrProto(
+	input *time.Time,
+) *timestamppb.Timestamp {
+	if input == nil {
+		return nil
+	}
+	return timestamppb.New(*input)
+}
+
 func UInt32(
 	input *wrapperspb.UInt32Value,
 ) uint32 {
 	return input.Value
+}
+
+func UInt32Ptr(
+	input *wrapperspb.UInt32Value,
+) *uint32 {
+	return &input.Value
 }
 
 func UInt32Proto(
@@ -329,10 +484,27 @@ func UInt32Proto(
 	}
 }
 
+func UInt32PtrProto(
+	input *uint32,
+) *wrapperspb.UInt32Value {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.UInt32Value{
+		Value: *input,
+	}
+}
+
 func UInt64(
 	input *wrapperspb.UInt64Value,
 ) uint64 {
 	return input.Value
+}
+
+func UInt64Ptr(
+	input *wrapperspb.UInt64Value,
+) *uint64 {
+	return &input.Value
 }
 
 func UInt64Proto(
@@ -340,6 +512,17 @@ func UInt64Proto(
 ) *wrapperspb.UInt64Value {
 	return &wrapperspb.UInt64Value{
 		Value: input,
+	}
+}
+
+func UInt64PtrProto(
+	input *uint64,
+) *wrapperspb.UInt64Value {
+	if input == nil {
+		return nil
+	}
+	return &wrapperspb.UInt64Value{
+		Value: *input,
 	}
 }
 
@@ -520,14 +703,29 @@ func SeedsProtoFull(
 	return result, nil
 }
 
+func Range(
+	input *vagrant_plugin_sdk.Args_Range,
+) (types.Range, error) {
+	return types.NewRange(input.Start, input.End)
+}
+
+func RangeProto(
+	input types.Range,
+) *vagrant_plugin_sdk.Args_Range {
+	return &vagrant_plugin_sdk.Args_Range{
+		Start: input.Initial(),
+		End:   input.Final(),
+	}
+}
+
 func Symbol(
 	input *vagrant_plugin_sdk.Args_Symbol,
-) core.Symbol {
-	return core.Symbol(input.Str)
+) types.Symbol {
+	return types.Symbol(input.Str)
 }
 
 func SymbolProto(
-	input core.Symbol,
+	input types.Symbol,
 ) *vagrant_plugin_sdk.Args_Symbol {
 	return &vagrant_plugin_sdk.Args_Symbol{
 		Str: string(input),
@@ -580,15 +778,84 @@ func ArrayProto(
 	}, nil
 }
 
+func Class(
+	input *vagrant_plugin_sdk.Args_Class,
+) types.Class {
+	return types.Class(input.Name)
+}
+
+func ClassProto(
+	input types.Class,
+) *vagrant_plugin_sdk.Args_Class {
+	return &vagrant_plugin_sdk.Args_Class{
+		Name: string(input),
+	}
+}
+
+func ConfigData(
+	input *vagrant_plugin_sdk.Args_ConfigData,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*component.ConfigData, error) {
+	v, err := Hash(input.Data, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	data := make(map[string]interface{}, len(v))
+	for key, val := range v {
+		skey, ok := key.(string)
+		if !ok {
+			symkey, ok := key.(types.Symbol)
+			if !ok {
+				return nil, fmt.Errorf("invalid root key type %T", key)
+			}
+			skey = string(symkey)
+		}
+		data[skey] = val
+	}
+
+	result := &component.ConfigData{
+		Data: data,
+	}
+	if input.Source != nil {
+		result.Source = input.Source.Name
+	}
+
+	return result, nil
+}
+
+func ConfigDataProto(
+	input *component.ConfigData,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Args_ConfigData, error) {
+	i := make(map[interface{}]interface{}, len(input.Data))
+	for key, val := range input.Data {
+		i[key] = val
+	}
+	iproto, err := HashProto(i, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Args_ConfigData{
+		Data: iproto,
+		Source: &vagrant_plugin_sdk.Args_Class{
+			Name: input.Source,
+		},
+	}, nil
+}
+
 func Hash(
 	input *vagrant_plugin_sdk.Args_Hash,
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
 ) (result map[interface{}]interface{}, err error) {
-	result = make(map[interface{}]interface{}, len(input.Entries))
+	result = make(map[interface{}]interface{}, len(input.GetEntries()))
 
-	for _, e := range input.Entries {
+	for _, e := range input.GetEntries() {
 		r, err := Direct(
 			&vagrant_plugin_sdk.Args_Direct{
 				Arguments: []*anypb.Any{
@@ -734,6 +1001,13 @@ func Direct(
 			return nil, err
 		}
 
+		// If the value is nil, check for that before we start
+		// trying maps
+		if _, ok := val.(*vagrant_plugin_sdk.Args_Null); ok {
+			args[i] = nil
+			continue
+		}
+
 		// First attempt to map the decoded value using
 		// the well known type protos
 		nv, err := dynamic.MapFromWellKnownProto(val.(proto.Message))
@@ -760,6 +1034,11 @@ func Direct(
 			"value", val,
 			"error", err,
 		)
+
+		// return nil, err
+
+		// TODO(spox): I don't think we should do this but instead
+		// force an error when we can't convert
 
 		// Set the decoded value into the result set since it's
 		// the best we can do
@@ -2374,7 +2653,12 @@ func Vagrantfile(
 		return nil, err
 	}
 
-	return client.(core.Vagrantfile), nil
+	c, ok := client.(core.Vagrantfile)
+	if !ok {
+		return nil, fmt.Errorf("could not cast client to core.Vagrantfile interface (%#v)", client)
+	}
+
+	return c, nil
 }
 
 type connInfo interface {
@@ -2509,7 +2793,7 @@ func wrapClientStandalone(
 			return
 		}
 	} else {
-		logger.Warn("implementation does not support direct targets for wrapped plugins",
+		logger.Trace("implementation does not support direct targets for wrapped plugins",
 			"plugin", hclog.Fmt("%T", p),
 			"implementation", hclog.Fmt("%T", impl),
 		)
@@ -2619,6 +2903,9 @@ func init() {
 		plugincomponent.MapperFns = append(plugincomponent.MapperFns, mFn)
 		plugincomponent.ProtomapperAllMap[reflect.TypeOf(fn)] = struct{}{}
 	}
+	AllFns := make([]*argmapper.Func, len(All))
+	copy(AllFns, plugincomponent.MapperFns)
+
 	for _, fn := range WellKnownTypes {
 		mFn, err := argmapper.NewFunc(fn)
 		if err != nil {
@@ -2626,6 +2913,13 @@ func init() {
 		}
 		dynamic.WellKnownTypeFns = append(dynamic.WellKnownTypeFns, mFn)
 	}
+	WellKnownFns = make([]*argmapper.Func, len(WellKnownTypes))
+	copy(WellKnownFns, dynamic.WellKnownTypeFns)
+
+	totLen := len(plugincomponent.MapperFns) + len(dynamic.WellKnownTypeFns)
+	config.Mappers = make([]*argmapper.Func, totLen)
+	copy(config.Mappers, dynamic.WellKnownTypeFns)
+	copy(config.Mappers[len(dynamic.WellKnownTypeFns):totLen], plugincomponent.MapperFns)
 }
 
 type pluginMetadata interface {
