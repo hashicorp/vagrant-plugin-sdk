@@ -2,6 +2,7 @@ package funcspec
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 
 	"github.com/golang/protobuf/proto"
@@ -76,27 +77,85 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		filterProto,
 	)
 
-	// Redefine the function in terms of protobuf messages. "Redefine" changes
-	// the inputs of a function to only require values that match our filter
-	// function. In our case, that is protobuf messages.
-	f, err = f.Redefine(append(args,
-		argmapper.FilterInput(inputFilter),
-	)...)
-	if err != nil {
-		return nil, err
+	inputs := []argmapper.Value{}
+
+	// Take each input for the defined function and redefine it
+	// based on the filter to get valid proto inputs. We do this
+	// individually so that we can ensure named parameters are
+	// properly retained
+	for _, i := range f.Input().Values() {
+		// Create a function whose input and output is the same type
+		// as the current input being processed
+		set, err := argmapper.NewValueSet([]argmapper.Value{i})
+		if err != nil {
+			return nil, err
+		}
+		cb := func(in, out *argmapper.ValueSet) error { return nil }
+		inputFn, err := argmapper.BuildFunc(set, set, cb, argmapper.Logger(dynamic.Logger))
+		if err != nil {
+			return nil, err
+		}
+
+		// Now redefine the function including our input filter
+		reFn, err := inputFn.Redefine(
+			append(
+				args,
+				argmapper.FilterInput(inputFilter),
+			)...,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Collect all the inputs for the redefined function
+		// that are protos
+		reI := []argmapper.Value{}
+		for _, ri := range reFn.Input().Values() {
+			if !filterProto(ri) {
+				continue
+			}
+			reI = append(reI, ri)
+		}
+
+		// If there are no inputs, then the original function
+		// input is being satisfied by provided arguments
+		if len(reI) == 0 {
+			continue
+		}
+
+		// If we have more than one input, this is unexpected and
+		// we force an error.
+		//
+		// TODO(spox): This seems to be true for existing cases, but
+		// 			   it's easy to imagine a situation where the
+		// 			   conversion could result in extra inputs.
+		if len(reI) != 1 {
+			return nil, fmt.Errorf(
+				"expected funcspec input redefine size to be 1, got: %d (fn: %s)",
+				f.Name(),
+				len(reI),
+			)
+		}
+
+		// Grab the new input, set the name value and store as a new input
+		v := reI[0]
+		v.Name = i.Name
+		inputs = append(inputs, v)
 	}
 
 	// Grab the input set of the function and build up our funcspec
 	result := vagrant_plugin_sdk.FuncSpec{Name: f.Name()}
-	for _, v := range f.Input().Values() {
+	for _, v := range inputs {
 		if !filterProto(v) {
-			if inputFilter(v) && v.Name != "" {
-				result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
-					Name: v.Name,
-				})
-			}
 			continue
 		}
+
+		// if inputFilter(v) && v.Name != "" {
+		// 	result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
+		// 		Name: v.Name,
+		// 	})
+		// 	continue
+		// }
 
 		result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
 			Name: v.Name,
@@ -133,5 +192,6 @@ var (
 	intType          = reflect.TypeOf((*int64)(nil)).Elem()
 	cliOptType       = reflect.TypeOf((**component.CommandFlag)(nil)).Elem()
 	commandInfoType  = reflect.TypeOf((**component.CommandInfo)(nil)).Elem()
+	configDataType   = reflect.TypeOf((**component.ConfigData)(nil)).Elem()
 	interfaceType    = reflect.TypeOf((*interface{})(nil)).Elem()
 )
