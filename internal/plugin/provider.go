@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -65,18 +64,6 @@ type providerClient struct {
 
 func (c *providerClient) GetCapabilityClient() *capabilityClient {
 	return c.capabilityClient
-}
-
-func (c *providerClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
-}
-
-func (c *providerClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
-}
-
-func (c *providerClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *providerClient) UsableFunc() interface{} {
@@ -263,27 +250,6 @@ type providerServer struct {
 	*capabilityServer
 
 	Impl component.Provider
-}
-
-func (s *providerServer) ConfigStruct(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
-}
-
-func (s *providerServer) Configure(
-	ctx context.Context,
-	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*emptypb.Empty, error) {
-	return configure(s.Impl, req)
-}
-
-func (s *providerServer) Documentation(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
 }
 
 func (s *providerServer) UsableSpec(
@@ -474,7 +440,5 @@ var (
 	_ core.Provider                            = (*providerClient)(nil)
 	_ component.CapabilityPlatform             = (*providerClient)(nil)
 	_ core.CapabilityPlatform                  = (*providerClient)(nil)
-	_ component.Configurable                   = (*providerClient)(nil)
-	_ component.Documented                     = (*providerClient)(nil)
 	_ core.Seeder                              = (*providerClient)(nil)
 )
