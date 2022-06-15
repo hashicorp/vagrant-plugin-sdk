@@ -266,6 +266,20 @@ func (t *targetClient) Destroy() (err error) {
 	return
 }
 
+func (t *targetClient) Vagrantfile() (core.Vagrantfile, error) {
+	resp, err := t.client.Vagrantfile(t.Ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := t.Map(resp, (*core.Vagrantfile)(nil), argmapper.Typed(t.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(core.Vagrantfile), nil
+}
+
 // Target Server
 
 func (s *targetServer) Communicate(
@@ -630,6 +644,26 @@ func (t *targetServer) Destroy(
 ) (_ *empty.Empty, err error) {
 	err = t.Impl.Destroy()
 	return
+}
+
+func (t *targetServer) Vagrantfile(
+	ctx context.Context,
+	_ *empty.Empty,
+) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
+	v, err := t.Impl.Vagrantfile()
+	if err != nil {
+		t.Logger.Error("failed to get vagrantfile from target implementation",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	raw, err := t.Map(v, (**vagrant_plugin_sdk.Args_Vagrantfile)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(*vagrant_plugin_sdk.Args_Vagrantfile), nil
 }
 
 var (

@@ -127,20 +127,8 @@ func (p *projectClient) CWD() (dir path.Path, err error) {
 	return
 }
 
-func (p *projectClient) Config() (v *vagrant_plugin_sdk.Vagrantfile_Vagrantfile, err error) {
-	defer func() {
-		if err != nil {
-			p.Logger.Error("failed to get config",
-				"error", err,
-			)
-		}
-	}()
-	r, err := p.client.Config(p.Ctx, &emptypb.Empty{})
-	if err != nil {
-		return nil, err
-	}
-
-	return r.Vagrantfile, nil
+func (p *projectClient) Config() (v core.Vagrantfile, err error) {
+	return
 }
 
 func (p *projectClient) DataDir() (dir *datadir.Project, err error) {
@@ -421,6 +409,26 @@ func (p *projectClient) UI() (ui terminal.UI, err error) {
 	return
 }
 
+func (p *projectClient) Vagrantfile() (core.Vagrantfile, error) {
+	resp, err := p.client.Vagrantfile(p.Ctx, &emptypb.Empty{})
+	if err != nil {
+		p.Logger.Error("failed to get project vagrantfile",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	raw, err := p.Map(resp, (*core.Vagrantfile)(nil), argmapper.Typed(p.Ctx))
+	if err != nil {
+		p.Logger.Error("failed to map vagrantfile",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	return raw.(core.Vagrantfile), nil
+}
+
 func (p *projectClient) VagrantfileName() (name string, err error) {
 	defer func() {
 		if err != nil {
@@ -504,7 +512,7 @@ func (p *projectServer) Config(
 	ctx context.Context,
 	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Project_ConfigResponse, error) {
-	v, err := p.Impl.Config()
+	_, err := p.Impl.Config()
 	if err != nil {
 		p.Logger.Error("failed to get config",
 			"error", err,
@@ -513,7 +521,7 @@ func (p *projectServer) Config(
 	}
 
 	return &vagrant_plugin_sdk.Project_ConfigResponse{
-		Vagrantfile: v,
+		//Vagrantfile: v,
 	}, nil
 }
 
@@ -806,6 +814,28 @@ func (p *projectServer) UI(
 	}
 
 	return
+}
+
+func (p *projectServer) Vagrantfile(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
+	v, err := p.Impl.Vagrantfile()
+	if err != nil {
+		p.Logger.Error("failed to get vagrantfile from implementation",
+			"error", err,
+		)
+		return nil, err
+	}
+	raw, err := p.Map(v, (**vagrant_plugin_sdk.Args_Vagrantfile)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		p.Logger.Error("failed to map vagrantfile",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	return raw.(*vagrant_plugin_sdk.Args_Vagrantfile), nil
 }
 
 func (p *projectServer) VagrantfileName(
