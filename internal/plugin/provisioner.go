@@ -68,7 +68,7 @@ func (c *provisionerClient) CleanupFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *provisionerClient) Cleanup(machine core.Machine, config core.ProvisionerConfig) error {
+func (c *provisionerClient) Cleanup(machine core.Machine, config *component.ConfigData) error {
 	f := c.CleanupFunc()
 
 	_, err := c.CallDynamicFunc(f, false,
@@ -97,7 +97,7 @@ func (c *provisionerClient) ConfigureFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *provisionerClient) Configure(machine core.Machine, config core.ProvisionerConfig, rootConfig core.Vagrantfile) error {
+func (c *provisionerClient) Configure(machine core.Machine, config, rootConfig *component.ConfigData) error {
 	f := c.CleanupFunc()
 
 	_, err := c.CallDynamicFunc(f, false,
@@ -127,7 +127,7 @@ func (c *provisionerClient) ProvisionFunc() interface{} {
 	return c.GenerateFunc(spec, cb)
 }
 
-func (c *provisionerClient) Provision(machine core.Machine, config core.ProvisionerConfig) error {
+func (c *provisionerClient) Provision(machine core.Machine, config *component.ConfigData) error {
 	f := c.ProvisionFunc()
 
 	_, err := c.CallDynamicFunc(f, false,
