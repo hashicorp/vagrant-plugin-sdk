@@ -10,8 +10,9 @@ type CleanupFn func() error
 
 // Cleanup is an interface for registering cleanup functions
 type Cleanup interface {
-	Do(CleanupFn) // registers a cleanup function
-	Close() error // executes registered cleanup functions
+	Prepend(CleanupFn) // registers a cleanup function at start of current cleanup stack
+	Do(CleanupFn)      // registers a cleanup function at the end of the current cleanup stack
+	Close() error      // executes registered cleanup functions
 }
 
 // Create a new cleanup instance
@@ -22,9 +23,8 @@ func New() Cleanup {
 }
 
 type cleanup struct {
-	fns  []CleanupFn
-	l    sync.Mutex
-	mark bool
+	fns []CleanupFn
+	l   sync.Mutex
 }
 
 // Register a new cleanup task to be performed on close
@@ -34,6 +34,16 @@ func (c *cleanup) Do(fn CleanupFn) {
 	defer c.l.Unlock()
 
 	c.fns = append(c.fns, fn)
+}
+
+func (c *cleanup) Prepend(fn CleanupFn) {
+	c.l.Lock()
+	defer c.l.Unlock()
+
+	fns := make([]CleanupFn, len(c.fns)+1)
+	fns[0] = fn
+	copy(fns[1:], c.fns)
+	c.fns = fns
 }
 
 // Run all cleanup tasks
@@ -49,9 +59,6 @@ func (c *cleanup) Close() (err error) {
 
 	// Remove cleanup tasks as they have been called
 	c.fns = []CleanupFn{}
-
-	// Set the mark to show close has been called
-	c.mark = true
 
 	return
 }
