@@ -19,7 +19,7 @@ import (
 )
 
 type parser interface {
-	ParseVagrantfile(string) (*vagrant_plugin_sdk.Vagrantfile_Serialized, error)
+	ParseVagrantfile(string) (*vagrant_plugin_sdk.Args_Hash, error)
 }
 
 type VagrantfileFormat uint8
@@ -37,12 +37,13 @@ func LoadRubyVagrantfile(
 	p path.Path, // path to Ruby Vagrantfile
 	rubyRuntime parser, // ruby runtime plugin
 ) (*Vagrantfile, error) {
-	s, err := rubyRuntime.ParseVagrantfile(p.String())
-	if err != nil {
-		return nil, err
-	}
+	return nil, fmt.Errorf("not implemented")
+	// s, err := rubyRuntime.ParseVagrantfile(p.String())
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return LoadVagrantfile(s.Json, p.String(), JSON)
+	// return LoadVagrantfile(s.Json, p.String(), JSON)
 }
 
 // Load Vagrant configuration using an HCL based Vagrantfile
