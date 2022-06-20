@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
