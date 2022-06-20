@@ -1700,7 +1700,7 @@ service DownloaderService {
   rpc SetPluginName(PluginInfo.Name) returns (google.protobuf.Empty);
   rpc PluginName(google.protobuf.Empty) returns (PluginInfo.Name);
 
-  rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResp);
-  rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
-  rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
+  // rpc ConfigStruct(google.protobuf.Empty) returns (Config.StructResponse);
+  // rpc Configure(Config.ConfigureRequest) returns (google.protobuf.Empty);
+  // rpc Documentation(google.protobuf.Empty) returns (Config.Documentation);
 }
