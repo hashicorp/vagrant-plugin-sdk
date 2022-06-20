@@ -311,7 +311,6 @@ func (b *BaseClient) GenerateContext(ctx context.Context) (context.Context, cont
 
 // Close the client and perform any required cleanup
 func (b *BaseClient) Close() error {
-	b.Logger.Warn("received close request for plugin client")
 	return b.Cleanup.Close()
 }
 
