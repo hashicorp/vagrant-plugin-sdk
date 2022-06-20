@@ -62,14 +62,45 @@ type vagrantfileServer struct {
 func (v *vagrantfileClient) Target(
 	name, provider string,
 ) (machine core.Target, err error) {
-	return
+	resp, err := v.client.Target(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_TargetRequest{
+			Name:     name,
+			Provider: provider,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := v.Map(resp, (*core.Target)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(core.Target), nil
 }
 
 func (v *vagrantfileClient) TargetConfig(
 	name, provider string,
 	validateProvider bool,
 ) (config core.Vagrantfile, err error) {
-	return
+	resp, err := v.client.TargetConfig(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_TargetConfigRequest{
+			Name:             name,
+			Provider:         provider,
+			ValidateProvider: validateProvider,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := v.Map(resp, (*core.Vagrantfile)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(core.Vagrantfile), nil
 }
 
 func (v *vagrantfileClient) TargetNames() ([]string, error) {
