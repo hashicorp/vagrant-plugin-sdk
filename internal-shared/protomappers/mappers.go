@@ -2621,6 +2621,13 @@ func VagrantfileProto(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
+	rid := fmt.Sprintf("%p", v)
+	if av := internal.Cache().Get(rid); av != nil {
+		log.Trace("using cache vagrantfile value",
+			"value", av,
+		)
+		return av.(*vagrant_plugin_sdk.Args_Vagrantfile), nil
+	}
 	bp := &plugincore.VagrantfilePlugin{
 		BasePlugin: basePlugin(v, internal),
 		Impl:       v,
@@ -2631,11 +2638,19 @@ func VagrantfileProto(
 		return nil, err
 	}
 
-	return &vagrant_plugin_sdk.Args_Vagrantfile{
+	proto := &vagrant_plugin_sdk.Args_Vagrantfile{
 		StreamId: id,
 		Network:  ep.Network(),
 		Addr:     ep.String(),
-	}, nil
+	}
+
+	log.Trace("registering vagrantfile proto to cache",
+		"rid", rid,
+		"proto", proto,
+	)
+	internal.Cache().Register(rid, proto)
+
+	return proto, nil
 }
 
 func Vagrantfile(
