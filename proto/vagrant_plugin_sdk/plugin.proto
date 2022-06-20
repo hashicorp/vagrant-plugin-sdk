@@ -314,6 +314,14 @@ message Args {
     int32 end = 2;
   }
 
+  message RubyLogger {
+    string name = 1;
+  }
+
+  message Set {
+    Args.Array list = 1;
+  }
+
   message Options {
     Hash options = 1;
   }
