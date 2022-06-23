@@ -58,11 +58,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1654285951,
-        "narHash": "sha256-qGPeTemUhsaX8afhsCpx4nHniYysyGiteCQ25JLHGFk=",
+        "lastModified": 1655127775,
+        "narHash": "sha256-CTdDPAbp/a4aziSbk8Liwt5iJfOHwrHALJL6aEFAMcQ=",
         "owner": "hashicorp",
         "repo": "vagrant-ruby",
-        "rev": "7341d41c014155e43899028dd2fe16b08f0328ca",
+        "rev": "708b688b3fe1ac5201f6a3dcd21d489c4be69851",
         "type": "github"
       },
       "original": {
