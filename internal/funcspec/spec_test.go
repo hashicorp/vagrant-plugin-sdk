@@ -69,20 +69,6 @@ func TestSpec(t *testing.T) {
 		require.NotNil(spec)
 	})
 
-	t.Run("WithOutput proto to int", func(t *testing.T) {
-		require := require.New(t)
-
-		spec, err := Spec(func(*empty.Empty) int { return 0 },
-			argmapper.FilterOutput(argmapper.FilterType(reflect.TypeOf(int(0)))),
-		)
-		require.NoError(err)
-		require.NotNil(spec)
-		require.Len(spec.Args, 1)
-		require.Empty(spec.Args[0].Name)
-		require.Equal("google.protobuf.Empty", spec.Args[0].Type)
-		require.Empty(spec.Result)
-	})
-
 	t.Run("WithOutput proto to interface, doesn't implement", func(t *testing.T) {
 		require := require.New(t)
 
@@ -91,20 +77,6 @@ func TestSpec(t *testing.T) {
 		)
 		require.Error(err)
 		require.Nil(spec)
-	})
-
-	t.Run("WithOutput proto to interface", func(t *testing.T) {
-		require := require.New(t)
-
-		spec, err := Spec(func(*empty.Empty) *testSpecInterfaceImpl { return nil },
-			argmapper.FilterOutput(argmapper.FilterType(reflect.TypeOf((*testSpecInterface)(nil)).Elem())),
-		)
-		require.NoError(err)
-		require.NotNil(spec)
-		require.Len(spec.Args, 1)
-		require.Empty(spec.Args[0].Name)
-		require.Equal("google.protobuf.Empty", spec.Args[0].Type)
-		require.Empty(spec.Result)
 	})
 
 	t.Run("args as extra values", func(t *testing.T) {
