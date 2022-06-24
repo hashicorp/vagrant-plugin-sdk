@@ -2,11 +2,12 @@ package core
 
 import (
 	"context"
-	"errors"
 
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
@@ -114,10 +115,9 @@ func (b *boxCollectionClient) Clean(name string) (err error) {
 
 func (b *boxCollectionClient) Find(name string, version string, providers ...string) (box core.Box, err error) {
 	defer func() {
-		if err != nil {
-			b.Logger.Error("failed to find box",
-				"error", err,
-			)
+		// Log errors, but not NotFound errors which happen during normal operations
+		if err != nil && (status.Convert(err).Code() != codes.NotFound) {
+			b.Logger.Error("failed to find box", "error", err)
 		}
 	}()
 
@@ -217,10 +217,9 @@ func (b *boxCollectionServer) Find(
 	ctx context.Context, in *vagrant_plugin_sdk.BoxCollection_FindRequest,
 ) (r *vagrant_plugin_sdk.Args_Box, err error) {
 	defer func() {
-		if err != nil {
-			b.Logger.Error("failed to find box",
-				"error", err,
-			)
+		// Log errors, but not NotFound errors which happen during normal operations
+		if err != nil && (status.Convert(err).Code() != codes.NotFound) {
+			b.Logger.Error("failed to find box", "error", err)
 		}
 	}()
 
@@ -231,7 +230,7 @@ func (b *boxCollectionServer) Find(
 		return
 	}
 	if box == nil {
-		return nil, errors.New("no box found")
+		return nil, status.New(codes.NotFound, "no box found").Err()
 	}
 	boxProto, err := b.Map(
 		box, (**vagrant_plugin_sdk.Args_Box)(nil), argmapper.Typed(ctx),
