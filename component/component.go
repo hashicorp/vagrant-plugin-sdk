@@ -236,6 +236,15 @@ type ConfigData struct {
 	Data   map[string]interface{} // Configuration data
 }
 
+type ConfigMerge struct {
+	Base    *ConfigData
+	Overlay *ConfigData
+}
+
+type ConfigFinalize struct {
+	Config *ConfigData
+}
+
 type Config interface {
 	Register() (*ConfigRegistration, error)
 	// Defines the structure of the supported configuration

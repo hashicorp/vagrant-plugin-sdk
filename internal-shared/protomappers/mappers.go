@@ -120,6 +120,10 @@ var All = []interface{}{
 	CommunicatorProto,
 	ConfigData,
 	ConfigDataProto,
+	ConfigMerge,
+	ConfigMergeProto,
+	ConfigFinalize,
+	ConfigFinalizeProto,
 	DatadirBasis,
 	DatadirBasisProto,
 	DatadirProject,
@@ -844,6 +848,80 @@ func ConfigDataProto(
 		Source: &vagrant_plugin_sdk.Args_Class{
 			Name: input.Source,
 		},
+	}, nil
+}
+
+func ConfigMerge(
+	input *vagrant_plugin_sdk.Config_Merge,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*component.ConfigMerge, error) {
+	base, err := ConfigData(input.Base, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	overlay, err := ConfigData(input.Overlay, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &component.ConfigMerge{
+		Base:    base,
+		Overlay: overlay,
+	}, nil
+}
+
+func ConfigMergeProto(
+	input *component.ConfigMerge,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Config_Merge, error) {
+	base, err := ConfigDataProto(input.Base, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	overlay, err := ConfigDataProto(input.Overlay, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Config_Merge{
+		Base:    base,
+		Overlay: overlay,
+	}, nil
+}
+
+func ConfigFinalize(
+	input *vagrant_plugin_sdk.Config_Finalize,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*component.ConfigFinalize, error) {
+	data, err := ConfigData(input.Config, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &component.ConfigFinalize{
+		Config: data,
+	}, nil
+}
+
+func ConfigFinalizeProto(
+	input *component.ConfigFinalize,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Config_Finalize, error) {
+	data, err := ConfigDataProto(input.Config, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Config_Finalize{
+		Config: data,
 	}, nil
 }
 

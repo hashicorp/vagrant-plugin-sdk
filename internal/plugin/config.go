@@ -109,7 +109,7 @@ func (c *configClient) MergeFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (*component.ConfigData, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Args_ConfigData, error) {
 		ctx, _ = c.GenerateContext(ctx)
 		result, err := c.client.Merge(
 			ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -117,11 +117,8 @@ func (c *configClient) MergeFunc() interface{} {
 		if err != nil {
 			return nil, err
 		}
-		raw, err := c.Map(result, (**component.ConfigData)(nil), argmapper.Typed(ctx))
-		if err != nil {
-			return nil, err
-		}
-		return raw.(*component.ConfigData), err
+
+		return result, nil
 	}
 
 	return c.GenerateFunc(spec, cb)
@@ -129,28 +126,13 @@ func (c *configClient) MergeFunc() interface{} {
 
 func (c *configClient) Merge(base, toMerge *component.ConfigData) (*component.ConfigData, error) {
 	f := c.MergeFunc()
-	rb, err := c.Map(
-		base, (**vagrant_plugin_sdk.Args_ConfigData)(nil), argmapper.Typed(c.Ctx),
-	)
-	if err != nil {
-		c.Logger.Error("failed to convert base to proto",
-			"error", err,
-		)
-	}
-
-	tb, err := c.Map(
-		toMerge, (**vagrant_plugin_sdk.Args_ConfigData)(nil), argmapper.Typed(c.Ctx),
-	)
-	if err != nil {
-		c.Logger.Error("failed to convert base to proto",
-			"error", err,
-		)
+	m := &component.ConfigMerge{
+		Base:    base,
+		Overlay: toMerge,
 	}
 
 	raw, err := c.CallDynamicFunc(f, (**component.ConfigData)(nil),
-		argmapper.Typed(c.Ctx),
-		argmapper.Named("Base", rb),
-		argmapper.Named("ToMerge", tb),
+		argmapper.Typed(c.Ctx, m),
 	)
 	if err != nil {
 		return nil, err
@@ -165,7 +147,7 @@ func (c *configClient) FinalizeFunc() interface{} {
 		return funcErr(err)
 	}
 	spec.Result = nil
-	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Config_FinalizeResponse, error) {
+	cb := func(ctx context.Context, args funcspec.Args) (*vagrant_plugin_sdk.Args_ConfigData, error) {
 		ctx, _ = c.GenerateContext(ctx)
 		resp, err := c.client.Finalize(
 			ctx, &vagrant_plugin_sdk.FuncSpec_Args{Args: args},
@@ -181,15 +163,8 @@ func (c *configClient) FinalizeFunc() interface{} {
 
 func (c *configClient) Finalize(data *component.ConfigData) (*component.ConfigData, error) {
 	f := c.FinalizeFunc()
-	r, err := c.CallDynamicFunc(f, (**vagrant_plugin_sdk.Config_FinalizeResponse)(nil),
-		argmapper.Typed(data, c.Ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := c.Map(r.(*vagrant_plugin_sdk.Config_FinalizeResponse).Data, (**component.ConfigData)(nil),
-		argmapper.Typed(c.Ctx),
-	)
+	raw, err := c.CallDynamicFunc(f, (**component.ConfigData)(nil),
+		argmapper.Typed(&component.ConfigFinalize{Config: data}, c.Ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -355,13 +330,17 @@ func (s *configServer) Merge(
 		"args", hclog.Fmt("%#v", req.Args),
 	)
 	raw, err := s.CallDynamicFunc(s.Impl.MergeFunc(),
-		(**vagrant_plugin_sdk.Args_ConfigData)(nil), req.Args, argmapper.Typed(ctx)) //, argmapper.Dot())
+		(**vagrant_plugin_sdk.Args_ConfigData)(nil), req.Args, argmapper.Typed(ctx))
 	if err != nil {
 		s.Logger.Error("failed to merge config",
 			"error", err,
 		)
 		return nil, err
 	}
+
+	s.Logger.Info("result of config mrege on go config plugin",
+		"config", hclog.Fmt("%#v", raw.(*vagrant_plugin_sdk.Args_ConfigData).Data),
+	)
 
 	return raw.(*vagrant_plugin_sdk.Args_ConfigData), nil
 }
@@ -388,13 +367,17 @@ func (s *configServer) FinalizeSpec(
 		)
 	}
 
+	s.Logger.Info("finalize spec generated for config",
+		"spec", hclog.Fmt("%#v", result),
+	)
+
 	return
 }
 
 func (s *configServer) Finalize(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.FuncSpec_Args,
-) (result *vagrant_plugin_sdk.Config_FinalizeResponse, err error) {
+) (result *vagrant_plugin_sdk.Args_ConfigData, err error) {
 	defer func() {
 		if err != nil {
 			s.Logger.Error("failed to finalize config",
@@ -419,9 +402,7 @@ func (s *configServer) Finalize(
 		return
 	}
 
-	return &vagrant_plugin_sdk.Config_FinalizeResponse{
-		Data: raw.(*vagrant_plugin_sdk.Args_ConfigData),
-	}, nil
+	return raw.(*vagrant_plugin_sdk.Args_ConfigData), nil
 }
 
 var (

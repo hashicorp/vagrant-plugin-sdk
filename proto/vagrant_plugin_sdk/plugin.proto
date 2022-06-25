@@ -859,20 +859,22 @@ message Communicator {
 //       is accepted, with documentation.
 //
 message Config {
+  message Merge {
+    Args.ConfigData base = 1;
+    Args.ConfigData overlay = 2;
+  }
+
+  message Finalize {
+    Args.ConfigData config = 1;
+  }
+
+
   message Fields {
     repeated string fields = 1;
   }
 
   message Structure {
     protostructure.Struct struct = 1;
-  }
-
-  // message Content {
-  //   Args.Hash data = 1;
-  // }
-
-  message FinalizeResponse {
-    Args.ConfigData data = 1;
   }
 
   message RawRubyValue {
@@ -938,7 +940,7 @@ service ConfigService {
   rpc MergeSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Merge(FuncSpec.Args) returns (Args.ConfigData);
   rpc FinalizeSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Finalize(FuncSpec.Args) returns (Config.FinalizeResponse);
+  rpc Finalize(FuncSpec.Args) returns (Args.ConfigData);
 
   rpc Register(google.protobuf.Empty) returns (Config.RegisterResponse);
 
