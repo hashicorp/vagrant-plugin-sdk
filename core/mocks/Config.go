@@ -4,6 +4,7 @@ package mocks
 
 import (
 	component "github.com/hashicorp/vagrant-plugin-sdk/component"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -12,36 +13,50 @@ type Config struct {
 	mock.Mock
 }
 
-// FinalizeFunc provides a mock function with given fields:
-func (_m *Config) FinalizeFunc() interface{} {
-	ret := _m.Called()
+// Finalize provides a mock function with given fields: _a0
+func (_m *Config) Finalize(_a0 *component.ConfigData) (*component.ConfigData, error) {
+	ret := _m.Called(_a0)
 
-	var r0 interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
-		r0 = rf()
+	var r0 *component.ConfigData
+	if rf, ok := ret.Get(0).(func(*component.ConfigData) *component.ConfigData); ok {
+		r0 = rf(_a0)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(interface{})
+			r0 = ret.Get(0).(*component.ConfigData)
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*component.ConfigData) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
-// MergeFunc provides a mock function with given fields:
-func (_m *Config) MergeFunc() interface{} {
-	ret := _m.Called()
+// Merge provides a mock function with given fields: base, toMerge
+func (_m *Config) Merge(base *component.ConfigData, toMerge *component.ConfigData) (*component.ConfigData, error) {
+	ret := _m.Called(base, toMerge)
 
-	var r0 interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
-		r0 = rf()
+	var r0 *component.ConfigData
+	if rf, ok := ret.Get(0).(func(*component.ConfigData, *component.ConfigData) *component.ConfigData); ok {
+		r0 = rf(base, toMerge)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(interface{})
+			r0 = ret.Get(0).(*component.ConfigData)
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*component.ConfigData, *component.ConfigData) error); ok {
+		r1 = rf(base, toMerge)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Register provides a mock function with given fields:
@@ -67,8 +82,8 @@ func (_m *Config) Register() (*component.ConfigRegistration, error) {
 	return r0, r1
 }
 
-// StructFunc provides a mock function with given fields:
-func (_m *Config) StructFunc() interface{} {
+// Struct provides a mock function with given fields:
+func (_m *Config) Struct() (interface{}, error) {
 	ret := _m.Called()
 
 	var r0 interface{}
@@ -80,7 +95,14 @@ func (_m *Config) StructFunc() interface{} {
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 type NewConfigT interface {

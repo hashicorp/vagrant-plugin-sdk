@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -52,18 +51,6 @@ type commandClient struct {
 	*BaseClient
 
 	client vagrant_plugin_sdk.CommandServiceClient
-}
-
-func (c *commandClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
-}
-
-func (c *commandClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
-}
-
-func (c *commandClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *commandClient) CommandInfoFunc() interface{} {
@@ -137,27 +124,6 @@ type commandServer struct {
 
 	Impl component.Command
 	vagrant_plugin_sdk.UnsafeCommandServiceServer
-}
-
-func (s *commandServer) ConfigStruct(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
-}
-
-func (s *commandServer) Configure(
-	ctx context.Context,
-	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*emptypb.Empty, error) {
-	return configure(s.Impl, req)
-}
-
-func (s *commandServer) Documentation(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
 }
 
 func (s *commandServer) CommandInfoSpec(

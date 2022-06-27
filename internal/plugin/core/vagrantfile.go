@@ -3,12 +3,14 @@ package core
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+	//	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -57,20 +59,83 @@ type vagrantfileServer struct {
 	vagrant_plugin_sdk.UnimplementedVagrantfileServiceServer
 }
 
-func (v *vagrantfileClient) Target(name, provider string, boxes core.BoxCollection, dataPath path.Path, project core.Project) (machine core.Machine, err error) {
-	return
+func (v *vagrantfileClient) Target(
+	name, provider string,
+) (machine core.Target, err error) {
+	resp, err := v.client.Target(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_TargetRequest{
+			Name:     name,
+			Provider: provider,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := v.Map(resp, (*core.Target)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(core.Target), nil
 }
 
-func (v *vagrantfileClient) TargetConfig(name, provider string, boxes core.BoxCollection, dataPath path.Path, validateProvider bool) (config core.MachineConfig, err error) {
-	return
+func (v *vagrantfileClient) TargetConfig(
+	name, provider string,
+	validateProvider bool,
+) (config core.Vagrantfile, err error) {
+	resp, err := v.client.TargetConfig(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_TargetConfigRequest{
+			Name:             name,
+			Provider:         provider,
+			ValidateProvider: validateProvider,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := v.Map(resp, (*core.Vagrantfile)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(core.Vagrantfile), nil
 }
 
-func (v *vagrantfileClient) TargetNames() (names []string, err error) {
-	return
+func (v *vagrantfileClient) TargetNames() ([]string, error) {
+	resp, err := v.client.TargetNames(v.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Names, nil
 }
 
-func (v *vagrantfileClient) PrimaryTargetName() (name string, err error) {
-	return
+func (v *vagrantfileClient) PrimaryTargetName() (string, error) {
+	resp, err := v.client.PrimaryTargetName(v.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return "", err
+	}
+
+	return resp.Name, nil
+}
+
+func (v *vagrantfileClient) GetConfig(namespace string) (*component.ConfigData, error) {
+	resp, err := v.client.GetConfig(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_NamespaceRequest{
+			Namespace: namespace,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	raw, err := v.Map(resp, (**component.ConfigData)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(*component.ConfigData), nil
 }
 
 // Server
@@ -78,29 +143,100 @@ func (v *vagrantfileClient) PrimaryTargetName() (name string, err error) {
 func (v *vagrantfileServer) Target(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Vagrantfile_TargetRequest,
-) (*vagrant_plugin_sdk.Vagrantfile_TargetResponse, error) {
-	return nil, nil
+) (*vagrant_plugin_sdk.Args_Target, error) {
+	t, err := v.Impl.Target(req.Name, req.Provider)
+	if err != nil {
+		v.Logger.Error("failed to get target from implementation",
+			"error", err,
+		)
+
+		return nil, err
+	}
+
+	raw, err := v.Map(t, (**vagrant_plugin_sdk.Args_Target)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(*vagrant_plugin_sdk.Args_Target), nil
 }
 
 func (v *vagrantfileServer) TargetConfig(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.Vagrantfile_TargetConfigRequest,
-) (*vagrant_plugin_sdk.Vagrantfile_TargetConfigResponse, error) {
-	return nil, nil
+) (*vagrant_plugin_sdk.Args_Vagrantfile, error) {
+	vf, err := v.Impl.TargetConfig(req.Name, req.Provider, req.ValidateProvider)
+	if err != nil {
+		v.Logger.Error("failed to get target config from implementation",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	raw, err := v.Map(vf, (**vagrant_plugin_sdk.Args_Vagrantfile)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		v.Logger.Error("failed to map vagrantfile for config response",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	return raw.(*vagrant_plugin_sdk.Args_Vagrantfile), nil
 }
 
 func (v *vagrantfileServer) TargetNames(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Vagrantfile_TargetNamesResponse, error) {
-	return nil, nil
+	n, err := v.Impl.TargetNames()
+	if err != nil {
+		v.Logger.Error("failed to get target names from implementation",
+			"error", err,
+		)
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Vagrantfile_TargetNamesResponse{
+		Names: n,
+	}, nil
 }
 
 func (v *vagrantfileServer) PrimaryTargetName(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (*vagrant_plugin_sdk.Vagrantfile_PrimaryTargetNameResponse, error) {
-	return nil, nil
+	n, err := v.Impl.PrimaryTargetName()
+	if err != nil {
+		v.Logger.Error("failed to get primary target name from implementation",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Vagrantfile_PrimaryTargetNameResponse{
+		Name: n,
+	}, nil
+}
+
+func (v *vagrantfileServer) GetConfig(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Vagrantfile_NamespaceRequest,
+) (*vagrant_plugin_sdk.Args_ConfigData, error) {
+	c, err := v.Impl.GetConfig(req.Namespace)
+	if err != nil {
+		v.Logger.Error("failed to get config from implementation",
+			"namespace", req.Namespace,
+			"error", err,
+		)
+		return nil, err
+	}
+	raw, err := v.Map(c, (**vagrant_plugin_sdk.Args_ConfigData)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		v.Logger.Error("failed to map config data",
+			"error", err,
+		)
+		return nil, err
+	}
+	return raw.(*vagrant_plugin_sdk.Args_ConfigData), nil
 }
 
 var (

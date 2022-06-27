@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/funcspec"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -65,18 +64,6 @@ type guestClient struct {
 
 func (c *guestClient) GetCapabilityClient() *capabilityClient {
 	return c.capabilityClient
-}
-
-func (c *guestClient) Config() (interface{}, error) {
-	return configStructCall(c.Ctx, c.client)
-}
-
-func (c *guestClient) ConfigSet(v interface{}) error {
-	return configureCall(c.Ctx, c.client, v)
-}
-
-func (c *guestClient) Documentation() (*docs.Documentation, error) {
-	return documentationCall(c.Ctx, c.client)
 }
 
 func (c *guestClient) GuestDetectFunc() interface{} {
@@ -145,27 +132,6 @@ type guestServer struct {
 	*capabilityServer
 
 	Impl component.Guest
-}
-
-func (s *guestServer) ConfigStruct(
-	ctx context.Context,
-	empty *empty.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
-}
-
-func (s *guestServer) Configure(
-	ctx context.Context,
-	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*empty.Empty, error) {
-	return configure(s.Impl, req)
-}
-
-func (s *guestServer) Documentation(
-	ctx context.Context,
-	empty *empty.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
 }
 
 func (s *guestServer) DetectSpec(

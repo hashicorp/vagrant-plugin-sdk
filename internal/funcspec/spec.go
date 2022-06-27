@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/go-argmapper"
+	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -46,21 +47,9 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		return nil, status.Errorf(codes.Unimplemented, "required plugin type not implemented")
 	}
 
-	filterProto := argmapper.FilterType(protoMessageType)
-
-	outputFilter := argmapper.FilterOr(
-		filterProto,
-		argmapper.FilterType(boolType),
-		argmapper.FilterType(stringType),
-		argmapper.FilterType(intType),
-		argmapper.FilterType(cliOptType),
-		argmapper.FilterType(commandInfoType),
-		argmapper.FilterType(interfaceType),
-	)
-	// Copy our args cause we're going to use append() and we don't
-	// want to modify our caller.
 	args = append([]argmapper.Arg{
-		argmapper.FilterOutput(outputFilter),
+		argmapper.FilterInput(filterAllowedInputTypes),
+		//		argmapper.FilterOutput(filterAllowedOutputTypes),
 	}, args...)
 
 	// Build our function
@@ -70,38 +59,49 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 		return nil, err
 	}
 
-	inputFilter := argmapper.FilterOr(
-		argmapper.FilterType(contextType),
-		argmapper.FilterType(stringType),
-		filterProto,
-	)
-
-	// Redefine the function in terms of protobuf messages. "Redefine" changes
-	// the inputs of a function to only require values that match our filter
-	// function. In our case, that is protobuf messages.
-	f, err = f.Redefine(append(args,
-		argmapper.FilterInput(inputFilter),
-	)...)
-	if err != nil {
-		return nil, err
-	}
-
 	// Grab the input set of the function and build up our funcspec
 	result := vagrant_plugin_sdk.FuncSpec{Name: f.Name()}
-	for _, v := range f.Input().Values() {
-		if !filterProto(v) {
-			if inputFilter(v) && v.Name != "" {
-				result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
-					Name: v.Name,
-				})
-			}
-			continue
+	// Take each input for the defined function and redefine it
+	// based on the filter to get valid proto inputs. We do this
+	// individually so that we can ensure named parameters are
+	// properly retained
+	for _, i := range f.Input().Values() {
+		// Create a function whose input and output is the same type
+		// as the current input being processed
+		set, err := argmapper.NewValueSet([]argmapper.Value{i})
+		if err != nil {
+			return nil, err
+		}
+		cb := func(in, out *argmapper.ValueSet) error { return nil }
+		inputFn, err := argmapper.BuildFunc(set, set, cb,
+			argmapper.Logger(dynamic.Logger))
+		if err != nil {
+			return nil, err
 		}
 
-		result.Args = append(result.Args, &vagrant_plugin_sdk.FuncSpec_Value{
-			Name: v.Name,
-			Type: typeToMessage(v.Type),
-		})
+		// Now redefine the function with our input and output
+		// filters included
+		reFn, err := inputFn.Redefine(args...)
+		if err != nil {
+			return nil, err
+		}
+
+		// Collect all the inputs for the redefined function
+		// that are protos
+		for _, reVal := range reFn.Input().Values() {
+			if !filterProto(reVal) {
+				continue
+			}
+			// Set the name on the value. If extra values are
+			// required, the name won't have an impact as it
+			// will fallback to a typed match
+			result.Args = append(result.Args,
+				&vagrant_plugin_sdk.FuncSpec_Value{
+					Name: i.Name,
+					Type: typeToMessage(reVal.Type),
+				},
+			)
+		}
 	}
 
 	// Grab the output set and store that
@@ -126,12 +126,22 @@ func typeToMessage(typ reflect.Type) string {
 }
 
 var (
-	contextType      = reflect.TypeOf((*context.Context)(nil)).Elem()
-	protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
-	boolType         = reflect.TypeOf((*bool)(nil)).Elem()
-	stringType       = reflect.TypeOf((*string)(nil)).Elem()
-	intType          = reflect.TypeOf((*int64)(nil)).Elem()
-	cliOptType       = reflect.TypeOf((**component.CommandFlag)(nil)).Elem()
-	commandInfoType  = reflect.TypeOf((**component.CommandInfo)(nil)).Elem()
-	interfaceType    = reflect.TypeOf((*interface{})(nil)).Elem()
+	filterAllowedInputTypes = argmapper.FilterOr(
+		argmapper.FilterType(reflect.TypeOf((*context.Context)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*proto.Message)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*string)(nil)).Elem()),
+	)
+
+	filterAllowedOutputTypes = argmapper.FilterOr(
+		argmapper.FilterType(reflect.TypeOf((*proto.Message)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*bool)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*string)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*int64)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((**component.CommandFlag)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((**component.CommandInfo)(nil)).Elem()),
+		argmapper.FilterType(reflect.TypeOf((*hclog.Logger)(nil)).Elem()),
+		//		argmapper.FilterType(reflect.TypeOf((*interface{})(nil)).Elem()),
+	)
+
+	filterProto = argmapper.FilterType(reflect.TypeOf((*proto.Message)(nil)).Elem())
 )

@@ -1,9 +1,10 @@
 package cacher
 
 type Cache interface {
-	Register(key string, value interface{})
+	Fetch(key string) (interface{}, bool)
 	Get(key string) interface{}
 	Keys() []string
+	Register(key string, value interface{})
 	Values() []interface{}
 }
 
@@ -24,6 +25,11 @@ type cache struct {
 
 func (c *cache) Register(key string, value interface{}) {
 	c.registry[key] = value
+}
+
+func (c *cache) Fetch(key string) (interface{}, bool) {
+	v, ok := c.registry[key]
+	return v, ok
 }
 
 func (c *cache) Get(key string) interface{} {

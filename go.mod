@@ -10,6 +10,7 @@ require (
 	github.com/containerd/console v1.0.1
 	github.com/creack/pty v1.1.11
 	github.com/fatih/color v1.9.0
+	github.com/fatih/structs v1.1.0
 	github.com/golang/protobuf v1.4.2
 	github.com/hashicorp/go-argmapper v0.2.3
 	github.com/hashicorp/go-hclog v0.14.1

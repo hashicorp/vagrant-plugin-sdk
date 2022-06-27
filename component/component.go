@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/hashicorp/vagrant-plugin-sdk/docs"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
 
@@ -102,7 +101,7 @@ func FindComponent(name string) (interface{}, error) {
 }
 
 func FindType(name string) (Type, error) {
-	for k, _ := range TypeMap {
+	for k := range TypeMap {
 		if k.String() == name ||
 			strings.ToLower(k.String()) == name ||
 			strings.ToLower(k.String()) == strings.ReplaceAll(name, "_", "") {
@@ -227,9 +226,33 @@ type Command interface {
 	CommandInfoFunc() interface{}
 }
 
+type ConfigRegistration struct {
+	Identifier string // Identifier used within Vagrantfile
+	Scope      string // Optional scope (provider, provisioner, etc)
+}
+
+type ConfigData struct {
+	Source string                 // Only used within Ruby runtime
+	Data   map[string]interface{} // Configuration data
+}
+
+type ConfigMerge struct {
+	Base    *ConfigData
+	Overlay *ConfigData
+}
+
+type ConfigFinalize struct {
+	Config *ConfigData
+}
+
 type Config interface {
-	Config() (interface{}, error)
-	Documentation() (*docs.Documentation, error)
+	Register() (*ConfigRegistration, error)
+	// Defines the structure of the supported configuration
+	StructFunc() interface{}
+	// Merge configuration
+	MergeFunc() interface{}
+	// Return finalized configuration data
+	FinalizeFunc() interface{}
 }
 
 type ComponentWithOptions struct {

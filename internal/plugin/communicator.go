@@ -384,27 +384,6 @@ type communicatorServer struct {
 	vagrant_plugin_sdk.UnsafeCommunicatorServiceServer
 }
 
-func (s *communicatorServer) ConfigStruct(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_StructResp, error) {
-	return configStruct(s.Impl)
-}
-
-func (s *communicatorServer) Configure(
-	ctx context.Context,
-	req *vagrant_plugin_sdk.Config_ConfigureRequest,
-) (*emptypb.Empty, error) {
-	return configure(s.Impl, req)
-}
-
-func (s *communicatorServer) Documentation(
-	ctx context.Context,
-	empty *emptypb.Empty,
-) (*vagrant_plugin_sdk.Config_Documentation, error) {
-	return documentation(s.Impl)
-}
-
 func (s *communicatorServer) MatchSpec(
 	ctx context.Context,
 	args *emptypb.Empty,

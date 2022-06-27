@@ -12,6 +12,7 @@ import (
 
 type Target interface {
 	Communicate() (comm Communicator, err error)
+	//	Config() (config interface{}, err error)
 	DataDir() (*datadir.Target, error)
 	Destroy() error
 	GetUUID() (id string, err error)
@@ -29,6 +30,7 @@ type Target interface {
 	State() (State, error)
 	UI() (ui terminal.UI, err error)
 	UpdatedAt() (t *time.Time, err error)
+	Vagrantfile() (v Vagrantfile, err error)
 
 	io.Closer
 }
