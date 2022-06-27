@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
@@ -148,7 +150,8 @@ func (t *targetIndexServer) Get(
 	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
 ) (target *vagrant_plugin_sdk.Args_Target, err error) {
 	defer func() {
-		if err != nil {
+		// Log errors, but not NotFound errors which happen during normal operations
+		if err != nil && (status.Convert(err).Code() != codes.NotFound) {
 			t.Logger.Error("failed to get target from index",
 				"error", err,
 			)
