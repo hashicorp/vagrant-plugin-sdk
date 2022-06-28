@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
@@ -50,17 +49,21 @@ func FindPath(
 		p = dir
 		for {
 			p = p.Join(f)
-			if _, err = os.Stat(p.String()); err == nil || !os.IsNotExist(err) {
+			if p.Exists() {
 				return
 			}
-			if p.Parent() == p.Parent().Parent() {
+			root, err := p.Parent().IsRoot()
+			if err != nil {
+				return nil, err
+			}
+			if root {
 				break
 			}
 			p = p.Parent().Parent()
 		}
 	}
 
-	return nil, fmt.Errorf("failed to locate Vagrantfile")
+	return nil, nil
 }
 
 // Detect existing path within directory
