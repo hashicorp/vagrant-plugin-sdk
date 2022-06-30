@@ -994,7 +994,7 @@ func Options(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
-) (result map[interface{}]interface{}, err error) {
+) (result types.Options, err error) {
 	return Hash(
 		input.Options,
 		log,
@@ -1004,7 +1004,7 @@ func Options(
 }
 
 func OptionsProto(
-	input map[interface{}]interface{},
+	input types.Options,
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
@@ -1023,7 +1023,7 @@ func Folders(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
-) (result map[interface{}]interface{}, err error) {
+) (result types.Folders, err error) {
 	return Hash(
 		input.Folders,
 		log,
@@ -1033,7 +1033,7 @@ func Folders(
 }
 
 func FoldersProto(
-	input map[interface{}]interface{},
+	input types.Folders,
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
