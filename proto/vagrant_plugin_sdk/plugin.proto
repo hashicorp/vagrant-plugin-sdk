@@ -1090,14 +1090,14 @@ message Basis {
 }
 
 service BasisService {
+  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
   rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Args.Path);
-  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
-  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
-  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
   rpc ResourceId(google.protobuf.Empty) returns (Basis.ResourceIdResponse);
+  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
 
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
