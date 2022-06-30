@@ -9,6 +9,8 @@
 package path
 
 import (
+	"errors"
+	"os"
 	"os/user"
 	"path/filepath"
 )
@@ -20,12 +22,15 @@ type Path interface {
 	Clean() Path
 	Dir() Path
 	EvalSymLinks() (Path, error)
+	Exists() bool
 	Ext() string
 	FromSlash() Path
 	HasPrefix(string) bool
 	IsAbs() bool
+	IsRoot() (bool, error)
 	Join(...string) Path
 	Parent() Path
+	SameFile(Path) (bool, error)
 	Split() (Path, string)
 	SplitList() []string
 	ToSlash() string
@@ -82,6 +87,11 @@ func (p *path) EvalSymLinks() (newP Path, err error) {
 	return
 }
 
+func (p *path) Exists() bool {
+	_, err := os.Stat(p.String())
+	return !errors.Is(err, os.ErrNotExist)
+}
+
 func (p *path) Ext() string {
 	return filepath.Ext(p.path)
 }
@@ -98,6 +108,10 @@ func (p *path) IsAbs() bool {
 	return filepath.IsAbs(p.path)
 }
 
+func (p *path) IsRoot() (bool, error) {
+	return p.SameFile(p.Parent())
+}
+
 func (p *path) Join(elm ...string) Path {
 	return &path{path: filepath.Join(append([]string{p.path}, elm...)...)}
 }
@@ -105,6 +119,20 @@ func (p *path) Join(elm ...string) Path {
 func (p *path) Parent() Path {
 	parent, _ := p.Split()
 	return parent.Dir()
+}
+
+func (p *path) SameFile(other Path) (bool, error) {
+	myInfo, err := os.Stat(p.String())
+	if err != nil {
+		return false, err
+	}
+
+	otherInfo, err := os.Stat(other.String())
+	if err != nil {
+		return false, err
+	}
+
+	return os.SameFile(myInfo, otherInfo), nil
 }
 
 func (p *path) Split() (dir Path, file string) {
