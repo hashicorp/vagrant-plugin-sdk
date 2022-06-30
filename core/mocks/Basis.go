@@ -214,6 +214,29 @@ func (_m *Basis) UI() (terminal.UI, error) {
 	return r0, r1
 }
 
+// Vagrantfile provides a mock function with given fields:
+func (_m *Basis) Vagrantfile() (core.Vagrantfile, error) {
+	ret := _m.Called()
+
+	var r0 core.Vagrantfile
+	if rf, ok := ret.Get(0).(func() core.Vagrantfile); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.Vagrantfile)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type NewBasisT interface {
 	mock.TestingT
 	Cleanup(func())

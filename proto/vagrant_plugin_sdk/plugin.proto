@@ -1097,6 +1097,7 @@ service BasisService {
   rpc Host(google.protobuf.Empty) returns (Args.Host);
   rpc ResourceId(google.protobuf.Empty) returns (Basis.ResourceIdResponse);
   rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+  rpc Vagrantfile(google.protobuf.Empty) returns (Args.Vagrantfile);
   rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
 
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);

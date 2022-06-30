@@ -16,6 +16,7 @@ type Basis interface {
 	Host() (host Host, err error)
 	ResourceId() (string, error)
 	TargetIndex() (index TargetIndex, err error)
+	Vagrantfile() (Vagrantfile, error)
 	UI() (ui terminal.UI, err error)
 
 	io.Closer

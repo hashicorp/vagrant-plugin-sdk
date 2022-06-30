@@ -5456,6 +5456,7 @@ type BasisServiceClient interface {
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
 	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_ResourceIdResponse, error)
 	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
+	Vagrantfile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error)
 	UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error)
 	Seed(ctx context.Context, in *Args_Seeds, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Seeds(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Seeds, error)
@@ -5532,6 +5533,15 @@ func (c *basisServiceClient) TargetIndex(ctx context.Context, in *emptypb.Empty,
 	return out, nil
 }
 
+func (c *basisServiceClient) Vagrantfile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Vagrantfile, error) {
+	out := new(Args_Vagrantfile)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/Vagrantfile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *basisServiceClient) UI(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TerminalUI, error) {
 	out := new(Args_TerminalUI)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/UI", in, out, opts...)
@@ -5570,6 +5580,7 @@ type BasisServiceServer interface {
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
 	ResourceId(context.Context, *emptypb.Empty) (*Basis_ResourceIdResponse, error)
 	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
+	Vagrantfile(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error)
 	UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error)
 	Seed(context.Context, *Args_Seeds) (*emptypb.Empty, error)
 	Seeds(context.Context, *emptypb.Empty) (*Args_Seeds, error)
@@ -5599,6 +5610,9 @@ func (UnimplementedBasisServiceServer) ResourceId(context.Context, *emptypb.Empt
 }
 func (UnimplementedBasisServiceServer) TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TargetIndex not implemented")
+}
+func (UnimplementedBasisServiceServer) Vagrantfile(context.Context, *emptypb.Empty) (*Args_Vagrantfile, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Vagrantfile not implemented")
 }
 func (UnimplementedBasisServiceServer) UI(context.Context, *emptypb.Empty) (*Args_TerminalUI, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UI not implemented")
@@ -5747,6 +5761,24 @@ func _BasisService_TargetIndex_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BasisService_Vagrantfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).Vagrantfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/Vagrantfile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).Vagrantfile(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BasisService_UI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -5835,6 +5867,10 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TargetIndex",
 			Handler:    _BasisService_TargetIndex_Handler,
+		},
+		{
+			MethodName: "Vagrantfile",
+			Handler:    _BasisService_Vagrantfile_Handler,
 		},
 		{
 			MethodName: "UI",
