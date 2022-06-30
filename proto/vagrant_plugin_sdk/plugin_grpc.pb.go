@@ -5453,6 +5453,7 @@ type BasisServiceClient interface {
 	CWD(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
 	DataDir(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_DataDir_Basis, error)
 	DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error)
+	DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_DefaultProviderResponse, error)
 	Host(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Host, error)
 	ResourceId(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_ResourceIdResponse, error)
 	TargetIndex(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_TargetIndex, error)
@@ -5500,6 +5501,15 @@ func (c *basisServiceClient) DataDir(ctx context.Context, in *emptypb.Empty, opt
 func (c *basisServiceClient) DefaultPrivateKey(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Path, error) {
 	out := new(Args_Path)
 	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/DefaultPrivateKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *basisServiceClient) DefaultProvider(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Basis_DefaultProviderResponse, error) {
+	out := new(Basis_DefaultProviderResponse)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.BasisService/DefaultProvider", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -5577,6 +5587,7 @@ type BasisServiceServer interface {
 	CWD(context.Context, *emptypb.Empty) (*Args_Path, error)
 	DataDir(context.Context, *emptypb.Empty) (*Args_DataDir_Basis, error)
 	DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error)
+	DefaultProvider(context.Context, *emptypb.Empty) (*Basis_DefaultProviderResponse, error)
 	Host(context.Context, *emptypb.Empty) (*Args_Host, error)
 	ResourceId(context.Context, *emptypb.Empty) (*Basis_ResourceIdResponse, error)
 	TargetIndex(context.Context, *emptypb.Empty) (*Args_TargetIndex, error)
@@ -5601,6 +5612,9 @@ func (UnimplementedBasisServiceServer) DataDir(context.Context, *emptypb.Empty) 
 }
 func (UnimplementedBasisServiceServer) DefaultPrivateKey(context.Context, *emptypb.Empty) (*Args_Path, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DefaultPrivateKey not implemented")
+}
+func (UnimplementedBasisServiceServer) DefaultProvider(context.Context, *emptypb.Empty) (*Basis_DefaultProviderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DefaultProvider not implemented")
 }
 func (UnimplementedBasisServiceServer) Host(context.Context, *emptypb.Empty) (*Args_Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Host not implemented")
@@ -5703,6 +5717,24 @@ func _BasisService_DefaultPrivateKey_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BasisServiceServer).DefaultPrivateKey(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BasisService_DefaultProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BasisServiceServer).DefaultProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.BasisService/DefaultProvider",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BasisServiceServer).DefaultProvider(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5855,6 +5887,10 @@ var BasisService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DefaultPrivateKey",
 			Handler:    _BasisService_DefaultPrivateKey_Handler,
+		},
+		{
+			MethodName: "DefaultProvider",
+			Handler:    _BasisService_DefaultProvider_Handler,
 		},
 		{
 			MethodName: "Host",

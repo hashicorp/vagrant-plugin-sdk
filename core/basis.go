@@ -13,6 +13,7 @@ type Basis interface {
 	CWD() (path path.Path, err error)
 	DataDir() (dir *datadir.Basis, err error)
 	DefaultPrivateKey() (path path.Path, err error)
+	DefaultProvider() (name string, err error)
 	Host() (host Host, err error)
 	ResourceId() (string, error)
 	TargetIndex() (index TargetIndex, err error)

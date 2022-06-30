@@ -113,6 +113,22 @@ func (b *basisClient) DefaultPrivateKey() (p path.Path, err error) {
 	return
 }
 
+func (b *basisClient) DefaultProvider() (name string, err error) {
+	defer func() {
+		if err != nil {
+			b.Logger.Error("failed to get default provider",
+				"error", err,
+			)
+		}
+	}()
+	d, err := b.client.DefaultProvider(b.Ctx, &emptypb.Empty{})
+	if err == nil {
+		name = d.ProviderName
+	}
+
+	return
+}
+
 func (p *basisClient) DataDir() (dir *datadir.Basis, err error) {
 	defer func() {
 		if err != nil {
@@ -321,6 +337,23 @@ func (p *basisServer) DefaultPrivateKey(
 
 	return &vagrant_plugin_sdk.Args_Path{
 		Path: c.String(),
+	}, nil
+}
+
+func (b *basisServer) DefaultProvider(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Basis_DefaultProviderResponse, error) {
+	provider, err := b.Impl.DefaultProvider()
+	if err != nil {
+		b.Logger.Error("failed to get default provider",
+			"error", err,
+		)
+		return nil, err
+	}
+
+	return &vagrant_plugin_sdk.Basis_DefaultProviderResponse{
+		ProviderName: provider,
 	}, nil
 }
 
