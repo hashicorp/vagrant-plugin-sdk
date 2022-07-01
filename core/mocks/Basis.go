@@ -124,6 +124,27 @@ func (_m *Basis) DefaultPrivateKey() (path.Path, error) {
 	return r0, r1
 }
 
+// DefaultProvider provides a mock function with given fields:
+func (_m *Basis) DefaultProvider() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Host provides a mock function with given fields:
 func (_m *Basis) Host() (core.Host, error) {
 	ret := _m.Called()
@@ -201,6 +222,29 @@ func (_m *Basis) UI() (terminal.UI, error) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(terminal.UI)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Vagrantfile provides a mock function with given fields:
+func (_m *Basis) Vagrantfile() (core.Vagrantfile, error) {
+	ret := _m.Called()
+
+	var r0 core.Vagrantfile
+	if rf, ok := ret.Get(0).(func() core.Vagrantfile); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.Vagrantfile)
 		}
 	}
 

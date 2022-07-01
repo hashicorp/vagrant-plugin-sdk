@@ -1087,17 +1087,22 @@ message Basis {
   message ResourceIdResponse {
     string resource_id = 1;
   }
+  message DefaultProviderResponse {
+    string provider_name = 1;
+  }
 }
 
 service BasisService {
+  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
   rpc CWD(google.protobuf.Empty) returns (Args.Path);
   rpc DataDir(google.protobuf.Empty) returns (Args.DataDir.Basis);
   rpc DefaultPrivateKey(google.protobuf.Empty) returns (Args.Path);
-  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
+  rpc DefaultProvider(google.protobuf.Empty) returns (Basis.DefaultProviderResponse);
   rpc Host(google.protobuf.Empty) returns (Args.Host);
-  rpc Boxes(google.protobuf.Empty) returns (Args.BoxCollection);
-  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
   rpc ResourceId(google.protobuf.Empty) returns (Basis.ResourceIdResponse);
+  rpc TargetIndex(google.protobuf.Empty) returns (Args.TargetIndex);
+  rpc Vagrantfile(google.protobuf.Empty) returns (Args.Vagrantfile);
+  rpc UI(google.protobuf.Empty) returns (Args.TerminalUI);
 
   rpc Seed(Args.Seeds) returns (google.protobuf.Empty);
   rpc Seeds(google.protobuf.Empty) returns (Args.Seeds);
