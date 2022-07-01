@@ -1222,9 +1222,14 @@ message Target {
       string user_id = 1;
     }
     message SyncedFoldersResponse {
+      message FolderHash {
+        string source = 1;
+        string destination = 2;
+        Args.Folders options = 3;
+      }
       message MachineSyncedFolder {
         Args.SyncedFolder plugin = 1;
-        Vagrantfile.SyncedFolder folder = 2;
+        FolderHash folder = 2;
       }
       repeated MachineSyncedFolder synced_folders = 1;
     }
