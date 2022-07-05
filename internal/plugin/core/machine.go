@@ -250,7 +250,7 @@ func (t *targetMachineClient) SetID(id string) (err error) {
 func (t *targetMachineClient) Box() (b core.Box, err error) {
 	defer func() {
 		if err != nil {
-			t.Logger.Error("failed to get machine box",
+			t.Logger.Error("[client] failed to get machine box",
 				"error", err,
 			)
 		}
@@ -471,10 +471,10 @@ func (t *targetMachineServer) SetState(
 func (t *targetMachineServer) Box(
 	ctx context.Context,
 	_ *empty.Empty,
-) (r *vagrant_plugin_sdk.Args_Box, err error) {
+) (r *vagrant_plugin_sdk.Target_Machine_BoxResponse, err error) {
 	defer func() {
 		if err != nil {
-			t.Logger.Error("failed to get machine box",
+			t.Logger.Error("[server] failed to get machine box",
 				"error", err,
 			)
 		}
@@ -485,10 +485,17 @@ func (t *targetMachineServer) Box(
 		return
 	}
 
-	result, err := t.Map(b, (**vagrant_plugin_sdk.Args_Box)(nil),
+	// Mappers do not like working with a nil input, so we build the response
+	// manually if the box is nil.
+	if b == nil {
+		r = &vagrant_plugin_sdk.Target_Machine_BoxResponse{}
+		return
+	}
+
+	result, err := t.Map(b, (**vagrant_plugin_sdk.Target_Machine_BoxResponse)(nil),
 		argmapper.Typed(ctx))
 	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Box)
+		r = result.(*vagrant_plugin_sdk.Target_Machine_BoxResponse)
 	}
 
 	return
