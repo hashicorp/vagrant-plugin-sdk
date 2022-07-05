@@ -1225,7 +1225,7 @@ message Target {
       message FolderHash {
         string source = 1;
         string destination = 2;
-        Args.Folders options = 3;
+        Args.Hash options = 3;
       }
       message MachineSyncedFolder {
         Args.SyncedFolder plugin = 1;

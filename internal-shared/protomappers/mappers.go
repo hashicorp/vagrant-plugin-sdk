@@ -2343,7 +2343,7 @@ func FolderToVagrantfileSyncedFolder(
 	ctx context.Context,
 ) (*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_FolderHash, error) {
 	result := &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_FolderHash{}
-	opts, err := FoldersProto(f.Options, log, internal, ctx)
+	opts, err := HashProto(f.Options, log, internal, ctx)
 	if err != nil {
 		return nil, err
 	}

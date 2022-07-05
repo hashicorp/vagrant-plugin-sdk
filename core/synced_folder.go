@@ -2,13 +2,12 @@ package core
 
 import (
 	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
-	"github.com/hashicorp/vagrant-plugin-sdk/helper/types"
 )
 
 type Folder struct {
 	Source      path.Path
 	Destination path.Path
-	Options     types.Folders
+	Options     map[interface{}]interface{}
 }
 
 type SyncedFolder interface {
