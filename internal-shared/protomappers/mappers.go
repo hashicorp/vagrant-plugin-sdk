@@ -84,7 +84,6 @@ var WellKnownTypes = []interface{}{
 	ValueToString,
 	ValueToStruct,
 	ValueToString,
-	// ValueProto,
 }
 
 // All is the list of all mappers as raw function pointers.
@@ -197,10 +196,6 @@ var All = []interface{}{
 	StateBagProto,
 	SyncedFolder,
 	SyncedFolderProto,
-	Vagrantfile,
-	VagrantfileProto,
-	VagrantfileSyncedFolderToFolder,
-	FolderToVagrantfileSyncedFolder,
 	Target,
 	TargetProto,
 	TargetIndex,
@@ -212,6 +207,8 @@ var All = []interface{}{
 	TerminalUIProto,
 	Vagrantfile,
 	VagrantfileProto,
+	VagrantfileSyncedFolderToFolder,
+	FolderToVagrantfileSyncedFolder,
 }
 
 var AllFns []*argmapper.Func
