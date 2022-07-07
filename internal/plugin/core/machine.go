@@ -322,13 +322,13 @@ func (t *targetMachineServer) SyncedFolders(
 		if err != nil {
 			return nil, err
 		}
-		f, err = t.Map(folder.Folder, (**vagrant_plugin_sdk.Vagrantfile_SyncedFolder)(nil), argmapper.Typed(ctx))
+		f, err = t.Map(folder.Folder, (**vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_Folder)(nil), argmapper.Typed(ctx))
 		if err != nil {
 			return nil, err
 		}
 		sf = append(sf, &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_MachineSyncedFolder{
 			Plugin: plg.(*vagrant_plugin_sdk.Args_SyncedFolder),
-			Folder: f.(*vagrant_plugin_sdk.Vagrantfile_SyncedFolder),
+			Folder: f.(*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_Folder),
 		})
 	}
 	resp = &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse{

@@ -1,11 +1,13 @@
 package core
 
-import "github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+import (
+	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
+)
 
 type Folder struct {
 	Source      path.Path
 	Destination path.Path
-	Options     map[string]interface{} `mapstructure:",remain"`
+	Options     map[interface{}]interface{}
 }
 
 type SyncedFolder interface {
