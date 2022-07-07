@@ -187,6 +187,8 @@ var All = []interface{}{
 	PushProto,
 	Range,
 	RangeProto,
+	RawRubyValue,
+	RawRubyValueProto,
 	Seeds,
 	SeedsProto,
 	State,
@@ -796,6 +798,59 @@ func ClassProto(
 	return &vagrant_plugin_sdk.Args_Class{
 		Name: string(input),
 	}
+}
+
+func RawRubyValue(
+	input *vagrant_plugin_sdk.Config_RawRubyValue,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*types.RawRubyValue, error) {
+	v, err := Hash(input.Data, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	data := make(map[string]interface{}, len(v))
+	for key, val := range v {
+		skey, ok := key.(string)
+		if !ok {
+			symkey, ok := key.(types.Symbol)
+			if !ok {
+				return nil, fmt.Errorf("invalid root key type %T", key)
+			}
+			skey = string(symkey)
+		}
+		data[skey] = val
+	}
+
+	result := &types.RawRubyValue{
+		Data: data,
+	}
+	if input.Source != nil {
+		result.Source = Class(input.Source)
+	}
+
+	return result, nil
+}
+
+func RawRubyValueProto(
+	input *types.RawRubyValue,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Config_RawRubyValue, error) {
+	i := make(map[interface{}]interface{}, len(input.Data))
+	for key, val := range input.Data {
+		i[key] = val
+	}
+	iproto, err := HashProto(i, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Config_RawRubyValue{
+		Data:   iproto,
+		Source: ClassProto(input.Source),
+	}, nil
 }
 
 func ConfigData(
