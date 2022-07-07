@@ -8561,6 +8561,7 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VagrantfileServiceClient interface {
+	GetValue(ctx context.Context, in *Vagrantfile_ValueRequest, opts ...grpc.CallOption) (*Args_Direct, error)
 	GetConfig(ctx context.Context, in *Vagrantfile_NamespaceRequest, opts ...grpc.CallOption) (*Args_ConfigData, error)
 	Target(ctx context.Context, in *Vagrantfile_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetConfig(ctx context.Context, in *Vagrantfile_TargetConfigRequest, opts ...grpc.CallOption) (*Args_Vagrantfile, error)
@@ -8574,6 +8575,15 @@ type vagrantfileServiceClient struct {
 
 func NewVagrantfileServiceClient(cc grpc.ClientConnInterface) VagrantfileServiceClient {
 	return &vagrantfileServiceClient{cc}
+}
+
+func (c *vagrantfileServiceClient) GetValue(ctx context.Context, in *Vagrantfile_ValueRequest, opts ...grpc.CallOption) (*Args_Direct, error) {
+	out := new(Args_Direct)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/GetValue", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *vagrantfileServiceClient) GetConfig(ctx context.Context, in *Vagrantfile_NamespaceRequest, opts ...grpc.CallOption) (*Args_ConfigData, error) {
@@ -8625,6 +8635,7 @@ func (c *vagrantfileServiceClient) PrimaryTargetName(ctx context.Context, in *em
 // All implementations should embed UnimplementedVagrantfileServiceServer
 // for forward compatibility
 type VagrantfileServiceServer interface {
+	GetValue(context.Context, *Vagrantfile_ValueRequest) (*Args_Direct, error)
 	GetConfig(context.Context, *Vagrantfile_NamespaceRequest) (*Args_ConfigData, error)
 	Target(context.Context, *Vagrantfile_TargetRequest) (*Args_Target, error)
 	TargetConfig(context.Context, *Vagrantfile_TargetConfigRequest) (*Args_Vagrantfile, error)
@@ -8636,6 +8647,9 @@ type VagrantfileServiceServer interface {
 type UnimplementedVagrantfileServiceServer struct {
 }
 
+func (UnimplementedVagrantfileServiceServer) GetValue(context.Context, *Vagrantfile_ValueRequest) (*Args_Direct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetValue not implemented")
+}
 func (UnimplementedVagrantfileServiceServer) GetConfig(context.Context, *Vagrantfile_NamespaceRequest) (*Args_ConfigData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
 }
@@ -8661,6 +8675,24 @@ type UnsafeVagrantfileServiceServer interface {
 
 func RegisterVagrantfileServiceServer(s grpc.ServiceRegistrar, srv VagrantfileServiceServer) {
 	s.RegisterService(&VagrantfileService_ServiceDesc, srv)
+}
+
+func _VagrantfileService_GetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_ValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).GetValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/GetValue",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).GetValue(ctx, req.(*Vagrantfile_ValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _VagrantfileService_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -8760,6 +8792,10 @@ var VagrantfileService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.VagrantfileService",
 	HandlerType: (*VagrantfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetValue",
+			Handler:    _VagrantfileService_GetValue_Handler,
+		},
 		{
 			MethodName: "GetConfig",
 			Handler:    _VagrantfileService_GetConfig_Handler,
