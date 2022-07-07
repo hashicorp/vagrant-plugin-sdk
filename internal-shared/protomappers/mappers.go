@@ -3,7 +3,6 @@ package protomappers
 import (
 	"context"
 	"fmt"
-	"io"
 	"net"
 	"reflect"
 	"strings"
@@ -2834,10 +2833,6 @@ func wrapConnect(
 			"error", err)
 
 		return nil, err
-	}
-
-	if closer, ok := client.(io.Closer); ok {
-		internal.Cleanup().Do(func() error { return closer.Close() })
 	}
 
 	if cache, ok := client.(cacher.HasCache); ok {
