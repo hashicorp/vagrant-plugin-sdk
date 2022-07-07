@@ -2330,7 +2330,7 @@ func Command(
 }
 
 func VagrantfileSyncedFolderToFolder(
-	f *vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_FolderHash,
+	f *vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_Folder,
 ) (*core.Folder, error) {
 	var result *core.Folder
 	return result, mapstructure.Decode(f, &result)
@@ -2341,8 +2341,8 @@ func FolderToVagrantfileSyncedFolder(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 	ctx context.Context,
-) (*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_FolderHash, error) {
-	result := &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_FolderHash{}
+) (*vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_Folder, error) {
+	result := &vagrant_plugin_sdk.Target_Machine_SyncedFoldersResponse_Folder{}
 	opts, err := HashProto(f.Options, log, internal, ctx)
 	if err != nil {
 		return nil, err

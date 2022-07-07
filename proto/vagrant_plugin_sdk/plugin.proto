@@ -1222,14 +1222,14 @@ message Target {
       string user_id = 1;
     }
     message SyncedFoldersResponse {
-      message FolderHash {
+      message Folder {
         string source = 1;
         string destination = 2;
         Args.Hash options = 3;
       }
       message MachineSyncedFolder {
         Args.SyncedFolder plugin = 1;
-        FolderHash folder = 2;
+        Folder folder = 2;
       }
       repeated MachineSyncedFolder synced_folders = 1;
     }
