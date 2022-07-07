@@ -6,6 +6,7 @@ import (
 
 type Vagrantfile interface {
 	GetConfig(namespace string) (*component.ConfigData, error)
+	GetValue(path ...string) (interface{}, error)
 	PrimaryTargetName() (name string, err error)
 	Target(name, provider string) (Target, error)
 	TargetConfig(name, provider string, validateProvider bool) (Vagrantfile, error)

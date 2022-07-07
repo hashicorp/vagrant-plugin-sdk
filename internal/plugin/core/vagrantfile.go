@@ -6,11 +6,11 @@ import (
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
-	//	"github.com/hashicorp/vagrant-plugin-sdk/helper/path"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
 )
@@ -138,6 +138,23 @@ func (v *vagrantfileClient) GetConfig(namespace string) (*component.ConfigData, 
 	return raw.(*component.ConfigData), nil
 }
 
+func (v *vagrantfileClient) GetValue(path ...string) (interface{}, error) {
+	resp, err := v.client.GetValue(v.Ctx,
+		&vagrant_plugin_sdk.Vagrantfile_ValueRequest{
+			Path: path,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	raw, err := v.Map(resp, (*component.Direct)(nil), argmapper.Typed(v.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(*component.Direct).Arguments[0], nil
+}
+
 // Server
 
 func (v *vagrantfileServer) Target(
@@ -237,6 +254,50 @@ func (v *vagrantfileServer) GetConfig(
 		return nil, err
 	}
 	return raw.(*vagrant_plugin_sdk.Args_ConfigData), nil
+}
+
+func (v *vagrantfileServer) GetValue(
+	ctx context.Context,
+	req *vagrant_plugin_sdk.Vagrantfile_ValueRequest,
+) (*vagrant_plugin_sdk.Args_Direct, error) {
+	var val interface{}
+
+	val, err := v.Impl.GetValue(req.Path...)
+	if err != nil {
+		v.Logger.Error("failed to get config value from implementation",
+			"path", req.Path,
+			"error", err,
+		)
+		return nil, err
+	}
+
+	if sh, ok := val.(map[string]interface{}); ok {
+		ih := make(map[interface{}]interface{}, len(sh))
+		for k, v := range sh {
+			ih[k] = v
+		}
+		val = ih
+	}
+
+	v.Logger.Info("got value from vagrantfile config for conversion",
+		"value", val,
+	)
+
+	raw, err := v.Map(
+		&component.Direct{Arguments: []interface{}{val}},
+		(*proto.Message)(nil),
+		argmapper.Typed(ctx),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.Logger.Info("got value and converting to any value",
+		"value", raw,
+	)
+
+	return raw.(*vagrant_plugin_sdk.Args_Direct), nil
 }
 
 var (
