@@ -357,7 +357,7 @@ message FuncSpec {
     string name = 1;
 
     // type is the type of the argument. All arguments must be encoded using
-    // *any.Any so this type specifies the proto Any message type and not
+    // *anypb.Any so this type specifies the proto Any message type and not
     // a language-specific type.
     string type = 2;
 

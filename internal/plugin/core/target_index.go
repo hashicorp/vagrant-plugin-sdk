@@ -3,12 +3,12 @@ package core
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/core"
 	vplugin "github.com/hashicorp/vagrant-plugin-sdk/internal/plugin"
@@ -108,7 +108,7 @@ func (t *targetIndexClient) Set(entry core.Target) (updatedEntry core.Target, er
 }
 
 func (t *targetIndexClient) All() (targets []core.Target, err error) {
-	argTargets, err := t.client.All(t.Ctx, &empty.Empty{})
+	argTargets, err := t.client.All(t.Ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func (t *targetIndexClient) All() (targets []core.Target, err error) {
 func (t *targetIndexServer) Delete(
 	ctx context.Context,
 	in *vagrant_plugin_sdk.TargetIndex_TargetIdentifier,
-) (empty *empty.Empty, err error) {
+) (empty *emptypb.Empty, err error) {
 	defer func() {
 		if err != nil {
 			t.Logger.Error("failed to delete target from index",
@@ -221,7 +221,7 @@ func (t *targetIndexServer) Set(
 
 func (t *targetIndexServer) All(
 	ctx context.Context,
-	_ *empty.Empty,
+	_ *emptypb.Empty,
 ) (resp *vagrant_plugin_sdk.TargetIndex_AllResponse, err error) {
 	defer func() {
 		if err != nil {

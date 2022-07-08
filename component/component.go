@@ -14,8 +14,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+	"google.golang.org/protobuf/proto"
 )
 
 // Type is an enum of all the types of components supported.

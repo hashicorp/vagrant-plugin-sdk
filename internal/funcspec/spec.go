@@ -4,11 +4,11 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/component"
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
@@ -122,7 +122,7 @@ func Spec(fn interface{}, args ...argmapper.Arg) (*vagrant_plugin_sdk.FuncSpec, 
 }
 
 func typeToMessage(typ reflect.Type) string {
-	return proto.MessageName(reflect.Zero(typ).Interface().(proto.Message))
+	return string(reflect.Zero(typ).Interface().(proto.Message).ProtoReflect().Descriptor().FullName())
 }
 
 var (

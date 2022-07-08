@@ -3,11 +3,10 @@ package component
 import (
 	"reflect"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // ProtoMarshaler is the interface required by objects that must support
@@ -25,8 +24,8 @@ type ProtoMarshaler interface {
 	Proto() proto.Message
 }
 
-// ProtoAny returns an *any.Any for the given ProtoMarshaler object.
-func ProtoAny(m interface{}) (*any.Any, error) {
+// ProtoAny returns an *anypb.Any for the given ProtoMarshaler object.
+func ProtoAny(m interface{}) (*anypb.Any, error) {
 	msg, ok := m.(proto.Message)
 
 	// If it isn't a message directly, we accept marshalers
@@ -40,19 +39,19 @@ func ProtoAny(m interface{}) (*any.Any, error) {
 	}
 
 	// If the message is already an Any, then we're done
-	if result, ok := msg.(*any.Any); ok {
+	if result, ok := msg.(*anypb.Any); ok {
 		return result, nil
 	}
 
 	// Marshal it
-	return ptypes.MarshalAny(msg)
+	return anypb.New(msg)
 }
 
-// ProtoAny returns []*any.Any for the given input slice by encoding
+// ProtoAny returns []*anypb.Any for the given input slice by encoding
 // each result into a proto value.
-func ProtoAnySlice(m interface{}) ([]*any.Any, error) {
+func ProtoAnySlice(m interface{}) ([]*anypb.Any, error) {
 	val := reflect.ValueOf(m)
-	result := make([]*any.Any, val.Len())
+	result := make([]*anypb.Any, val.Len())
 	for i := 0; i < val.Len(); i++ {
 		var err error
 		result[i], err = ProtoAny(val.Index(i).Interface())
@@ -82,11 +81,11 @@ func ProtoAnyUnmarshal(m interface{}, out proto.Message) error {
 		msg = pm.Proto()
 	}
 
-	result, ok := msg.(*any.Any)
+	result, ok := msg.(*anypb.Any)
 	if !ok {
-		return status.Errorf(codes.FailedPrecondition, "expected *any.Any, got %T", msg)
+		return status.Errorf(codes.FailedPrecondition, "expected *anypb.Any, got %T", msg)
 	}
 
 	// Unmarshal
-	return ptypes.UnmarshalAny(result, out)
+	return result.UnmarshalTo(out)
 }

@@ -3,12 +3,12 @@ package funcspec
 import (
 	"reflect"
 
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/any"
 	"github.com/hashicorp/go-argmapper"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal-shared/dynamic"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
+
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // Func takes a FuncSpec and returns a *mapper.Func that can be called
@@ -57,7 +57,7 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 	outputSet := cbFunc.Output()
 
 	// If we have results specified on the Spec, then we expect this to represent
-	// a mapper. Mapper callbacks MUST return *any.Any or []*any.Any. When we
+	// a mapper. Mapper callbacks MUST return *anypb.Any or []*anypb.Any. When we
 	// have a mapper, we change the output type to be all the values we're
 	// mapping to.
 	if len(s.Result) > 0 {
@@ -80,11 +80,11 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 		callArgs := make([]argmapper.Arg, 0, len(args)+len(in.Values()))
 
 		// Build up our callArgs which we'll pass to our callback. We pass
-		// through all args except for *any.Any values. For *any values, we
+		// through all args except for *anypb.Any values. For *any values, we
 		// add them to our Args list.
 		var args Args
 		for _, v := range in.Values() {
-			// If we have any *any.Any then we append it to args
+			// If we have any *anypb.Any then we append it to args
 			if v.Type == anyType {
 				args = appendValue(args, v)
 				continue
@@ -109,18 +109,15 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 		}
 
 		// We're a mapper, so we have to go through our values and look
-		// for the *any.Any value or []*any.Any and populate our expected
+		// for the *anypb.Any value or []*anypb.Any and populate our expected
 		// outputs.
 		for _, v := range cbOut.Values() {
 			switch v.Type {
 			case anyType:
-				// We're seeing an *any.Any. So we encode this and try
+				// We're seeing an *anypb.Any. So we encode this and try
 				// to match it to any value that we have.
-				anyVal := v.Value.Interface().(*any.Any)
-				st, err := ptypes.AnyMessageName(anyVal)
-				if err != nil {
-					return err
-				}
+				anyVal := v.Value.Interface().(*anypb.Any)
+				st := string(anyVal.MessageName())
 
 				expected := out.TypedSubtype(v.Type, st)
 				if expected == nil {
@@ -148,6 +145,6 @@ func Func(s *vagrant_plugin_sdk.FuncSpec, cb interface{}, args ...argmapper.Arg)
 }
 
 var (
-	anyType  = reflect.TypeOf((*any.Any)(nil))
+	anyType  = reflect.TypeOf((*anypb.Any)(nil))
 	argsType = reflect.TypeOf(Args(nil))
 )

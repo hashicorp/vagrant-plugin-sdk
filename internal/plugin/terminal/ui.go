@@ -8,13 +8,13 @@ import (
 	"os"
 	"sync"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/go-argmapper"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	spb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/grpc"
 	statuspkg "google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hashicorp/vagrant-plugin-sdk/internal/pkg/pty"
 	"github.com/hashicorp/vagrant-plugin-sdk/proto/vagrant_plugin_sdk"
@@ -56,11 +56,11 @@ func (p *UIPlugin) GRPCClient(
 	c *grpc.ClientConn,
 ) (interface{}, error) {
 	client := vagrant_plugin_sdk.NewTerminalUIServiceClient(c)
-	interactiveResp, err := client.IsInteractive(ctx, &empty.Empty{})
+	interactiveResp, err := client.IsInteractive(ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
-	machineReadableResp, err := client.IsMachineReadable(ctx, &empty.Empty{})
+	machineReadableResp, err := client.IsMachineReadable(ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ type uiServer struct {
 func (s *uiServer) Output(
 	ctx context.Context,
 	req *vagrant_plugin_sdk.TerminalUI_OutputRequest,
-) (*empty.Empty, error) {
+) (*emptypb.Empty, error) {
 	opts := []interface{}{}
 	if req.DisableNewLine {
 		opts = append(opts, terminal.WithoutNewLine())
@@ -120,12 +120,12 @@ func (s *uiServer) Output(
 		s.Impl.Output(line, opts...)
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *uiServer) IsInteractive(
 	ctx context.Context,
-	req *empty.Empty,
+	req *emptypb.Empty,
 ) (*vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse, error) {
 	return &vagrant_plugin_sdk.TerminalUI_IsInteractiveResponse{
 		Interactive: s.Impl.Interactive(),
@@ -134,7 +134,7 @@ func (s *uiServer) IsInteractive(
 
 func (s *uiServer) IsMachineReadable(
 	ctx context.Context,
-	req *empty.Empty,
+	req *emptypb.Empty,
 ) (*vagrant_plugin_sdk.TerminalUI_IsMachineReadableResponse, error) {
 	return &vagrant_plugin_sdk.TerminalUI_IsMachineReadableResponse{
 		MachineReadable: s.Impl.MachineReadable(),
