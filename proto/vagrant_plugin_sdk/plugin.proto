@@ -1160,7 +1160,7 @@ service TargetMachineService {
   rpc GetID(google.protobuf.Empty) returns (Target.Machine.GetIDResponse);
   rpc SetState(Target.Machine.SetStateRequest) returns (google.protobuf.Empty);
   rpc GetState(google.protobuf.Empty) returns (Args.Target.Machine.State);
-  rpc Box(google.protobuf.Empty) returns (Args.Box);
+  rpc Box(google.protobuf.Empty) returns (Target.Machine.BoxResponse);
   rpc Guest(google.protobuf.Empty) returns (Args.Guest);
   rpc ConnectionInfo(google.protobuf.Empty) returns(Args.Hash);
   rpc UID(google.protobuf.Empty) returns(Target.Machine.UIDResponse);
@@ -1206,6 +1206,13 @@ message Target {
    * Machine message used with machine service
    **********************************************/
   message Machine {
+    // NOTE: In general we are trying to consolidate our responses into generic
+    // shared Args.Foo style messages. A Machine can exist without a box, but
+    // the only way to get a nullable value in proto is within a message field.
+    // So here we break our pattern and wrap a response type to use "optional"
+    message BoxResponse {
+      optional Args.Box box = 1;
+    }
     message SetIDRequest {
       string id = 1;
     }

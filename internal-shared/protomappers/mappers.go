@@ -102,6 +102,8 @@ var All = []interface{}{
 	BoxCollectionProto,
 	BoxMetadata,
 	BoxMetadataProto,
+	BoxResponse,
+	BoxResponseProto,
 	Host,
 	HostProto,
 	Guest,
@@ -1585,6 +1587,86 @@ func BoxMetadataProto(
 	internal.Cache().Register(cid, proto)
 
 	return proto, nil
+}
+
+func BoxResponse(ctx context.Context,
+	input *vagrant_plugin_sdk.Target_Machine_BoxResponse,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+) (core.Box, error) {
+	// Return nil if the response is empty
+	if input.Box == nil {
+		return nil, nil
+	}
+
+	// Create our plugin
+	p := &plugincore.BoxPlugin{
+		BasePlugin: basePlugin(nil, internal),
+	}
+
+	client, err := wrapConnect(ctx, p, input.Box, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.(core.Box), nil
+}
+
+func BoxResponseProto(
+	box core.Box,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+) (*vagrant_plugin_sdk.Target_Machine_BoxResponse, error) {
+	result := &vagrant_plugin_sdk.Target_Machine_BoxResponse{}
+
+	// A nil box and an empty result are valid
+	if box == nil {
+		return result, nil
+	}
+
+	n, err := box.Name()
+	if err != nil {
+		return nil, err
+	}
+	v, err := box.Version()
+	if err != nil {
+		return nil, err
+	}
+	pr, err := box.Provider()
+	if err != nil {
+		return nil, err
+	}
+	cid := n + "-" + v + "-" + pr
+	if ch := internal.Cache().Get(cid); ch != nil {
+		result.Box = ch.(*vagrant_plugin_sdk.Args_Box)
+		return result, nil
+	}
+
+	// Create our plugin
+	p := &plugincore.BoxPlugin{
+		BasePlugin: basePlugin(box, internal),
+		Impl:       box,
+	}
+
+	id, ep, err := wrapClient(box, p, internal)
+	if err != nil {
+		return nil, err
+	}
+
+	result.Box = &vagrant_plugin_sdk.Args_Box{
+		StreamId: id,
+		Network:  ep.Network(),
+		Addr:     ep.String()}
+
+	log.Trace("registered box into cache",
+		"cid", cid,
+		"proto", result.Box,
+		"cache", hclog.Fmt("%p", internal.Cache()),
+	)
+
+	internal.Cache().Register(cid, result.Box)
+
+	return result, nil
 }
 
 // JobInfo maps Args.JobInfo to component.JobInfo.
