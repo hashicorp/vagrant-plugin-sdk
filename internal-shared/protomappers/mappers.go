@@ -139,6 +139,7 @@ var All = []interface{}{
 	FlagsProto,
 	Folders,
 	FoldersProto,
+	FolderToVagrantfileSyncedFolder,
 	Hash,
 	HashProto,
 	JobInfo,
@@ -208,7 +209,6 @@ var All = []interface{}{
 	Vagrantfile,
 	VagrantfileProto,
 	VagrantfileSyncedFolderToFolder,
-	FolderToVagrantfileSyncedFolder,
 }
 
 var AllFns []*argmapper.Func
