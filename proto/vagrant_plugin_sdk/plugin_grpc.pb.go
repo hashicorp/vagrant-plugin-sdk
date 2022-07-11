@@ -6691,6 +6691,7 @@ type TargetMachineServiceClient interface {
 	ConnectionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Hash, error)
 	UID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_SyncedFoldersResponse, error)
+	AsTarget(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Target, error)
 }
 
 type targetMachineServiceClient struct {
@@ -6953,6 +6954,15 @@ func (c *targetMachineServiceClient) SyncedFolders(ctx context.Context, in *empt
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) AsTarget(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Target, error) {
+	out := new(Args_Target)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/AsTarget", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetMachineServiceServer is the server API for TargetMachineService service.
 // All implementations should embed UnimplementedTargetMachineServiceServer
 // for forward compatibility
@@ -6987,6 +6997,7 @@ type TargetMachineServiceServer interface {
 	ConnectionInfo(context.Context, *emptypb.Empty) (*Args_Hash, error)
 	UID(context.Context, *emptypb.Empty) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(context.Context, *emptypb.Empty) (*Target_Machine_SyncedFoldersResponse, error)
+	AsTarget(context.Context, *emptypb.Empty) (*Args_Target, error)
 }
 
 // UnimplementedTargetMachineServiceServer should be embedded to have forward compatible implementations.
@@ -7076,6 +7087,9 @@ func (UnimplementedTargetMachineServiceServer) UID(context.Context, *emptypb.Emp
 }
 func (UnimplementedTargetMachineServiceServer) SyncedFolders(context.Context, *emptypb.Empty) (*Target_Machine_SyncedFoldersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncedFolders not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) AsTarget(context.Context, *emptypb.Empty) (*Args_Target, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AsTarget not implemented")
 }
 
 // UnsafeTargetMachineServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -7593,6 +7607,24 @@ func _TargetMachineService_SyncedFolders_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_AsTarget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).AsTarget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/AsTarget",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).AsTarget(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TargetMachineService_ServiceDesc is the grpc.ServiceDesc for TargetMachineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -7711,6 +7743,10 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncedFolders",
 			Handler:    _TargetMachineService_SyncedFolders_Handler,
+		},
+		{
+			MethodName: "AsTarget",
+			Handler:    _TargetMachineService_AsTarget_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
