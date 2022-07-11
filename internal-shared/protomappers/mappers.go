@@ -1920,6 +1920,12 @@ func Plugin(
 		Name: input.Name,
 		Type: t.String(),
 	}
+	if input.Options != nil {
+		result.Options, err = component.UnmarshalOptionsProto(t, input.Options)
+		if err != nil {
+			return nil, fmt.Errorf("problem unmarshalling plugin options: %s", err)
+		}
+	}
 
 	if input.Plugin == nil {
 		return result, nil
@@ -1952,6 +1958,14 @@ func PluginProto(
 		Name: input.Name,
 		Type: t.String(),
 	}
+
+	if input.Options != nil {
+		result.Options, err = component.ProtoAny(input.Options)
+		if err != nil {
+			return nil, fmt.Errorf("problem converting plugin options to proto: %s", err)
+		}
+	}
+
 	if input.Plugin == nil {
 		return result, nil
 	}

@@ -630,6 +630,8 @@ message PluginManager {
     string name = 1;
     string type = 2;
     google.protobuf.Any plugin = 3;
+    // This is one of the PluginInfo.*Options structs
+    google.protobuf.Any options = 4;
   }
 }
 
