@@ -37,6 +37,35 @@ func (_m *Vagrantfile) GetConfig(namespace string) (*component.ConfigData, error
 	return r0, r1
 }
 
+// GetValue provides a mock function with given fields: path
+func (_m *Vagrantfile) GetValue(path ...string) (interface{}, error) {
+	_va := make([]interface{}, len(path))
+	for _i := range path {
+		_va[_i] = path[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 interface{}
+	if rf, ok := ret.Get(0).(func(...string) interface{}); ok {
+		r0 = rf(path...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(interface{})
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(...string) error); ok {
+		r1 = rf(path...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // PrimaryTargetName provides a mock function with given fields:
 func (_m *Vagrantfile) PrimaryTargetName() (string, error) {
 	ret := _m.Called()

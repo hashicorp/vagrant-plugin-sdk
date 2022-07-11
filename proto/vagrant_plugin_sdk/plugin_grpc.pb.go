@@ -6691,6 +6691,7 @@ type TargetMachineServiceClient interface {
 	ConnectionInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Hash, error)
 	UID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Target_Machine_SyncedFoldersResponse, error)
+	AsTarget(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Target, error)
 }
 
 type targetMachineServiceClient struct {
@@ -6953,6 +6954,15 @@ func (c *targetMachineServiceClient) SyncedFolders(ctx context.Context, in *empt
 	return out, nil
 }
 
+func (c *targetMachineServiceClient) AsTarget(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Args_Target, error) {
+	out := new(Args_Target)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.TargetMachineService/AsTarget", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TargetMachineServiceServer is the server API for TargetMachineService service.
 // All implementations should embed UnimplementedTargetMachineServiceServer
 // for forward compatibility
@@ -6987,6 +6997,7 @@ type TargetMachineServiceServer interface {
 	ConnectionInfo(context.Context, *emptypb.Empty) (*Args_Hash, error)
 	UID(context.Context, *emptypb.Empty) (*Target_Machine_UIDResponse, error)
 	SyncedFolders(context.Context, *emptypb.Empty) (*Target_Machine_SyncedFoldersResponse, error)
+	AsTarget(context.Context, *emptypb.Empty) (*Args_Target, error)
 }
 
 // UnimplementedTargetMachineServiceServer should be embedded to have forward compatible implementations.
@@ -7076,6 +7087,9 @@ func (UnimplementedTargetMachineServiceServer) UID(context.Context, *emptypb.Emp
 }
 func (UnimplementedTargetMachineServiceServer) SyncedFolders(context.Context, *emptypb.Empty) (*Target_Machine_SyncedFoldersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncedFolders not implemented")
+}
+func (UnimplementedTargetMachineServiceServer) AsTarget(context.Context, *emptypb.Empty) (*Args_Target, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AsTarget not implemented")
 }
 
 // UnsafeTargetMachineServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -7593,6 +7607,24 @@ func _TargetMachineService_SyncedFolders_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TargetMachineService_AsTarget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TargetMachineServiceServer).AsTarget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.TargetMachineService/AsTarget",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TargetMachineServiceServer).AsTarget(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TargetMachineService_ServiceDesc is the grpc.ServiceDesc for TargetMachineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -7711,6 +7743,10 @@ var TargetMachineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncedFolders",
 			Handler:    _TargetMachineService_SyncedFolders_Handler,
+		},
+		{
+			MethodName: "AsTarget",
+			Handler:    _TargetMachineService_AsTarget_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -8561,6 +8597,7 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VagrantfileServiceClient interface {
+	GetValue(ctx context.Context, in *Vagrantfile_ValueRequest, opts ...grpc.CallOption) (*Args_Direct, error)
 	GetConfig(ctx context.Context, in *Vagrantfile_NamespaceRequest, opts ...grpc.CallOption) (*Args_ConfigData, error)
 	Target(ctx context.Context, in *Vagrantfile_TargetRequest, opts ...grpc.CallOption) (*Args_Target, error)
 	TargetConfig(ctx context.Context, in *Vagrantfile_TargetConfigRequest, opts ...grpc.CallOption) (*Args_Vagrantfile, error)
@@ -8574,6 +8611,15 @@ type vagrantfileServiceClient struct {
 
 func NewVagrantfileServiceClient(cc grpc.ClientConnInterface) VagrantfileServiceClient {
 	return &vagrantfileServiceClient{cc}
+}
+
+func (c *vagrantfileServiceClient) GetValue(ctx context.Context, in *Vagrantfile_ValueRequest, opts ...grpc.CallOption) (*Args_Direct, error) {
+	out := new(Args_Direct)
+	err := c.cc.Invoke(ctx, "/hashicorp.vagrant.sdk.VagrantfileService/GetValue", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *vagrantfileServiceClient) GetConfig(ctx context.Context, in *Vagrantfile_NamespaceRequest, opts ...grpc.CallOption) (*Args_ConfigData, error) {
@@ -8625,6 +8671,7 @@ func (c *vagrantfileServiceClient) PrimaryTargetName(ctx context.Context, in *em
 // All implementations should embed UnimplementedVagrantfileServiceServer
 // for forward compatibility
 type VagrantfileServiceServer interface {
+	GetValue(context.Context, *Vagrantfile_ValueRequest) (*Args_Direct, error)
 	GetConfig(context.Context, *Vagrantfile_NamespaceRequest) (*Args_ConfigData, error)
 	Target(context.Context, *Vagrantfile_TargetRequest) (*Args_Target, error)
 	TargetConfig(context.Context, *Vagrantfile_TargetConfigRequest) (*Args_Vagrantfile, error)
@@ -8636,6 +8683,9 @@ type VagrantfileServiceServer interface {
 type UnimplementedVagrantfileServiceServer struct {
 }
 
+func (UnimplementedVagrantfileServiceServer) GetValue(context.Context, *Vagrantfile_ValueRequest) (*Args_Direct, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetValue not implemented")
+}
 func (UnimplementedVagrantfileServiceServer) GetConfig(context.Context, *Vagrantfile_NamespaceRequest) (*Args_ConfigData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
 }
@@ -8661,6 +8711,24 @@ type UnsafeVagrantfileServiceServer interface {
 
 func RegisterVagrantfileServiceServer(s grpc.ServiceRegistrar, srv VagrantfileServiceServer) {
 	s.RegisterService(&VagrantfileService_ServiceDesc, srv)
+}
+
+func _VagrantfileService_GetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Vagrantfile_ValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VagrantfileServiceServer).GetValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hashicorp.vagrant.sdk.VagrantfileService/GetValue",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VagrantfileServiceServer).GetValue(ctx, req.(*Vagrantfile_ValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _VagrantfileService_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -8760,6 +8828,10 @@ var VagrantfileService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "hashicorp.vagrant.sdk.VagrantfileService",
 	HandlerType: (*VagrantfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetValue",
+			Handler:    _VagrantfileService_GetValue_Handler,
+		},
 		{
 			MethodName: "GetConfig",
 			Handler:    _VagrantfileService_GetConfig_Handler,

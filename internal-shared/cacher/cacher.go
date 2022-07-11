@@ -1,6 +1,7 @@
 package cacher
 
 type Cache interface {
+	Delete(key string)
 	Fetch(key string) (interface{}, bool)
 	Get(key string) interface{}
 	Keys() []string
@@ -21,6 +22,10 @@ func New() Cache {
 // Used for caching local conversions
 type cache struct {
 	registry map[string]interface{}
+}
+
+func (c *cache) Delete(key string) {
+	delete(c.registry, key)
 }
 
 func (c *cache) Register(key string, value interface{}) {

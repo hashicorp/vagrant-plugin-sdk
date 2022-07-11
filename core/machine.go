@@ -20,6 +20,7 @@ type MachineSyncedFolder struct {
 type Machine interface {
 	Target
 
+	AsTarget() (t Target, err error)
 	Box() (b Box, err error)
 	ConnectionInfo() (info *ConnectionInfo, err error)
 	Guest() (g Guest, err error)

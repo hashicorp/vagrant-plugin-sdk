@@ -84,7 +84,6 @@ var WellKnownTypes = []interface{}{
 	ValueToString,
 	ValueToStruct,
 	ValueToString,
-	// ValueProto,
 }
 
 // All is the list of all mappers as raw function pointers.
@@ -140,6 +139,7 @@ var All = []interface{}{
 	FlagsProto,
 	Folders,
 	FoldersProto,
+	FolderToVagrantfileSyncedFolder,
 	Hash,
 	HashProto,
 	JobInfo,
@@ -187,6 +187,8 @@ var All = []interface{}{
 	PushProto,
 	Range,
 	RangeProto,
+	RawRubyValue,
+	RawRubyValueProto,
 	Seeds,
 	SeedsProto,
 	State,
@@ -195,10 +197,6 @@ var All = []interface{}{
 	StateBagProto,
 	SyncedFolder,
 	SyncedFolderProto,
-	Vagrantfile,
-	VagrantfileProto,
-	VagrantfileSyncedFolderToFolder,
-	FolderToVagrantfileSyncedFolder,
 	Target,
 	TargetProto,
 	TargetIndex,
@@ -206,10 +204,12 @@ var All = []interface{}{
 	TargetMachine,
 	TargetMachineProto,
 	TargetProject,
+	TargetToMachine,
 	TerminalUI,
 	TerminalUIProto,
 	Vagrantfile,
 	VagrantfileProto,
+	VagrantfileSyncedFolderToFolder,
 }
 
 var AllFns []*argmapper.Func
@@ -709,6 +709,16 @@ func SeedsProtoFull(
 	return result, nil
 }
 
+func TargetToMachine(
+	input core.Target,
+) (core.Machine, error) {
+	m, err := input.Specialize((*core.Machine)(nil))
+	if err != nil {
+		return nil, err
+	}
+	return m.(core.Machine), nil
+}
+
 func Range(
 	input *vagrant_plugin_sdk.Args_Range,
 ) (types.Range, error) {
@@ -796,6 +806,59 @@ func ClassProto(
 	return &vagrant_plugin_sdk.Args_Class{
 		Name: string(input),
 	}
+}
+
+func RawRubyValue(
+	input *vagrant_plugin_sdk.Config_RawRubyValue,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*types.RawRubyValue, error) {
+	v, err := Hash(input.Data, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	data := make(map[string]interface{}, len(v))
+	for key, val := range v {
+		skey, ok := key.(string)
+		if !ok {
+			symkey, ok := key.(types.Symbol)
+			if !ok {
+				return nil, fmt.Errorf("invalid root key type %T", key)
+			}
+			skey = string(symkey)
+		}
+		data[skey] = val
+	}
+
+	result := &types.RawRubyValue{
+		Data: data,
+	}
+	if input.Source != nil {
+		result.Source = Class(input.Source)
+	}
+
+	return result, nil
+}
+
+func RawRubyValueProto(
+	input *types.RawRubyValue,
+	log hclog.Logger,
+	internal pluginargs.Internal,
+	ctx context.Context,
+) (*vagrant_plugin_sdk.Config_RawRubyValue, error) {
+	i := make(map[interface{}]interface{}, len(input.Data))
+	for key, val := range input.Data {
+		i[key] = val
+	}
+	iproto, err := HashProto(i, log, internal, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &vagrant_plugin_sdk.Config_RawRubyValue{
+		Data:   iproto,
+		Source: ClassProto(input.Source),
+	}, nil
 }
 
 func ConfigData(
@@ -2635,7 +2698,7 @@ func TargetProto(
 	if err != nil {
 		return nil, err
 	}
-	cid := fmt.Sprintf("%s-%p", rid, t)
+	cid := fmt.Sprintf("target-%s-%p", rid, t)
 	if at := internal.Cache().Get(cid); at != nil {
 		log.Trace("using cached target value",
 			"value", at,
@@ -2674,6 +2737,11 @@ func Target(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (core.Target, error) {
+	cid := fmt.Sprintf("target-%s", input.Addr)
+	if v, ok := internal.Cache().Fetch(cid); ok {
+		return v.(core.Target), nil
+	}
+
 	t := &plugincore.TargetPlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
@@ -2683,6 +2751,7 @@ func Target(
 		return nil, err
 	}
 
+	internal.Cache().Register(cid, client)
 	return client.(core.Target), nil
 }
 
@@ -2691,13 +2760,14 @@ func TargetMachineProto(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (*vagrant_plugin_sdk.Args_Target_Machine, error) {
-	rid := fmt.Sprintf("%p", m)
+	rid, err := m.ResourceId()
+	if err != nil {
+		return nil, err
+	}
 
-	if at := internal.Cache().Get(rid); at != nil {
-		log.Trace("using cached machine value",
-			"value", at,
-		)
-		return at.(*vagrant_plugin_sdk.Args_Target_Machine), nil
+	cid := fmt.Sprintf("machine-%s", rid)
+	if v, ok := internal.Cache().Fetch(cid); ok {
+		return v.(*vagrant_plugin_sdk.Args_Target_Machine), nil
 	}
 
 	tp := &plugincore.TargetMachinePlugin{
@@ -2718,10 +2788,10 @@ func TargetMachineProto(
 	}
 
 	log.Trace("registering machine proto to cache",
-		"rid", rid,
+		"rid", cid,
 		"proto", proto,
 	)
-	internal.Cache().Register(rid, proto)
+	internal.Cache().Register(cid, proto)
 	return proto, nil
 }
 
@@ -2731,6 +2801,11 @@ func TargetMachine(
 	log hclog.Logger,
 	internal pluginargs.Internal,
 ) (core.Machine, error) {
+	cid := fmt.Sprintf("machine-%s", input.Addr)
+	if v, ok := internal.Cache().Fetch(cid); ok {
+		return v.(core.Machine), nil
+	}
+
 	m := &plugincore.TargetMachinePlugin{
 		BasePlugin: basePlugin(nil, internal),
 	}
@@ -2740,6 +2815,7 @@ func TargetMachine(
 		return nil, err
 	}
 
+	internal.Cache().Register(cid, client)
 	return client.(core.Machine), nil
 }
 

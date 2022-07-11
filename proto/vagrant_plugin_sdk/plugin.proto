@@ -1165,6 +1165,7 @@ service TargetMachineService {
   rpc ConnectionInfo(google.protobuf.Empty) returns(Args.Hash);
   rpc UID(google.protobuf.Empty) returns(Target.Machine.UIDResponse);
   rpc SyncedFolders(google.protobuf.Empty) returns (Target.Machine.SyncedFoldersResponse);
+  rpc AsTarget(google.protobuf.Empty) returns (Args.Target);
 }
 
 message Target {
@@ -1324,6 +1325,7 @@ message Project {
 * Vagrantfile services
 ********************************************************************/
 service VagrantfileService {
+  rpc GetValue(Vagrantfile.ValueRequest) returns (Args.Direct);
   rpc GetConfig(Vagrantfile.NamespaceRequest) returns (Args.ConfigData);
   rpc Target(Vagrantfile.TargetRequest) returns (Args.Target);
   rpc TargetConfig(Vagrantfile.TargetConfigRequest) returns (Args.Vagrantfile);
@@ -1335,6 +1337,10 @@ service VagrantfileService {
  * Vagrantfile message used with Vagrantfile service
  *******************************************************/
 message Vagrantfile {
+  message ValueRequest {
+    repeated string path = 1;
+  }
+
   message Serialized {
     bytes json = 1;
   }

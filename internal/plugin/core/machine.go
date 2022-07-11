@@ -270,6 +270,20 @@ func (t *targetMachineClient) Box() (b core.Box, err error) {
 	return
 }
 
+func (t *targetMachineClient) AsTarget() (core.Target, error) {
+	raw, err := t.client.AsTarget(t.Ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	target, err := t.Map(raw, (*core.Target)(nil), argmapper.Typed(t.Ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return target.(core.Target), nil
+}
+
 // Machine Server
 
 func (t *targetMachineServer) ConnectionInfo(
@@ -499,6 +513,23 @@ func (t *targetMachineServer) Box(
 	}
 
 	return
+}
+
+func (t *targetMachineServer) AsTarget(
+	ctx context.Context,
+	_ *emptypb.Empty,
+) (*vagrant_plugin_sdk.Args_Target, error) {
+	target, err := t.Impl.AsTarget()
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := t.Map(target, (**vagrant_plugin_sdk.Args_Target)(nil), argmapper.Typed(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return raw.(*vagrant_plugin_sdk.Args_Target), nil
 }
 
 var (
