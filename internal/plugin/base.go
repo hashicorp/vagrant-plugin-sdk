@@ -102,7 +102,7 @@ func (b *BasePlugin) NewClient(
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
-			Cleanup: b.Cleanup,
+			Cleanup: cleanup.New(),
 			Logger:  b.Logger,
 			Mappers: mappers(b.Mappers),
 			Wrapped: b.Wrapped,
@@ -122,7 +122,7 @@ func (b *BasePlugin) NewServer(
 		Base: &Base{
 			Broker:  broker,
 			Cache:   b.Cache,
-			Cleanup: b.Cleanup,
+			Cleanup: cleanup.New(),
 			Logger:  b.Logger,
 			Mappers: mappers(b.Mappers),
 			Wrapped: b.Wrapped,
@@ -148,7 +148,7 @@ type Base struct {
 func (b *Base) Wrap() *BasePlugin {
 	return &BasePlugin{
 		Cache:   b.Cache,
-		Cleanup: b.Cleanup,
+		Cleanup: cleanup.New(),
 		Logger:  b.Logger,
 		Mappers: mappers(b.Mappers),
 		Wrapped: true,
