@@ -2166,6 +2166,7 @@ func CommandInfo(input *vagrant_plugin_sdk.Command_CommandInfo) (*component.Comm
 		Help:        input.Help,
 		Synopsis:    input.Synopsis,
 		Subcommands: subcommands,
+		Primary:     input.Primary,
 	}
 	return result, err
 }

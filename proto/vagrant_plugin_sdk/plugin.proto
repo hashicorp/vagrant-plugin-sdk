@@ -599,6 +599,10 @@ message PluginInfo {
   message ComponentOptionsMap {
     map<uint32, google.protobuf.Any> options = 1;
   }
+  // See component.CommandOptions
+  message CommandOptions {
+    bool primary = 1;
+  }
   // See component.ProviderOptions for details
   message ProviderOptions {
     int32 priority = 1;
@@ -750,6 +754,7 @@ message Command {
     string synopsis = 3;
     repeated Flag flags = 4;
     repeated CommandInfo subcommands = 5;
+    bool primary = 6;
   }
 
   message CommandInfoResp {
