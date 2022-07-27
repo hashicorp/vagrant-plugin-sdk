@@ -20,6 +20,29 @@ type Machine struct {
 	mock.Mock
 }
 
+// AsTarget provides a mock function with given fields:
+func (_m *Machine) AsTarget() (core.Target, error) {
+	ret := _m.Called()
+
+	var r0 core.Target
+	if rf, ok := ret.Get(0).(func() core.Target); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(core.Target)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Box provides a mock function with given fields:
 func (_m *Machine) Box() (core.Box, error) {
 	ret := _m.Called()

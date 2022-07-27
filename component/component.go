@@ -66,6 +66,7 @@ var TypeMap = map[Type]interface{}{
 // the options struct (if any) for that type. This is used in PluginInfo when
 // decoding options from proto.
 var OptionsTypeMap = map[Type]interface{}{
+	CommandType:      (*CommandOptions)(nil),
 	ProviderType:     (*ProviderOptions)(nil),
 	SyncedFolderType: (*SyncedFolderOptions)(nil),
 }
@@ -73,6 +74,10 @@ var OptionsTypeMap = map[Type]interface{}{
 // DefaultOptions contains default options values for components that use
 // options
 var DefaultOptionsMap = map[Type]interface{}{
+	CommandType: &CommandOptions{
+		// See V2::Plugin.command where primary is defaulted to true.
+		Primary: true,
+	},
 	ProviderType: &ProviderOptions{
 		// See V2::Plugin.provider where priority is defaulted to 5.
 		Priority: 5,
@@ -120,6 +125,15 @@ func UnmarshalOptionsProto(typ Type, optsProtoAny interface{}) (result interface
 		return nil, nil
 	}
 	switch typ {
+	case CommandType:
+		optsProto := &vagrant_plugin_sdk.PluginInfo_CommandOptions{}
+		err := ProtoAnyUnmarshal(optsProtoAny, optsProto)
+		if err != nil {
+			return nil, fmt.Errorf("error unmarshalling command options: %s", err)
+		}
+		return &CommandOptions{
+			Primary: optsProto.Primary,
+		}, nil
 	case ProviderType:
 		optsProto := &vagrant_plugin_sdk.PluginInfo_ProviderOptions{}
 		err := ProtoAnyUnmarshal(optsProtoAny, optsProto)
@@ -208,6 +222,7 @@ type CommandInfo struct {
 	Synopsis    string
 	Flags       []*CommandFlag
 	Subcommands []*CommandInfo
+	Primary     bool
 }
 
 type CommandParams struct {
@@ -224,6 +239,18 @@ type Command interface {
 	ExecuteFunc([]string) interface{}
 	// Retruns command info
 	CommandInfoFunc() interface{}
+}
+
+type CommandOptions struct {
+	// Primary indicates that a command should show up in the main help output.
+	Primary bool
+}
+
+// implements ProtoMarshaler
+func (co *CommandOptions) Proto() proto.Message {
+	return &vagrant_plugin_sdk.PluginInfo_CommandOptions{
+		Primary: co.Primary,
+	}
 }
 
 type ConfigRegistration struct {
