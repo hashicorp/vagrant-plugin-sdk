@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/bgentry/speakeasy"
 	"github.com/mitchellh/go-glint"
 	"github.com/olekukonko/tablewriter"
 )
@@ -89,13 +90,22 @@ func (ui *glintUI) Input(input *Input) (string, error) {
 	ui.d.Pause()
 	defer ui.d.Resume()
 
-	reader := bufio.NewReader(os.Stdin)
-	text, _ := reader.ReadString('\n')
-	// convert CRLF to LF
-	text = strings.TrimSpace(text)
+	var line string
+	var err error
 
+	if input.Secret {
+		line, err = speakeasy.Ask("")
+	} else {
+		r := bufio.NewReader(os.Stdin)
+		line, err = r.ReadString('\n')
+	}
+	if err != nil {
+		return "", err
+	}
+
+	text := strings.TrimSpace(line)
 	if !input.Secret {
-		ui.Output(text + "\n")
+		ui.Output(text)
 	} else {
 		ui.Output("")
 	}
