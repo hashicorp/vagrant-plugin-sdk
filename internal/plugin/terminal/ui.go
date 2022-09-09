@@ -168,7 +168,11 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 
 		switch ev := ev.Event.(type) {
 		case *vagrant_plugin_sdk.TerminalUI_Event_Line_:
-			s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style))
+			if ev.Line.DisableNewLine {
+				s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style), terminal.WithoutNewLine())
+			} else {
+				s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style))
+			}
 			stream.Send(&vagrant_plugin_sdk.TerminalUI_Response{
 				Event: &vagrant_plugin_sdk.TerminalUI_Response_Input{
 					Input: &vagrant_plugin_sdk.TerminalUI_Event_InputResp{
