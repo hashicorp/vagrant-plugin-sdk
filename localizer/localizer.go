@@ -8,6 +8,8 @@ import (
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -23,6 +25,7 @@ type LocaleData struct {
 type Localizer struct {
 	localizer *i18n.Localizer
 	bundle    *i18n.Bundle
+	lang      language.Tag
 }
 
 func LocalizeMsg(msg string, templateData interface{}) string {
@@ -43,6 +46,31 @@ func LocalizeErr(msg string, templateData interface{}) error {
 		return err
 	}
 	return l.LocalizeErr(msg, templateData)
+}
+
+func LocalizeStatusErr(msg string, templateData interface{}, st *status.Status) error {
+	l, err := NewCoreLocalizer()
+	if err != nil {
+		return err
+	}
+	localizedMsg, err := l.LocalizeMsg(msg, templateData)
+	if err != nil {
+		return err
+	}
+	localizedProtoMsg := &errdetails.LocalizedMessage{
+		Message: localizedMsg,
+		Locale:  l.lang.String(),
+	}
+
+	// Use the code provided in the status
+	returnErr := status.New(st.Code(), localizedMsg)
+	// Prepend the provided error
+	returnErr, _ = returnErr.WithDetails(localizedProtoMsg)
+	// Add the details
+	for _, d := range st.Details() {
+		returnErr, _ = returnErr.WithDetails(d.(*errdetails.LocalizedMessage))
+	}
+	return returnErr.Err()
 }
 
 func NewPluginLocalizer(data ...LocaleData) (localizer *Localizer, err error) {
@@ -80,7 +108,7 @@ func NewCoreLocalizer() (localizer *Localizer, err error) {
 	}
 	l := i18n.NewLocalizer(bundle, lang.String())
 	return &Localizer{
-		localizer: l, bundle: bundle,
+		localizer: l, bundle: bundle, lang: lang,
 	}, nil
 }
 
