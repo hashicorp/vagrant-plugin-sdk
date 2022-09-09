@@ -11,9 +11,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/bgentry/speakeasy"
 	"github.com/mitchellh/go-glint"
 	"github.com/olekukonko/tablewriter"
+	"golang.org/x/term"
 )
 
 type glintUI struct {
@@ -82,7 +82,7 @@ func (ui *glintUI) Close() error {
 	return ui.d.Close()
 }
 
-func (ui *glintUI) Input(input *Input) (string, error) {
+func (ui *glintUI) Input(input *Input) (line string, err error) {
 	ui.Output(input.Prompt, WithoutNewLine())
 	// Render the last frame
 	ui.d.RenderFrame()
@@ -90,11 +90,12 @@ func (ui *glintUI) Input(input *Input) (string, error) {
 	ui.d.Pause()
 	defer ui.d.Resume()
 
-	var line string
-	var err error
-
 	if input.Secret {
-		line, err = speakeasy.Ask("")
+		l, err := term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			return "", err
+		}
+		line = string(l)
 	} else {
 		r := bufio.NewReader(os.Stdin)
 		line, err = r.ReadString('\n')
@@ -107,7 +108,7 @@ func (ui *glintUI) Input(input *Input) (string, error) {
 	if !input.Secret {
 		ui.Output(text)
 	} else {
-		ui.Output("")
+		ui.Output(text)
 	}
 	return text, nil
 }
