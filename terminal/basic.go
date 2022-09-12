@@ -94,43 +94,27 @@ func (ui *basicUI) Interactive() bool {
 
 // ClearLine implements UI
 func (ui *basicUI) ClearLine() {
-	_, _, _, w := Interpret("")
+	_, _, _, w, _ := Interpret("")
 	w.Write([]byte("\r\033[K"))
 }
 
 // Output implements UI
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
-	msg, style, disableNewline, w := Interpret(msg, raw...)
+	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
 
+	// TODO: ensure this output gets colored
 	switch style {
 	case HeaderStyle:
-		msg = colorHeader.Sprintf("\n==> %s", msg)
-	case ErrorStyle:
-		msg = colorError.Sprint(msg)
-	case ErrorBoldStyle:
-		msg = colorErrorBold.Sprint(msg)
-	case WarningStyle:
-		msg = colorWarning.Sprint(msg)
-	case WarningBoldStyle:
-		msg = colorWarningBold.Sprint(msg)
-	case SuccessStyle:
-		msg = colorSuccess.Sprint(msg)
-	case SuccessBoldStyle:
-		msg = colorSuccessBold.Sprint(msg)
-	case InfoStyle:
+		msg = fmt.Sprintf("\n==> %s", msg)
+	case InfoStyle, InfoBoldStyle:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = colorInfo.Sprintf("    %s", line)
+			lines[i] = fmt.Sprintf("    %s", line)
 		}
 
 		msg = strings.Join(lines, "\n")
-	case InfoBoldStyle:
-		lines := strings.Split(msg, "\n")
-		for i, line := range lines {
-			lines[i] = colorInfoBold.Sprintf("    %s", line)
-		}
-
-		msg = strings.Join(lines, "\n")
+	default:
+		msg = fmt.Sprint(msg)
 	}
 
 	st := ui.status
@@ -176,7 +160,7 @@ func (ui *basicUI) NamedValues(rows []NamedValue, opts ...Option) {
 	}
 
 	tr.Flush()
-	colorInfo.Fprintln(cfg.Writer, buf.String())
+	fmt.Fprintln(cfg.Writer, buf.String())
 }
 
 // OutputWriters implements UI

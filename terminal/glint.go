@@ -126,7 +126,7 @@ func (ui *glintUI) MachineReadable() bool {
 // Output implements UI
 func (ui *glintUI) Output(msg string, raw ...interface{}) {
 	defer ui.d.RenderFrame()
-	msg, style, disableNewline, _ := Interpret(msg, raw...)
+	msg, style, disableNewline, _, color := Interpret(msg, raw...)
 
 	var cs []glint.StyleOption
 	switch style {
@@ -134,7 +134,6 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 		cs = append(cs, glint.Bold())
 		msg = "\n» " + msg
 	case ErrorStyle, ErrorBoldStyle:
-		cs = append(cs, glint.Color("lightRed"))
 		if style == ErrorBoldStyle {
 			cs = append(cs, glint.Bold())
 		}
@@ -151,18 +150,14 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 		msg = strings.Join(lines, "\n")
 
 	case WarningStyle, WarningBoldStyle:
-		cs = append(cs, glint.Color("lightYellow"))
 		if style == WarningBoldStyle {
 			cs = append(cs, glint.Bold())
 		}
 
 	case SuccessStyle, SuccessBoldStyle:
-		cs = append(cs, glint.Color("lightGreen"))
 		if style == SuccessBoldStyle {
 			cs = append(cs, glint.Bold())
 		}
-
-		msg = colorSuccess.Sprint(msg)
 
 	case InfoStyle:
 		lines := strings.Split(msg, "\n")
@@ -181,6 +176,8 @@ func (ui *glintUI) Output(msg string, raw ...interface{}) {
 
 		msg = strings.Join(lines, "\n")
 	}
+
+	cs = append(cs, glint.Color(color))
 
 	a := ui.append
 	ui.append = disableNewline

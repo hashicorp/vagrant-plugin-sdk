@@ -116,6 +116,10 @@ func (s *uiServer) Output(
 		opts = append(opts, terminal.WithWarningBoldStyle())
 	}
 
+	if req.Color != "" {
+		opts = append(opts, terminal.WithColor(req.Color))
+	}
+
 	for _, line := range req.Lines {
 		s.Impl.Output(line, opts...)
 	}
@@ -169,9 +173,16 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 		switch ev := ev.Event.(type) {
 		case *vagrant_plugin_sdk.TerminalUI_Event_Line_:
 			if ev.Line.DisableNewLine {
-				s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style), terminal.WithoutNewLine())
+				s.Impl.Output(
+					ev.Line.Msg,
+					terminal.WithStyle(ev.Line.Style),
+					terminal.WithoutNewLine(),
+					terminal.WithColor(ev.Line.Color))
 			} else {
-				s.Impl.Output(ev.Line.Msg, terminal.WithStyle(ev.Line.Style))
+				s.Impl.Output(
+					ev.Line.Msg,
+					terminal.WithStyle(ev.Line.Style),
+					terminal.WithColor(ev.Line.Color))
 			}
 			stream.Send(&vagrant_plugin_sdk.TerminalUI_Response{
 				Event: &vagrant_plugin_sdk.TerminalUI_Response_Input{
@@ -418,7 +429,7 @@ func (u *uiBridge) ClearLine() {
 // arguments should be interpolations for the format string. After the
 // interpolations you may add Options.
 func (u *uiBridge) Output(msg string, raw ...interface{}) {
-	msg, style, disableNewline, _ := terminal.Interpret(msg, raw...)
+	msg, style, disableNewline, _, color := terminal.Interpret(msg, raw...)
 
 	ev := &vagrant_plugin_sdk.TerminalUI_Event{
 		Event: &vagrant_plugin_sdk.TerminalUI_Event_Line_{
@@ -426,6 +437,7 @@ func (u *uiBridge) Output(msg string, raw ...interface{}) {
 				Msg:            msg,
 				Style:          style,
 				DisableNewLine: disableNewline,
+				Color:          color,
 			},
 		},
 	}

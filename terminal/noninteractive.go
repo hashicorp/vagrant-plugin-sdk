@@ -42,7 +42,7 @@ func (ui *nonInteractiveUI) MachineReadable() bool {
 func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
-	msg, style, disableNewline, w := Interpret(msg, raw...)
+	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
 
 	switch style {
 	case HeaderStyle:
