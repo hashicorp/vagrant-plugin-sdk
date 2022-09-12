@@ -108,8 +108,8 @@ type Step interface {
 	Abort()
 }
 
-// Interpret decomposes the msg and arguments into the message, style, disabled new line, and writer
-func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer) {
+// Interpret decomposes the msg and arguments into the message, style, disabled new line, writer, and color
+func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer, string) {
 	// Build our args and options
 	var args []interface{}
 	var opts []Option
@@ -130,7 +130,7 @@ func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer)
 		opt(cfg)
 	}
 
-	return msg, cfg.Style, cfg.DisableNewLine, cfg.Writer
+	return msg, cfg.Style, cfg.DisableNewLine, cfg.Writer, cfg.Color
 }
 
 const (
@@ -154,6 +154,9 @@ type config struct {
 
 	// Do not append new line to end of output
 	DisableNewLine bool
+
+	// Color of the message when it is output to the writer
+	Color string
 }
 
 // Option controls output styling.
@@ -194,6 +197,7 @@ func WithInfoBoldStyle() Option {
 func WithErrorStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorStyle
+		c.Color = "red"
 	}
 }
 
@@ -201,6 +205,7 @@ func WithErrorStyle() Option {
 func WithErrorBoldStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorBoldStyle
+		c.Color = "red"
 	}
 }
 
@@ -208,6 +213,7 @@ func WithErrorBoldStyle() Option {
 func WithWarningStyle() Option {
 	return func(c *config) {
 		c.Style = WarningStyle
+		c.Color = "yellow"
 	}
 }
 
@@ -215,6 +221,7 @@ func WithWarningStyle() Option {
 func WithWarningBoldStyle() Option {
 	return func(c *config) {
 		c.Style = WarningBoldStyle
+		c.Color = "yellow"
 	}
 }
 
@@ -222,6 +229,7 @@ func WithWarningBoldStyle() Option {
 func WithSuccessStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessStyle
+		c.Color = "green"
 	}
 }
 
@@ -229,6 +237,7 @@ func WithSuccessStyle() Option {
 func WithSuccessBoldStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessBoldStyle
+		c.Color = "green"
 	}
 }
 
@@ -243,14 +252,12 @@ func WithWriter(w io.Writer) Option {
 	return func(c *config) { c.Writer = w }
 }
 
+// WithColor specifies the color of the output.
+func WithColor(color string) Option {
+	return func(c *config) { c.Color = color }
+}
+
 var (
-	colorHeader      = color.New(color.Bold)
-	colorInfo        = color.New()
-	colorInfoBold    = color.New(color.Bold)
-	colorError       = color.New(color.FgRed)
-	colorErrorBold   = color.New(color.FgRed, color.Bold)
-	colorSuccess     = color.New(color.FgGreen)
-	colorSuccessBold = color.New(color.FgGreen, color.Bold)
-	colorWarning     = color.New(color.FgYellow)
-	colorWarningBold = color.New(color.FgYellow, color.Bold)
+	colorInfo     = color.New()
+	colorInfoBold = color.New(color.Bold)
 )
