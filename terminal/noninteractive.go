@@ -44,39 +44,33 @@ func (ui *nonInteractiveUI) Output(msg string, raw ...interface{}) {
 	defer ui.mu.Unlock()
 	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
 
+	var printer *color.Color
+	switch style {
+	case HeaderStyle, WarningBoldStyle, ErrorBoldStyle, SuccessBoldStyle, InfoBoldStyle:
+		printer = colorInfoBold
+	default:
+		printer = colorInfo
+	}
+
 	switch style {
 	case HeaderStyle:
-		msg = "\n» " + msg
+		msg = printer.Sprintf("\n» " + msg)
 	case ErrorStyle, ErrorBoldStyle:
 		lines := strings.Split(msg, "\n")
 		if len(lines) > 0 {
-			fmt.Fprintln(w, "! "+lines[0])
+			printer.Sprintf("! " + lines[0])
 			for _, line := range lines[1:] {
-				fmt.Fprintln(w, "  "+line)
+				printer.Sprintf("  " + line)
 			}
 		}
-
-		return
-
-	case WarningStyle, WarningBoldStyle:
-		msg = "warning: " + msg
-
-	case SuccessStyle, SuccessBoldStyle:
-
-	case InfoStyle:
-		lines := strings.Split(msg, "\n")
-		for i, line := range lines {
-			lines[i] = colorInfo.Sprintf("  %s", line)
-		}
-
 		msg = strings.Join(lines, "\n")
-
-	case InfoBoldStyle:
+	case WarningStyle, WarningBoldStyle:
+		msg = printer.Sprintf("WARNING: " + msg)
+	default:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = colorInfoBold.Sprintf("  %s", line)
+			lines[i] = printer.Sprintf("  %s", line)
 		}
-
 		msg = strings.Join(lines, "\n")
 	}
 

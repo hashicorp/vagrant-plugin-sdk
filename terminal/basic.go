@@ -24,7 +24,7 @@ type basicUI struct {
 func BasicUI(ctx context.Context) UI {
 	result := &basicUI{
 		ctx:    ctx,
-		status: newSpinnerStatus(ctx),
+		status: nil,
 	}
 
 	return result
@@ -91,18 +91,34 @@ func (ui *basicUI) ClearLine() {
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
 	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
 
+	var printer *color.Color
+	switch style {
+	case HeaderStyle, WarningBoldStyle, ErrorBoldStyle, SuccessBoldStyle, InfoBoldStyle:
+		printer = colorInfoBold
+	default:
+		printer = colorInfo
+	}
+
 	switch style {
 	case HeaderStyle:
-		msg = fmt.Sprintf("\n==> %s", msg)
-	case ErrorBoldStyle, WarningBoldStyle, SuccessBoldStyle, InfoBoldStyle:
+		msg = printer.Sprintf("\n» " + msg)
+	case ErrorStyle, ErrorBoldStyle:
+		lines := strings.Split(msg, "\n")
+		if len(lines) > 0 {
+			printer.Sprintf("! " + lines[0])
+			for _, line := range lines[1:] {
+				printer.Sprintf("  " + line)
+			}
+		}
+		msg = strings.Join(lines, "\n")
+	case WarningStyle, WarningBoldStyle:
+		msg = printer.Sprintf("WARNING: " + msg)
+	default:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = colorInfoBold.Sprintf("    %s", line)
+			lines[i] = printer.Sprintf("  %s", line)
 		}
-
 		msg = strings.Join(lines, "\n")
-	default:
-		msg = fmt.Sprint(msg)
 	}
 
 	st := ui.status
@@ -114,7 +130,7 @@ func (ui *basicUI) Output(msg string, raw ...interface{}) {
 
 	// Write it
 	if disableNewline {
-		fmt.Fprintf(w, msg)
+		fmt.Fprint(w, msg)
 	} else {
 		fmt.Fprintln(w, msg)
 	}
