@@ -13,6 +13,7 @@ import (
 
 	"github.com/mitchellh/go-glint"
 	"github.com/olekukonko/tablewriter"
+	"golang.org/x/term"
 )
 
 type glintUI struct {
@@ -81,7 +82,7 @@ func (ui *glintUI) Close() error {
 	return ui.d.Close()
 }
 
-func (ui *glintUI) Input(input *Input) (string, error) {
+func (ui *glintUI) Input(input *Input) (line string, err error) {
 	ui.Output(input.Prompt, WithoutNewLine())
 	// Render the last frame
 	ui.d.RenderFrame()
@@ -89,15 +90,25 @@ func (ui *glintUI) Input(input *Input) (string, error) {
 	ui.d.Pause()
 	defer ui.d.Resume()
 
-	reader := bufio.NewReader(os.Stdin)
-	text, _ := reader.ReadString('\n')
-	// convert CRLF to LF
-	text = strings.TrimSpace(text)
-
-	if !input.Secret {
-		ui.Output(text + "\n")
+	if input.Secret {
+		l, err := term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			return "", err
+		}
+		line = string(l)
 	} else {
-		ui.Output("")
+		r := bufio.NewReader(os.Stdin)
+		line, err = r.ReadString('\n')
+	}
+	if err != nil {
+		return "", err
+	}
+
+	text := strings.TrimSpace(line)
+	if !input.Secret {
+		ui.Output(text)
+	} else {
+		ui.Output(text)
 	}
 	return text, nil
 }
