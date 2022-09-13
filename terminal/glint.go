@@ -105,8 +105,8 @@ func (ui *glintUI) Input(input *Input) (line string, err error) {
 	}
 
 	text := strings.TrimSpace(line)
-	if !input.Secret {
-		ui.Output(text)
+	if input.Secret {
+		ui.Output("")
 	} else {
 		ui.Output(text)
 	}
