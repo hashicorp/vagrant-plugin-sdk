@@ -11,10 +11,8 @@ import (
 	"text/tabwriter"
 
 	"github.com/bgentry/speakeasy"
-	"github.com/containerd/console"
 	"github.com/fatih/color"
 	"github.com/mattn/go-isatty"
-	sshterm "golang.org/x/crypto/ssh/terminal"
 )
 
 // basicUI
@@ -23,27 +21,13 @@ type basicUI struct {
 	status *spinnerStatus
 }
 
-// Returns a UI which will write to the current processes
-// stdout/stderr.
-func ConsoleUI(ctx context.Context) UI {
-	// We do both of these checks because some sneaky environments fool
-	// one or the other and we really only want the glint-based UI in
-	// truly interactive environments.
-	glint := isatty.IsTerminal(os.Stdout.Fd()) && sshterm.IsTerminal(int(os.Stdout.Fd()))
-	if glint {
-		glint = false
-		if c, err := console.ConsoleFromFile(os.Stdout); err == nil {
-			if sz, err := c.Size(); err == nil {
-				glint = sz.Height > 0 && sz.Width > 0
-			}
-		}
+func BasicUI(ctx context.Context) UI {
+	result := &basicUI{
+		ctx:    ctx,
+		status: newSpinnerStatus(ctx),
 	}
 
-	if glint {
-		return GlintUI(ctx)
-	} else {
-		return NonInteractiveUI(ctx)
-	}
+	return result
 }
 
 // Input implements UI
@@ -92,6 +76,11 @@ func (ui *basicUI) Interactive() bool {
 	return isatty.IsTerminal(os.Stdin.Fd())
 }
 
+// MachineReadable implements UI
+func (ui *basicUI) MachineReadable() bool {
+	return false
+}
+
 // ClearLine implements UI
 func (ui *basicUI) ClearLine() {
 	_, _, _, w, _ := Interpret("")
@@ -102,14 +91,13 @@ func (ui *basicUI) ClearLine() {
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
 	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
 
-	// TODO: ensure this output gets colored
 	switch style {
 	case HeaderStyle:
 		msg = fmt.Sprintf("\n==> %s", msg)
-	case InfoStyle, InfoBoldStyle:
+	case ErrorBoldStyle, WarningBoldStyle, SuccessBoldStyle, InfoBoldStyle:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = fmt.Sprintf("    %s", line)
+			lines[i] = colorInfoBold.Sprintf("    %s", line)
 		}
 
 		msg = strings.Join(lines, "\n")

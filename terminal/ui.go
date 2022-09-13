@@ -1,11 +1,16 @@
 package terminal
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"os"
 
+	"github.com/containerd/console"
 	"github.com/fatih/color"
 	"github.com/hashicorp/vagrant-plugin-sdk/localizer"
+	"github.com/mattn/go-isatty"
+	sshterm "golang.org/x/crypto/ssh/terminal"
 )
 
 var ErrNonInteractive = nonInteractiveError()
@@ -106,6 +111,29 @@ type Step interface {
 	// This is usually done in a defer so that any return before the Done() shows
 	// the Step didn't completely properly.
 	Abort()
+}
+
+// Returns a UI which will write to the current processes
+// stdout/stderr.
+func ConsoleUI(ctx context.Context) UI {
+	// We do both of these checks because some sneaky environments fool
+	// one or the other and we really only want the glint-based UI in
+	// truly interactive environments.
+	glint := isatty.IsTerminal(os.Stdout.Fd()) && sshterm.IsTerminal(int(os.Stdout.Fd()))
+	if glint {
+		glint = false
+		if c, err := console.ConsoleFromFile(os.Stdout); err == nil {
+			if sz, err := c.Size(); err == nil {
+				glint = sz.Height > 0 && sz.Width > 0
+			}
+		}
+	}
+
+	if glint {
+		return GlintUI(ctx)
+	} else {
+		return NonInteractiveUI(ctx)
+	}
 }
 
 // Interpret decomposes the msg and arguments into the message, style, disabled new line, writer, and color
