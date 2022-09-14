@@ -207,6 +207,14 @@ func WithoutNewLine() Option {
 	}
 }
 
+// WithNewLine ensures a new line character from being suffixed at
+// the end of the message
+func WithNewLine() Option {
+	return func(c *config) {
+		c.DisableNewLine = false
+	}
+}
+
 // WithInfoStyle styles the output like it's formatted information.
 func WithInfoStyle() Option {
 	return func(c *config) {
@@ -225,7 +233,9 @@ func WithInfoBoldStyle() Option {
 func WithErrorStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorStyle
-		c.Color = "red"
+		if c.Color == "" {
+			c.Color = "red"
+		}
 	}
 }
 
@@ -233,7 +243,9 @@ func WithErrorStyle() Option {
 func WithErrorBoldStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorBoldStyle
-		c.Color = "red"
+		if c.Color == "" {
+			c.Color = "red"
+		}
 	}
 }
 
@@ -241,7 +253,9 @@ func WithErrorBoldStyle() Option {
 func WithWarningStyle() Option {
 	return func(c *config) {
 		c.Style = WarningStyle
-		c.Color = "yellow"
+		if c.Color == "" {
+			c.Color = "yellow"
+		}
 	}
 }
 
@@ -249,7 +263,9 @@ func WithWarningStyle() Option {
 func WithWarningBoldStyle() Option {
 	return func(c *config) {
 		c.Style = WarningBoldStyle
-		c.Color = "yellow"
+		if c.Color == "" {
+			c.Color = "yellow"
+		}
 	}
 }
 
@@ -257,7 +273,9 @@ func WithWarningBoldStyle() Option {
 func WithSuccessStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessStyle
-		c.Color = "green"
+		if c.Color == "" {
+			c.Color = "green"
+		}
 	}
 }
 
@@ -265,7 +283,9 @@ func WithSuccessStyle() Option {
 func WithSuccessBoldStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessBoldStyle
-		c.Color = "green"
+		if c.Color == "" {
+			c.Color = "green"
+		}
 	}
 }
 
