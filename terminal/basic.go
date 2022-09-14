@@ -101,7 +101,7 @@ func (ui *basicUI) Output(msg string, raw ...interface{}) {
 
 	switch style {
 	case HeaderStyle:
-		msg = printer.Sprintf("\n» " + msg)
+		msg = printer.Sprintf("\n==> " + msg)
 	case ErrorStyle, ErrorBoldStyle:
 		lines := strings.Split(msg, "\n")
 		if len(lines) > 0 {

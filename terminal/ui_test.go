@@ -76,9 +76,9 @@ two
 		WithInfoStyle(),
 	)
 
-	expected := `    one
-    two
-      three
+	expected := `  one
+  two
+    three
 `
 
 	require.Equal(expected, buf.String())
