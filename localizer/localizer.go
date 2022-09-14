@@ -48,7 +48,7 @@ func LocalizeErr(msg string, templateData interface{}) error {
 	return l.LocalizeErr(msg, templateData)
 }
 
-func LocalizeStatusErr(msg string, templateData interface{}, st *status.Status) error {
+func LocalizeStatusErr(msg string, templateData interface{}, st *status.Status, prepend bool) error {
 	l, err := NewCoreLocalizer()
 	if err != nil {
 		return err
@@ -64,11 +64,20 @@ func LocalizeStatusErr(msg string, templateData interface{}, st *status.Status) 
 
 	// Use the code provided in the status
 	returnErr := status.New(st.Code(), localizedMsg)
-	// Prepend the provided error
-	returnErr, _ = returnErr.WithDetails(localizedProtoMsg)
-	// Add the details
-	for _, d := range st.Details() {
-		returnErr, _ = returnErr.WithDetails(d.(*errdetails.LocalizedMessage))
+	if prepend {
+		// Prepend the provided error
+		returnErr, _ = returnErr.WithDetails(localizedProtoMsg)
+		// Add the details
+		for _, d := range st.Details() {
+			returnErr, _ = returnErr.WithDetails(d.(*errdetails.LocalizedMessage))
+		}
+	} else {
+		// Add the details
+		for _, d := range st.Details() {
+			returnErr, _ = returnErr.WithDetails(d.(*errdetails.LocalizedMessage))
+		}
+		// Append the provided error
+		returnErr, _ = returnErr.WithDetails(localizedProtoMsg)
 	}
 	return returnErr.Err()
 }
