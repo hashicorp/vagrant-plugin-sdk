@@ -1,11 +1,16 @@
 package terminal
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"os"
 
+	"github.com/containerd/console"
 	"github.com/fatih/color"
 	"github.com/hashicorp/vagrant-plugin-sdk/localizer"
+	"github.com/mattn/go-isatty"
+	sshterm "golang.org/x/crypto/ssh/terminal"
 )
 
 var ErrNonInteractive = nonInteractiveError()
@@ -108,8 +113,31 @@ type Step interface {
 	Abort()
 }
 
-// Interpret decomposes the msg and arguments into the message, style, disabled new line, and writer
-func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer) {
+// Returns a UI which will write to the current processes
+// stdout/stderr.
+func ConsoleUI(ctx context.Context) UI {
+	// We do both of these checks because some sneaky environments fool
+	// one or the other and we really only want the glint-based UI in
+	// truly interactive environments.
+	glint := isatty.IsTerminal(os.Stdout.Fd()) && sshterm.IsTerminal(int(os.Stdout.Fd()))
+	if glint {
+		glint = false
+		if c, err := console.ConsoleFromFile(os.Stdout); err == nil {
+			if sz, err := c.Size(); err == nil {
+				glint = sz.Height > 0 && sz.Width > 0
+			}
+		}
+	}
+
+	if glint {
+		return GlintUI(ctx)
+	} else {
+		return NonInteractiveUI(ctx)
+	}
+}
+
+// Interpret decomposes the msg and arguments into the message, style, disabled new line, writer, and color
+func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer, string) {
 	// Build our args and options
 	var args []interface{}
 	var opts []Option
@@ -130,7 +158,7 @@ func Interpret(msg string, raw ...interface{}) (string, string, bool, io.Writer)
 		opt(cfg)
 	}
 
-	return msg, cfg.Style, cfg.DisableNewLine, cfg.Writer
+	return msg, cfg.Style, cfg.DisableNewLine, cfg.Writer, cfg.Color
 }
 
 const (
@@ -154,6 +182,9 @@ type config struct {
 
 	// Do not append new line to end of output
 	DisableNewLine bool
+
+	// Color of the message when it is output to the writer
+	Color string
 }
 
 // Option controls output styling.
@@ -176,6 +207,14 @@ func WithoutNewLine() Option {
 	}
 }
 
+// WithNewLine ensures a new line character from being suffixed at
+// the end of the message
+func WithNewLine() Option {
+	return func(c *config) {
+		c.DisableNewLine = false
+	}
+}
+
 // WithInfoStyle styles the output like it's formatted information.
 func WithInfoStyle() Option {
 	return func(c *config) {
@@ -194,6 +233,9 @@ func WithInfoBoldStyle() Option {
 func WithErrorStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorStyle
+		if c.Color == "" {
+			c.Color = "red"
+		}
 	}
 }
 
@@ -201,6 +243,9 @@ func WithErrorStyle() Option {
 func WithErrorBoldStyle() Option {
 	return func(c *config) {
 		c.Style = ErrorBoldStyle
+		if c.Color == "" {
+			c.Color = "red"
+		}
 	}
 }
 
@@ -208,6 +253,9 @@ func WithErrorBoldStyle() Option {
 func WithWarningStyle() Option {
 	return func(c *config) {
 		c.Style = WarningStyle
+		if c.Color == "" {
+			c.Color = "yellow"
+		}
 	}
 }
 
@@ -215,6 +263,9 @@ func WithWarningStyle() Option {
 func WithWarningBoldStyle() Option {
 	return func(c *config) {
 		c.Style = WarningBoldStyle
+		if c.Color == "" {
+			c.Color = "yellow"
+		}
 	}
 }
 
@@ -222,6 +273,9 @@ func WithWarningBoldStyle() Option {
 func WithSuccessStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessStyle
+		if c.Color == "" {
+			c.Color = "green"
+		}
 	}
 }
 
@@ -229,6 +283,9 @@ func WithSuccessStyle() Option {
 func WithSuccessBoldStyle() Option {
 	return func(c *config) {
 		c.Style = SuccessBoldStyle
+		if c.Color == "" {
+			c.Color = "green"
+		}
 	}
 }
 
@@ -243,14 +300,12 @@ func WithWriter(w io.Writer) Option {
 	return func(c *config) { c.Writer = w }
 }
 
+// WithColor specifies the color of the output.
+func WithColor(color string) Option {
+	return func(c *config) { c.Color = color }
+}
+
 var (
-	colorHeader      = color.New(color.Bold)
-	colorInfo        = color.New()
-	colorInfoBold    = color.New(color.Bold)
-	colorError       = color.New(color.FgRed)
-	colorErrorBold   = color.New(color.FgRed, color.Bold)
-	colorSuccess     = color.New(color.FgGreen)
-	colorSuccessBold = color.New(color.FgGreen, color.Bold)
-	colorWarning     = color.New(color.FgYellow)
-	colorWarningBold = color.New(color.FgYellow, color.Bold)
+	colorInfo     = color.New()
+	colorInfoBold = color.New(color.Bold)
 )

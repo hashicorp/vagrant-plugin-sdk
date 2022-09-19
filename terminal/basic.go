@@ -11,10 +11,8 @@ import (
 	"text/tabwriter"
 
 	"github.com/bgentry/speakeasy"
-	"github.com/containerd/console"
 	"github.com/fatih/color"
 	"github.com/mattn/go-isatty"
-	sshterm "golang.org/x/crypto/ssh/terminal"
 )
 
 // basicUI
@@ -23,27 +21,13 @@ type basicUI struct {
 	status *spinnerStatus
 }
 
-// Returns a UI which will write to the current processes
-// stdout/stderr.
-func ConsoleUI(ctx context.Context) UI {
-	// We do both of these checks because some sneaky environments fool
-	// one or the other and we really only want the glint-based UI in
-	// truly interactive environments.
-	glint := isatty.IsTerminal(os.Stdout.Fd()) && sshterm.IsTerminal(int(os.Stdout.Fd()))
-	if glint {
-		glint = false
-		if c, err := console.ConsoleFromFile(os.Stdout); err == nil {
-			if sz, err := c.Size(); err == nil {
-				glint = sz.Height > 0 && sz.Width > 0
-			}
-		}
+func BasicUI(ctx context.Context) UI {
+	result := &basicUI{
+		ctx:    ctx,
+		status: nil,
 	}
 
-	if glint {
-		return GlintUI(ctx)
-	} else {
-		return NonInteractiveUI(ctx)
-	}
+	return result
 }
 
 // Input implements UI
@@ -92,44 +76,48 @@ func (ui *basicUI) Interactive() bool {
 	return isatty.IsTerminal(os.Stdin.Fd())
 }
 
+// MachineReadable implements UI
+func (ui *basicUI) MachineReadable() bool {
+	return false
+}
+
 // ClearLine implements UI
 func (ui *basicUI) ClearLine() {
-	_, _, _, w := Interpret("")
+	_, _, _, w, _ := Interpret("")
 	w.Write([]byte("\r\033[K"))
 }
 
 // Output implements UI
 func (ui *basicUI) Output(msg string, raw ...interface{}) {
-	msg, style, disableNewline, w := Interpret(msg, raw...)
+	msg, style, disableNewline, w, _ := Interpret(msg, raw...)
+
+	var printer *color.Color
+	switch style {
+	case HeaderStyle, WarningBoldStyle, ErrorBoldStyle, SuccessBoldStyle, InfoBoldStyle:
+		printer = colorInfoBold
+	default:
+		printer = colorInfo
+	}
 
 	switch style {
 	case HeaderStyle:
-		msg = colorHeader.Sprintf("\n==> %s", msg)
-	case ErrorStyle:
-		msg = colorError.Sprint(msg)
-	case ErrorBoldStyle:
-		msg = colorErrorBold.Sprint(msg)
-	case WarningStyle:
-		msg = colorWarning.Sprint(msg)
-	case WarningBoldStyle:
-		msg = colorWarningBold.Sprint(msg)
-	case SuccessStyle:
-		msg = colorSuccess.Sprint(msg)
-	case SuccessBoldStyle:
-		msg = colorSuccessBold.Sprint(msg)
-	case InfoStyle:
+		msg = printer.Sprintf("\n==> " + msg)
+	case ErrorStyle, ErrorBoldStyle:
 		lines := strings.Split(msg, "\n")
-		for i, line := range lines {
-			lines[i] = colorInfo.Sprintf("    %s", line)
+		if len(lines) > 0 {
+			printer.Sprintf("! " + lines[0])
+			for _, line := range lines[1:] {
+				printer.Sprintf("  " + line)
+			}
 		}
-
 		msg = strings.Join(lines, "\n")
-	case InfoBoldStyle:
+	case WarningStyle, WarningBoldStyle:
+		msg = printer.Sprintf("WARNING: " + msg)
+	default:
 		lines := strings.Split(msg, "\n")
 		for i, line := range lines {
-			lines[i] = colorInfoBold.Sprintf("    %s", line)
+			lines[i] = printer.Sprintf("  %s", line)
 		}
-
 		msg = strings.Join(lines, "\n")
 	}
 
@@ -142,7 +130,7 @@ func (ui *basicUI) Output(msg string, raw ...interface{}) {
 
 	// Write it
 	if disableNewline {
-		fmt.Fprintf(w, msg)
+		fmt.Fprint(w, msg)
 	} else {
 		fmt.Fprintln(w, msg)
 	}
@@ -176,7 +164,7 @@ func (ui *basicUI) NamedValues(rows []NamedValue, opts ...Option) {
 	}
 
 	tr.Flush()
-	colorInfo.Fprintln(cfg.Writer, buf.String())
+	fmt.Fprintln(cfg.Writer, buf.String())
 }
 
 // OutputWriters implements UI
