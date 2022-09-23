@@ -35,7 +35,7 @@ func (ui *basicUI) Input(input *Input) (string, error) {
 	var buf bytes.Buffer
 
 	// Write the prompt, add a space.
-	ui.Output(input.Prompt, WithStyle(input.Style), WithWriter(&buf))
+	ui.Output(input.Prompt, WithStyle(input.Style), WithWriter(&buf), WithColor(input.Color))
 	fmt.Fprint(color.Output, strings.TrimRight(buf.String(), "\r\n"))
 	fmt.Fprint(color.Output, " ")
 

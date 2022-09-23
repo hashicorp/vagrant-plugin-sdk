@@ -83,7 +83,7 @@ func (ui *glintUI) Close() error {
 }
 
 func (ui *glintUI) Input(input *Input) (line string, err error) {
-	ui.Output(input.Prompt, WithoutNewLine())
+	ui.Output(input.Prompt, WithoutNewLine(), WithStyle(input.Style), WithColor(input.Color))
 	// Render the last frame
 	ui.d.RenderFrame()
 	// Pause so that input can be read
