@@ -1,6 +1,8 @@
 {
-  "adding_v1_box": "\nAdding V1 Vagrant box, `{{.BoxName}}`. Vagrant will automatically upgrade this box. Please consider upgrading the source box. https://www.vagrantup.com/docs/boxes/format\n",
+  "adding_v1_box": "\nAdding V1 Vagrant box, '{{.BoxName}}'. Vagrant will automatically upgrade this box. Please consider upgrading the source box. https://www.vagrantup.com/docs/boxes/format\n",
   "box_add": "Adding box",
+  "box_does_not_have_metadata_json_file": "The 'metadata.json' file for the box '{{.BoxName}}' was not found. Boxes require this file in order for Vagrant to determine the provider it was made for. If you made the box, please add a 'metadata.json' file to it. If someone else made the box, please notify the box creator that the box is corrupt.\n\nDocumentation for box file format can be found at the URL: https://www.vagrantup.com/docs/boxes/format.html",
+  "box_metadata_missing_required_fields": "The metadata associated with the box '{{.BoxName}}' appears to be missing the required field '{{.RequiredField}}'. Please ensure 'metadata.json' has all required fields.\n\nRequired fields: {{.RequiredFields}}",
   "deprecated_flag": "The provided flag '{{.Flag}}' is deprecated. In future releases of Vagrant it will not be available.",
   "error_noninteractive_ui": "Vagrant is attempting to interface with the UI in a way that requires a TTY. Most actions in Vagrant that require a TTY have configuration switches to disable this requirement. Please do that or run Vagrant with TTY.",
   "provider_not_usable": "The provider '{{.Provider}}' that was requested to back the machine '{{.Machine}}' is reporting that it isn't usable on this system"
