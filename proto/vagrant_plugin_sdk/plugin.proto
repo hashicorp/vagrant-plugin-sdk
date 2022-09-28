@@ -452,6 +452,7 @@ message TerminalUI {
       string prompt = 1;
       string style = 2;
       bool secret = 3;
+      string color = 4;
     }
 
     message InputResp {

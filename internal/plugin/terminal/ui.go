@@ -306,6 +306,7 @@ func (s *uiServer) Events(stream vagrant_plugin_sdk.TerminalUIService_EventsServ
 				Prompt: ev.Input.Prompt,
 				Style:  ev.Input.Style,
 				Secret: ev.Input.Secret,
+				Color:  ev.Input.Color,
 			})
 
 			var sterr *spb.Status
@@ -376,6 +377,7 @@ func (u *uiBridge) Input(input *terminal.Input) (string, error) {
 				Prompt: input.Prompt,
 				Style:  input.Style,
 				Secret: input.Secret,
+				Color:  input.Color,
 			},
 		},
 	})

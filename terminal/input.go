@@ -7,9 +7,13 @@ type Input struct {
 	Prompt string
 
 	// Style is the style to apply to the input. If this is blank,
-	// the output won't be colorized in any way.
+	// the output won't be styled in any way.
 	Style string
 
 	// True if this input is a secret. The input will be masked.
 	Secret bool
+
+	// Color is the color to apply to the input. If this is blank,
+	// the output will be the default color for the terminal.
+	Color string
 }
