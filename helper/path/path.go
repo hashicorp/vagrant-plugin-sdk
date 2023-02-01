@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // This package provides a simple way to represent a path
 // value and perform common operations on it. All the functions
 // expected with `path/filepath` are provided. The reason
