@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // Package core has the interfaces for all core types
 // used by Vagrant. These are implemented within Vagrant
 // and provided to plugins as needed/required. This is

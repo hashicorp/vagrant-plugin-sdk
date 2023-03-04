@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // Code generated for package localizer by go-bindata DO NOT EDIT. (@generated)
 // sources:
 // localizer/locales/en.json
