@@ -1,8 +1,7 @@
 {
   description = "HashiCorp Vagrant SDK";
 
-  inputs.vagrant.url =
-    "/home/spox/Projects/hashicorp/vagrant"; # "github:hashicorp/vagrant-ruby";
+  inputs.vagrant.url = "github:hashicorp/vagrant-ruby";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, flake-utils, vagrant }:
