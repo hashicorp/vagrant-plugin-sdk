@@ -13,6 +13,9 @@ type Vagrantfile interface {
 	PrimaryTargetName() (name string, err error)
 	Target(name, provider string) (Target, error)
 	TargetConfig(name, provider string, validateProvider bool) (Vagrantfile, error)
+
+	// Returns a list of the machines that are defined within this
+	// Vagrantfile.
 	TargetNames() (names []string, err error)
 	//TargetNamesAndOptions() (names []string, options map[string]interface{}, err error)
 }

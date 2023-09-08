@@ -91,6 +91,8 @@ var WellKnownTypes = []interface{}{
 
 // All is the list of all mappers as raw function pointers.
 var All = []interface{}{
+	HclRange,
+	HclRangeProto,
 	Array,
 	ArrayProto,
 	Symbol,
@@ -122,6 +124,7 @@ var All = []interface{}{
 	CommunicatorCommandProto,
 	Communicator,
 	CommunicatorProto,
+	ConfigDataToFinalize,
 	ConfigData,
 	ConfigDataProto,
 	ConfigMerge,
@@ -200,6 +203,10 @@ var All = []interface{}{
 	StateBagProto,
 	SyncedFolder,
 	SyncedFolderProto,
+	Vagrantfile,
+	VagrantfileProto,
+	VagrantfileSyncedFolderToFolder,
+	FolderToVagrantfileSyncedFolder,
 	Target,
 	TargetProto,
 	TargetIndex,
@@ -728,6 +735,27 @@ func Range(
 	return types.NewRange(input.Start, input.End)
 }
 
+func HclRange(
+	input *vagrant_plugin_sdk.Args_Range,
+) (*config.Range, error) {
+	return &config.Range{
+		Start: input.Start,
+		End:   input.End,
+	}, nil
+}
+
+func HclRangeProto(
+	input *config.Range,
+) (*vagrant_plugin_sdk.Args_Range, error) {
+	if input == nil {
+		return nil, nil
+	}
+	return &vagrant_plugin_sdk.Args_Range{
+		Start: input.Start,
+		End:   input.End,
+	}, nil
+}
+
 func RangeProto(
 	input types.Range,
 ) *vagrant_plugin_sdk.Args_Range {
@@ -870,6 +898,9 @@ func ConfigData(
 	internal pluginargs.Internal,
 	ctx context.Context,
 ) (*component.ConfigData, error) {
+	if input == nil {
+		return nil, fmt.Errorf("received config data proto was nil")
+	}
 	v, err := Hash(input.Data, log, internal, ctx)
 	if err != nil {
 		return nil, err
@@ -895,6 +926,14 @@ func ConfigData(
 	}
 
 	return result, nil
+}
+
+func ConfigDataToFinalize(
+	input *component.ConfigData,
+) *component.ConfigFinalize {
+	return &component.ConfigFinalize{
+		Config: input,
+	}
 }
 
 func ConfigDataProto(

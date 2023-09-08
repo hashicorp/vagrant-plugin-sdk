@@ -224,9 +224,10 @@ func (p *projectClient) Host() (h core.Host, err error) {
 	result, err := p.Map(r, (*core.Host)(nil),
 		argmapper.Typed(p.Ctx),
 	)
-	if err == nil {
-		h = result.(core.Host)
+	if err != nil {
+		return
 	}
+	h = result.(core.Host)
 
 	return
 }
@@ -627,17 +628,16 @@ func (p *projectServer) Host(
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	d, err := p.Impl.Host()
 	if err != nil {
-		p.Logger.Error("failed to get host",
-			"error", err,
-		)
 		return
 	}
 
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
 		argmapper.Typed(ctx))
-	if err == nil {
-		r = result.(*vagrant_plugin_sdk.Args_Host)
+
+	if err != nil {
+		return
 	}
+	r = result.(*vagrant_plugin_sdk.Args_Host)
 
 	return
 }

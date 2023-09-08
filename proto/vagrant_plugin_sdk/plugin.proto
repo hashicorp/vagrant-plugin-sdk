@@ -890,6 +890,14 @@ message Config {
     protostructure.Struct struct = 1;
   }
 
+  message InitResponse {
+    Args.ConfigData data = 1;
+  }
+
+  message FinalizeResponse {
+    Args.ConfigData data = 1;
+  }
+
   message RawRubyValue {
     Args.Class source = 1;
     Args.Hash data = 2;
@@ -946,14 +954,15 @@ message Config {
   }
 }
 
-
 service ConfigService {
+  rpc InitSpec(google.protobuf.Empty) returns (FuncSpec);
+  rpc Init(FuncSpec.Args) returns (Config.InitResponse);
   rpc StructSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Struct(FuncSpec.Args) returns (Config.StructResponse);
   rpc MergeSpec(google.protobuf.Empty) returns (FuncSpec);
   rpc Merge(FuncSpec.Args) returns (Args.ConfigData);
   rpc FinalizeSpec(google.protobuf.Empty) returns (FuncSpec);
-  rpc Finalize(FuncSpec.Args) returns (Args.ConfigData);
+  rpc Finalize(FuncSpec.Args) returns (Config.FinalizeResponse);
 
   rpc Register(google.protobuf.Empty) returns (Config.RegisterResponse);
 

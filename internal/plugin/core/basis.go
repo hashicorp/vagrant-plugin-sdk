@@ -169,9 +169,10 @@ func (p *basisClient) Host() (h core.Host, err error) {
 	}
 
 	result, err := p.Map(r, (*core.Host)(nil), argmapper.Typed(p.Ctx))
-	if err == nil {
-		h = result.(core.Host)
+	if err != nil {
+		return
 	}
+	h = result.(core.Host)
 
 	return
 }
@@ -366,7 +367,7 @@ func (p *basisServer) Host(
 ) (r *vagrant_plugin_sdk.Args_Host, err error) {
 	defer func() {
 		if err != nil {
-			p.Logger.Error("failed to get host",
+			p.Logger.Error("failed to get host impl call basis",
 				"error", err,
 			)
 		}
@@ -374,11 +375,15 @@ func (p *basisServer) Host(
 
 	d, err := p.Impl.Host()
 	if err != nil {
+		p.Logger.Error("host function call error", "error", err)
 		return
 	}
 
 	result, err := p.Map(d, (**vagrant_plugin_sdk.Args_Host)(nil),
 		argmapper.Typed(ctx))
+	if err != nil {
+		p.Logger.Error("host result mapping failure", "result", result, "error", err)
+	}
 	if err == nil {
 		r = result.(*vagrant_plugin_sdk.Args_Host)
 	}
