@@ -5,6 +5,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/mapstructure"
@@ -226,6 +227,9 @@ func (b *boxMetadataServer) Version(
 	if err != nil {
 		return nil, err
 	}
+	if v == nil {
+		return nil, fmt.Errorf("no version found for version %s", in.Version)
+	}
 	return &vagrant_plugin_sdk.BoxMetadata_VersionResponse{
 		Version: v.Version, Status: v.Status, Description: v.Description,
 	}, nil
@@ -269,6 +273,9 @@ func (b *boxMetadataServer) Provider(
 	p, err := b.Impl.Provider(in.Version, in.Name)
 	if err != nil {
 		return nil, err
+	}
+	if p == nil {
+		return nil, fmt.Errorf("No provider found for version %s, name %s", in.Version, in.Name)
 	}
 	return &vagrant_plugin_sdk.BoxMetadata_ProviderResponse{
 		Name: p.Name, Url: p.Url, Checksum: p.Checksum, ChecksumType: p.ChecksumType,

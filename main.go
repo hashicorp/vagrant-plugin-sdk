@@ -32,9 +32,11 @@ import (
 // TEMP: Workaround mockery bug that produces extra files for testing interfaces
 //       Can be removed once this is fixed: https://github.com/vektra/mockery/issues/471
 //go:generate sh -c "rm -rf ./component/mocks/*T.go && rm -rf ./core/mocks/*T.go"
+//go:generate mockery --all --dir ./cloud --output ./cloud/mocks
 
 // String generation
 //go:generate stringer -type=Type,FlagType -linecomment ./component
+//go:generate stringer -type=HTTPMethod -linecomment ./cloud
 
 // Locales data bundling
 //go:generate go-bindata -o localizer/locales.go -pkg localizer localizer/locales/
