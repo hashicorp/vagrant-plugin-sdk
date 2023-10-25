@@ -29,12 +29,12 @@ require (
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/stretchr/testify v1.7.5
 	golang.org/x/crypto v0.1.0
-	golang.org/x/sys v0.5.0
-	golang.org/x/term v0.5.0
-	golang.org/x/text v0.7.0
-	google.golang.org/genproto v0.0.0-20201002142447-3860012362da
-	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.25.0
+	golang.org/x/sys v0.7.0
+	golang.org/x/term v0.7.0
+	golang.org/x/text v0.9.0
+	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1
+	google.golang.org/grpc v1.56.3
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
@@ -44,8 +44,8 @@ require (
 	github.com/apparentlymart/go-textseg/v12 v12.0.0 // indirect
 	github.com/cheggaaa/pb/v3 v3.0.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/google/go-cmp v0.5.0 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/gookit/color v1.3.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb // indirect
@@ -60,7 +60,6 @@ require (
 	github.com/tj/go-spin v1.1.0 // indirect
 	github.com/y0ssar1an/q v1.0.7 // indirect
 	github.com/zclconf/go-cty v1.2.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	golang.org/x/net v0.9.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
