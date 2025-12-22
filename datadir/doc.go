@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright IBM Corp. 2020, 2023
 // SPDX-License-Identifier: MPL-2.0
 
 // Package datadir manages the data directories. This includes persisted
